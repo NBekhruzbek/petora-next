@@ -1,25 +1,47 @@
 import withLayoutMain from "@/libs/components/layout/LayoutHome";
-import { Box, Container, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { NextPage } from "next";
 
 const Home: NextPage = () => {
   return (
     <>
-      <Container>
+      <Stack>
         <Stack flexDirection={"column"}>
-          <Box>Our Company</Box>
-          <Box>What we Offer</Box>
-          <Box>Discovery</Box>
-          <Box>Species</Box>
-          <Box>Advertisement</Box>
-          <Box>Discount advertisement</Box>
-          <Box>Top Pet Foods</Box>
-          <Box>Top Pet Toys</Box>
-          <Box>Top Agents</Box>
-          <Box>Events</Box>
-          <Box>Contuct Us</Box>
+          <Stack>
+            <Stack className="container">Our Company</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">What we Offer</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">Discovery</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">Species</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">Advertisement</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">Discount advertisement</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">Top Pet Foods</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">Top Pet Toys</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">Top Agents</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">Events</Stack>
+          </Stack>
+          <Stack>
+            <Stack className="container">Contuct Us</Stack>
+          </Stack>
         </Stack>
-      </Container>
+      </Stack>
     </>
   );
 };
