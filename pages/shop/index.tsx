@@ -1,6 +1,10 @@
-const Shop = () => {
+import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
+import { Container } from "@mui/material";
+import { NextPage } from "next";
+
+const ShopList: NextPage = () => {
   console.log("SHOP COMPONENT - PAGES ROUTER");
-  return <div>SHOP LIST</div>;
+  return <Container>SHOP LIST</Container>;
 };
 
-export default Shop;
+export default withLayoutBasic(ShopList);
