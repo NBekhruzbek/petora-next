@@ -1,7 +1,18 @@
-import "@/styles/globals.css";
+import { useState } from "react";
 import type { AppProps } from "next/app";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { light } from "@/scss/MaterialTheme";
+import { CssBaseline } from "@mui/material";
 
 export default function App({ Component, pageProps }: AppProps) {
-  console.log("App COMPONENT - PAGES ROUTER");
-  return <Component {...pageProps} />;
+  // @ts-ignore
+  const [theme, setTheme] = useState(createTheme(light));
+
+  // Socket.io, Redux, MUI ...
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </ThemeProvider>
+  );
 }
