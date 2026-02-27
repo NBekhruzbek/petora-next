@@ -15,7 +15,7 @@
         display: flex;
         flex-direction: row;
         box-sizing: border-box;
-        z-index: 99;
+        z-index: 9999;
         align-items: center;
         background-color: #f2e2ff;
         border-top: 1px solid rgba(255, 255, 255, 0.07);
@@ -321,7 +321,7 @@
       .cat-image {
         width: 262.89px;
         height: 334.211px;
-        z-index: 9999;
+        z-index: 77;
         margin-top: 425px;
         margin-left: 518px;
       }
@@ -400,6 +400,179 @@
           height: 80px;
           background-color: #ebebeb;
           border-radius: 16px;
+        }
+      }
+    }
+  }
+  #footer {
+    background-color: #f2e2ff;
+    position: relative;
+    height: 584px;
+
+    // TOP wave - yuqoridan kelgan yana bir seksiyoni ajratish
+    &::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      left: 0;
+      width: 100%;
+      height: 186px;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C360,0 1080,120 1440,60 L1440,120 L0,120 Z' fill='%23f2e2ff'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .footer-main {
+      width: 100%;
+      .container {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        .footer-info {
+          display: flex;
+          width: 380px;
+          margin-top: 100px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 20px;
+          .logo-section {
+            height: 120px;
+            display: flex;
+            flex-direction: row;
+            .logo {
+              width: 180px;
+              height: 120px;
+            }
+            .logo-name {
+              margin-left: 10px;
+              height: 120px;
+              padding-top: 20px;
+              font-size: 50px;
+              font-family: "Pacifico", cursive;
+              font-weight: 500;
+            }
+          }
+          .text {
+            width: 100%;
+
+            /* Web/18px-Content/Regular */
+            font-family: $font;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 22px; /* 122.222% */
+            color: var(--Neutral-800, #252525);
+          }
+          .contact-section {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+          }
+          .social-media {
+            display: flex;
+            width: 130px;
+            flex-direction: row;
+            justify-content: space-between;
+          }
+        }
+        .footer-img {
+          position: relative;
+          display: flex;
+          width: 315.73px;
+          height: 339.35px;
+          .first-square {
+            position: absolute;
+            margin-top: 60px;
+            margin-left: 20px;
+          }
+          .second-square {
+            position: absolute;
+            margin-top: 40px;
+            z-index: 1;
+          }
+          .dog-image {
+            position: absolute;
+            width: 360px;
+            margin-top: 48px;
+            margin-left: 7px;
+          }
+        }
+        .footer-nav {
+          width: 280px;
+          height: auto;
+          display: flex;
+          margin-top: 100px;
+          .main-text {
+            /* Web/24px-Display/Regular */
+            font-family: Assistant;
+            font-size: 30px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 30px; /* 125% */
+            color: #410075;
+          }
+          .router-box {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            .left-box {
+              .navLink-text {
+                margin-top: 16px;
+                align-items: center;
+                /* Web/18px-Content/Bold */
+                font-family: Assistant;
+                font-size: 22px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 22px; /* 122.222% */
+                color: var(--Neutral-700, #595959);
+              }
+            }
+            .right-box {
+              .navLink-text {
+                margin-top: 16px;
+                align-items: center;
+                /* Web/18px-Content/Bold */
+                font-family: Assistant;
+                font-size: 22px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 22px; /* 122.222% */
+                color: var(--Neutral-700, #595959);
+              }
+            }
+            .navLink-text {
+              margin-top: 16px;
+              /* Web/18px-Content/Bold */
+              font-family: Assistant;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 700;
+              line-height: 22px; /* 122.222% */
+              color: var(--Neutral-700, #595959);
+            }
+          }
+          .enjoy-text {
+            height: 120px;
+            padding-top: 50px;
+            font-size: 30px;
+            font-family: "Pacifico", cursive;
+            font-weight: 500;
+          }
+        }
+        .union1 {
+          position: absolute;
+          bottom: -110px;
+          left: -90px;
+        }
+        .union2 {
+          position: absolute;
+          right: -140.5px;
+          bottom: -80px;
         }
       }
     }
