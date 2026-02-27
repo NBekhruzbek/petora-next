@@ -57,30 +57,62 @@ const Top = () => {
           </Box>
           <Box component={"div"} className="router-box">
             <Link href={"/"}>
-              <div>Home</div>
+              <div
+                className={`nav-item ${router.pathname === "/" ? "active" : ""}`}
+              >
+                Home
+              </div>
             </Link>
             <Link href={"/service"}>
-              <div>Service</div>
+              <div
+                className={`nav-item ${router.pathname === "/service" ? "active" : ""}`}
+              >
+                Service
+              </div>
             </Link>
             <Link href={"/discovery"}>
-              <div>Discovery</div>
+              <div
+                className={`nav-item ${router.pathname === "/discovery" ? "active" : ""}`}
+              >
+                Discovery
+              </div>
             </Link>
             <Link href={"/shop"}>
-              <div>Shop</div>
+              <div
+                className={`nav-item ${router.pathname === "/shop" ? "active" : ""}`}
+              >
+                Shop
+              </div>
             </Link>
             <Link href={"/agents"}>
-              <div>Agents List</div>
+              <div
+                className={`nav-item ${router.pathname === "/agents" ? "active" : ""}`}
+              >
+                Agents List
+              </div>
             </Link>
             <Link href={"/community?articleCategory=FREE"}>
-              <div>Community</div>
+              <div
+                className={`nav-item ${router.pathname === "/community" ? "active" : ""}`}
+              >
+                Community
+              </div>
             </Link>
             {authMember && (
               <Link href={"/mypage"}>
-                <div>My Page</div>
+                <div
+                  className={`nav-item ${router.pathname === "/mypage" ? "active" : ""}`}
+                >
+                  My Page
+                </div>
               </Link>
             )}
             <Link href={"/cs"}>
-              <div>CS</div>
+              <div
+                className={`nav-item ${router.pathname === "/cs" ? "active" : ""}`}
+              >
+                CS
+              </div>
             </Link>
             <Box>
               <Basket />

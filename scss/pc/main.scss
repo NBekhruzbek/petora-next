@@ -20,7 +20,7 @@
         background-color: #f2e2ff;
         border-top: 1px solid rgba(255, 255, 255, 0.07);
         &.transparent {
-          background-color: #f2e2ff;
+          background-color: rgba(242, 226, 255, 0.85);
         }
         .container {
           flex-direction: row;
@@ -54,6 +54,30 @@
               font-weight: 600;
               line-height: normal;
               cursor: pointer;
+            }
+            .nav-item {
+              position: relative;
+              cursor: pointer;
+              padding-bottom: 4px;
+              &:after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 0%;
+                height: 2px;
+                background-color: #410075;
+                transition: width 0.3s ease;
+              }
+              &:hover::after {
+                width: 100%;
+              }
+              &.active::after {
+                width: 100%;
+              }
+            }
+            .active {
+              color: #410075;
             }
           }
           .user-box {
