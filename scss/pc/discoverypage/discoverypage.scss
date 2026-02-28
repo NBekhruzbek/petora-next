@@ -55,10 +55,10 @@
 
         .ellipse {
           position: absolute;
-          top: 120px;
+          top: 96px;
           left: 90px;
           width: 82%;
-          z-index: -1;
+          z-index: -10;
         }
         .dog-icon {
           position: absolute;
@@ -80,7 +80,7 @@
         position: relative;
         width: 1020px;
         height: 750px;
-        margin-top: 50px;
+        margin-top: 35px;
       }
     }
   }
