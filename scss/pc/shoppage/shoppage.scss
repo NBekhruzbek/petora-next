@@ -50,7 +50,7 @@
       .dog2-image {
         position: absolute;
         width: 300px;
-        bottom: -138px;
+        bottom: -112px;
         left: 0;
         animation: floatSide 4s ease-in-out infinite;
       }
@@ -60,14 +60,14 @@
         .product1 {
           position: absolute;
           width: 220px;
-          top: 160px;
+          top: 150px;
           z-index: 2;
           animation: float 3s ease-in-out infinite;
         }
         .product2 {
           position: absolute;
           width: 130px;
-          top: 130px;
+          top: 120px;
           left: 160px;
           z-index: 1;
           animation: float 3s ease-in-out infinite;
@@ -81,14 +81,14 @@
 
         .ellipse {
           position: absolute;
-          top: 75px;
+          top: 69px;
           left: 90px;
-          width: 75.2%;
+          width: 73%;
           z-index: -1;
         }
         .ellipse2 {
           position: absolute;
-          top: 242px;
+          top: 218px;
           left: 220px;
           width: 55%;
           z-index: -1;
@@ -121,7 +121,7 @@
           position: relative;
           width: 1200px;
           height: 650px;
-          margin-top: 150px;
+          margin-top: 130px;
 
           animation: scrollWiggle linear both;
           animation-timeline: scroll();
