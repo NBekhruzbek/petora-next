@@ -1,0 +1,92 @@
+#pc-wrap {
+  #discovery-top {
+    background-color: #f2e2ff;
+
+    .discovery-top {
+      padding-top: 40px;
+      flex-direction: row;
+      justify-content: space-between;
+      height: 715px;
+      .text-area {
+        position: relative;
+        margin-top: 260px;
+        width: 100%;
+        gap: 20px;
+        .text1 {
+          /* Web/36px-Display/Bold */
+          font-family: Assistant;
+          font-size: 36px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 48px; /* 133.333% */
+          text-transform: uppercase;
+          color: var(--Primary-Purple3, #410075);
+        }
+        .text2 {
+          /* Web/36px-Display/Bold */
+          font-family: Assistant;
+          font-size: 36px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 48px; /* 133.333% */
+          text-transform: uppercase;
+          color: var(--Secondary-Green5, #a1be97);
+        }
+        .text3 {
+          width: 387px;
+          height: 90px;
+          /* Web/24px-Display/Regular */
+          font-family: Assistant;
+          font-size: 24px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 30px; /* 125% */
+          color: var(--Neutral-700, #595959);
+        }
+        .hand-icon {
+          margin-left: 15px;
+        }
+      }
+      .circle-background {
+        position: initial;
+        width: 826px;
+        z-index: 0;
+        margin-top: 10px;
+
+        .ellipse {
+          position: absolute;
+          top: 120px;
+          left: 90px;
+          width: 82%;
+          z-index: -1;
+        }
+        .dog-icon {
+          position: absolute;
+          border-radius: 167.764px;
+          top: 280px;
+          left: 880px;
+          z-index: 9999;
+          background: var(--Secondary-Green4, #6ab052);
+        }
+        .cat-icon {
+          position: absolute;
+          border-radius: 213.931px;
+          top: 430px;
+          left: 80px;
+          background: var(--Secondary-Red2, #c80006);
+        }
+      }
+      .dogs-image {
+        position: relative;
+        width: 1020px;
+        height: 750px;
+        margin-top: 50px;
+      }
+    }
+  }
+  .service-page {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+}
