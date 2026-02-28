@@ -15,19 +15,47 @@ const withLayoutBasic = (Component: any) => {
     const router = useRouter();
     switch (router.pathname) {
       case "/service":
-        return <ServiceHeader />;
+        return (
+          <Stack id={"main-top"}>
+            <ServiceHeader />;
+          </Stack>
+        );
       case "/discovery":
-        return <DiscoveryHeader />;
+        return (
+          <Stack id={"discovery-top"}>
+            <DiscoveryHeader />;
+          </Stack>
+        );
       case "/shop":
-        return <ShopHeader />;
+        return (
+          <Stack id={"shop-top"}>
+            <ShopHeader />;
+          </Stack>
+        );
       case "/agents":
-        return <AgentsHeader />;
+        return (
+          <Stack id={"agents-top"}>
+            <AgentsHeader />;
+          </Stack>
+        );
       case "/community":
-        return <CommunityHeader />;
+        return (
+          <Stack id={"community-top"}>
+            <CommunityHeader />;
+          </Stack>
+        );
       case "/mypage":
-        return <MyPageHeader />;
+        return (
+          <Stack id={"mypage-top"}>
+            <MyPageHeader />;
+          </Stack>
+        );
       case "/cs":
-        return <CsHeader />;
+        return (
+          <Stack id={"cs-top"}>
+            <CsHeader />;
+          </Stack>
+        );
     }
   };
   return (props: any) => {
@@ -41,7 +69,7 @@ const withLayoutBasic = (Component: any) => {
             <Top />
           </Stack>
 
-          <Stack id="main-top">{header()}</Stack>
+          {header()}
 
           <Stack id={"main"}>
             <Component {...props} />
