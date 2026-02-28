@@ -17,43 +17,43 @@ const withLayoutBasic = (Component: any) => {
       case "/service":
         return (
           <Stack id={"main-top"}>
-            <ServiceHeader />;
+            <ServiceHeader />
           </Stack>
         );
       case "/discovery":
         return (
           <Stack id={"discovery-top"}>
-            <DiscoveryHeader />;
+            <DiscoveryHeader />
           </Stack>
         );
       case "/shop":
         return (
           <Stack id={"shop-top"}>
-            <ShopHeader />;
+            <ShopHeader />
           </Stack>
         );
       case "/agents":
         return (
           <Stack id={"agents-top"}>
-            <AgentsHeader />;
+            <AgentsHeader />
           </Stack>
         );
       case "/community":
         return (
           <Stack id={"community-top"}>
-            <CommunityHeader />;
+            <CommunityHeader />
           </Stack>
         );
       case "/mypage":
         return (
           <Stack id={"mypage-top"}>
-            <MyPageHeader />;
+            <MyPageHeader />
           </Stack>
         );
       case "/cs":
         return (
           <Stack id={"cs-top"}>
-            <CsHeader />;
+            <CsHeader />
           </Stack>
         );
     }
