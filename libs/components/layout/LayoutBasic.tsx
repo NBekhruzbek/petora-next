@@ -9,6 +9,7 @@ import CommunityHeader from "../headers/CommunityHeader";
 import MyPageHeader from "../headers/MyPageHeader";
 import CsHeader from "../headers/CsHeader";
 import Top from "../Top";
+import Footer from "../Footer";
 
 const withLayoutBasic = (Component: any) => {
   const header = () => {
@@ -75,7 +76,9 @@ const withLayoutBasic = (Component: any) => {
             <Component {...props} />
           </Stack>
 
-          <Stack sx={{ background: "#a1887f" }}>Footer</Stack>
+          <Stack id={"footer"}>
+            <Footer />
+          </Stack>
         </Stack>
       </>
     );
