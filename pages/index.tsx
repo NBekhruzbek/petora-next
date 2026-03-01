@@ -1,46 +1,33 @@
-import withLayoutMain from "@/libs/components/layout/LayoutHome";
 import { Stack } from "@mui/material";
 import { NextPage } from "next";
+import withLayoutMain from "@/libs/components/layout/LayoutHome";
+import OurCompany from "@/libs/components/homepage/OurCompany";
+import WhatWeOffer from "@/libs/components/homepage/WhatWeOffer";
+import Species from "@/libs/components/homepage/Species";
+import Advertisement from "@/libs/components/homepage/Advertisement";
+import DiscountAdvertisement from "@/libs/components/homepage/DiscountAdvertisement";
+import TopPetFoods from "@/libs/components/homepage/TopPetFoods";
+import TopPetToys from "@/libs/components/homepage/TopPetToys";
+import TopAgents from "@/libs/components/homepage/TopAgents";
+import Events from "@/libs/components/homepage/Events";
+import ContactUs from "@/libs/components/homepage/ContactUs";
+import Discovery from "@/libs/components/homepage/Discovery";
 
 const Home: NextPage = () => {
   return (
     <>
-      <Stack>
-        <Stack flexDirection={"column"}>
-          <Stack>
-            <Stack className="container">Our Company</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">What we Offer</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">Discovery</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">Species</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">Advertisement</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">Discount advertisement</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">Top Pet Foods</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">Top Pet Toys</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">Top Agents</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">Events</Stack>
-          </Stack>
-          <Stack>
-            <Stack className="container">Contuct Us</Stack>
-          </Stack>
-        </Stack>
+      <Stack className="home-page">
+        <OurCompany />
+        <WhatWeOffer />
+        <Discovery />
+        <Species />
+        <Advertisement />
+        <DiscountAdvertisement />
+        <TopPetFoods />
+        <TopPetToys />
+        <TopAgents />
+        <Events />
+        <ContactUs />
       </Stack>
     </>
   );
