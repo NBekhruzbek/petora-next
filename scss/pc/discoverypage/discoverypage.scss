@@ -45,6 +45,9 @@
         }
         .hand-icon {
           margin-left: 15px;
+          animation: scrollWiggle linear both;
+          animation-timeline: scroll();
+          animation-range: 0% 100%;
         }
       }
       .circle-background {
@@ -67,6 +70,7 @@
           left: 880px;
           z-index: 9999;
           background: var(--Secondary-Green4, #6ab052);
+          animation: floatSide 4s ease-in-out infinite;
         }
         .cat-icon {
           position: absolute;
@@ -74,6 +78,7 @@
           top: 430px;
           left: 80px;
           background: var(--Secondary-Red2, #c80006);
+          animation: floatSide 4s ease-in-out infinite;
         }
       }
       .dogs-image {
@@ -81,6 +86,8 @@
         width: 1020px;
         height: 750px;
         margin-top: 35px;
+        z-index: 10;
+        animation: productReveal 1s ease-out forwards;
       }
     }
   }
@@ -88,5 +95,27 @@
     position: relative;
     width: 100%;
     height: auto;
+  }
+}
+@keyframes productReveal {
+  0% {
+    opacity: 0;
+    transform: scale(1.1) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes scrollWiggle {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(20px) rotate(2deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
   }
 }
