@@ -1,7 +1,244 @@
+@use "../../variables.scss" as *;
+
 #pc-wrap {
   .home-page {
     position: relative;
     width: 100%;
     height: auto;
+    .our-company {
+      height: 650px;
+      margin-top: 100px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .container {
+        width: 1300px;
+        .left-side {
+          width: 590px;
+          height: 525px;
+          margin-top: 50px;
+          gap: 20px;
+          .title {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            /* Web/28px-Header/Bold */
+            font-family: $font;
+            font-size: 28px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 36px; /* 128.571% */
+            text-transform: uppercase;
+            color: var(--Primary-Purple3, #410075);
+            .hand-icon {
+              height: auto;
+            }
+          }
+          .about-us {
+            gap: 10px;
+            .main-text {
+              color: var(--Neutral-800, #252525);
+
+              /* Web/18px-Content/Bold */
+              font-family: $font;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 700;
+              line-height: 22px; /* 122.222% */
+            }
+            .text {
+              color: var(--Neutral-700, #595959);
+
+              /* Web/18px-Content/Regular */
+              font-family: $font;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 400;
+              line-height: 22px; /* 122.222% */
+            }
+          }
+          .about-consulting {
+            gap: 8px;
+            .main-text {
+              color: var(--Neutral-800, #252525);
+
+              /* Web/18px-Content/Bold */
+              font-family: $font;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 700;
+              line-height: 22px; /* 122.222% */
+            }
+            .text {
+              color: var(--Neutral-700, #595959);
+
+              /* Web/18px-Content/Regular */
+              font-family: $font;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 400;
+              line-height: 22px; /* 122.222% */
+            }
+          }
+          .our-service {
+            gap: 8px;
+            .main-text {
+              color: var(--Neutral-800, #252525);
+
+              /* Web/18px-Content/Bold */
+              font-family: $font;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 700;
+              line-height: 22px; /* 122.222% */
+            }
+            .service-cards {
+              flex-direction: row;
+              justify-content: space-between;
+              gap: 20px;
+              .left-card {
+                position: relative;
+                width: 285px;
+                height: 158px;
+                background: #dfefda;
+                border-radius: 10px;
+                .text-area {
+                  width: 140px;
+                  gap: 8px;
+                  margin-top: 14px;
+                  margin-left: 20px;
+                  .main-text {
+                    /* Web/18px-Content/Bold */
+                    font-family: $font;
+                    font-size: 15px;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 22px; /* 122.222% */
+                    color: var(--Neutral-800, #252525);
+                  }
+                  .text {
+                    /* Web/18px-Content/Regular */
+                    font-family: $font;
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 400;
+                    color: var(--Neutral-700, #595959);
+                  }
+                  .read-more-button {
+                    width: 88px;
+                    height: 28px;
+                    color: #fff;
+                    font-size: 10px;
+                    font-weight: 600;
+                    animation: floatSide 4s ease-in-out infinite;
+                  }
+                }
+                .dog-image {
+                  position: absolute;
+                  width: 147px;
+                  bottom: 0;
+                  right: 0;
+                }
+              }
+              .right-card {
+                position: relative;
+                width: 285px;
+                height: 158px;
+                background: #e5c3ff;
+                border-radius: 10px;
+                .text-area {
+                  width: 140px;
+                  gap: 8px;
+                  margin-top: 14px;
+                  margin-left: 20px;
+                  .main-text {
+                    margin-top: 8px;
+                    /* Web/18px-Content/Bold */
+                    font-family: $font;
+                    font-size: 15px;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 22px; /* 122.222% */
+                    color: var(--Neutral-800, #252525);
+                  }
+                  .text {
+                    margin-top: 8px;
+                    /* Web/18px-Content/Regular */
+                    font-family: $font;
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 400;
+                    color: var(--Neutral-700, #595959);
+                  }
+                  .read-more-button {
+                    width: 88px;
+                    height: 28px;
+                    margin-top: 4px;
+                    font-size: 10px;
+                    font-weight: 600;
+                    color: #fff;
+                    animation: floatSide 4s ease-in-out infinite;
+                  }
+                }
+                .dog-image {
+                  position: absolute;
+                  width: 145px;
+                  bottom: -7px;
+                  right: 0;
+                }
+              }
+            }
+          }
+        }
+        .right-side {
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+          .background-dog {
+            width: 520px;
+            margin-left: 230px;
+          }
+        }
+        .dog-background {
+          position: absolute;
+          width: 700px;
+          height: 700px;
+          margin-top: 140px;
+          margin-left: 140px;
+          border-radius: 50%;
+          background: #e5c3ff;
+          z-index: -1;
+        }
+        .rectangle1 {
+          position: absolute;
+          margin-left: 282px;
+          z-index: -3;
+        }
+        .rectangle2 {
+          position: absolute;
+          margin-top: 30px;
+          margin-left: 290px;
+          z-index: -3;
+        }
+        .rectangle3 {
+          position: absolute;
+          margin-top: 60px;
+          margin-left: 290px;
+          z-index: -3;
+        }
+      }
+    }
+  }
+}
+
+@keyframes scrollWiggle {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+  100% {
+    transform: translateX(0);
   }
 }

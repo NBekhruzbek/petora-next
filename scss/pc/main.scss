@@ -428,6 +428,7 @@
     background-color: #f2e2ff;
     position: relative;
     height: 584px;
+    overflow: hidden;
 
     // TOP wave - yuqoridan kelgan yana bir seksiyoni ajratish
     &::before {
