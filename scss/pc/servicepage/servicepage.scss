@@ -58,6 +58,7 @@
           position: absolute;
           top: 30px;
           right: -50px;
+          animation: floatSide 4s ease-in-out infinite;
         }
       }
       .circle-background {
@@ -90,6 +91,9 @@
           left: 640px;
           z-index: 9999;
           background: var(--Secondary-Green4, #6ab052);
+          animation: scrollWiggle linear both;
+          animation-timeline: scroll();
+          animation-range: 0% 100%;
         }
         .cat-icon {
           position: absolute;
@@ -97,6 +101,9 @@
           top: 250px;
           left: 90px;
           background: var(--Secondary-Red2, #c80006);
+          animation: scrollWiggle linear both;
+          animation-timeline: scroll();
+          animation-range: 0% 100%;
         }
       }
       .dog-card {
@@ -116,6 +123,9 @@
         border-radius: 15px;
         background: var(--Neutral-White, #fff);
         box-shadow: 0 4px 40px 0 rgba(0, 0, 0, 0.1);
+
+        animation: floatSide 4s ease-in-out infinite;
+
         .left {
           width: 140px;
           height: 92px;
@@ -172,6 +182,7 @@
         height: 525px;
         margin-top: 117px;
         z-index: 10;
+        animation: productReveal 1s ease-out forwards;
       }
     }
   }
@@ -179,5 +190,39 @@
     position: relative;
     width: 100%;
     height: auto;
+  }
+}
+@keyframes productReveal {
+  0% {
+    opacity: 0;
+    transform: scale(1.1) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes floatSide {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(15px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes scrollWiggle {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(20px) rotate(2deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
   }
 }
