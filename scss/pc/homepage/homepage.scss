@@ -479,6 +479,306 @@
       }
     }
 
+    .discovery {
+      width: 100%;
+      padding: 156px 0 34px;
+      background: #fcf7ff;
+
+      .container {
+        position: relative;
+        flex-direction: column;
+        gap: 18px;
+
+        .discovery-title {
+          margin-left: 63px;
+          color: #252525;
+          font-family: $font;
+          font-size: 30px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 1;
+          letter-spacing: 0.3px;
+          text-transform: uppercase;
+        }
+
+        .category-tabs {
+          gap: 10px;
+          margin-left: 63px;
+
+          .category-tab {
+            width: 116px;
+            height: 34px;
+            border-radius: 6px;
+            border: 1px solid #9f9f9f;
+            background: transparent;
+            color: #606060;
+            font-family: $font;
+            font-size: 15px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 1;
+            cursor: pointer;
+            position: relative;
+            transition:
+              background-color 0.2s ease,
+              border-color 0.2s ease,
+              color 0.2s ease;
+
+            &.active {
+              border: 1.5px solid transparent;
+              background:
+                linear-gradient(#c390ed, #410075) padding-box,
+                linear-gradient(
+                    120deg,
+                    #e83333 0%,
+                    #d3b7ff 35%,
+                    #ffffff 55%,
+                    #b56cff 75%,
+                    #5f18b7 100%
+                  )
+                  border-box;
+              background-size:
+                100% 100%,
+                220% 220%;
+              animation: categoryTabBorderFlow 2.8s linear infinite;
+              color: #fff;
+
+              @media (prefers-reduced-motion: reduce) {
+                animation: none;
+              }
+            }
+          }
+        }
+
+        .discovery-slider {
+          position: relative;
+          align-items: center;
+          justify-content: center;
+
+          .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            z-index: 3;
+
+            svg {
+              font-size: 18px;
+            }
+
+            &.prev {
+              left: -52px;
+            }
+
+            &.next {
+              right: -52px;
+            }
+
+            &.enabled {
+              background: #410075;
+              color: #fff;
+            }
+
+            &.disabled {
+              background: #d9d9d9;
+              color: #8a8a8a;
+            }
+          }
+
+          .cards-track {
+            width: 100%;
+            margin-left: 65px;
+            gap: 30px;
+
+            .discovery-card {
+              width: 268px;
+              min-height: 500px;
+              padding: 10px 12px 12px;
+              border-radius: 10px;
+              border: 1px solid #f0c0c0;
+              background: #fff;
+              box-sizing: border-box;
+
+              .like-icon {
+                display: flex;
+                justify-content: flex-end;
+
+                .like-toggle {
+                  width: 24px;
+                  height: 24px;
+                  padding: 0;
+                  border: 0;
+                  background: transparent;
+                  cursor: pointer;
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                }
+
+                .liked {
+                  color: #e70000;
+                  font-size: 18px;
+                }
+
+                .unliked {
+                  color: #6d6d6d;
+                  font-size: 18px;
+                }
+              }
+
+              .pet-image-box {
+                height: 126px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 2px;
+
+                .pet-image {
+                  max-width: 132px;
+                  max-height: 122px;
+                  width: auto;
+                  height: auto;
+                  object-fit: contain;
+                }
+              }
+
+              .pet-title {
+                margin-top: 8px;
+                color: #410075;
+                font-family: $font;
+                font-size: 22px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 1.1;
+                text-transform: uppercase;
+              }
+
+              .country-row {
+                flex-direction: row;
+                align-items: center;
+                gap: 6px;
+                margin-top: 8px;
+
+                .country-icon {
+                  font-size: 15px;
+                  color: #6d6d6d;
+                }
+
+                .country-text {
+                  color: #595959;
+                  font-family: $font;
+                  font-size: 16px;
+                  font-style: normal;
+                  font-weight: 400;
+                  line-height: 1;
+                }
+              }
+
+              .info-title {
+                margin-top: 8px;
+                color: #252525;
+                font-family: $font;
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 1;
+              }
+
+              .stats-list {
+                margin-top: 8px;
+                gap: 6px;
+
+                .stat-item {
+                  .stat-label {
+                    color: #646464;
+                    font-family: $font;
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: 1;
+                  }
+
+                  .stat-track {
+                    width: 100%;
+                    height: 5px;
+                    border-radius: 100px;
+                    background: #c4c4c4;
+                    margin-top: 4px;
+                    overflow: hidden;
+
+                    .stat-fill {
+                      height: 100%;
+                      border-radius: 100px;
+                      background: #410075;
+                    }
+                  }
+                }
+              }
+
+              .description-title {
+                margin-top: 10px;
+                color: #252525;
+                font-family: $font;
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 1;
+              }
+
+              .description-text {
+                margin-top: 6px;
+                color: #696969;
+                font-family: $font;
+                font-size: 12px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 1.25;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+              }
+
+              .learn-more-link {
+                margin-top: auto;
+                padding-top: 10px;
+                display: inline-flex;
+                justify-content: center;
+                color: #410075;
+                font-family: $font;
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 1;
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+
+        .pagination-dots {
+          align-self: center;
+          gap: 8px;
+
+          .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid #b3b3b3;
+            background: transparent;
+            cursor: pointer;
+
+            &.active {
+              border-color: #410075;
+              background: #410075;
+            }
+          }
+        }
+      }
+    }
+
     @keyframes scrollWiggle {
       0% {
         transform: translateX(0);
@@ -501,6 +801,19 @@
         background-position:
           0 0,
           200% 50%;
+      }
+    }
+
+    @keyframes categoryTabBorderFlow {
+      0% {
+        background-position:
+          0 0,
+          0% 50%;
+      }
+      100% {
+        background-position:
+          0 0,
+          180% 50%;
       }
     }
   }
