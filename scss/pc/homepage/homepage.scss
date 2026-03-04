@@ -481,8 +481,8 @@
 
     .discovery {
       width: 100%;
-      padding: 156px 0 34px;
-      background: #fcf7ff;
+      padding: 156px 0 54px;
+      background: #fff;
 
       .container {
         position: relative;
@@ -598,7 +598,7 @@
               padding: 10px 12px 12px;
               border-radius: 10px;
               border: 1px solid #f0c0c0;
-              background: #fff;
+              background: #f9f7fa;
               box-sizing: border-box;
 
               .like-icon {
@@ -736,7 +736,6 @@
                 font-weight: 400;
                 line-height: 1.25;
                 display: -webkit-box;
-                -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
               }
@@ -779,6 +778,206 @@
       }
     }
 
+    .species {
+      width: 100%;
+      height: 600px;
+      background: #fcf7ff;
+      .species-main {
+        margin-top: 32px;
+        flex-direction: row;
+        justify-content: space-between;
+        .left-side {
+          width: 586px;
+          height: 493px;
+          .dog-image {
+            width: 586px;
+            height: 493px;
+            align-self: center;
+            z-index: 10;
+          }
+          .dog-background-1 {
+            position: absolute;
+            width: 430px;
+            height: 430px;
+            margin-top: 55px;
+            margin-left: 70px;
+            border-radius: 100%;
+            background: #f3e2ff;
+            z-index: 1;
+          }
+          .dog-background-2 {
+            position: absolute;
+            width: 365px;
+            height: 365px;
+            margin-top: 88px;
+            margin-left: 103px;
+            border-radius: 100%;
+            background: #e9ccff;
+            z-index: 1;
+          }
+          .bone {
+            position: absolute;
+            width: 66.844px;
+            height: 69.978px;
+            top: 270px;
+            left: 50px;
+            z-index: 2;
+          }
+          .bone-background {
+            position: absolute;
+            width: 85.844px;
+            height: 85.978px;
+            top: 263px;
+            left: 45px;
+            z-index: 1;
+            border-radius: 80px;
+            background: linear-gradient(39deg, #e5c3ff 14.13%, #fff 85.24%);
+            box-shadow:
+              0 4px 8px 0 rgba(0, 0, 0, 0.2),
+              0 6px 20px 0 rgba(0, 0, 0, 0.19);
+          }
+          .toy {
+            position: absolute;
+            width: 78px;
+            height: 53px;
+            top: 98px;
+            left: 564px;
+            z-index: 2;
+          }
+          .toy-background {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            top: 90px;
+            left: 570px;
+            z-index: 1;
+            border-radius: 80px;
+            background: linear-gradient(39deg, #e5c3ff 14.13%, #fff 85.24%);
+            box-shadow:
+              0 4px 8px 0 rgba(0, 0, 0, 0.2),
+              0 6px 20px 0 rgba(0, 0, 0, 0.19);
+          }
+          .bowl {
+            position: absolute;
+            width: 107.798px;
+            height: 70.234px;
+            top: 440px;
+            left: 490px;
+            z-index: 2;
+            animation: float 3s ease-in-out infinite;
+          }
+          .bowl-background {
+            position: absolute;
+            width: 115px;
+            height: 115px;
+            top: 417px;
+            left: 488px;
+            z-index: 1;
+            border-radius: 80px;
+            background: linear-gradient(39deg, #e5c3ff 14.13%, #fff 85.24%);
+            box-shadow:
+              0 4px 8px 0 rgba(0, 0, 0, 0.2),
+              0 6px 20px 0 rgba(0, 0, 0, 0.19);
+          }
+        }
+        .right-side {
+          width: 486px;
+          height: 186px;
+          display: inline-flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 30px;
+          align-self: center;
+          margin-right: 50px;
+          .title {
+            text-align: center;
+
+            /* Web/28px-Header/Bold */
+            font-family: $font;
+            font-size: 28px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 36px; /* 128.571% */
+            text-transform: uppercase;
+            color: var(--Neutral-800, #252525);
+          }
+          .text {
+            color: var(--Neutral-300, #999);
+
+            /* Web/18px-Content/Regular */
+            font-family: Assistant;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 22px; /* 122.222% */
+          }
+          .booking-button {
+            color: #fff;
+            padding: 12px;
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background:
+              linear-gradient(#c390ed, #410075) padding-box,
+              linear-gradient(
+                  120deg,
+                  #e83333 0%,
+                  #d3b7ff 35%,
+                  #ffffff 55%,
+                  #b56cff 75%,
+                  #5f18b7 100%
+                )
+                border-box;
+            background-size:
+              100% 100%,
+              250% 250%;
+            background-position:
+              0 0,
+              0% 50%;
+            animation: ctaBorderFlow 3.6s linear infinite;
+            font-family: $font;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1;
+            text-transform: none;
+            box-shadow: none;
+            transition:
+              transform 0.2s ease,
+              box-shadow 0.2s ease;
+
+            &:hover {
+              background:
+                linear-gradient(#32005b, #32005b) padding-box,
+                linear-gradient(
+                    120deg,
+                    #c27bff 0%,
+                    #f3e4ff 45%,
+                    #ffffff 60%,
+                    #d190ff 78%,
+                    #7f2ed8 100%
+                  )
+                  border-box;
+              box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+              transform: translateY(-1px);
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+              animation: none;
+            }
+          }
+          .hand-icon1 {
+            position: absolute;
+            right: -89px;
+          }
+          .hand-icon2 {
+            position: absolute;
+            top: 350px;
+            right: -89px;
+          }
+        }
+      }
+    }
+
     @keyframes scrollWiggle {
       0% {
         transform: translateX(0);
@@ -814,6 +1013,18 @@
         background-position:
           0 0,
           180% 50%;
+      }
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0px);
       }
     }
   }
