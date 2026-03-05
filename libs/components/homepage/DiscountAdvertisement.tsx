@@ -1,7 +1,56 @@
-import { Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
+import Link from "next/link";
 
 const DiscountAdvertisement = () => {
-  return <Stack className="container">Discount Advertisement</Stack>;
+  return (
+    <Stack className="discount-ads">
+      <Stack className="container">
+        <Stack className="discount-ads-main">
+          <img
+            className="back-image"
+            src="./img/discount-ads-back.jpg"
+            alt=""
+          />
+          <img className="leaf-1" src="./img/dis-ads-leaf-1.png" alt="" />
+          <img className="leaf-2" src="./img/dis-ads-leaf-2.png" alt="" />
+          <img className="leaf-3" src="./img/dis-ads-leaf-3.png" alt="" />
+          <img className="leaf-4" src="./img/dis-ads-leaf-4.png" alt="" />
+          <img className="wood" src="./img/dis-ads-wood.png" alt="" />
+          <img className="grass" src="./img/dis-ads-grass.png" alt="" />
+          <p className="the">The</p>
+          <p className="summer">
+            Summer <span className="sale">Sale</span>
+          </p>
+          <img className="dog" src="./img/dis-ads-dog.svg" alt="" />
+          <Stack className="main-area">
+            <Box className={"saving-percent"}>save 20% off</Box>
+            <Box className={"title"}>Pet food products</Box>
+            <Box className={"text"}>Buy products for free pet checkup</Box>
+            <Button
+              className="shop-button"
+              variant="contained"
+              component={Link}
+              href="/shop"
+            >
+              shop now
+            </Button>
+          </Stack>
+          <Box className={"products"}>
+            <img
+              className="product1"
+              src="./img/headers/shop-header-product1.png"
+              alt=""
+            />
+            <img
+              className={"product2"}
+              src="./img/headers/shop-header-product2.png"
+              alt=""
+            />
+          </Box>
+        </Stack>
+      </Stack>
+    </Stack>
+  );
 };
 
 export default DiscountAdvertisement;
