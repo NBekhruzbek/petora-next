@@ -8,7 +8,7 @@ const ShopHeader = () => {
           <Box className={"text1"}>
             The most popular products{" "}
             <span>
-              <img className="hand-icon" src="./img/logo/Union.svg" alt="" />
+              <img className="hand-icon" src="/img/logo/Union.svg" alt="" />
             </span>
           </Box>
           <Box className={"text2"}>Shop everything what you want!</Box>
@@ -16,7 +16,7 @@ const ShopHeader = () => {
         </Stack>
         <Box>
           <img
-            src="./img/headers/shop-header2.svg"
+            src="/img/headers/shop-header2.svg"
             className="dog2-image"
             alt=""
           />
@@ -24,12 +24,12 @@ const ShopHeader = () => {
         <Box className={"products"}>
           <img
             className="product1"
-            src="./img/headers/shop-header-product1.png"
+            src="/img/headers/shop-header-product1.png"
             alt=""
           />
           <img
             className={"product2"}
-            src="./img/headers/shop-header-product2.png"
+            src="/img/headers/shop-header-product2.png"
             alt=""
           />
         </Box>
@@ -37,24 +37,24 @@ const ShopHeader = () => {
           <Box className={"circle-background"}>
             <img
               className="ellipse"
-              src="./img/headers/EllipseServiceHeader.png"
+              src="/img/headers/EllipseServiceHeader.png"
               alt=""
             />
             <img
               className="ellipse2"
-              src="./img/headers/EllipseServiceHeader.png"
+              src="/img/headers/EllipseServiceHeader.png"
               alt=""
             />
             <Box className={"dog-icon"}>
-              <img src="./img/icons/Dog.svg" alt="" />
+              <img src="/img/icons/Dog.svg" alt="" />
             </Box>
             <Box className={"cat-icon"}>
-              <img src="./img/icons/Cat.svg" alt="" />
+              <img src="/img/icons/Cat.svg" alt="" />
             </Box>
           </Box>
           <Box className={"dogs-image-wrapper"}>
             <img
-              src="./img/headers/shop-header.png"
+              src="/img/headers/shop-header.png"
               className={"dogs-image"}
               alt=""
             />
