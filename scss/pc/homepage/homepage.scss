@@ -1263,6 +1263,11 @@
               display: flex;
               align-items: center;
               justify-content: center;
+              :hover {
+                scale: 1.15;
+                transition: scale 0.3s ease-out;
+                cursor: pointer;
+              }
 
               .like-toggle {
                 position: absolute;
@@ -1449,6 +1454,11 @@
               display: flex;
               align-items: center;
               justify-content: center;
+              :hover {
+                scale: 1.15;
+                transition: scale 0.3s ease-out;
+                cursor: pointer;
+              }
 
               .like-toggle {
                 position: absolute;
