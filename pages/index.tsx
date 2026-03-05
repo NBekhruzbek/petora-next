@@ -21,10 +21,10 @@ const Home: NextPage = () => {
         <WhatWeOffer />
         <Discovery />
         <Species />
-        <Advertisement />
         <DiscountAdvertisement />
         <TopPetFoods />
         <TopPetToys />
+        <Advertisement />
         <TopAgents />
         <Events />
         <ContactUs />

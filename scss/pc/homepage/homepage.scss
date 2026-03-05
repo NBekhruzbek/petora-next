@@ -978,21 +978,13 @@
       }
     }
 
-    .video-frame {
-      width: 100%;
-      height: 648px;
-      background: black;
-      transform: perspective(0px);
-      box-shadow: -3px 0px 20px 14px #34343480;
-    }
-
     .discount-ads {
       width: 100%;
       height: 500px;
       background-color: #fff;
       .container {
         .discount-ads-main {
-          margin-top: 170px;
+          margin-top: 140px;
           align-items: center;
           height: 210px;
           border-radius: 10px;
@@ -1593,6 +1585,14 @@
           }
         }
       }
+    }
+
+    .video-frame {
+      width: 100%;
+      height: 648px;
+      background: black;
+      transform: perspective(0px);
+      box-shadow: -3px 0px 20px 14px #34343480;
     }
 
     @media (max-width: 1300px) {
