@@ -23,7 +23,7 @@ type TopPetProductsProps = {
 
 const formatPrice = (value: number) => `$${value.toFixed(2)}`;
 
-const TopPetProducts = ({ item, onToggleLike }: TopPetProductsProps) => {
+const TopPetProductsCard = ({ item, onToggleLike }: TopPetProductsProps) => {
   return (
     <Stack className="top-pet-product-card">
       <Box className="card-image-wrap">
@@ -78,4 +78,4 @@ const TopPetProducts = ({ item, onToggleLike }: TopPetProductsProps) => {
   );
 };
 
-export default TopPetProducts;
+export default TopPetProductsCard;

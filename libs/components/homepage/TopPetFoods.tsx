@@ -1,12 +1,12 @@
 import { Box, Stack } from "@mui/material";
 import { useMemo, useState } from "react";
-import TopPetProducts, { type TopPetProductItem } from "./TopPetProducts";
+import TopPetProductsCard, { TopPetProductItem } from "./TopPetProductsCard";
 
 const topPetFoodItems: TopPetProductItem[] = [
   {
     id: "food-1",
     name: "FILLET 'O' LAKES - KIT CAT",
-    image: "/img/fillet.png",
+    image: "/img/products/fillet.png",
     rating: 5.0,
     sold: 1000,
     discountedPrice: 100,
@@ -16,7 +16,7 @@ const topPetFoodItems: TopPetProductItem[] = [
   {
     id: "food-2",
     name: "ENCORE - CAT FOOD",
-    image: "/img/encore.png",
+    image: "/img/products/encore.png",
     rating: 4.0,
     sold: 329,
     discountedPrice: 400,
@@ -26,7 +26,7 @@ const topPetFoodItems: TopPetProductItem[] = [
   {
     id: "food-3",
     name: "ROYAL CANIN - CARE DIGEST",
-    image: "/img/royal-canin.png",
+    image: "/img/products/royal-canin.png",
     rating: 4.5,
     sold: 900,
     discountedPrice: 600,
@@ -36,7 +36,7 @@ const topPetFoodItems: TopPetProductItem[] = [
   {
     id: "food-4",
     name: "WELLNESS - SIGNATURE SELECTS",
-    image: "/img/wellness.png",
+    image: "/img/products/wellness.png",
     rating: 3.0,
     sold: 12,
     discountedPrice: 200,
@@ -76,7 +76,7 @@ const TopPetFoods = () => {
 
         <Stack className="top-pet-foods-grid">
           {items.map((item) => (
-            <TopPetProducts
+            <TopPetProductsCard
               key={item.id}
               item={item}
               onToggleLike={() => onToggleLike(item.id)}
