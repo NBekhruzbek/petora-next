@@ -1409,6 +1409,192 @@
       }
     }
 
+    .top-pet-toys {
+      width: 100%;
+      padding-bottom: 100px;
+
+      .container {
+        flex-direction: column;
+        gap: 24px;
+
+        .section-title {
+          display: inline-flex;
+          align-items: center;
+          gap: 20px;
+          color: #410075;
+          font-family: $font;
+          font-size: 42px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 1;
+          text-transform: uppercase;
+
+          .hand-icon {
+            width: 54px;
+            height: auto;
+          }
+        }
+
+        .top-pet-toys-grid {
+          display: grid;
+          width: 100%;
+          grid-template-columns: repeat(4, minmax(0, 280px));
+          justify-content: space-around;
+          gap: 1px;
+
+          .top-pet-product-card {
+            min-height: 420px;
+            border-radius: 12px;
+            border: 1px solid #e5c3ff;
+            background: #fff;
+            overflow: hidden;
+
+            .card-image-wrap {
+              position: relative;
+              height: 248px;
+              padding: 14px;
+              background: #f4f4f4;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              .like-toggle {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                width: 26px;
+                height: 26px;
+                border: 0;
+                padding: 0;
+                background: transparent;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              }
+
+              .liked {
+                color: #e70000;
+                font-size: 20px;
+              }
+
+              .unliked {
+                color: #666;
+                font-size: 20px;
+              }
+
+              .product-image {
+                max-width: 88%;
+                max-height: 205px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+              }
+            }
+
+            .card-content {
+              padding: 14px;
+              gap: 8px;
+              height: calc(100% - 248px);
+
+              .product-title {
+                color: #252525;
+                font-family: $font;
+                font-size: 16px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 1.1;
+                text-transform: uppercase;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+
+              .rating-row {
+                align-items: center;
+                gap: 4px;
+
+                .star-icon {
+                  color: #e0ab00;
+                  font-size: 20px;
+                }
+
+                .rating-text {
+                  color: #666;
+                  font-family: $font;
+                  font-size: 13px;
+                  font-style: normal;
+                  font-weight: 400;
+                  line-height: 1.1;
+                }
+              }
+
+              .price-row {
+                align-items: flex-end;
+                gap: 10px;
+
+                .discounted-price {
+                  color: #7100ff;
+                  font-family: $font;
+                  font-size: 24px;
+                  font-style: normal;
+                  font-weight: 700;
+                  line-height: 1;
+                }
+
+                .origin-price {
+                  color: #666;
+                  font-family: $font;
+                  font-size: 18px;
+                  font-style: normal;
+                  font-weight: 400;
+                  line-height: 1;
+                  text-decoration-line: line-through;
+                }
+              }
+
+              .actions-row {
+                margin-top: auto;
+                align-items: center;
+                gap: 8px;
+
+                .buy-now-btn {
+                  flex: 1;
+                  height: 30px;
+                  color: #fff;
+                  border-radius: 6px;
+                  background: #410075;
+                  font-family: $font;
+                  font-size: 13px;
+                  font-style: normal;
+                  font-weight: 700;
+                  line-height: 1;
+                  text-transform: none;
+
+                  &:hover {
+                    background: #32005b;
+                  }
+                }
+
+                .cart-btn {
+                  width: 30px;
+                  height: 30px;
+                  border-radius: 6px;
+                  border: 1px solid #c4c4c4;
+                  background: #fff;
+                  color: #595959;
+                  cursor: pointer;
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     @media (max-width: 1300px) {
       .top-pet-foods {
         .container {
