@@ -9,9 +9,9 @@ import DiscountAdvertisement from "@/libs/components/homepage/DiscountAdvertisem
 import TopPetFoods from "@/libs/components/homepage/TopPetFoods";
 import TopPetToys from "@/libs/components/homepage/TopPetToys";
 import TopAgents from "@/libs/components/homepage/TopAgents";
-import Events from "@/libs/components/homepage/Events";
 import ContactUs from "@/libs/components/homepage/ContactUs";
 import Discovery from "@/libs/components/homepage/Discovery";
+import SocialMedia from "@/libs/components/homepage/SocialMedia";
 
 const Home: NextPage = () => {
   return (
@@ -26,7 +26,7 @@ const Home: NextPage = () => {
         <TopPetToys />
         <Advertisement />
         <TopAgents />
-        <Events />
+        <SocialMedia />
         <ContactUs />
       </Stack>
     </>
