@@ -10,7 +10,7 @@ const Footer = () => {
       <Stack className="container">
         <Stack className={"footer-info"}>
           <Box className={"logo-section"}>
-            <img className="logo" src="./img/logo/Petora-logo.png" alt="" />
+            <img className="logo" src="/img/logo/Petora-logo.png" alt="" />
             <span className="logo-name">Petora</span>
           </Box>
           <Box className={"text"}>
@@ -19,19 +19,19 @@ const Footer = () => {
           </Box>
           <Stack className="contact-section">
             <Box className={"contact"}>
-              <img src="./img/icons/Email.svg" alt="" />
+              <img src="/img/icons/Email.svg" alt="" />
               <a href="mailto:bekhruzbek2022@gmail.com">bekhruzbek2022@gm...</a>
             </Box>
             <Box className={"contact"}>
-              <img src="./img/icons/Phone.svg" alt="" />
+              <img src="/img/icons/Phone.svg" alt="" />
               <a href="tel:+821058898183">+82 10-5889-8183</a>
             </Box>
             <Box className={"contact"}>
-              <img src="./img/icons/Email.svg" alt="" />
+              <img src="/img/icons/Email.svg" alt="" />
               <a href="mailto:bekhruzbek2022@gmail.com">bekhruzbek2022@gm...</a>
             </Box>
             <Box className={"contact"}>
-              <img src="./img/icons/Phone.svg" alt="" />
+              <img src="/img/icons/Phone.svg" alt="" />
               <a href="tel:+821058898183">+82 10-5889-8183</a>
             </Box>
           </Stack>
@@ -41,7 +41,7 @@ const Footer = () => {
                 component={Link}
                 href="https://www.instagram.com/mr_bekhruzbek1"
               >
-                <img src="./img/icons/Instagram.svg" alt="" />
+                <img src="/img/icons/Instagram.svg" alt="" />
               </Button>
             </Box>
             <Box>
@@ -49,7 +49,7 @@ const Footer = () => {
                 component={Link}
                 href="https://www.facebook.com/NBekhruzbek"
               >
-                <img src="./img/icons/Facebook.svg" alt="" />
+                <img src="/img/icons/Facebook.svg" alt="" />
               </Button>
             </Box>
             <Box>
@@ -57,7 +57,7 @@ const Footer = () => {
                 component={Link}
                 href="https://www.linkedin.com/in/nbekhruzbek/"
               >
-                <img src="./img/icons/Linkedin.svg" alt="" />
+                <img src="/img/icons/Linkedin.svg" alt="" />
               </Button>
             </Box>
           </Stack>
@@ -135,7 +135,7 @@ const Footer = () => {
               </defs>
             </svg>
           </Box>
-          <img className="dog-image" src="./img/footer-dog.png" alt="" />
+          <img className="dog-image" src="/img/footer-dog.png" alt="" />
         </Stack>
 
         <Stack className={"footer-nav"}>
@@ -193,8 +193,8 @@ const Footer = () => {
           </Stack>
           <Box className={"enjoy-text"}>Enjoy Our Services!</Box>
         </Stack>
-        <img className="union1" src="./img/icons/Footer-union.svg" alt="" />
-        <img className="union2" src="./img/icons/Footer-union.png" alt="" />
+        <img className="union1" src="/img/icons/Footer-union.svg" alt="" />
+        <img className="union2" src="/img/icons/Footer-union.png" alt="" />
       </Stack>
     </Stack>
   );
