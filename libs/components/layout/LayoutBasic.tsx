@@ -10,6 +10,7 @@ import MyPageHeader from "../headers/MyPageHeader";
 import CsHeader from "../headers/CsHeader";
 import Top from "../Top";
 import Footer from "../Footer";
+import ContactUs from "../ContactUs";
 
 const withLayoutBasic = (Component: any) => {
   const header = () => {
@@ -80,6 +81,10 @@ const withLayoutBasic = (Component: any) => {
 
           <Stack id={"main"}>
             <Component {...props} />
+          </Stack>
+
+          <Stack id={"contact-us"}>
+            <ContactUs />
           </Stack>
 
           <Stack id={"footer"}>
