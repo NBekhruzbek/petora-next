@@ -9,7 +9,6 @@ import DiscountAdvertisement from "@/libs/components/homepage/DiscountAdvertisem
 import TopPetFoods from "@/libs/components/homepage/TopPetFoods";
 import TopPetToys from "@/libs/components/homepage/TopPetToys";
 import TopAgents from "@/libs/components/homepage/TopAgents";
-import ContactUs from "@/libs/components/homepage/ContactUs";
 import Discovery from "@/libs/components/homepage/Discovery";
 import SocialMedia from "@/libs/components/homepage/SocialMedia";
 
@@ -27,7 +26,6 @@ const Home: NextPage = () => {
         <Advertisement />
         <TopAgents />
         <SocialMedia />
-        <ContactUs />
       </Stack>
     </>
   );

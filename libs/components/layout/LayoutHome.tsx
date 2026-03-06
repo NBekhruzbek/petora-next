@@ -3,6 +3,7 @@ import Head from "next/head";
 import Top from "../Top";
 import MainHeader from "../headers/MainHeader";
 import Footer from "../Footer";
+import ContactUs from "../ContactUs";
 
 const withLayoutMain = (Component: any) => {
   return (props: any) => {
@@ -23,6 +24,10 @@ const withLayoutMain = (Component: any) => {
 
           <Stack id={"main"}>
             <Component {...props} />
+          </Stack>
+
+          <Stack id={"contact-us"}>
+            <ContactUs />
           </Stack>
 
           <Stack id={"footer"}>
