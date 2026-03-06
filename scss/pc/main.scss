@@ -193,18 +193,53 @@
           gap: 10px;
           cursor: pointer;
 
-          border-radius: 5px;
-          background: var(--Primary-Purple3, #410075);
-
-          color: var(--Neutral-White, #fff);
-          text-align: center;
-
-          /* Web/18px-Content/SemiBold */
-          font-family: Assistant;
+          border-radius: 12px;
+          border: 2px solid transparent;
+          background:
+            linear-gradient(#c390ed, #410075) padding-box,
+            linear-gradient(
+                120deg,
+                #e83333 0%,
+                #d3b7ff 35%,
+                #ffffff 55%,
+                #b56cff 75%,
+                #5f18b7 100%
+              )
+              border-box;
+          background-size:
+            100% 100%,
+            250% 250%;
+          background-position:
+            0 0,
+            0% 50%;
+          animation: ctaBorderFlow 3.6s linear infinite;
+          color: #fff;
+          font-family: $font;
           font-size: 18px;
           font-style: normal;
-          font-weight: 600;
-          line-height: 22px; /* 122.222% */
+          font-weight: 700;
+          line-height: 1;
+          text-transform: none;
+          box-shadow: none;
+          transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+
+          &:hover {
+            background:
+              linear-gradient(#32005b, #32005b) padding-box,
+              linear-gradient(
+                  120deg,
+                  #c27bff 0%,
+                  #f3e4ff 45%,
+                  #ffffff 60%,
+                  #d190ff 78%,
+                  #7f2ed8 100%
+                )
+                border-box;
+            box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+            transform: translateY(-1px);
+          }
         }
       }
       .circle-background {
