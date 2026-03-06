@@ -127,10 +127,51 @@
                   .read-more-button {
                     width: 88px;
                     height: 28px;
-                    color: #fff;
                     font-size: 10px;
                     font-weight: 600;
-                    animation: floatSide 4s ease-in-out infinite;
+                    animation:
+                      floatSide 4s ease-in-out infinite,
+                      ctaBorderFlow 3.6s linear infinite;
+                    border-radius: 10px;
+                    border: 2px solid transparent;
+                    background:
+                      linear-gradient(#c390ed, #410075) padding-box,
+                      linear-gradient(
+                          120deg,
+                          #e83333 0%,
+                          #d3b7ff 35%,
+                          #ffffff 55%,
+                          #b56cff 75%,
+                          #5f18b7 100%
+                        )
+                        border-box;
+                    background-size:
+                      100% 100%,
+                      250% 250%;
+                    background-position:
+                      0 0,
+                      0% 50%;
+                    color: #fff;
+                    font-family: $font;
+                    transition:
+                      transform 0.2s ease,
+                      box-shadow 0.2s ease;
+
+                    &:hover {
+                      background:
+                        linear-gradient(#cd95fc, #5d2789) padding-box,
+                        linear-gradient(
+                            120deg,
+                            #c27bff 0%,
+                            #f3e4ff 45%,
+                            #ffffff 60%,
+                            #d190ff 78%,
+                            #7f2ed8 100%
+                          )
+                          border-box;
+                      box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+                      transform: translateY(-1px);
+                    }
                   }
                 }
                 .dog-image {
@@ -173,11 +214,52 @@
                   .read-more-button {
                     width: 88px;
                     height: 28px;
-                    margin-top: 4px;
+                    top: 5px;
                     font-size: 10px;
                     font-weight: 600;
+                    animation:
+                      floatSide 4s ease-in-out infinite,
+                      ctaBorderFlow 3.6s linear infinite;
+                    border-radius: 10px;
+                    border: 2px solid transparent;
+                    background:
+                      linear-gradient(#c390ed, #410075) padding-box,
+                      linear-gradient(
+                          120deg,
+                          #e83333 0%,
+                          #d3b7ff 35%,
+                          #ffffff 55%,
+                          #b56cff 75%,
+                          #5f18b7 100%
+                        )
+                        border-box;
+                    background-size:
+                      100% 100%,
+                      250% 250%;
+                    background-position:
+                      0 0,
+                      0% 50%;
                     color: #fff;
-                    animation: floatSide 4s ease-in-out infinite;
+                    font-family: $font;
+                    transition:
+                      transform 0.2s ease,
+                      box-shadow 0.2s ease;
+
+                    &:hover {
+                      background:
+                        linear-gradient(#cd95fc, #5d2789) padding-box,
+                        linear-gradient(
+                            120deg,
+                            #c27bff 0%,
+                            #f3e4ff 45%,
+                            #ffffff 60%,
+                            #d190ff 78%,
+                            #7f2ed8 100%
+                          )
+                          border-box;
+                      box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+                      transform: translateY(-1px);
+                    }
                   }
                 }
                 .dog-image {
@@ -1373,17 +1455,57 @@
                   flex: 1;
                   height: 30px;
                   color: #fff;
-                  border-radius: 6px;
+                  border-radius: 10px;
                   background: #410075;
                   font-family: $font;
                   font-size: 13px;
                   font-style: normal;
                   font-weight: 700;
                   line-height: 1;
+                  border: 2px solid transparent;
+                  background:
+                    linear-gradient(#c390ed, #410075) padding-box,
+                    linear-gradient(
+                        120deg,
+                        #e83333 0%,
+                        #d3b7ff 35%,
+                        #ffffff 55%,
+                        #b56cff 75%,
+                        #5f18b7 100%
+                      )
+                      border-box;
+                  background-size:
+                    100% 100%,
+                    250% 250%;
+                  background-position:
+                    0 0,
+                    0% 50%;
+                  animation: ctaBorderFlow 3.6s linear infinite;
+                  font-family: $font;
+                  font-size: 14px;
+                  font-style: normal;
+                  font-weight: 700;
+                  line-height: 1;
                   text-transform: none;
+                  box-shadow: none;
+                  transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
 
                   &:hover {
-                    background: #32005b;
+                    background:
+                      linear-gradient(#32005b, #32005b) padding-box,
+                      linear-gradient(
+                          120deg,
+                          #c27bff 0%,
+                          #f3e4ff 45%,
+                          #ffffff 60%,
+                          #d190ff 78%,
+                          #7f2ed8 100%
+                        )
+                        border-box;
+                    box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+                    transform: translateY(-1px);
                   }
                 }
 
@@ -1564,17 +1686,57 @@
                   flex: 1;
                   height: 30px;
                   color: #fff;
-                  border-radius: 6px;
+                  border-radius: 10px;
                   background: #410075;
                   font-family: $font;
                   font-size: 13px;
                   font-style: normal;
                   font-weight: 700;
                   line-height: 1;
+                  border: 2px solid transparent;
+                  background:
+                    linear-gradient(#c390ed, #410075) padding-box,
+                    linear-gradient(
+                        120deg,
+                        #e83333 0%,
+                        #d3b7ff 35%,
+                        #ffffff 55%,
+                        #b56cff 75%,
+                        #5f18b7 100%
+                      )
+                      border-box;
+                  background-size:
+                    100% 100%,
+                    250% 250%;
+                  background-position:
+                    0 0,
+                    0% 50%;
+                  animation: ctaBorderFlow 3.6s linear infinite;
+                  font-family: $font;
+                  font-size: 14px;
+                  font-style: normal;
+                  font-weight: 700;
+                  line-height: 1;
                   text-transform: none;
+                  box-shadow: none;
+                  transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
 
                   &:hover {
-                    background: #32005b;
+                    background:
+                      linear-gradient(#32005b, #32005b) padding-box,
+                      linear-gradient(
+                          120deg,
+                          #c27bff 0%,
+                          #f3e4ff 45%,
+                          #ffffff 60%,
+                          #d190ff 78%,
+                          #7f2ed8 100%
+                        )
+                        border-box;
+                    box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+                    transform: translateY(-1px);
                   }
                 }
 
