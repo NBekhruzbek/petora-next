@@ -1,3 +1,5 @@
+@use "../../variables.scss" as *;
+
 #pc-wrap {
   #main-top {
     background-color: #f2e2ff;
@@ -190,6 +192,216 @@
     position: relative;
     width: 100%;
     height: auto;
+    .about-services {
+      width: 100%;
+      height: 400px;
+      gap: 20px;
+      .about-services__header {
+        align-items: center;
+        gap: 10px;
+        .about-services__eyebrow-text {
+          /* Web/36px-Display/Bold */
+          font-family: $font;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 600;
+          .hand-icon {
+            width: 30px;
+            height: 30px;
+          }
+        }
+        .about-services__title {
+          color: var(--Primary-Purple3, #232323);
+
+          /* Web/36px-Display/Bold */
+          font-family: $font;
+          font-size: 36px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 48px; /* 133.333% */
+          .text-color {
+            color: var(--Primary-Purple3, #ff33dd);
+
+            /* Web/36px-Display/Bold */
+            font-family: $font;
+            font-size: 36px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 48px; /* 133.333% */
+          }
+        }
+      }
+      .services-marquee {
+        width: 100%;
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(
+          90deg,
+          transparent 0%,
+          #000 7%,
+          #000 93%,
+          transparent 100%
+        );
+        mask-image: linear-gradient(
+          90deg,
+          transparent 0%,
+          #000 7%,
+          #000 93%,
+          transparent 100%
+        );
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        .services-track {
+          width: max-content;
+          animation: topAgentsScroll 24s linear infinite;
+          .service-segment {
+            flex-direction: row;
+            gap: 18px;
+            padding-right: 18px;
+            .service-item {
+              flex: 0 0 auto;
+              .service-card {
+                width: 250px;
+                height: 240px;
+                margin-top: 30px;
+                border-radius: 26px;
+                border: 1px solid #d8dde8;
+                background: #fff;
+                overflow: hidden;
+                position: relative;
+                box-shadow: 0 10px 24px rgba(25, 25, 35, 0.18);
+                .service-image-wrap {
+                  position: relative;
+                  height: 100%;
+                  overflow: hidden;
+                  background: #f3f3f3;
+
+                  .service-image {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transition: transform 0.4s ease;
+                  }
+
+                  &::after {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    background: rgba(0, 0, 0, 0.45);
+                    opacity: 0;
+                    transition: opacity 0.35s ease;
+                    z-index: 1;
+                  }
+                }
+                .content {
+                  position: absolute;
+                  inset: 0;
+                  z-index: 2;
+                  align-items: center;
+                  justify-content: flex-end;
+                  gap: 10px;
+                  padding: 20px 18px 14px;
+                  bottom: -60px;
+                  text-align: center;
+                  color: #fff;
+                  pointer-events: none;
+
+                  .title {
+                    font-family: $font;
+                    font-size: 22px;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 1.2;
+                    letter-spacing: 0.2px;
+                    background: rgba(0, 0, 0, 0.35);
+                    padding: 6px 12px;
+                    border-radius: 999px;
+                    text-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+                    transition: transform 0.35s ease;
+                  }
+
+                  .copy {
+                    font-family: $font;
+                    font-size: 14px;
+                    font-style: italic;
+                    font-weight: 400;
+                    line-height: 1.45;
+                    opacity: 0;
+                    transform: translateY(8px);
+                    max-height: 0;
+                    overflow: hidden;
+                    transition:
+                      opacity 0.35s ease,
+                      transform 0.35s ease,
+                      max-height 0.35s ease;
+                  }
+
+                  .btn {
+                    margin-top: 4px;
+                    width: 160px;
+                    height: 40px;
+                    border-radius: 20px;
+                    border: 2px solid transparent;
+                    background:
+                      linear-gradient(#c390ed, #410075) padding-box,
+                      linear-gradient(
+                          120deg,
+                          #e83333 0%,
+                          #d3b7ff 35%,
+                          #ffffff 55%,
+                          #b56cff 75%,
+                          #5f18b7 100%
+                        )
+                        border-box;
+                    color: #fff;
+                    font-family: $font;
+                    font-size: 13px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 1;
+                    letter-spacing: 0.6px;
+                    text-transform: uppercase;
+                    opacity: 0;
+                    transform: translateY(10px);
+                    transition:
+                      opacity 0.35s ease,
+                      transform 0.35s ease;
+                  }
+                }
+
+                &:hover .service-image-wrap::after {
+                  opacity: 1;
+                }
+
+                &:hover .service-image {
+                  transform: scale(1.06);
+                }
+
+                &:hover .content {
+                  pointer-events: auto;
+                }
+
+                &:hover .content .title {
+                  transform: translateY(-64px);
+                }
+
+                &:hover .content .copy,
+                &:hover .content .btn {
+                  opacity: 1;
+                  transform: translateY(-64px);
+                }
+
+                &:hover .content .copy {
+                  max-height: 90px;
+                }
+              }
+            }
+          }
+        }
+        :hover .agents-track {
+          animation-play-state: paused;
+        }
+      }
+    }
   }
 }
 @keyframes productReveal {
