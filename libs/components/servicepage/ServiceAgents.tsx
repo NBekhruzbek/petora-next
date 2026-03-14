@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -23,9 +23,9 @@ const agents: AgentItem[] = [
     name: "Kelvin John",
     serviceType: "Grooming",
     image: "/img/agents/topAgent1.jpg",
-    desc: "Most popular agent in the South Korea",
+    price: "$50~$220",
     likes: 121,
-    rating: 4.2,
+    rating: 4.4,
     bookings: 111,
   },
   {
@@ -33,7 +33,7 @@ const agents: AgentItem[] = [
     name: "Emma Watson",
     serviceType: "Day Care | Walking | Training",
     image: "/img/agents/topAgent2.png",
-    desc: "Most popular agent in the South Korea ",
+    price: "$50~$520",
     likes: 121,
     rating: 4.2,
     bookings: 111,
@@ -43,8 +43,8 @@ const agents: AgentItem[] = [
     name: "Daniel Smith",
     serviceType: "Walking | Training",
     image: "/img/agents/topAgent3.jpg",
-    desc: "Most popular agent in the South Korea",
-    likes: 121,
+    price: "$90~$420",
+    likes: 321,
     rating: 4.2,
     bookings: 111,
   },
@@ -53,7 +53,7 @@ const agents: AgentItem[] = [
     name: "Sophia Brown",
     serviceType: "Boarding",
     image: "/img/agents/topAgent4.jpg",
-    desc: "Most popular agent in the South Korea",
+    price: "$100~$520",
     likes: 121,
     rating: 4.2,
     bookings: 111,
@@ -63,9 +63,9 @@ const agents: AgentItem[] = [
     name: "Liam Wilson",
     serviceType: "Training",
     image: "/img/agents/topAgent5.jpeg",
-    desc: "Most popular agent in the South Korea",
+    price: "$40~$120",
     likes: 121,
-    rating: 4.2,
+    rating: 4.9,
     bookings: 111,
   },
   {
@@ -73,27 +73,27 @@ const agents: AgentItem[] = [
     name: "Noah Taylor",
     serviceType: "Day Care | Walking",
     image: "/img/agents/topAgent7.jpeg",
-    desc: "Most popular agent in the South Korea",
+    price: "$90~$320",
     likes: 121,
     rating: 4.2,
     bookings: 111,
   },
   {
-    _id: "agent-6",
+    _id: "agent-7",
     name: "Noah Taylor",
     serviceType: "Veterinary",
     image: "/img/agents/topAgent6.jpg",
-    desc: "Most popular agent in the South Korea",
+    price: "$10~$990",
     likes: 121,
     rating: 4.2,
-    bookings: 111,
+    bookings: 211,
   },
   {
-    _id: "agent-6",
+    _id: "agent-8",
     name: "Noah Taylor",
     serviceType: "Training",
     image: "/img/agents/topAgent8.jpeg",
-    desc: "Most popular agent in the South Korea",
+    price: "$20~$320",
     likes: 121,
     rating: 4.2,
     bookings: 111,
@@ -101,13 +101,14 @@ const agents: AgentItem[] = [
 ];
 
 const Agents = () => {
-  const [value, setValue] = useState<number[]>([10, 600]);
+  const [value, setValue] = useState<number[]>([10, 1000]);
   const [isPriceOpen, setIsPriceOpen] = useState(true);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
   const [isLikedOpen, setIsLikedOpen] = useState(true);
   const [likedSelected, setLikedSelected] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([""]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchText, setSearchText] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("new");
 
   const [agentSearch, setAgentSearch] = useState({
     page: 1,
@@ -163,9 +164,73 @@ const Agents = () => {
     setAgentSearch((prev) => ({ ...prev, page: value }));
   };
 
-  const totalPages = Math.max(1, Math.ceil(agents.length / agentSearch.limit));
+  const filteredAgents = useMemo(() => {
+    const [minPrice, maxPrice] = value;
+    const normalizedSearch = searchText.trim().toLowerCase();
+
+    const parsePriceRange = (price: string) => {
+      const matches = price.match(/\d+(\.\d+)?/g) ?? [];
+      const numbers = matches.map((item) => Number(item));
+      if (numbers.length === 0) return [0, 0] as const;
+      if (numbers.length === 1) return [numbers[0], numbers[0]] as const;
+      return [numbers[0], numbers[numbers.length - 1]] as const;
+    };
+
+    return agents.filter((agent) => {
+      const [agentMin, agentMax] = parsePriceRange(agent.price);
+      const matchesPrice = agentMin >= minPrice && agentMax <= maxPrice;
+
+      const agentCategories = agent.serviceType
+        .split("|")
+        .map((item) => item.trim())
+        .filter(Boolean);
+      const matchesCategory =
+        selectedCategories.length === 0 ||
+        agentCategories.some((category) =>
+          selectedCategories.includes(category),
+        );
+
+      const matchesSearch =
+        normalizedSearch.length === 0 ||
+        agent.name.toLowerCase().includes(normalizedSearch) ||
+        agent.serviceType.toLowerCase().includes(normalizedSearch);
+
+      return matchesPrice && matchesCategory && matchesSearch;
+    });
+  }, [searchText, selectedCategories, value]);
+
+  const sortedAgents = useMemo(() => {
+    if (sortBy === "new") return filteredAgents;
+    const next = [...filteredAgents];
+    switch (sortBy) {
+      case "rating":
+        next.sort((a, b) => b.rating - a.rating);
+        break;
+      case "bookings":
+        next.sort((a, b) => b.bookings - a.bookings);
+        break;
+      case "likes":
+        next.sort((a, b) => b.likes - a.likes);
+        break;
+      default:
+        break;
+    }
+    return next;
+  }, [filteredAgents, sortBy]);
+
+  useEffect(() => {
+    setAgentSearch((prev) => ({ ...prev, page: 1 }));
+  }, [searchText, selectedCategories, value, sortBy]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedAgents.length / agentSearch.limit),
+  );
   const startIndex = (agentSearch.page - 1) * agentSearch.limit;
-  const pagedAgents = agents.slice(startIndex, startIndex + agentSearch.limit);
+  const pagedAgents = sortedAgents.slice(
+    startIndex,
+    startIndex + agentSearch.limit,
+  );
 
   return (
     <Stack className="services-agents-page">
@@ -277,9 +342,10 @@ const Agents = () => {
             </Stack>
           </Stack>
           <Stack className="sorting-agents">
-            <Box>
+            <Box className="filter-section-wrap">
               <Select
-                defaultValue="default"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
                 className={"filter-section"}
                 MenuProps={{
                   disableScrollLock: true,
@@ -287,7 +353,7 @@ const Agents = () => {
                   MenuListProps: { className: "filter-menu-list" },
                 }}
               >
-                <MenuItem value="default">Default</MenuItem>
+                <MenuItem value="new">New</MenuItem>
                 <MenuItem value="rating">Highest rating</MenuItem>
                 <MenuItem value="bookings">Most Booked</MenuItem>
                 <MenuItem value="likes">Likes</MenuItem>
@@ -296,7 +362,7 @@ const Agents = () => {
             <Stack className="agents-cards">
               {pagedAgents.length !== 0 ? (
                 pagedAgents.map((agent) => {
-                  return <ServiceAgentsCard item={agent} />;
+                  return <ServiceAgentsCard key={agent._id} item={agent} />;
                 })
               ) : (
                 <Box

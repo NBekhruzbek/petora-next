@@ -10,7 +10,7 @@ export type AgentItem = {
   name: string;
   serviceType: string;
   image: string;
-  desc: string;
+  price: string;
   likes: number;
   rating: number;
   bookings: number;
@@ -52,6 +52,8 @@ const ServiceAgentsCard = ({ item }: AgentsCardProps) => {
           <Box className="bookings-row">Bookings: {item.bookings}</Box>
         </Stack>
         <Box className="agent-email">{item.serviceType}</Box>
+        <Box className="agent-desc">{item.price}</Box>
+
         <Stack className="rating-row">
           <Rating
             value={item.rating}
@@ -61,7 +63,6 @@ const ServiceAgentsCard = ({ item }: AgentsCardProps) => {
           />
           <Box className="rating-value">{item.rating.toFixed(1)}</Box>
         </Stack>
-        <Box className="agent-desc">{item.desc}</Box>
 
         <Stack className="agent-actions">
           <Button
