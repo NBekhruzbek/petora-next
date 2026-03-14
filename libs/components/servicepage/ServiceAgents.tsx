@@ -34,7 +34,7 @@ const agents: AgentItem[] = [
     serviceType: "Day Care | Walking | Training",
     image: "/img/agents/topAgent2.png",
     price: "$50~$520",
-    likes: 121,
+    likes: 2022,
     rating: 4.2,
     bookings: 111,
   },

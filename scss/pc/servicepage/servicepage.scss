@@ -426,10 +426,10 @@
           gap: 36px;
           .category {
             margin-top: 50px;
-            width: 360px;
-            flex: 0 0 360px;
+            width: 320px;
+            flex: 0 0 320px;
             .search-box {
-              width: 340px;
+              width: 320px;
               height: 46px;
               padding: 4px;
               border-radius: 12px;
@@ -474,7 +474,7 @@
               }
             }
             .divider {
-              width: 342px;
+              width: 322px;
               height: 2px;
               margin-top: 25px;
               margin-bottom: 25px;
@@ -482,7 +482,7 @@
               background-color: #9b9a9a;
             }
             .price-range {
-              width: 340px;
+              width: 320px;
               background: #fff;
               .price-title {
                 /* Web/28px-Header/Bold */
@@ -517,7 +517,7 @@
               }
             }
             .category-section {
-              width: 340px;
+              width: 320px;
               gap: 14px;
               background: #fff;
               &.price-section {
@@ -609,7 +609,7 @@
               }
             }
             .liked-agents-section {
-              width: 340px;
+              width: 320px;
               background: #fff;
               gap: 14px;
               .likes-header {
@@ -691,7 +691,7 @@
                   border-color: #f6c200;
                 }
                 .likes-divider {
-                  height: 1.7px;
+                  height: 2px;
                   margin-top: 20px;
                   background-color: #9b9a9a;
                 }
@@ -758,7 +758,7 @@
             width: 100%;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 22px;
+            gap: 30px;
             min-height: 700px;
             align-content: start;
           }
