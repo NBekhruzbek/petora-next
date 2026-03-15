@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { gsap } from "gsap";
 
 interface InstagramPost {
@@ -128,7 +128,9 @@ const SocialMedia = () => {
     <Stack className="instagram-frame">
       <Stack className="container">
         <Stack className="instagram-main">
-          <Stack className="section-title">FOLLOW US ON INSTAGRAM</Stack>
+          <Box className="section-title">
+            FOLLOW US ON <span className="social-media-text">INSTAGRAM</span>
+          </Box>
           <Typography
             sx={{
               fontFamily: '"Archivo", sans-serif',
