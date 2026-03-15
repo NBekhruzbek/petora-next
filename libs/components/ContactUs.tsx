@@ -111,7 +111,7 @@ const ContactUs = () => {
           <Box className="visual-circle" />
           <img
             className="pets-image"
-            src="./img/headers/shop-header.png"
+            src="/img/headers/shop-header.png"
             alt="Pets"
           />
         </Stack>

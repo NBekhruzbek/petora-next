@@ -69,7 +69,7 @@ const ServiceAgentsCard = ({ item }: AgentsCardProps) => {
             className="message-btn"
             variant="outlined"
             component={Link}
-            href="/service"
+            href="/service/booking"
             startIcon={<ChatBubbleOutlineRoundedIcon />}
           >
             Booking

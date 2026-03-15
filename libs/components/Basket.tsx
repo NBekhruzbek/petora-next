@@ -46,10 +46,7 @@ const Basket = () => {
         onClick={handleClick}
       >
         <Badge badgeContent={3} color="secondary">
-          <img
-            src={"./img/icons/shopping-cart.svg"}
-            className="shopping-cart"
-          />
+          <img src={"/img/icons/shopping-cart.svg"} className="shopping-cart" />
         </Badge>
       </IconButton>
       <Menu
