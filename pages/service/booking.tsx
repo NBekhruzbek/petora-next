@@ -20,6 +20,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useRef, useState } from "react";
 import moment from "moment";
+import RelatedServices from "@/libs/components/servicepage/RelatedServices";
 
 const Booking = () => {
   const images = [
@@ -238,6 +239,7 @@ const Booking = () => {
           </Stack>
         </Stack>
       </Stack>
+      <RelatedServices />
     </Stack>
   );
 };

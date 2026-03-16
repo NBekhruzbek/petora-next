@@ -51,8 +51,8 @@ const ServiceAgentsCard = ({ item }: AgentsCardProps) => {
           <Box className="agent-name">{item.name}</Box>
           <Box className="bookings-row">Bookings: {item.bookings}</Box>
         </Stack>
-        <Box className="agent-email">{item.serviceType}</Box>
-        <Box className="agent-desc">{item.price}</Box>
+        <Box className="agent-service-type">{item.serviceType}</Box>
+        <Box className="service-price">{item.price}</Box>
 
         <Stack className="rating-row">
           <Rating
@@ -66,7 +66,7 @@ const ServiceAgentsCard = ({ item }: AgentsCardProps) => {
 
         <Stack className="agent-actions">
           <Button
-            className="message-btn"
+            className="booking-btn"
             variant="outlined"
             component={Link}
             href="/service/booking"

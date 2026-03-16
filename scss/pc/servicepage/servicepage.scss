@@ -951,18 +951,65 @@
             justify-content: center;
             gap: 10px;
           }
-          .message-btn {
-            height: 38px;
-            border-radius: 999px;
+          .booking-btn {
+            display: flex;
+            width: 160px;
+            height: 35px;
             border: 1.5px solid #d8d2e6;
-            color: #4b158d;
-            background: #fff;
+
+            padding: 10px 30px;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background:
+              linear-gradient(#c390ed, #410075) padding-box,
+              linear-gradient(
+                  120deg,
+                  #e83333 0%,
+                  #d3b7ff 35%,
+                  #ffffff 55%,
+                  #b56cff 75%,
+                  #5f18b7 100%
+                )
+                border-box;
+            background-size:
+              100% 100%,
+              250% 250%;
+            background-position:
+              0 0,
+              0% 50%;
+            animation: ctaBorderFlow 3.6s linear infinite;
+            color: #fff;
             font-family: $font;
-            font-size: 13px;
+            font-size: 16px;
             font-style: normal;
-            font-weight: 600;
+            font-weight: 700;
+            line-height: 1;
             text-transform: none;
-            width: 180px;
+            box-shadow: none;
+            transition:
+              transform 0.2s ease,
+              box-shadow 0.2s ease;
+
+            &:hover {
+              background:
+                linear-gradient(#d3acf2, #8527d3) padding-box,
+                linear-gradient(
+                    120deg,
+                    #c27bff 0%,
+                    #f3e4ff 45%,
+                    #ffffff 60%,
+                    #d190ff 78%,
+                    #7f2ed8 100%
+                  )
+                  border-box;
+              box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+              transform: translateY(-1px);
+            }
           }
         }
       }
@@ -1380,6 +1427,246 @@
           font-size: 14px;
           color: #6d6d6d;
           line-height: 1.7;
+        }
+      }
+    }
+  }
+
+  .related-services {
+    padding: 40px 0 110px;
+    background: #fff;
+
+    .container {
+      flex-direction: column;
+      gap: 28px;
+      .related-services-title {
+        font-family: $font;
+        font-size: 22px;
+        font-weight: 700;
+        color: #2b2b2b;
+        letter-spacing: 0.3px;
+      }
+      .agents-cards {
+        display: flex;
+        flex-direction: row;
+        gap: 34px;
+        .agents-card {
+          width: 300px;
+          border-radius: 22px;
+          border: 1px solid #e5e7eb;
+          background: #fff;
+          overflow: hidden;
+          box-shadow: 0 10px 24px rgba(18, 18, 25, 0.1);
+          transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+
+          &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 34px rgba(18, 18, 25, 0.16);
+          }
+          .agent-media {
+            position: relative;
+            .agent-image-wrap {
+              width: 100%;
+              height: 300px;
+              margin: 0 auto;
+              background: #e9e4e1;
+              overflow: visible;
+              position: relative;
+              border-radius: 999px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              .agent-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+              }
+            }
+            .like-fab {
+              position: absolute;
+              right: 16px;
+              top: 90%;
+              transform: translateY(-50%);
+              width: 36px;
+              height: 36px;
+              border-radius: 999px;
+              background: #f7ede4;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              color: #8a8a8a;
+              box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+              cursor: pointer;
+              transition:
+                color 0.2s ease,
+                transform 0.2s ease;
+              z-index: 2;
+              .like-count {
+                position: absolute;
+                top: -14px;
+                right: -12px;
+                min-width: 10px;
+                height: 20px;
+                padding: 0 6px;
+                border-radius: 999px;
+                background: #e11d48;
+                color: #fff;
+                font-family: $font;
+                font-size: 11px;
+                font-style: normal;
+                font-weight: 700;
+                line-height: 20px;
+                text-align: center;
+                box-shadow: 0 6px 12px rgba(225, 29, 72, 0.28);
+              }
+            }
+            .is-liked {
+              color: #e11d48;
+              transform: translateY(-50%) scale(1.03);
+            }
+          }
+        }
+        :hover .agent-image {
+          transform: scale(1.04);
+        }
+
+        .agent-content {
+          padding: 14px 16px 18px;
+          gap: 6px;
+          .name-row {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            .agent-name {
+              font-family: $font;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 700;
+              color: #111827;
+            }
+            .bookings-row {
+              font-family: $font;
+              font-size: 12px;
+              font-style: normal;
+              font-weight: 600;
+              color: #ffffff;
+              background: #4b158d;
+              padding: 4px 8px;
+              border-radius: 999px;
+              white-space: nowrap;
+            }
+          }
+          .agent-service-type {
+            font-family: $font;
+            font-size: 13px;
+            font-style: normal;
+            font-weight: 500;
+            color: #6b7280;
+          }
+          .service-price {
+            font-family: $font;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #4b5563;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+          .rating-row {
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            .rating-stars {
+              font-size: 18px;
+              .MuiRating-iconFilled {
+                color: #f6c200;
+              }
+              .MuiRating-iconEmpty {
+                color: #e5e7eb;
+              }
+            }
+            .rating-value {
+              font-family: $font;
+              font-size: 14px;
+              font-style: normal;
+              font-weight: 700;
+              color: #6b7280;
+            }
+          }
+          .agent-actions {
+            margin-top: 10px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            .booking-btn {
+              display: flex;
+              width: 160px;
+              height: 35px;
+              border: 1.5px solid #d8d2e6;
+
+              padding: 10px 30px;
+              justify-content: center;
+              align-items: center;
+              gap: 10px;
+              cursor: pointer;
+
+              border-radius: 999px;
+              border: 2px solid transparent;
+              background:
+                linear-gradient(#c390ed, #410075) padding-box,
+                linear-gradient(
+                    120deg,
+                    #e83333 0%,
+                    #d3b7ff 35%,
+                    #ffffff 55%,
+                    #b56cff 75%,
+                    #5f18b7 100%
+                  )
+                  border-box;
+              background-size:
+                100% 100%,
+                250% 250%;
+              background-position:
+                0 0,
+                0% 50%;
+              animation: ctaBorderFlow 3.6s linear infinite;
+              color: #fff;
+              font-family: $font;
+              font-size: 16px;
+              font-style: normal;
+              font-weight: 700;
+              line-height: 1;
+              text-transform: none;
+              box-shadow: none;
+              transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+              &:hover {
+                background:
+                  linear-gradient(#d3acf2, #8527d3) padding-box,
+                  linear-gradient(
+                      120deg,
+                      #c27bff 0%,
+                      #f3e4ff 45%,
+                      #ffffff 60%,
+                      #d190ff 78%,
+                      #7f2ed8 100%
+                    )
+                    border-box;
+                box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+                transform: translateY(-1px);
+              }
+            }
+          }
         }
       }
     }
