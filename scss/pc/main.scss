@@ -54,9 +54,9 @@
             align-items: center;
             div {
               position: relative;
-              color: #999;
+              color: #000;
               font-family: $font;
-              font-size: 18px;
+              font-size: 16px;
               font-style: normal;
               font-weight: 600;
               line-height: normal;
@@ -85,6 +85,7 @@
             }
             .active {
               color: #410075;
+              font-size: 18px;
             }
           }
           .user-box {
