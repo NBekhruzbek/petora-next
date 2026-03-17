@@ -1,10 +1,17 @@
 import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
-import { Container } from "@mui/material";
+import WellnessItems from "@/libs/components/shoppage/WellnessItems";
+import { Container, Stack } from "@mui/material";
 import { NextPage } from "next";
 
 const ShopList: NextPage = () => {
   console.log("SHOP COMPONENT - PAGES ROUTER");
-  return <Container>SHOP LIST</Container>;
+  return (
+    <>
+      <Stack className="shop-page">
+        <WellnessItems />
+      </Stack>
+    </>
+  );
 };
 
 export default withLayoutBasic(ShopList);

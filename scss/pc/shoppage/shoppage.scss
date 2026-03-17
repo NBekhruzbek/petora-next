@@ -1,3 +1,5 @@
+@use "../../variables.scss" as *;
+
 #pc-wrap {
   #shop-top {
     background-color: #f2e2ff;
@@ -132,10 +134,120 @@
       }
     }
   }
-  .service-page {
+  .shop-page {
     position: relative;
     width: 100%;
     height: auto;
+    .wellness-section {
+      padding: 120px 120px 50px;
+      background: #ffffff;
+      .container {
+        gap: 36px;
+        .wellness-header {
+          width: 100%;
+          align-items: center;
+          justify-content: center;
+          gap: 40px;
+
+          .title {
+            color: var(--Neutral-800, #252525);
+            text-align: center;
+
+            /* Web/28px-Header/Bold */
+            font-family: $font;
+            font-size: 28px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 36px; /* 128.571% */
+            text-transform: uppercase;
+          }
+
+          .header-nav {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #d9d9d9;
+            border-radius: 50%;
+            color: #2f2f2f;
+          }
+        }
+      }
+
+      .wellness-carousel {
+        width: 100%;
+        overflow: hidden;
+        padding: 10px 0 50px;
+        .carousel-track {
+          display: flex;
+          gap: 28px;
+          align-items: flex-end;
+          transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+          will-change: transform;
+
+          &.no-transition {
+            transition: none;
+          }
+          .wellness-card {
+            width: 220px;
+            min-height: 235px;
+            padding: 24px 20px 22px;
+            border-radius: 20px;
+            border: 1px solid #e5e5e5;
+            background: #ffffff;
+            box-shadow: 0 14px 28px rgba(17, 17, 17, 0.08);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            text-align: center;
+            cursor: pointer;
+            flex: 0 0 auto;
+            opacity: var(--card-opacity, 0.35);
+            transform: translateY(var(--card-shift, 0px))
+              scale(var(--card-scale, 0.88));
+            transform-origin: center center;
+            transition:
+              transform 0.45s ease,
+              opacity 0.45s ease,
+              box-shadow 0.45s ease;
+
+            .card-image {
+              width: 90px;
+              height: 90px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+              }
+            }
+
+            .card-title {
+              color: #6b6b6b;
+              font-family: Assistant;
+              font-size: 13px;
+              font-style: normal;
+              font-weight: 700;
+              line-height: 1.2;
+              letter-spacing: 0.8px;
+              text-transform: uppercase;
+            }
+
+            &.active {
+              box-shadow: 0 16px 30px rgba(17, 17, 17, 0.12);
+
+              .card-title {
+                color: #303030;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 
