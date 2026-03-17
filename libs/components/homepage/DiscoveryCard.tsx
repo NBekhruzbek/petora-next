@@ -76,10 +76,6 @@ const DiscoveryCard = ({ item, onToggleLike }: DiscoveryCardProps) => {
 
       <Box className="description-title">Description</Box>
       <Box className="description-text">{item.description}</Box>
-
-      <Link href="/discovery" className="learn-more-link">
-        Learn More
-      </Link>
     </Stack>
   );
 };
