@@ -146,6 +146,67 @@
         }
       }
     }
+    .understanding-your-pet-section {
+      padding: 80px;
+      background:
+        radial-gradient(
+          circle at 12% 18%,
+          rgba(228, 212, 244, 0.34),
+          transparent 40%
+        ),
+        radial-gradient(
+          circle at 82% 22%,
+          rgba(173, 214, 159, 0.2),
+          transparent 44%
+        ),
+        linear-gradient(
+          180deg,
+          #ffffff 0%,
+          #f8f5fb 99%,
+          #f8f5fb 96%,
+          #ffffff 100%
+        );
+      .container {
+        flex-direction: row;
+        justify-content: space-around;
+      }
+      .pets-image {
+        width: 488px;
+        height: 539px;
+      }
+      .text-area {
+        width: 488px;
+        height: 539px;
+        .title {
+          margin-top: 50px;
+          /* Web/36px-Display/Bold */
+          font-family: $font;
+          font-size: 36px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 48px; /* 133.333% */
+          .green-title {
+            color: #a1be97;
+          }
+        }
+        .desc-text {
+          margin-top: 30px;
+          gap: 18px;
+          /* Web/18px-Content/Regular */
+          font-family: Assistant;
+          font-size: 18px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 22px; /* 122.222% */
+          color: var(--Neutral-700, #595959);
+          .icon {
+            color: #410075;
+            font-size: 18px;
+            margin-right: 10px;
+          }
+        }
+      }
+    }
   }
 }
 @keyframes productReveal {
