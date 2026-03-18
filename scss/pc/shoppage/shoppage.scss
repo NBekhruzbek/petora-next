@@ -248,6 +248,70 @@
         }
       }
     }
+    .pet-nutrition-section {
+      padding: 80px;
+      background: #f3eff5;
+      .container {
+        align-items: center;
+        .title {
+          text-align: center;
+
+          /* Web/28px-Header/Bold */
+          font-family: $font;
+          font-size: 28px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 36px; /* 128.571% */
+          text-transform: uppercase;
+          .green-title {
+            color: #a1be97;
+            .hand-icon {
+              margin-left: 15px;
+            }
+          }
+        }
+        .nutrition-main {
+          margin-top: 65px;
+          flex-direction: row;
+          .info-card {
+            width: 387px;
+            align-items: center;
+            gap: 20px;
+            .icon-box {
+              width: 100px;
+              height: 100px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              border-radius: 100px;
+              background-color: #f2e2ff;
+            }
+            .main-text {
+              text-align: center;
+              /* Web/20px-Tittle/Tittle */
+              font-family: $font;
+              font-size: 20px;
+              font-style: normal;
+              font-weight: 700;
+              line-height: 26px; /* 130% */
+              text-transform: capitalize;
+            }
+            .desc-text {
+              width: 320px;
+              color: var(--Neutral-700, #595959);
+              text-align: center;
+
+              /* Web/18px-Content/Regular */
+              font-family: $font;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 400;
+              line-height: 22px; /* 122.222% */
+            }
+          }
+        }
+      }
+    }
   }
 }
 

@@ -1,4 +1,5 @@
 import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
+import PetNutrition from "@/libs/components/shoppage/PetNutrition";
 import WellnessItems from "@/libs/components/shoppage/WellnessItems";
 import { Container, Stack } from "@mui/material";
 import { NextPage } from "next";
@@ -9,6 +10,7 @@ const ShopList: NextPage = () => {
     <>
       <Stack className="shop-page">
         <WellnessItems />
+        <PetNutrition />
       </Stack>
     </>
   );
