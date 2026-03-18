@@ -84,16 +84,16 @@
 
         .ellipse {
           position: absolute;
-          top: 69px;
+          top: 101px;
           left: 90px;
-          width: 73%;
+          width: 83%;
           z-index: -1;
         }
         .ellipse2 {
           position: absolute;
-          top: 218px;
-          left: 220px;
-          width: 55%;
+          top: 225px;
+          left: 182px;
+          width: 65%;
           z-index: -1;
         }
         .dog-icon {
@@ -123,9 +123,9 @@
         z-index: 1;
         .dogs-image {
           position: relative;
-          width: 1200px;
-          height: 650px;
-          margin-top: 130px;
+          width: 1000px;
+          height: 500px;
+          margin-top: 250px;
 
           animation: scrollWiggle linear both;
           animation-timeline: scroll();
@@ -139,7 +139,10 @@
     width: 100%;
     height: auto;
     .wellness-section {
+      box-sizing: border-box;
+      width: 100%;
       padding: 120px 120px 50px;
+      overflow: hidden;
       background: #ffffff;
       .container {
         gap: 36px;
@@ -249,7 +252,10 @@
       }
     }
     .pet-nutrition-section {
+      box-sizing: border-box;
+      width: 100%;
       padding: 80px;
+      overflow: hidden;
       background: #f3eff5;
       .container {
         align-items: center;
@@ -271,10 +277,16 @@
           }
         }
         .nutrition-main {
+          width: 100%;
           margin-top: 65px;
           flex-direction: row;
+          justify-content: space-between;
+          gap: 24px;
+          flex-wrap: wrap;
           .info-card {
-            width: 387px;
+            flex: 1 1 320px;
+            max-width: 387px;
+            width: 100%;
             align-items: center;
             gap: 20px;
             .icon-box {

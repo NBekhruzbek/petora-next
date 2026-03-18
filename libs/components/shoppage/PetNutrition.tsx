@@ -1,5 +1,4 @@
 import { Box, Stack } from "@mui/material";
-import VolunteerActivismOutlinedIcon from "@mui/icons-material/VolunteerActivismOutlined";
 
 const PetNutrition = () => {
   return (

@@ -463,8 +463,10 @@
 
   #contact-us {
     .contact-us {
+      box-sizing: border-box;
       width: 100%;
       padding: 84px 0 110px;
+      overflow: hidden;
       background: #fff;
 
       .container {
