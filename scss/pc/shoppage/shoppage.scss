@@ -509,6 +509,187 @@
         z-index: 1;
       }
     }
+    .discount-ads {
+      width: 100%;
+      height: 500px;
+      background-color: #fff;
+      .container {
+        .discount-ads-main {
+          margin-top: 120px;
+          align-items: center;
+          height: 210px;
+          border-radius: 10px;
+          background-color: rgba(242, 226, 255, 0.8);
+          backdrop-filter: blur(4.050000190734863px);
+          .back-image {
+            position: absolute;
+            width: 100%;
+            height: 210px;
+            z-index: -1;
+            border-radius: 10px;
+            opacity: 0.12;
+            background-color: rgba(242, 226, 255, 0.8);
+          }
+          .leaf-1 {
+            position: absolute;
+            width: 98px;
+            height: 149px;
+            top: 125px;
+            left: -10px;
+          }
+          .leaf-2 {
+            position: absolute;
+            width: 180px;
+            height: 158px;
+            transform: rotate(-5.949deg);
+            top: 25px;
+            left: -40px;
+          }
+          .leaf-3 {
+            position: absolute;
+            width: 160px;
+            height: 138px;
+            transform: rotate(255deg) scaleX(-1);
+            top: 20px;
+            left: 240px;
+          }
+          .leaf-4 {
+            position: absolute;
+            width: 150px;
+            top: 110px;
+            left: 290px;
+          }
+          .wood {
+            position: absolute;
+            width: 340px;
+            height: 246px;
+            top: 50px;
+            left: 30px;
+          }
+          .grass {
+            position: absolute;
+            width: 105px;
+            height: 105px;
+            top: 50px;
+            left: 240px;
+          }
+          .the {
+            position: absolute;
+            left: 95px;
+            top: 130px;
+            text-align: center;
+            font-family: Pacifico;
+            font-size: 35px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            transform: rotate(-15deg);
+            color: #3d3d3d;
+            background: linear-gradient(to bottom, #4d4d4d, #2d2d2d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow:
+              inset 0 2px 4px rgba(0, 0, 0, 0.8),
+              inset 0 -2px 4px rgba(255, 255, 255, 0.3);
+          }
+          .summer {
+            position: absolute;
+            left: 115px;
+            top: 159.5px;
+            text-align: center;
+            font-family: Pacifico;
+            font-size: 36px;
+            color: #3d3d3d;
+            background: linear-gradient(to bottom, #4d4d4d, #2d2d2d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow:
+              inset 0 2px 4px rgba(0, 0, 0, 0.8),
+              inset 0 -2px 4px rgba(255, 255, 255, 0.3);
+            .sale {
+              left: 95px;
+              top: 130px;
+              text-align: center;
+              font-family: Pacifico;
+              font-size: 35px;
+              font-style: normal;
+              font-weight: 400;
+              line-height: normal;
+              transform: rotate(-15deg);
+              color: #ebff71;
+              background: linear-gradient(to bottom, #68685a, #ebff71);
+              -webkit-background-clip: text;
+              background-clip: text;
+              -webkit-text-fill-color: transparent;
+              text-shadow:
+                inset 0 2px 4px rgba(0, 0, 0, 0.8),
+                inset 0 -2px 4px rgba(255, 255, 255, 0.3);
+            }
+          }
+          .dog {
+            position: absolute;
+            top: -32.5px;
+            left: 80px;
+          }
+          .main-area {
+            padding-top: 45px;
+            margin-left: 40px;
+            gap: 10px;
+            .saving-percent {
+              /* Web/28px-Header/Bold */
+              font-family: $font;
+              font-size: 28px;
+              font-style: normal;
+              font-weight: 700;
+              line-height: 36px; /* 128.571% */
+              text-transform: uppercase;
+              color: var(--Primary-Purple3, #410075);
+            }
+            .title {
+              /* Web/28px-Header/Bold */
+              font-family: $font;
+              font-size: 28px;
+              font-style: normal;
+              font-weight: 700;
+              line-height: 36px; /* 128.571% */
+              text-transform: uppercase;
+              color: #000;
+            }
+            .text {
+              /* Web/18px-Content/Regular */
+              font-family: $font;
+              font-size: 18px;
+              font-style: normal;
+              font-weight: 400;
+              line-height: 22px; /* 122.222% */
+              color: var(--Neutral-700, #595959);
+            }
+          }
+          .products {
+            z-index: 1;
+            animation: productReveal 1s ease-out forwards;
+            .product1 {
+              position: absolute;
+              width: 220px;
+              top: -115px;
+              left: 293px;
+              z-index: 2;
+              animation: float 3s ease-in-out infinite;
+            }
+            .product2 {
+              position: absolute;
+              width: 130px;
+              top: -145px;
+              left: 450px;
+              z-index: 1;
+              animation: float 3s ease-in-out infinite;
+            }
+          }
+        }
+      }
+    }
   }
 }
 

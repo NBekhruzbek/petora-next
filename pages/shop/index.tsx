@@ -1,4 +1,5 @@
 import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
+import DiscountAdvertisement from "@/libs/components/shoppage/DiscountAdvertisement";
 import PetNutrition from "@/libs/components/shoppage/PetNutrition";
 import ProductSales from "@/libs/components/shoppage/ProductSales";
 import WellnessItems from "@/libs/components/shoppage/WellnessItems";
@@ -13,6 +14,7 @@ const ShopList: NextPage = () => {
         <WellnessItems />
         <PetNutrition />
         <ProductSales />
+        <DiscountAdvertisement />
       </Stack>
     </>
   );
