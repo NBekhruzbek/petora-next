@@ -32,11 +32,36 @@ const wellnessItems: WellnessItem[] = [
     name: "PLAY BALL - DOG TOY",
     image: "/img/products/ball-dog.png",
   },
+  {
+    id: "fillet-o-lakes",
+    name: "FILLET O’ LAKES - KITTEN",
+    image: "/img/products/fillet.png",
+  },
+  {
+    id: "encore-cat-food",
+    name: "ENCORE - CAT FOOD",
+    image: "/img/products/encore.png",
+  },
+  {
+    id: "wellness-signature",
+    name: "WELLNESS - SIGNATURE",
+    image: "/img/products/wellness.png",
+  },
+  {
+    id: "royal-canin-care",
+    name: "ROYAL CANIN - CARE",
+    image: "/img/products/royal-canin.png",
+  },
+  {
+    id: "ball-dog",
+    name: "PLAY BALL - DOG TOY",
+    image: "/img/products/ball-dog.png",
+  },
 ];
 
 const cardWidth = 220;
 const cardGap = 28;
-const autoPlayDelay = 3200;
+const autoPlayDelay = 1500;
 const WellnessItems = () => {
   const totalItems = wellnessItems.length;
   const middleOffset = totalItems;

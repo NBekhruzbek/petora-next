@@ -183,7 +183,7 @@
           display: flex;
           gap: 28px;
           align-items: flex-end;
-          transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+          transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
           will-change: transform;
 
           &.no-transition {
