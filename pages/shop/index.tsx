@@ -1,7 +1,8 @@
 import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
 import PetNutrition from "@/libs/components/shoppage/PetNutrition";
+import ProductSales from "@/libs/components/shoppage/ProductSales";
 import WellnessItems from "@/libs/components/shoppage/WellnessItems";
-import { Container, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { NextPage } from "next";
 
 const ShopList: NextPage = () => {
@@ -11,6 +12,7 @@ const ShopList: NextPage = () => {
       <Stack className="shop-page">
         <WellnessItems />
         <PetNutrition />
+        <ProductSales />
       </Stack>
     </>
   );

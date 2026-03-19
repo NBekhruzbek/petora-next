@@ -254,7 +254,7 @@
     .pet-nutrition-section {
       box-sizing: border-box;
       width: 100%;
-      padding: 80px;
+      padding: 80px 0 240px;
       overflow: hidden;
       background: #f3eff5;
       .container {
@@ -322,6 +322,191 @@
             }
           }
         }
+      }
+    }
+    .product-sales-section {
+      position: relative;
+      width: 100%;
+      height: 1000px;
+      padding: 80px;
+      background: url("/img/main-background-sale-section.jpg") center center /
+        100% no-repeat;
+      overflow: visible;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0px;
+        width: 100%;
+        height: 260px;
+        background: url("/img/woodTable.png") center bottom / 100% 343%
+          no-repeat;
+        z-index: 0;
+      }
+      .container {
+        .main-section {
+          position: relative;
+
+          .pets-image {
+            position: absolute;
+            width: 80%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            top: -301px;
+          }
+
+          .sun-shine-wrap {
+            position: absolute;
+            top: -82px;
+            left: -350px;
+            width: 820px;
+            height: 920px;
+            overflow: hidden;
+            z-index: 0;
+            .sun-shine {
+              transform: scaleX(-1);
+            }
+          }
+          .left-lemon {
+            position: absolute;
+            width: 170.284px;
+            height: 159.529px;
+            top: 50px;
+            left: 50px;
+            filter: blur(1.5px);
+          }
+          .board {
+            position: absolute;
+            width: 100%;
+            flex-direction: row;
+            justify-content: center;
+            top: -90px;
+            .wood {
+              width: 492px;
+              height: 347px;
+            }
+            .title {
+              position: absolute;
+              top: 170px;
+
+              font-family: Pacifico;
+              font-size: 40px;
+              font-style: normal;
+              font-weight: 400;
+              line-height: normal;
+
+              background-image: url("/img/title-background-wood.png");
+              background-size: cover;
+              background-position: center;
+
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+            }
+            .hand-icon {
+              position: absolute;
+              fill: #8f00ff;
+              mix-blend-mode: multiply;
+              top: 230px;
+            }
+          }
+          .leav {
+            position: absolute;
+            width: 143.274px;
+            height: 120.04px;
+            right: 250px;
+            top: 180px;
+            filter: blur(3.299999952316284px);
+          }
+          .leav2 {
+            position: absolute;
+            width: 143.274px;
+            height: 120.04px;
+            top: 680px;
+            left: 100px;
+            z-index: 1;
+            filter: blur(2.5px);
+          }
+          .wellness {
+            position: absolute;
+            width: 201px;
+            height: 201px;
+            left: 310px;
+            top: 550px;
+            z-index: 1;
+          }
+          .wellness-bottom {
+            position: absolute;
+            left: 310px;
+            top: 660px;
+            z-index: 1;
+          }
+          .fillet {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            left: 29%;
+            top: 280px;
+            z-index: 10;
+          }
+          .box-shadow {
+            position: absolute;
+            top: 630px;
+            left: 700px;
+            z-index: 1;
+          }
+          .box {
+            position: absolute;
+            width: 300.963px;
+            height: 360px;
+            top: 380px;
+            left: 740px;
+            z-index: 1;
+          }
+          .lemons {
+            position: absolute;
+            width: 123.895px;
+            height: 94.792px;
+            top: 470px;
+            left: 874px;
+            z-index: 1;
+          }
+          .fillet-shadow {
+            position: absolute;
+            top: 345px;
+            left: 460px;
+            z-index: 1;
+          }
+          .right-lemon {
+            position: absolute;
+            width: 198.578px;
+            height: 186.037px;
+            transform: rotate(-165deg);
+            top: 230px;
+            left: 1100px;
+            filter: blur(1.5px);
+          }
+          .bottom-leav {
+            position: absolute;
+            width: 307px;
+            height: 241px;
+            top: 699px;
+            left: 800px;
+            transform: rotate(-60deg);
+            filter: blur(2.5px);
+            z-index: 2;
+          }
+        }
+      }
+      .bottom-shade {
+        position: absolute;
+        top: 600px;
+        width: 100%;
+        height: 40%;
+        left: -1px;
+        z-index: 1;
       }
     }
   }
