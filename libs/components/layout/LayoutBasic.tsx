@@ -34,12 +34,6 @@ const withLayoutBasic = (Component: any) => {
             <ShopHeader />
           </Stack>
         );
-      case "/shop/detail":
-        return (
-          <Stack id={"shop-top"}>
-            <ShopHeader />
-          </Stack>
-        );
       case "/agents":
         return (
           <Stack id={"agents-top"}>
