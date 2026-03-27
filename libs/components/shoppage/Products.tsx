@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -280,6 +280,7 @@ const Products = () => {
     page: 1,
     limit: 12,
   });
+  const productsTopRef = useRef<HTMLDivElement | null>(null);
 
   const handlePriceChange = (_event: Event, newValue: number | number[]) => {
     if (Array.isArray(newValue)) {
@@ -339,6 +340,16 @@ const Products = () => {
 
   const paginationHandler = (_event: ChangeEvent<unknown>, page: number) => {
     setProductSearch((prev) => ({ ...prev, page }));
+
+    if (!productsTopRef.current) return;
+
+    const scrollTarget =
+      window.scrollY + productsTopRef.current.getBoundingClientRect().top - 210;
+
+    window.scrollTo({
+      top: Math.max(0, scrollTarget),
+      behavior: "smooth",
+    });
   };
 
   const toggleProductLike = (productId: string) => {
@@ -604,7 +615,7 @@ const Products = () => {
             </Stack>
           </Stack>
 
-          <Stack className="sorting-products">
+          <Stack className="sorting-products" ref={productsTopRef}>
             <Box className="filter-section-wrap">
               <Select
                 value={sortBy}
