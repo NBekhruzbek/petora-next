@@ -23,6 +23,7 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
+import RelatedProducts from "@/libs/components/shoppage/RelatedProducts";
 
 const Detail = () => {
   const product = {
@@ -540,6 +541,7 @@ const Detail = () => {
         </Stack>
       </Stack>
       {/* Other Products may You Like component develop*/}
+      <RelatedProducts />
     </Stack>
   );
 };
