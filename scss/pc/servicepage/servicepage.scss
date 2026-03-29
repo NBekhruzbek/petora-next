@@ -2201,7 +2201,6 @@
   .related-services {
     padding: 40px 0 110px;
     background: #fff;
-
     .container {
       flex-direction: column;
       gap: 28px;
@@ -2211,13 +2210,16 @@
         font-weight: 700;
         letter-spacing: 0.3px;
         color: #000;
+        img {
+          margin-left: 10px;
+        }
       }
       .agents-cards {
-        display: flex;
-        flex-direction: row;
-        gap: 34px;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 20px;
         .agents-card {
-          width: 300px;
+          width: 100%;
           border-radius: 22px;
           border: 1px solid #e5e7eb;
           background: #fff;
@@ -2235,12 +2237,12 @@
             position: relative;
             .agent-image-wrap {
               width: 100%;
-              height: 300px;
+              height: 220px;
               margin: 0 auto;
               background: #e9e4e1;
-              overflow: visible;
+              overflow: hidden;
               position: relative;
-              border-radius: 999px;
+              border-radius: 22px 22px 0 0;
               display: flex;
               align-items: center;
               justify-content: center;
@@ -2249,16 +2251,16 @@
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                object-position: center 24%;
                 transition: transform 0.3s ease;
               }
             }
             .like-fab {
               position: absolute;
-              right: 16px;
-              top: 90%;
-              transform: translateY(-50%);
-              width: 36px;
-              height: 36px;
+              right: 12px;
+              bottom: 12px;
+              width: 34px;
+              height: 34px;
               border-radius: 999px;
               background: #f7ede4;
               display: inline-flex;
@@ -2292,7 +2294,7 @@
             }
             .is-liked {
               color: #e11d48;
-              transform: translateY(-50%) scale(1.03);
+              transform: scale(1.03);
             }
           }
         }
@@ -2301,42 +2303,44 @@
         }
 
         .agent-content {
-          padding: 14px 16px 18px;
-          gap: 6px;
+          padding: 12px 14px 16px;
+          gap: 5px;
+
           .name-row {
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: 8px;
+
             .agent-name {
               font-family: $font;
-              font-size: 18px;
+              font-size: 16px;
               font-style: normal;
               font-weight: 700;
               color: #111827;
             }
             .bookings-row {
               font-family: $font;
-              font-size: 12px;
+              font-size: 11px;
               font-style: normal;
               font-weight: 600;
               color: #ffffff;
               background: #4b158d;
-              padding: 4px 8px;
+              padding: 4px 7px;
               border-radius: 999px;
               white-space: nowrap;
             }
           }
           .agent-service-type {
             font-family: $font;
-            font-size: 13px;
+            font-size: 12px;
             font-style: normal;
             font-weight: 500;
             color: #6b7280;
           }
           .service-price {
             font-family: $font;
-            font-size: 14px;
+            font-size: 13px;
             font-style: normal;
             font-weight: 400;
             line-height: 1.5;
@@ -2348,9 +2352,10 @@
           .rating-row {
             flex-direction: row;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+
             .rating-stars {
-              font-size: 18px;
+              font-size: 16px;
               .MuiRating-iconFilled {
                 color: #f6c200;
               }
@@ -2360,25 +2365,26 @@
             }
             .rating-value {
               font-family: $font;
-              font-size: 14px;
+              font-size: 13px;
               font-style: normal;
               font-weight: 700;
               color: #6b7280;
             }
           }
           .agent-actions {
-            margin-top: 10px;
+            margin-top: 8px;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
+
             .booking-btn {
               display: flex;
-              width: 160px;
-              height: 35px;
+              width: 142px;
+              height: 34px;
               border: 1.5px solid #d8d2e6;
 
-              padding: 10px 30px;
+              padding: 8px 20px;
               justify-content: center;
               align-items: center;
               gap: 10px;
@@ -2406,7 +2412,7 @@
               animation: ctaBorderFlow 3.6s linear infinite;
               color: #fff;
               font-family: $font;
-              font-size: 16px;
+              font-size: 14px;
               font-style: normal;
               font-weight: 700;
               line-height: 1;

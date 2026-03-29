@@ -42,6 +42,16 @@ const agents: AgentItem[] = [
     rating: 4.2,
     bookings: 211,
   },
+  {
+    _id: "agent-8",
+    name: "Emma Wilson",
+    serviceType: "Training | Walking",
+    image: "/img/agents/topAgent3.jpg",
+    price: "$45~$180",
+    likes: 138,
+    rating: 4.7,
+    bookings: 164,
+  },
 ];
 
 const RelatedServices = () => {
@@ -49,7 +59,8 @@ const RelatedServices = () => {
     <Stack className="related-services">
       <Stack className="container">
         <Box className={"related-services-title"}>
-          Related Services from TOP AGENTS
+          Related Services from TOP AGENTS{" "}
+          <img src="/img/logo/Union.svg" alt="" />
         </Box>
         <Stack className="agents-cards">
           {agents.map((agent) => {
