@@ -235,7 +235,7 @@ const Agents = () => {
   return (
     <Stack className="services-agents-page">
       <Stack className="container">
-        <Box className={"title"}>Services</Box>
+        <Box className={"title"}>Find Pet Care</Box>
         <Stack className="services-main">
           <Stack className="category">
             <Box className="search-box">
@@ -335,7 +335,7 @@ const Agents = () => {
                   onClick={toggleLikedSelected}
                 >
                   <Box className="likes-checkbox" aria-hidden="true" />
-                  <Typography className="likes-label">Liked Agents</Typography>
+                  <Typography className="likes-label">My Favorites</Typography>
                 </Stack>
                 <Divider className={"likes-divider"} />
               </Stack>
