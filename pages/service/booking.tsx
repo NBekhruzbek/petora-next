@@ -10,7 +10,10 @@ import {
   IconButton,
   MenuItem,
   Paper,
+  Rating,
   Stack,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -21,6 +24,10 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { useRef, useState } from "react";
 import moment from "moment";
 import RelatedServices from "@/libs/components/servicepage/RelatedServices";
+import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
 
 const Booking = () => {
   const images = [
@@ -29,6 +36,57 @@ const Booking = () => {
     "/img/services/walking.jpg",
     "/img/services/boarding.png",
   ];
+  const agentProfile = {
+    name: "Sophia Kim",
+    image: "/img/agents/topAgent1.jpg",
+    role: "Dog Trainer • Pet Groomer • Veterinary Assistant",
+    experience: "5+ years experience",
+    rating: 4.9,
+    reviewCount: 124,
+    responseTime: "Usually replies within 15 minutes",
+    serviceArea: "Seoul area",
+    distance: "3.2 km away",
+    pricing: "$35 / hour",
+    startingPrice: "From $20 per visit",
+    phone: "+82 10-2456-7812",
+    email: "sophia.kim@petora.co.kr",
+    bio: "Sophia works with puppies, adult dogs, and senior pets that need patient, structured care. Her approach is calm, friendly, and confidence-building, with a strong focus on positive reinforcement, safe handling, and clear communication with pet parents. She is especially trusted for leash manners, basic obedience, coat care, and medication support during home visits.",
+  };
+  const basicInformation = [
+    { label: "Agent Name", value: agentProfile.name },
+    { label: "Role / Specialty", value: agentProfile.role },
+    { label: "Experience", value: agentProfile.experience },
+    {
+      label: "Approach",
+      value: "Friendly, professional, positive reinforcement",
+    },
+    { label: "Languages", value: "Korean, English" },
+  ];
+  const certificateImages: Array<{
+    title: string;
+    image: string;
+  }> = [
+    {
+      title: "Pet Care Accreditation",
+      image: "/img/certifications/PACCC-fb-thumb.png",
+    },
+    {
+      title: "Professional Pet Certification",
+      image: "/img/certifications/certificate-50_page-0001.jpg",
+    },
+  ];
+  const bookingHighlights = [
+    {
+      title: "Location",
+      value: agentProfile.serviceArea,
+      description: `Service coverage includes ${agentProfile.distance} from your selected address.`,
+    },
+    {
+      title: "Pricing",
+      value: agentProfile.pricing,
+      description: `${agentProfile.startingPrice} depending on service type and pet needs.`,
+    },
+  ];
   const [selectedImage, setSelectedImage] = useState(0);
   const [openItems, setOpenItems] = useState([false, false, false]);
   const [trainingOption, setTrainingOption] = useState("");
@@ -36,11 +94,16 @@ const Booking = () => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(312);
   const dateInputRef = useRef<HTMLInputElement | null>(null);
+  const [value, setValue] = useState(0);
 
   const toggleDetail = (index: number) => {
     setOpenItems((prev) =>
       prev.map((isOpen, i) => (i === index ? !isOpen : isOpen)),
     );
+  };
+
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
   };
 
   return (
@@ -237,6 +300,201 @@ const Booking = () => {
               </Accordion>
             </Paper>
           </Stack>
+        </Stack>
+
+        <Stack className="product-detail-tabs-section">
+          <Tabs
+            className="product-detail-tabs"
+            value={value}
+            onChange={handleChange}
+            variant="fullWidth"
+          >
+            <Tab
+              label={
+                <span className="tab-label">
+                  <InventoryOutlinedIcon className="tab-icon" />
+                  Agent Information
+                </span>
+              }
+            />
+            <Tab
+              label={
+                <span className="tab-label">
+                  <RateReviewOutlinedIcon className="tab-icon" />
+                  Reviews
+                </span>
+              }
+            />
+          </Tabs>
+
+          {value === 0 && (
+            <Stack className="detail-tab-panel agent-tab-panel">
+              <Stack className="agent-overview-card">
+                <Box className="agent-overview-image">
+                  <img
+                    src={agentProfile.image}
+                    alt={`${agentProfile.name} profile`}
+                  />
+                </Box>
+
+                <Stack className="agent-overview-content">
+                  <Typography className="agent-overview-name">
+                    {agentProfile.name}
+                  </Typography>
+                  <Typography className="agent-overview-role">
+                    {agentProfile.role}
+                  </Typography>
+
+                  <Stack className="agent-overview-metrics">
+                    <Box className="agent-metric-chip">
+                      {agentProfile.experience}
+                    </Box>
+                    <Box className="agent-metric-chip">
+                      {agentProfile.responseTime}
+                    </Box>
+                  </Stack>
+
+                  <Stack className="agent-overview-rating">
+                    <Rating
+                      value={agentProfile.rating}
+                      precision={0.1}
+                      readOnly
+                    />
+                    <Typography className="agent-overview-rating-text">
+                      {agentProfile.rating.toFixed(1)} rating
+                    </Typography>
+                    <Typography className="agent-overview-rating-divider">
+                      •
+                    </Typography>
+                    <Typography className="agent-overview-rating-text">
+                      {agentProfile.reviewCount} verified bookings
+                    </Typography>
+                  </Stack>
+
+                  <Typography className="agent-overview-bio">
+                    {agentProfile.bio}
+                  </Typography>
+
+                  <Stack className="agent-overview-actions">
+                    <Typography className="contact-info-title">
+                      Contact Information
+                    </Typography>
+                    <Box className="contact-info-item">
+                      <Typography className="contact-info-label">
+                        Phone:
+                      </Typography>
+                      <a
+                        href={`tel:${agentProfile.phone.replace(/\s+/g, "")}`}
+                        className="contact-info-link"
+                      >
+                        {agentProfile.phone}
+                      </a>
+                    </Box>
+                    <Box className="contact-info-item">
+                      <Typography className="contact-info-label">
+                        Email:
+                      </Typography>
+                      <a
+                        href={`mailto:${agentProfile.email}`}
+                        className="contact-info-link"
+                      >
+                        {agentProfile.email}
+                      </a>
+                    </Box>
+                  </Stack>
+                </Stack>
+              </Stack>
+
+              <Stack className="agent-detail-grid">
+                <Stack className="agent-detail-card">
+                  <Typography className="detail-block-title">
+                    Basic Information
+                  </Typography>
+                  <Stack className="detail-info-grid">
+                    {basicInformation.map((item) => (
+                      <Box key={item.label} className="detail-info-row">
+                        <Typography className="detail-info-label">
+                          {item.label}
+                        </Typography>
+                        <Typography className="detail-info-value">
+                          {item.value}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Stack>
+
+                <Stack className="agent-detail-card compact-info-card">
+                  {bookingHighlights.map((item) => (
+                    <Box key={item.title} className="compact-info-item">
+                      <Box className="compact-info-icon">
+                        {item.title === "Location" ? (
+                          <PlaceOutlinedIcon />
+                        ) : (
+                          <SellOutlinedIcon />
+                        )}
+                      </Box>
+                      <Stack className="compact-info-copy">
+                        <Typography className="compact-info-title">
+                          {item.title}
+                        </Typography>
+                        <Typography className="compact-info-value">
+                          {item.value}
+                        </Typography>
+                        <Typography className="compact-info-description">
+                          {item.description}
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  ))}
+                </Stack>
+              </Stack>
+
+              <Stack className="agent-detail-card">
+                <Typography className="detail-block-title">
+                  Certifications
+                </Typography>
+
+                {certificateImages.length > 0 ? (
+                  <Stack className="certificate-gallery">
+                    {certificateImages.map((certificate) => (
+                      <Box
+                        key={`${certificate.title}`}
+                        className="certificate-card"
+                      >
+                        <Box className="certificate-image-wrap">
+                          <img
+                            src={certificate.image}
+                            alt={certificate.title}
+                            className="certificate-image"
+                          />
+                        </Box>
+                        <Typography className="certificate-title">
+                          {certificate.title}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Stack>
+                ) : (
+                  <Box className="certificate-empty-state">
+                    <Stack className="certificate-empty-copy">
+                      <Typography className="certificate-empty-title">
+                        No certificate images uploaded yet
+                      </Typography>
+                      <Typography className="certificate-empty-text">
+                        When the agent uploads official certificates, preview
+                        images can be displayed here.
+                      </Typography>
+                    </Stack>
+                  </Box>
+                )}
+              </Stack>
+            </Stack>
+          )}
+
+          {value === 1 && (
+            <Stack className="detail-tab-panel review-tab-panel"></Stack>
+          )}
         </Stack>
       </Stack>
       <RelatedServices />
