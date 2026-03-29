@@ -67,8 +67,8 @@ const Footer = () => {
           <Box className={"first-square"}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="313"
-              height="336"
+              width="303"
+              height="316"
               viewBox="0 0 313 336"
               fill="none"
             >
@@ -83,8 +83,7 @@ const Footer = () => {
           <Box className={"second-square"}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="373"
-              height="396"
+              width="350"
               viewBox="0 0 373 396"
               fill="none"
             >
