@@ -9,6 +9,7 @@ import {
   ButtonBase,
   IconButton,
   MenuItem,
+  Pagination,
   Paper,
   Rating,
   Stack,
@@ -28,6 +29,7 @@ import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
+import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 
 const Booking = () => {
   const images = [
@@ -87,6 +89,81 @@ const Booking = () => {
       description: `${agentProfile.startingPrice} depending on service type and pet needs.`,
     },
   ];
+  const reviewSummary = {
+    title: "Client Reviews",
+    rating: 4.9,
+    totalReviews: 124,
+    satisfiedText: "96% of pet parents would book Sophia again",
+  };
+  const reviewDistribution = [
+    { label: "Excellent", percent: 82, tone: "warm" },
+    { label: "Good", percent: 11, tone: "warm" },
+    { label: "Average", percent: 4, tone: "cool" },
+    { label: "Poor", percent: 2, tone: "cool" },
+    { label: "Bad", percent: 1, tone: "cool" },
+  ];
+  const reviewCards = [
+    {
+      userName: "Mina Park",
+      location: "Seoul",
+      bookingInfo: "Booked puppy training • Verified booking",
+      rating: 5,
+      date: "February 18, 2026",
+      content:
+        "Sophia was patient from the very first session and gave us simple routines we could actually follow at home. Our puppy became calmer on walks within two weeks, and we also appreciated the clear updates after every visit. Sophia was patient from the very first session and gave us simple routines we could actually follow at home. Our puppy became calmer on walks within two weeks, and we also appreciated the clear updates after every visit",
+      photos: ["/img/services/training.jpg", "/img/services/walking.jpg"],
+    },
+    {
+      userName: "Daniel Cho",
+      location: "Gangnam",
+      bookingInfo: "Booked grooming + medication support • Verified booking",
+      rating: 5,
+      date: "January 30, 2026",
+      content:
+        "We have an older dog who gets nervous with new people, but Sophia handled him gently and professionally. Grooming was neat, medication instructions were followed exactly, and she kept us informed the whole time.",
+      photos: ["/img/services/grooming.jpg"],
+    },
+    {
+      userName: "Sora Han",
+      location: "Mapo",
+      bookingInfo: "Booked pet sitting • Verified booking",
+      rating: 4,
+      date: "December 22, 2025",
+      content:
+        "Very dependable and warm with our dog. We especially liked the photo updates and the fact that she noticed small behavior changes right away. Would have loved a slightly longer first meet-and-greet, but the service itself was excellent.",
+      photos: [],
+    },
+    {
+      userName: "James Lee",
+      location: "Yongsan",
+      bookingInfo: "Booked obedience sessions • Verified booking",
+      rating: 5,
+      date: "November 14, 2025",
+      content:
+        "Sophia helped us work through leash pulling and basic recall in a realistic, encouraging way. The sessions felt structured, not rushed, and she explained what to practice between visits so we kept making progress.",
+      photos: ["/img/services/day-care.jpg", "/img/services/training.jpg"],
+    },
+    {
+      userName: "Yuri Kim",
+      location: "Songpa",
+      bookingInfo: "Booked senior pet care • Verified booking",
+      rating: 5,
+      date: "October 03, 2025",
+      content:
+        "Kind, punctual, and clearly experienced with senior dogs. She was careful with mobility issues and made our family feel comfortable leaving our pet in her care. We will definitely rebook.",
+      photos: [],
+    },
+    {
+      userName: "Kevin Moon",
+      location: "Seodaemun",
+      bookingInfo: "Booked home visit support • Verified booking",
+      rating: 4,
+      date: "September 09, 2025",
+      content:
+        "Communication was smooth and professional throughout. Sophia arrived on time, followed our care notes closely, and left a very detailed summary after the visit. Overall a very trustworthy experience.",
+      photos: [],
+    },
+  ];
   const [selectedImage, setSelectedImage] = useState(0);
   const [openItems, setOpenItems] = useState([false, false, false]);
   const [trainingOption, setTrainingOption] = useState("");
@@ -95,6 +172,33 @@ const Booking = () => {
   const [likeCount, setLikeCount] = useState(312);
   const dateInputRef = useRef<HTMLInputElement | null>(null);
   const [value, setValue] = useState(0);
+  const [reviewPage, setReviewPage] = useState(1);
+  const [expandedReviews, setExpandedReviews] = useState<
+    Record<string, boolean>
+  >({});
+  const [reviewSort, setReviewSort] = useState("newest");
+  const reviewPreviewLimit = 260;
+  const reviewsPerPage = 3;
+  const sortedReviewCards = [...reviewCards].sort((a, b) => {
+    const dateDiff =
+      moment(b.date, "MMMM DD, YYYY").valueOf() -
+      moment(a.date, "MMMM DD, YYYY").valueOf();
+
+    if (reviewSort === "highest") {
+      return b.rating - a.rating || dateDiff;
+    }
+
+    if (reviewSort === "lowest") {
+      return a.rating - b.rating || dateDiff;
+    }
+
+    return dateDiff;
+  });
+  const reviewPageCount = Math.ceil(sortedReviewCards.length / reviewsPerPage);
+  const paginatedReviews = sortedReviewCards.slice(
+    (reviewPage - 1) * reviewsPerPage,
+    reviewPage * reviewsPerPage,
+  );
 
   const toggleDetail = (index: number) => {
     setOpenItems((prev) =>
@@ -104,6 +208,18 @@ const Booking = () => {
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+  };
+  const handleReviewPageChange = (
+    _event: React.ChangeEvent<unknown>,
+    page: number,
+  ) => {
+    setReviewPage(page);
+  };
+  const handleReviewSortChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setReviewSort(event.target.value);
+    setReviewPage(1);
   };
 
   return (
@@ -493,7 +609,169 @@ const Booking = () => {
           )}
 
           {value === 1 && (
-            <Stack className="detail-tab-panel review-tab-panel"></Stack>
+            <Stack className="detail-tab-panel review-tab-panel">
+              <Stack className="review-summary-panel">
+                <Typography className="review-summary-title">
+                  {reviewSummary.title}
+                </Typography>
+
+                <Stack className="review-score-row">
+                  <Rating
+                    className="review-rating-stars"
+                    value={reviewSummary.rating}
+                    precision={0.1}
+                    readOnly
+                  />
+                  <Typography className="review-score-count">
+                    {reviewSummary.rating.toFixed(1)}
+                  </Typography>
+                </Stack>
+
+                <Box className="review-satisfied-box">
+                  <SentimentSatisfiedAltOutlinedIcon className="review-satisfied-icon" />
+                  <Typography className="review-satisfied-text">
+                    {reviewSummary.satisfiedText}
+                  </Typography>
+                </Box>
+
+                <Stack className="review-distribution-list">
+                  {reviewDistribution.map((item) => (
+                    <Box key={item.label} className="review-distribution-row">
+                      <Typography className="review-distribution-label">
+                        {item.label}
+                      </Typography>
+                      <Box className="review-distribution-track">
+                        <Box
+                          className={`review-distribution-fill ${item.tone}`}
+                          sx={{ width: `${item.percent}%` }}
+                        />
+                      </Box>
+                      <Typography className="review-distribution-value">
+                        {item.percent}%
+                      </Typography>
+                    </Box>
+                  ))}
+                </Stack>
+              </Stack>
+
+              <Stack className="review-cards-panel">
+                <Stack className="review-cards-header">
+                  <Typography className="review-cards-count">
+                    {sortedReviewCards.length} reviews
+                  </Typography>
+                  <TextField
+                    className="review-sort-field"
+                    select
+                    size="small"
+                    value={reviewSort}
+                    onChange={handleReviewSortChange}
+                    SelectProps={{
+                      MenuProps: {
+                        disablePortal: true,
+                        PaperProps: { className: "review-sort-menu" },
+                      },
+                    }}
+                  >
+                    <MenuItem value="newest">Newest</MenuItem>
+                    <MenuItem value="highest">High to Lowest rated</MenuItem>
+                    <MenuItem value="lowest">Low to Highest rated</MenuItem>
+                  </TextField>
+                </Stack>
+
+                {paginatedReviews.map((review) => {
+                  const reviewKey = `${review.userName}-${review.date}`;
+                  const isExpanded = expandedReviews[reviewKey];
+                  const shouldTruncate =
+                    review.content.length > reviewPreviewLimit;
+                  const reviewContent =
+                    shouldTruncate && !isExpanded
+                      ? `${review.content.slice(0, reviewPreviewLimit).trimEnd()}...`
+                      : review.content;
+
+                  return (
+                    <Box key={reviewKey} className="review-card">
+                      <Stack className="review-card-user">
+                        <Box className="review-user-avatar">
+                          <img
+                            src="/img/profile/defaultUser.png"
+                            alt={`${review.userName} avatar`}
+                          />
+                        </Box>
+                        <Stack className="review-user-meta">
+                          <Typography className="review-user-name">
+                            {review.userName}
+                          </Typography>
+                          <Typography className="review-user-location">
+                            {review.location}
+                          </Typography>
+                          <Typography className="review-user-purchase">
+                            {review.bookingInfo}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+
+                      <Stack className="review-card-body">
+                        <Stack className="review-card-top">
+                          <Rating
+                            className="review-card-stars"
+                            value={review.rating}
+                            precision={0.5}
+                            readOnly
+                          />
+                          <Typography className="review-card-date">
+                            {review.date}
+                          </Typography>
+                        </Stack>
+
+                        {review.photos.length > 0 && (
+                          <Stack className="review-photo-list">
+                            {review.photos.map((photo, index) => (
+                              <Box
+                                key={`${review.userName}-photo-${index}`}
+                                className="review-photo-item"
+                              >
+                                <img
+                                  src={photo}
+                                  alt={`${review.userName} review photo ${index + 1}`}
+                                />
+                              </Box>
+                            ))}
+                          </Stack>
+                        )}
+
+                        <Typography className="review-card-text">
+                          {reviewContent}
+                        </Typography>
+
+                        {shouldTruncate && (
+                          <Button
+                            className="review-card-toggle"
+                            onClick={() =>
+                              setExpandedReviews((prev) => ({
+                                ...prev,
+                                [reviewKey]: !prev[reviewKey],
+                              }))
+                            }
+                          >
+                            {isExpanded ? "Show less" : "Show more"}
+                          </Button>
+                        )}
+                      </Stack>
+                    </Box>
+                  );
+                })}
+
+                {reviewPageCount > 1 && (
+                  <Pagination
+                    className="review-pagination"
+                    count={reviewPageCount}
+                    page={reviewPage}
+                    onChange={handleReviewPageChange}
+                    shape="rounded"
+                  />
+                )}
+              </Stack>
+            </Stack>
           )}
         </Stack>
       </Stack>

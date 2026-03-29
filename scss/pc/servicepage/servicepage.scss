@@ -1764,6 +1764,371 @@
             }
           }
         }
+
+        .review-tab-panel {
+          flex-direction: row;
+          align-items: flex-start;
+          gap: 34px;
+
+          .review-summary-panel,
+          .review-cards-panel {
+            border-radius: 28px;
+            background: linear-gradient(180deg, #fff 0%, #fcf8ff 100%);
+            border: 1px solid #eee4f8;
+            box-shadow: 0 14px 34px rgba(76, 23, 141, 0.08);
+          }
+
+          .review-summary-panel {
+            width: 100%;
+            max-width: 360px;
+            padding: 28px;
+            gap: 20px;
+            flex-shrink: 0;
+
+            .review-summary-title {
+              font-family: $font;
+              font-size: 30px;
+              font-weight: 700;
+              line-height: 1.15;
+              color: #1f2937;
+            }
+
+            .review-score-row {
+              flex-direction: row;
+              align-items: center;
+              gap: 18px;
+
+              .review-rating-stars {
+                .MuiRating-iconFilled,
+                .MuiRating-iconHover,
+                .MuiRating-iconFocus {
+                  color: #ff9d59;
+                }
+
+                .MuiRating-iconEmpty {
+                  color: #d6d6d6;
+                }
+
+                .MuiSvgIcon-root {
+                  font-size: 34px;
+                }
+              }
+
+              .review-score-count {
+                font-family: $font;
+                font-size: 38px;
+                font-weight: 700;
+                line-height: 1;
+                color: #1f2937;
+              }
+            }
+
+            .review-satisfied-box {
+              min-height: 58px;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              padding: 14px 18px;
+              border-radius: 20px;
+              background: #f5f3fa;
+
+              .review-satisfied-icon {
+                font-size: 30px;
+                color: #4b158d;
+              }
+
+              .review-satisfied-text {
+                font-family: $font;
+                font-size: 16px;
+                font-weight: 700;
+                line-height: 1.4;
+                color: #253244;
+              }
+            }
+
+            .review-distribution-list {
+              gap: 14px;
+
+              .review-distribution-row {
+                display: grid;
+                grid-template-columns: 92px 1fr 42px;
+                align-items: center;
+                gap: 12px;
+
+                .review-distribution-label,
+                .review-distribution-value {
+                  font-family: $font;
+                  font-size: 15px;
+                  font-weight: 700;
+                  line-height: 1.2;
+                  color: #253244;
+                }
+
+                .review-distribution-track {
+                  position: relative;
+                  width: 100%;
+                  height: 10px;
+                  overflow: hidden;
+                  border-radius: 999px;
+                  background: #e7eaef;
+
+                  .review-distribution-fill {
+                    height: 100%;
+                    border-radius: inherit;
+
+                    &.warm {
+                      background: #ff9d59;
+                    }
+
+                    &.cool {
+                      background: #aab6c4;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          .review-cards-panel {
+            flex: 1;
+            gap: 18px;
+            padding: 28px;
+
+            .review-cards-header {
+              flex-direction: row;
+              align-items: center;
+              justify-content: flex-end;
+              gap: 12px;
+              padding: 10px 0 18px;
+              margin-bottom: 6px;
+
+              .review-cards-count {
+                font-family: $font;
+                font-size: 16px;
+                font-weight: 700;
+                color: #253244;
+                white-space: nowrap;
+                flex-shrink: 0;
+              }
+
+              .review-sort-field {
+                min-width: 200px;
+                flex: 0 0 148px;
+
+                .MuiOutlinedInput-root {
+                  border-radius: 12px;
+                  background: #fff;
+                  font-family: $font;
+                  font-size: 14px;
+                  color: #222;
+                }
+
+                .MuiOutlinedInput-notchedOutline {
+                  border-color: #dcd6e8;
+                }
+
+                &:hover .MuiOutlinedInput-notchedOutline {
+                  border-color: #b8a2d8;
+                }
+
+                .MuiSelect-select {
+                  padding: 10px 34px 10px 12px;
+                }
+              }
+            }
+
+            .review-card {
+              display: grid;
+              grid-template-columns: 230px minmax(0, 1fr);
+              gap: 24px;
+              padding: 0 0 24px;
+              margin-bottom: 24px;
+              border-bottom: 1px solid #eceff3;
+
+              &:last-child {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+              }
+
+              .review-card-user {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 14px;
+
+                .review-user-avatar {
+                  width: 56px;
+                  height: 56px;
+                  flex-shrink: 0;
+                  overflow: hidden;
+                  border-radius: 50%;
+                  background: #eef1f5;
+
+                  img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                  }
+                }
+
+                .review-user-meta {
+                  gap: 4px;
+
+                  .review-user-name {
+                    font-family: $font;
+                    font-size: 18px;
+                    font-weight: 700;
+                    line-height: 1.3;
+                    color: #222f3d;
+                  }
+
+                  .review-user-location,
+                  .review-user-purchase {
+                    font-family: $font;
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 1.4;
+                    color: #7e8794;
+                  }
+                }
+              }
+
+              .review-card-body {
+                gap: 14px;
+                min-width: 0;
+
+                .review-card-top {
+                  flex-direction: row;
+                  align-items: center;
+                  justify-content: space-between;
+                  gap: 16px;
+
+                  .review-card-stars {
+                    .MuiRating-iconFilled,
+                    .MuiRating-iconHover,
+                    .MuiRating-iconFocus {
+                      color: #ff9d59;
+                    }
+
+                    .MuiRating-iconEmpty {
+                      color: #d6d6d6;
+                    }
+
+                    .MuiSvgIcon-root {
+                      font-size: 22px;
+                    }
+                  }
+
+                  .review-card-date {
+                    font-family: $font;
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 1.4;
+                    color: #7e8794;
+                  }
+                }
+
+                .review-photo-list {
+                  flex-direction: row;
+                  flex-wrap: wrap;
+                  gap: 10px;
+
+                  .review-photo-item {
+                    width: 88px;
+                    height: 64px;
+                    overflow: hidden;
+                    border-radius: 10px;
+                    background: #eef1f4;
+
+                    img {
+                      width: 100%;
+                      height: 100%;
+                      object-fit: cover;
+                    }
+                  }
+                }
+
+                .review-card-text {
+                  font-family: $font;
+                  font-size: 16px;
+                  font-weight: 500;
+                  line-height: 1.75;
+                  color: #444f5b;
+                }
+
+                .review-card-toggle {
+                  align-self: flex-start;
+                  min-width: auto;
+                  padding: 0;
+                  font-family: $font;
+                  font-size: 14px;
+                  font-weight: 700;
+                  line-height: 1.2;
+                  text-transform: none;
+                  color: #253244;
+
+                  &:hover {
+                    background: transparent;
+                    text-decoration: underline;
+                  }
+                }
+              }
+            }
+
+            .review-sort-menu {
+              border-radius: 14px;
+              box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+              border: 1px solid rgba(0, 0, 0, 0.06);
+              padding: 6px 4px;
+
+              .MuiMenuItem-root {
+                font-family: $font;
+                font-size: 14px;
+                color: #2b2b2b;
+                padding: 10px 14px;
+                border-radius: 10px;
+                margin: 4px 6px;
+
+                &:hover {
+                  background: rgba(17, 17, 17, 0.06);
+                }
+
+                &.Mui-selected,
+                &.Mui-selected:hover {
+                  background: rgba(246, 196, 0, 0.25);
+                  color: #111;
+                  font-weight: 600;
+                }
+              }
+            }
+
+            .review-pagination {
+              align-items: center;
+              margin-top: 4px;
+
+              .MuiPagination-ul {
+                gap: 8px;
+                justify-content: center;
+              }
+
+              .MuiPaginationItem-root {
+                min-width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                font-family: $font;
+                font-size: 14px;
+                font-weight: 700;
+                color: #5f6671;
+                background: #f4f6f8;
+              }
+
+              .Mui-selected {
+                background: #5e239d;
+                color: #ffffff;
+              }
+            }
+          }
+        }
       }
     }
 
