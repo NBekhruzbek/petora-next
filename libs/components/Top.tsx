@@ -8,7 +8,7 @@ import React from "react";
 import Basket from "./Basket";
 
 const Top = () => {
-  const authMember = false;
+  const authMember = true;
   const router = useRouter();
   const [colorChange, setColorChange] = useState<boolean>(false);
   const [bgColor, setBgColor] = useState<boolean>(false);
@@ -82,13 +82,6 @@ const Top = () => {
                 className={`nav-item ${router.pathname === "/shop" ? "active" : ""}`}
               >
                 Shop
-              </div>
-            </Link>
-            <Link href={"/agents"}>
-              <div
-                className={`nav-item ${router.pathname === "/agents" ? "active" : ""}`}
-              >
-                Agents List
               </div>
             </Link>
             <Link href={"/community?articleCategory=FREE"}>

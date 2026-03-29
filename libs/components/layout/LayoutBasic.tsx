@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import ServiceHeader from "../headers/ServiceHeader";
 import DiscoveryHeader from "../headers/DiscoveryHeader";
 import ShopHeader from "../headers/ShopHeader";
-import AgentsHeader from "../headers/AgentsHeader";
 import CommunityHeader from "../headers/CommunityHeader";
 import MyPageHeader from "../headers/MyPageHeader";
 import CsHeader from "../headers/CsHeader";
@@ -32,12 +31,6 @@ const withLayoutBasic = (Component: any) => {
         return (
           <Stack id={"shop-top"}>
             <ShopHeader />
-          </Stack>
-        );
-      case "/agents":
-        return (
-          <Stack id={"agents-top"}>
-            <AgentsHeader />
           </Stack>
         );
       case "/community":

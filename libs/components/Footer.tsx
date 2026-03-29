@@ -163,18 +163,12 @@ const Footer = () => {
                   Discovery
                 </div>
               </Link>
+            </Box>
+            <Box className={"right-box"}>
               <Link href={"/shop"}>
                 <div className="navLink-text">
                   <FiberManualRecordOutlinedIcon style={{ fontSize: "12px" }} />{" "}
                   Shop
-                </div>
-              </Link>
-            </Box>
-            <Box className={"right-box"}>
-              <Link href={"/agents"}>
-                <div className="navLink-text">
-                  <FiberManualRecordOutlinedIcon style={{ fontSize: "12px" }} />{" "}
-                  Agents List
                 </div>
               </Link>
               <Link href={"/community?articleCategory=FREE"}>

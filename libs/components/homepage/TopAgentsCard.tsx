@@ -28,7 +28,7 @@ const TopAgentsCard = ({ item }: TopAgentsCardProps) => {
           className="message-btn"
           variant="outlined"
           component={Link}
-          href="/agents"
+          href="/service/booking"
           startIcon={<ChatBubbleOutlineRoundedIcon />}
         >
           Read More
