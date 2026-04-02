@@ -1,4 +1,4 @@
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 
 const CommunityHeader = () => {
   return (
@@ -7,20 +7,20 @@ const CommunityHeader = () => {
         <Stack className="text-area">
           <Box className={"text2"}>Community Page</Box>
           <Box className={"text1"}>
-            Read any article
+            Discover Pet Stories & Tips
             <span>
               <img className="hand-icon" src="./img/logo/Union.svg" alt="" />
             </span>
           </Box>
-          <Box className={"text3"}></Box>
+          <Box className={"text3"}>
+            Share your pet stories, ask questions, and connect with fellow pet
+            lovers.
+          </Box>
+          <Box className={"community-stats"}>
+            <Typography>🐾 12,000+ Members</Typography>
+            <Typography>📚 3,500+ Articles</Typography>
+          </Box>
         </Stack>
-        <Box>
-          <img
-            src="./img/headers/community-page-icon.png"
-            className="icon-image"
-            alt=""
-          />
-        </Box>
         <Box>
           <img className="news-logo" src="./img/headers/news-logo.png" alt="" />
         </Box>
@@ -28,6 +28,11 @@ const CommunityHeader = () => {
           <Box className={"circle-background"}>
             <img
               className="ellipse"
+              src="./img/headers/EllipseServiceHeader.png"
+              alt=""
+            />
+            <img
+              className="ellipse2"
               src="./img/headers/EllipseServiceHeader.png"
               alt=""
             />

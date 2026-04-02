@@ -5,12 +5,12 @@
     .community-top {
       flex-direction: row;
       justify-content: space-between;
-      height: 670px;
+      height: 600px;
       .text-area {
         position: relative;
         margin-top: 170px;
         width: 100%;
-        gap: 20px;
+        gap: 10px;
         .text1 {
           /* Web/36px-Display/Bold */
           font-family: Assistant;
@@ -19,7 +19,7 @@
           font-weight: 700;
           line-height: 48px; /* 133.333% */
           text-transform: uppercase;
-          color: var(--Primary-Purple3, #410075);
+          color: var(--Secondary-Green5, #a1be97);
           .hand-icon {
             margin-left: 15px;
           }
@@ -31,14 +31,25 @@
           font-style: normal;
           font-weight: 700;
           text-transform: uppercase;
-          color: var(--Secondary-Green5, #a1be97);
+          color: var(--Primary-Purple3, #410075);
         }
         .text3 {
+          width: 387px;
+          height: 70px;
+          /* Web/24px-Display/Regular */
+          font-family: Assistant;
+          font-size: 20px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 30px; /* 125% */
+          color: var(--Neutral-700, #595959);
+        }
+        .community-stats {
           width: 387px;
           height: 90px;
           /* Web/24px-Display/Regular */
           font-family: Assistant;
-          font-size: 24px;
+          font-size: 20px;
           font-style: normal;
           font-weight: 400;
           line-height: 30px; /* 125% */
@@ -68,16 +79,23 @@
         margin-top: 10px;
         .ellipse {
           position: absolute;
-          top: 156px;
+          top: 142.8px;
           left: 66px;
-          width: 90%;
+          width: 80%;
+          z-index: -1;
+        }
+        .ellipse2 {
+          position: absolute;
+          top: 228px;
+          left: 129px;
+          width: 65%;
           z-index: -1;
         }
         .dog-icon {
           position: absolute;
           border-radius: 167.764px;
-          top: 150px;
-          left: 750px;
+          top: 200px;
+          left: 650px;
           z-index: 9999;
           background: var(--Secondary-Green4, #6ab052);
           animation: scrollWiggle linear both;
@@ -87,7 +105,7 @@
         .cat-icon {
           position: absolute;
           border-radius: 213.931px;
-          top: 380px;
+          top: 280px;
           left: 30px;
           background: var(--Secondary-Red2, #c80006);
           animation: scrollWiggle linear both;
@@ -97,11 +115,10 @@
       }
       .community-image-wrapper {
         animation: productReveal 1s ease-out forwards;
-        overflow: hidden;
         .community-image {
           width: 110%;
-          margin-top: 160px;
-          margin-left: 10px;
+          margin-top: 265px;
+          margin-left: -90px;
           overflow: hidden;
 
           display: block;
