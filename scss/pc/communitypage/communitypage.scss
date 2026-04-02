@@ -387,6 +387,112 @@
         flex-wrap: wrap;
         gap: 18px;
         align-items: flex-start;
+        .free-board-news-card {
+          flex: 0 0 calc((100% - 36px) / 3);
+          max-width: calc((100% - 36px) / 3);
+          overflow: hidden;
+          border-radius: 18px;
+          border: 1px solid #e6e8ef;
+          background: #ffffff;
+          box-shadow: 0 8px 24px rgba(31, 41, 55, 0.06);
+          transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+
+          &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(31, 41, 55, 0.1);
+            img {
+              transform: scale(1.08);
+            }
+          }
+
+          .free-board-news-media {
+            position: relative;
+            height: 184px;
+            overflow: hidden;
+            background: #eceff5;
+
+            .free-board-news-image {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              transition: transform 0.4s ease;
+            }
+
+            .free-board-news-date {
+              position: absolute;
+              top: 14px;
+              right: 14px;
+              height: 34px;
+              padding: 0 14px;
+              border-radius: 999px;
+              background: rgba(255, 255, 255, 0.96);
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 700;
+              color: #4c5565;
+              box-shadow: 0 8px 20px rgba(25, 35, 60, 0.08);
+            }
+          }
+
+          .free-board-news-body {
+            gap: 5px;
+            padding: 16px 16px 14px;
+
+            .free-board-news-title {
+              font-family: $font;
+              font-size: 18px;
+              font-weight: 800;
+              line-height: 1.35;
+              color: #232938;
+              display: -webkit-box;
+              line-clamp: 2;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+            }
+
+            .free-board-news-description {
+              min-height: 55px;
+              font-family: $font;
+              font-size: 15px;
+              font-weight: 500;
+              line-height: 1.55;
+              color: #687184;
+              display: -webkit-box;
+              line-clamp: 3;
+              -webkit-line-clamp: 3;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+            }
+
+            .free-board-news-meta {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              gap: 16px;
+
+              .free-board-news-stat {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-family: $font;
+                font-size: 14px;
+                font-weight: 700;
+                color: #6d7485;
+
+                svg {
+                  font-size: 18px;
+                  color: #8d96a7;
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
