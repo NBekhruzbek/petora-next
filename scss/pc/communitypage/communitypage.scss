@@ -1,3 +1,7 @@
+@use "../../variables.scss" as *;
+
+@use "../../variables.scss" as *;
+
 #pc-wrap {
   #community-top {
     background-color: #f2e2ff;
@@ -13,7 +17,7 @@
         gap: 10px;
         .text1 {
           /* Web/36px-Display/Bold */
-          font-family: Assistant;
+          font-family: $font;
           font-size: 36px;
           font-style: normal;
           font-weight: 700;
@@ -26,7 +30,7 @@
         }
         .text2 {
           /* Web/36px-Display/Bold */
-          font-family: Assistant;
+          font-family: $font;
           font-size: 48px;
           font-style: normal;
           font-weight: 700;
@@ -37,7 +41,7 @@
           width: 387px;
           height: 70px;
           /* Web/24px-Display/Regular */
-          font-family: Assistant;
+          font-family: $font;
           font-size: 20px;
           font-style: normal;
           font-weight: 400;
@@ -48,7 +52,7 @@
           width: 387px;
           height: 90px;
           /* Web/24px-Display/Regular */
-          font-family: Assistant;
+          font-family: $font;
           font-size: 20px;
           font-style: normal;
           font-weight: 400;
@@ -135,7 +139,256 @@
   .community-page {
     position: relative;
     width: 100%;
-    height: auto;
+    min-height: 100vh;
+    padding: 100px 0 90px;
+    background: #ffffff;
+
+    .container {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      align-items: start;
+      gap: 48px;
+    }
+
+    .community-sidebar {
+      position: sticky;
+      top: 110px;
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      width: 240px;
+      min-height: 360px;
+      border-radius: 28px;
+      border: 1px solid #ebeaf2;
+      background: #ffffff;
+      box-shadow: 0 16px 50px rgba(24, 31, 56, 0.06);
+      overflow: hidden;
+
+      .community-sidebar-brand {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 24px 20px 22px;
+        border-bottom: 1px solid #ececf3;
+
+        .community-brand-icon {
+          width: 38px;
+          height: 38px;
+          border-radius: 14px;
+          background: linear-gradient(#ead7f9, #d80bfd) padding-box;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 10px 22px rgba(235, 74, 156, 0.2);
+
+          svg {
+            font-size: 21px;
+            color: #ffffff;
+          }
+        }
+
+        .community-brand-copy {
+          gap: 2px;
+          padding-top: 1px;
+
+          .community-brand-title {
+            font-family: $font;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #1d2433;
+          }
+
+          .community-brand-subtitle {
+            font-family: $font;
+            font-size: 13px;
+            font-weight: 500;
+            color: #7c8597;
+          }
+        }
+      }
+
+      .community-category-list {
+        gap: 8px;
+        padding: 18px 12px;
+
+        .community-category-btn {
+          justify-content: flex-start;
+          min-height: 46px;
+          padding: 12px 14px;
+          border-radius: 14px;
+          color: #505a6e;
+          font-family: $font;
+          font-size: 15px;
+          font-weight: 700;
+          line-height: 1.2;
+          text-transform: none;
+
+          .MuiButton-startIcon {
+            margin-right: 12px;
+
+            svg {
+              font-size: 20px;
+            }
+          }
+
+          &:hover {
+            background: #f6f6fb;
+          }
+
+          &.active {
+            color: #111827; /* aniqroq, kontrast yaxshi */
+            background: linear-gradient(
+              90deg,
+              #f5f3ff,
+              #fdf2f8
+            ); /* soft gradient */
+
+            border: 1px solid rgba(168, 85, 247, 0.3); /* purple accent */
+
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* yengil shadow */
+
+            font-weight: 600;
+
+            transition: all 0.25s ease;
+          }
+        }
+      }
+
+      .community-sidebar-footer {
+        margin-top: auto;
+        padding: 18px 20px 22px;
+        border-top: 1px solid #ececf3;
+
+        .community-footer-title {
+          font-family: $font;
+          font-size: 14px;
+          font-weight: 700;
+          color: #4b5568;
+        }
+
+        .community-footer-copy {
+          margin-top: 4px;
+          font-family: $font;
+          font-size: 13px;
+          font-weight: 500;
+          color: #9098a9;
+        }
+      }
+    }
+
+    .community-content {
+      align-self: start;
+      gap: 24px;
+      padding: 6px 0 0;
+
+      .community-content-top {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+
+        .community-content-heading {
+          gap: 8px;
+
+          .community-board-title {
+            font-family: $font;
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #202635;
+            letter-spacing: 0.2px;
+          }
+
+          .community-board-subtitle {
+            font-family: $font;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.45;
+            color: #667085;
+          }
+        }
+
+        .community-write-btn {
+          min-width: 110px;
+          height: 46px;
+          border: 1.5px solid #d8d2e6;
+
+          padding: 10px 30px;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+
+          border-radius: 999px;
+          border: 2px solid transparent;
+          background:
+            linear-gradient(#cda6ed, #cb33df) padding-box,
+            linear-gradient(
+                120deg,
+                #e83333 0%,
+                #d3b7ff 35%,
+                #ffffff 55%,
+                #b56cff 75%,
+                #5f18b7 100%
+              )
+              border-box;
+          background-size:
+            100% 100%,
+            250% 250%;
+          background-position:
+            0 0,
+            0% 50%;
+          animation: ctaBorderFlow 3.6s linear infinite;
+          color: #fff;
+          font-family: $font;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 1;
+          text-transform: none;
+          box-shadow: none;
+          transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+
+          &:hover {
+            background:
+              linear-gradient(#d3acf2, #8527d3) padding-box,
+              linear-gradient(
+                  120deg,
+                  #c27bff 0%,
+                  #f3e4ff 45%,
+                  #ffffff 60%,
+                  #d190ff 78%,
+                  #7f2ed8 100%
+                )
+                border-box;
+            box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+            transform: translateY(-1px);
+          }
+        }
+      }
+
+      .community-mobile-filter {
+        display: none;
+
+        .MuiOutlinedInput-root {
+          border-radius: 14px;
+          background: #ffffff;
+          font-family: $font;
+        }
+      }
+
+      .community-card-flex {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 18px;
+        align-items: flex-start;
+      }
+    }
   }
 }
 
