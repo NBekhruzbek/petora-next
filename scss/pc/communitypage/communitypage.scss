@@ -1,15 +1,18 @@
 @use "../../variables.scss" as *;
 
-@use "../../variables.scss" as *;
-
 #pc-wrap {
   #community-top {
+    position: relative;
+    z-index: 2;
+    overflow: visible;
     background-color: #f2e2ff;
 
     .community-top {
+      position: relative;
       flex-direction: row;
       justify-content: space-between;
       height: 600px;
+      overflow: visible;
       .text-area {
         position: relative;
         margin-top: 170px;
@@ -118,18 +121,26 @@
         }
       }
       .community-image-wrapper {
+        position: relative;
+        width: 640px;
+        min-height: 100%;
+        flex-shrink: 0;
+        overflow: visible;
+        z-index: 2;
         animation: productReveal 1s ease-out forwards;
+
         .community-image {
-          width: 110%;
-          margin-top: 265px;
-          margin-left: -90px;
-          overflow: hidden;
-
+          position: absolute;
+          right: -198px;
+          bottom: -62px;
+          width: 140%;
+          max-width: none;
+          margin-top: 0;
+          margin-left: 0;
+          overflow: visible;
           display: block;
-
           opacity: 0;
           transform: translateY(60px);
-
           animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
           will-change: transform, opacity;
         }
