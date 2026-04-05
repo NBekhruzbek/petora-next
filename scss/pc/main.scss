@@ -93,18 +93,39 @@
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
+
+            &:hover .join-box {
+              transform: scale(1.015);
+              background-color: rgba(242, 226, 255, 0.6);
+              border-color: #595959;
+              box-shadow: 0 10px 24px rgba(33, 1, 60, 0.18);
+            }
+            &:hover .join-box svg,
+            &:hover .join-box span {
+              color: #595959;
+              transform: scale(1.05);
+            }
             .join-box {
               width: 184px;
-              height: 47px;
+              height: 40px;
               display: flex;
               align-items: center;
               justify-content: center;
               border-radius: 60px;
+              color: #595959;
               border: 1px solid #595959;
               cursor: pointer;
+              transition:
+                transform 0.35s ease,
+                background 0.25s ease,
+                border-color 0.25s ease,
+                box-shadow 0.35s ease;
               svg {
-                color: "primary";
                 margin-right: 10px;
+                display: inline-block;
+                transition:
+                  color 0.25s ease,
+                  transform 0.28s ease;
               }
               span {
                 font-family: $font;
@@ -112,7 +133,10 @@
                 font-style: normal;
                 font-weight: 600;
                 line-height: normal;
-                color: "primary";
+                display: inline-block;
+                transition:
+                  color 0.25s ease,
+                  transform 0.28s ease;
               }
             }
             .login-user {
@@ -122,6 +146,7 @@
                 border-radius: 50%;
                 object-fit: cover;
                 margin-right: 80px;
+                cursor: pointer;
               }
             }
           }

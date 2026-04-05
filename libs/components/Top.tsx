@@ -1,5 +1,5 @@
 import { Logout } from "@mui/icons-material";
-import { Box, Menu, MenuItem, Stack, Typography } from "@mui/material";
+import { Box, Menu, MenuItem, Stack } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import React from "react";
 import Basket from "./Basket";
 
 const Top = () => {
-  const authMember = true;
+  const authMember = false;
   const router = useRouter();
   const [colorChange, setColorChange] = useState<boolean>(false);
   const [bgColor, setBgColor] = useState<boolean>(false);
@@ -35,6 +35,14 @@ const Top = () => {
     } else {
       setColorChange(false);
     }
+  };
+
+  const handleLogoutMenuOpen = (event: React.MouseEvent<HTMLDivElement>) => {
+    setLogoutAnchor(event.currentTarget);
+  };
+
+  const handleLogoutMenuClose = () => {
+    setLogoutAnchor(null);
   };
 
   if (typeof window !== "undefined") {
@@ -115,7 +123,13 @@ const Top = () => {
           <Box component={"div"} className="user-box">
             {authMember ? (
               <>
-                <div className={"login-user"}>
+                <div
+                  className={"login-user"}
+                  onClick={handleLogoutMenuOpen}
+                  aria-controls={logoutOpen ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={logoutOpen ? "true" : undefined}
+                >
                   <img
                     src={
                       authMember
@@ -130,15 +144,54 @@ const Top = () => {
                   id="basic-menu"
                   anchorEl={logoutAnchor}
                   open={logoutOpen}
-                  onClose={() => {
-                    setLogoutAnchor(null);
+                  onClose={handleLogoutMenuClose}
+                  disableScrollLock
+                  sx={{ mt: "5px", zIndex: 12000 }}
+                  PaperProps={{
+                    sx: {
+                      border: "1px solid rgba(65, 0, 117, 0.14)",
+                      borderRadius: "18px",
+                      boxShadow: "0 18px 40px rgba(65, 0, 117, 0.14)",
+                      overflow: "hidden",
+                    },
                   }}
-                  sx={{ mt: "5px" }}
+                  MenuListProps={{
+                    sx: {
+                      p: 1,
+                      background:
+                        "linear-gradient(180deg, #fffdfd 0%, #f7efff 100%)",
+                    },
+                  }}
                 >
-                  <MenuItem>
+                  <MenuItem
+                    onClick={handleLogoutMenuClose}
+                    sx={{
+                      minHeight: "44px",
+                      px: "14px",
+                      borderRadius: "12px",
+                      fontSize: "14px",
+                      fontWeight: 700,
+                      lineHeight: 1.2,
+                      color: "#4a2a64",
+                      transition:
+                        "background-color 0.2s ease, color 0.2s ease, transform 0.2s ease",
+                      "&:hover": {
+                        backgroundColor: "rgba(65, 0, 117, 0.08)",
+                        color: "#410075",
+                        transform: "translateX(2px)",
+                      },
+                      "&:hover .MuiSvgIcon-root": {
+                        color: "#410075",
+                      },
+                    }}
+                  >
                     <Logout
                       fontSize="small"
-                      style={{ color: "blue", marginRight: "10px" }}
+                      sx={{
+                        mr: "10px",
+                        color: "#8a4dc1",
+                        transition: "color 0.2s ease",
+                      }}
                     />
                     Logout
                   </MenuItem>
