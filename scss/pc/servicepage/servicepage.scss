@@ -425,11 +425,10 @@
           align-items: flex-start;
           gap: 36px;
           .category {
-            margin-top: 50px;
-            width: 320px;
-            flex: 0 0 320px;
+            width: 250px;
+            flex: 0 0 300px;
             .search-box {
-              width: 320px;
+              width: 280px;
               height: 46px;
               padding: 4px;
               border-radius: 12px;
@@ -474,29 +473,20 @@
               }
             }
             .divider {
-              width: 322px;
+              width: 282px;
               height: 2px;
-              margin-top: 25px;
-              margin-bottom: 25px;
+              margin-top: 20px;
+              margin-bottom: 20px;
 
               background-color: #9b9a9a;
             }
             .price-range {
-              width: 320px;
+              width: 280px;
               background: #fff;
-              .price-title {
-                /* Web/28px-Header/Bold */
-                font-family: $font;
-                font-size: 22px;
-                font-style: normal;
-                font-weight: 600;
-                line-height: 36px; /* 128.571% */
-                color: #000;
-              }
               .price-line {
                 color: #eab308;
                 height: 4px;
-                padding: 10px 0;
+                padding: 8px 0;
 
                 .MuiSlider-rail,
                 .MuiSlider-track {
@@ -512,12 +502,13 @@
               }
               .selected-price {
                 margin-top: 1px;
+                font-size: 14px;
                 text-align: center;
                 color: #595959;
               }
             }
             .category-section {
-              width: 320px;
+              width: 280px;
               gap: 14px;
               background: #fff;
               &.price-section {
@@ -536,15 +527,15 @@
                 .category-title {
                   /* Web/28px-Header/Bold */
                   font-family: $font;
-                  font-size: 22px;
+                  font-size: 20px;
                   font-style: normal;
                   font-weight: 600;
                   line-height: 36px; /* 128.571% */
                   color: #000;
                 }
                 .category-toggle {
-                  width: 14px;
-                  height: 14px;
+                  width: 12px;
+                  height: 12px;
                   border-right: 2px solid #111;
                   border-top: 2px solid #111;
                   transform: rotate(135deg);
@@ -574,8 +565,8 @@
                   cursor: pointer;
                   .category-checkbox {
                     position: relative;
-                    width: 28px;
-                    height: 28px;
+                    width: 24px;
+                    height: 24px;
                     border-radius: 8px;
                     background: #fff;
                     border: 2px solid #111;
@@ -584,16 +575,16 @@
                     content: "";
                     position: absolute;
                     width: 8px;
-                    height: 14px;
+                    height: 12px;
                     border: solid transparent;
-                    border-width: 0 3px 3px 0;
-                    left: 9px;
-                    top: 4px;
+                    border-width: 0 2.5px 2.5px 0;
+                    left: 6.5px;
+                    top: 3px;
                     transform: rotate(45deg);
                   }
                   .category-label {
                     font-family: $font;
-                    font-size: 20px;
+                    font-size: 18px;
                     font-style: normal;
                     font-weight: 600;
                     line-height: 1.2;
@@ -609,7 +600,7 @@
               }
             }
             .liked-agents-section {
-              width: 320px;
+              width: 280px;
               background: #fff;
               gap: 14px;
               .likes-header {
@@ -620,15 +611,15 @@
                 .likes-title {
                   /* Web/28px-Header/Bold */
                   font-family: $font;
-                  font-size: 22px;
+                  font-size: 20px;
                   font-style: normal;
                   font-weight: 600;
                   line-height: 36px; /* 128.571% */
                   color: #000;
                 }
                 .likes-toggle {
-                  width: 14px;
-                  height: 14px;
+                  width: 12px;
+                  height: 12px;
                   border-right: 2px solid #111;
                   border-top: 2px solid #111;
                   transform: rotate(135deg);
@@ -658,8 +649,8 @@
                   cursor: pointer;
                   .likes-checkbox {
                     position: relative;
-                    width: 28px;
-                    height: 28px;
+                    width: 24px;
+                    height: 24px;
                     border-radius: 8px;
                     background: #fff;
                     border: 2px solid #111;
@@ -668,16 +659,16 @@
                     content: "";
                     position: absolute;
                     width: 8px;
-                    height: 14px;
+                    height: 12px;
                     border: solid transparent;
-                    border-width: 0 3px 3px 0;
-                    left: 9px;
-                    top: 4px;
+                    border-width: 0 2.5px 2.5px 0;
+                    left: 6.5px;
+                    top: 3px;
                     transform: rotate(45deg);
                   }
                   .likes-label {
                     font-family: $font;
-                    font-size: 20px;
+                    font-size: 18px;
                     font-style: normal;
                     font-weight: 600;
                     line-height: 1.2;
@@ -692,7 +683,7 @@
                 }
                 .likes-divider {
                   height: 2px;
-                  margin-top: 20px;
+                  margin-top: 18px;
                   background-color: #9b9a9a;
                 }
               }
@@ -704,7 +695,6 @@
             flex-direction: column;
             padding-top: 6px;
             justify-content: flex-end;
-            margin-top: 50px;
             margin-left: auto;
             align-self: flex-start;
             gap: 22px;
@@ -758,7 +748,7 @@
             width: 100%;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 30px;
+            gap: 20px;
             min-height: 700px;
             align-content: start;
           }
@@ -806,10 +796,10 @@
           }
           .agent-media {
             position: relative;
-            padding: 18px 0 6px;
+            padding: 15px 0 5px;
             .agent-image-wrap {
-              width: 140px;
-              height: 140px;
+              width: 150px;
+              height: 150px;
               margin: 0 auto;
               background: #e9e4e1;
               overflow: visible;

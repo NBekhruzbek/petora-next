@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -109,6 +109,7 @@ const Agents = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("new");
+  const agentsTopRef = useRef<HTMLDivElement | null>(null);
 
   const [agentSearch, setAgentSearch] = useState({
     page: 1,
@@ -160,8 +161,18 @@ const Agents = () => {
     setSearchText((prev) => prev.trim());
   };
 
-  const paginationHandler = (e: ChangeEvent<any>, value: number) => {
-    setAgentSearch((prev) => ({ ...prev, page: value }));
+  const paginationHandler = (_event: ChangeEvent<unknown>, page: number) => {
+    setAgentSearch((prev) => ({ ...prev, page }));
+
+    if (!agentsTopRef.current) return;
+
+    const scrollTarget =
+      window.scrollY + agentsTopRef.current.getBoundingClientRect().top - 210;
+
+    window.scrollTo({
+      top: Math.max(0, scrollTarget),
+      behavior: "smooth",
+    });
   };
 
   const filteredAgents = useMemo(() => {
@@ -226,6 +237,13 @@ const Agents = () => {
     1,
     Math.ceil(sortedAgents.length / agentSearch.limit),
   );
+
+  useEffect(() => {
+    if (agentSearch.page > totalPages) {
+      setAgentSearch((prev) => ({ ...prev, page: totalPages }));
+    }
+  }, [agentSearch.page, totalPages]);
+
   const startIndex = (agentSearch.page - 1) * agentSearch.limit;
   const pagedAgents = sortedAgents.slice(
     startIndex,
@@ -341,7 +359,7 @@ const Agents = () => {
               </Stack>
             </Stack>
           </Stack>
-          <Stack className="sorting-agents">
+          <Stack className="sorting-agents" ref={agentsTopRef}>
             <Box className="filter-section-wrap">
               <Select
                 value={sortBy}
@@ -376,7 +394,7 @@ const Agents = () => {
                   }}
                 >
                   <img
-                    src="/icons/no-data.png"
+                    src="/img/icons/no-data.png"
                     style={{ width: 450, height: 450, marginTop: "120px" }}
                   />
                 </Box>
