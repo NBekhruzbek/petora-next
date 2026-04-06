@@ -23,7 +23,7 @@ type ShopProductItem = ProductItem & {
   createdAt: string;
 };
 
-type SortOption = "new" | "rating" | "sold" | "price-low";
+type SortOption = "new" | "rating" | "most-liked" | "sold" | "price-low";
 
 const initialProducts: ShopProductItem[] = [
   {
@@ -453,6 +453,9 @@ const Products = () => {
       case "rating":
         next.sort((a, b) => b.rating - a.rating);
         break;
+      case "most-liked":
+        next.sort((a, b) => b.likesCount - a.likesCount);
+        break;
       case "sold":
         next.sort((a, b) => b.sold - a.sold);
         break;
@@ -670,6 +673,7 @@ const Products = () => {
               >
                 <MenuItem value="new">New</MenuItem>
                 <MenuItem value="rating">Highest rating</MenuItem>
+                <MenuItem value="most-liked">Most Liked</MenuItem>
                 <MenuItem value="sold">Best selling</MenuItem>
                 <MenuItem value="price-low">Price: Low to High</MenuItem>
               </Select>

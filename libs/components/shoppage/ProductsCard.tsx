@@ -17,7 +17,7 @@ export type ProductItem = {
   discountedPrice: number;
   price: number;
   discountPercent: number;
-  likesCount?: number;
+  likesCount: number;
   liked?: boolean;
 };
 
@@ -35,8 +35,7 @@ const ProductsCard = ({ item, onToggleLike }: ProductsProps) => {
     typeof item.discountPercent === "number"
       ? item.discountPercent
       : Math.round(((item.price - item.discountedPrice) / item.price) * 100);
-  const likesCount =
-    typeof item.likesCount === "number" ? item.likesCount : 0;
+  const likesCount = typeof item.likesCount === "number" ? item.likesCount : 0;
 
   const handleCardClick = () => {
     void router.push(productDetailHref);
