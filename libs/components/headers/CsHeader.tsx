@@ -1,24 +1,50 @@
 import { Box, Stack } from "@mui/material";
+import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
+import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
+import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
+import ChatRoundedIcon from "@mui/icons-material/ChatRounded";
 
 const CsHeader = () => {
   return (
     <Stack className="container">
       <Stack className="cs-top">
         <Stack className="text-area">
-          <Box className={"text2"}>CS Page</Box>
-          <Box className={"text1"}>
-            If you need help, contact us 24/7!
-            <span>
-              <img className="hand-icon" src="./img/logo/Union.svg" alt="" />
-            </span>
+          <Stack className="support-badge" direction="row">
+            <SupportAgentRoundedIcon className="badge-icon" />
+            <Box>Customer Support</Box>
+          </Stack>
+
+          <Box className="hero-title">
+            Need help? We've got you{" "}
+            <span className="accent-line">
+              covered 24/7 <img src="./img/logo/Union.svg" alt="" />
+            </span>{" "}
           </Box>
-          <Box className={"text3"}></Box>
+
+          <Box className="text3">
+            Get support for your orders, pets, or account. Our team is always
+            ready to assist you.
+          </Box>
+
+          <Stack className="support-highlights" direction="row">
+            <Stack className="support-pill-wrap">
+              <Stack className="support-pill" direction="row">
+                <AccessTimeRoundedIcon className="pill-icon purple" />
+                <Box>24/7 Support</Box>
+              </Stack>
+              <Stack className="support-pill" direction="row">
+                <BoltRoundedIcon className="pill-icon gold" />
+                <Box>Fast Response</Box>
+              </Stack>
+            </Stack>
+            <Stack className="support-pill" direction="row">
+              <ChatRoundedIcon className="pill-icon lilac" />
+              <Box>Friendly Service</Box>
+            </Stack>
+          </Stack>
         </Stack>
         <Box>
-          <img src="./img/headers/cs-image.png" className="cs-image" alt="" />
-        </Box>
-        <Box>
-          <img className="faq-icon" src="./img/headers/faq-icon.png" alt="" />
+          <img className="typing-icon" src="./img/headers/typing.png" alt="" />
         </Box>
         <Stack sx={{ position: "relative" }}>
           <Box className={"circle-background"}>

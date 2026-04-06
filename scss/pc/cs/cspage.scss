@@ -3,46 +3,112 @@
     background-color: #f2e2ff;
 
     .cs-top {
+      position: relative;
       flex-direction: row;
       justify-content: space-between;
-      height: 670px;
+      height: 630px;
+      align-items: flex-start;
+
       .text-area {
         position: relative;
-        margin-top: 190px;
+        z-index: 3;
+        margin-top: 188px;
         width: 100%;
-        gap: 20px;
-        .text1 {
-          /* Web/36px-Display/Bold */
+        max-width: 620px;
+        gap: 28px;
+
+        .support-badge {
+          width: fit-content;
+          align-items: center;
+          gap: 12px;
+          padding: 8px 15px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.82);
+          box-shadow:
+            0 16px 30px rgba(135, 94, 201, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.75);
+          color: var(--Secondary-Green5, #a1be97);
           font-family: Assistant;
-          font-size: 36px;
+          font-size: 22px;
           font-style: normal;
           font-weight: 700;
-          line-height: 48px; /* 133.333% */
-          text-transform: uppercase;
-          color: var(--Primary-Purple3, #410075);
-          .hand-icon {
-            margin-left: 15px;
+          line-height: 1;
+
+          .badge-icon {
+            font-size: 32px;
+            color: #6b2cc7;
           }
         }
-        .text2 {
-          /* Web/36px-Display/Bold */
-          font-family: Assistant;
+
+        .hero-title {
+          gap: 6px;
+          color: #24163e;
+          font-family:
+            "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia,
+            serif;
           font-size: 48px;
           font-style: normal;
           font-weight: 700;
-          text-transform: uppercase;
-          color: var(--Secondary-Green5, #a1be97);
+          line-height: 1.1;
+          letter-spacing: -1px;
+
+          .accent-line {
+            color: #6826c9;
+          }
         }
+
         .text3 {
-          width: 387px;
-          height: 90px;
-          /* Web/24px-Display/Regular */
+          max-width: 610px;
           font-family: Assistant;
-          font-size: 24px;
+          font-size: 22px;
           font-style: normal;
           font-weight: 400;
-          line-height: 30px; /* 125% */
-          color: var(--Neutral-700, #595959);
+          line-height: 1.45;
+          color: #463d61;
+        }
+
+        .support-highlights {
+          flex-wrap: wrap;
+          gap: 18px;
+          max-width: 720px;
+
+          .support-pill-wrap {
+            flex-direction: row;
+            gap: 12px;
+          }
+          .support-pill {
+            min-width: 208px;
+            align-items: center;
+            gap: 16px;
+            padding: 7px 15px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow:
+              0 18px 34px rgba(126, 88, 184, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.85);
+            color: #2f2448;
+            font-family: Assistant;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 1;
+
+            .pill-icon {
+              font-size: 26px;
+            }
+
+            .pill-icon.purple {
+              color: #7a59f4;
+            }
+
+            .pill-icon.gold {
+              color: #ffb53f;
+            }
+
+            .pill-icon.lilac {
+              color: #a279ff;
+            }
+          }
         }
       }
       .cs-image {
@@ -53,24 +119,23 @@
         z-index: 1;
         animation: floatSide 4s ease-in-out infinite;
       }
-      .faq-icon {
+      .typing-icon {
         position: absolute;
-        width: 250px;
-        top: 130px;
+        width: 70px;
+        top: 160px;
+        left: 628px;
         z-index: 2;
-        animation: float 3s ease-in-out infinite;
-        z-index: 1;
       }
       .circle-background {
         position: initial;
         width: 826px;
         z-index: 0;
-        margin-top: 10px;
+        margin-top: 8.5px;
         .ellipse {
           position: absolute;
-          top: 156px;
-          left: 66px;
-          width: 90%;
+          top: 139px;
+          left: 86px;
+          width: 86%;
           z-index: -1;
         }
         .dog-icon {
@@ -96,14 +161,13 @@
         }
       }
       .cs-image-wrapper {
-        overflow: hidden;
         .cs-main-image {
-          width: 95%;
+          width: 88%;
           margin-top: 137px;
-          margin-left: 45px;
-          overflow: hidden;
+          margin-left: 65px;
           display: block;
-
+          filter: brightness(0.95) contrast(1.05)
+            drop-shadow(38px 15px 15px rgba(0, 0, 0, 0.38));
           opacity: 0;
           transform: translateY(60px);
 
