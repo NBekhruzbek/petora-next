@@ -18,6 +18,8 @@ const initialProducts: ShopProductItem[] = [
     sold: 900,
     discountedPrice: 600,
     price: 630.44,
+    discountPercent: 5,
+    likesCount: 743,
     liked: false,
     categories: ["Foods", "Health"],
     petType: "Dogs",
@@ -32,6 +34,8 @@ const initialProducts: ShopProductItem[] = [
     sold: 540,
     discountedPrice: 85,
     price: 120,
+    discountPercent: 29,
+    likesCount: 1560,
     liked: true,
     categories: ["Toys"],
     petType: "Dogs",
@@ -46,6 +50,8 @@ const initialProducts: ShopProductItem[] = [
     sold: 470,
     discountedPrice: 150,
     price: 180,
+    discountPercent: 17,
+    likesCount: 688,
     liked: false,
     categories: ["Toys", "Accessories"],
     petType: "Cats",
@@ -60,6 +66,8 @@ const initialProducts: ShopProductItem[] = [
     sold: 220,
     discountedPrice: 260,
     price: 310,
+    discountPercent: 16,
+    likesCount: 1195,
     liked: true,
     categories: ["Health", "Accessories"],
     petType: "Dogs",
@@ -74,6 +82,8 @@ const initialProducts: ShopProductItem[] = [
     sold: 156,
     discountedPrice: 95,
     price: 140,
+    discountPercent: 32,
+    likesCount: 437,
     liked: false,
     categories: ["Clothes"],
     petType: "Dogs",
@@ -88,7 +98,14 @@ const RelatedProducts = () => {
     setProducts((prev) =>
       prev.map((product) =>
         product.id === productId
-          ? { ...product, liked: !product.liked }
+          ? {
+              ...product,
+              liked: !product.liked,
+              likesCount: Math.max(
+                0,
+                (product.likesCount ?? 0) + (product.liked ? -1 : 1),
+              ),
+            }
           : product,
       ),
     );
@@ -100,7 +117,7 @@ const RelatedProducts = () => {
           Other Products may You Like <img src="/img/logo/Union.svg" alt="" />
         </Box>
         <Stack className="product-cards">
-          {initialProducts.map((product) => {
+          {products.map((product) => {
             return (
               <ProductsCard
                 key={product.id}

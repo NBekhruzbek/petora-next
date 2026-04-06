@@ -16,6 +16,8 @@ export type ProductItem = {
   sold: number;
   discountedPrice: number;
   price: number;
+  discountPercent: number;
+  likesCount?: number;
   liked?: boolean;
 };
 
@@ -29,6 +31,12 @@ const productDetailHref = "/shop/detail";
 
 const ProductsCard = ({ item, onToggleLike }: ProductsProps) => {
   const router = useRouter();
+  const discountPercent =
+    typeof item.discountPercent === "number"
+      ? item.discountPercent
+      : Math.round(((item.price - item.discountedPrice) / item.price) * 100);
+  const likesCount =
+    typeof item.likesCount === "number" ? item.likesCount : 0;
 
   const handleCardClick = () => {
     void router.push(productDetailHref);
@@ -61,19 +69,24 @@ const ProductsCard = ({ item, onToggleLike }: ProductsProps) => {
       tabIndex={0}
     >
       <Box className="card-image-wrap">
-        <Box
-          component="button"
-          type="button"
-          className="like-toggle"
-          onClick={handleLikeClick}
-          aria-label={item.liked ? "Remove from favorites" : "Add to favorites"}
-        >
-          {item.liked ? (
-            <FavoriteRoundedIcon className="liked" />
-          ) : (
-            <FavoriteBorderRoundedIcon className="unliked" />
-          )}
-        </Box>
+        <Stack className="like-meta">
+          <Box
+            component="button"
+            type="button"
+            className="like-toggle"
+            onClick={handleLikeClick}
+            aria-label={
+              item.liked ? "Remove from favorites" : "Add to favorites"
+            }
+          >
+            {item.liked ? (
+              <FavoriteRoundedIcon className="liked" />
+            ) : (
+              <FavoriteBorderRoundedIcon className="unliked" />
+            )}
+          </Box>
+          <Box className="like-count">{likesCount.toLocaleString()}</Box>
+        </Stack>
         {item.petType ? (
           <Box className="pet-type-badge">{item.petType}</Box>
         ) : null}
@@ -103,6 +116,7 @@ const ProductsCard = ({ item, onToggleLike }: ProductsProps) => {
           <Box className="discounted-price">
             {formatPrice(item.discountedPrice)}
           </Box>
+          <Box className="discount-percent">-{discountPercent}%</Box>
           <Box className="origin-price">{formatPrice(item.price)}</Box>
         </Stack>
 
@@ -114,7 +128,7 @@ const ProductsCard = ({ item, onToggleLike }: ProductsProps) => {
             href={productDetailHref}
             onClick={stopCardClickPropagation}
           >
-            Buy Now
+            See Product
           </Button>
           <Button className="cart-btn" onClick={stopCardClickPropagation}>
             <ShoppingCartOutlinedIcon />
