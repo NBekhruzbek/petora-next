@@ -16,6 +16,7 @@ import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import FreeBoardNewsCard from "@/libs/components/community/FreeBoardNewsCard";
+import QNACard from "@/libs/components/community/QNACard";
 
 type CategoryKey = "FREE" | "NEWS" | "QNA";
 
@@ -273,9 +274,13 @@ const Community: NextPage = () => {
           </Stack>
 
           <Stack className="community-card-flex">
-            {activePosts.map((post) => (
-              <FreeBoardNewsCard key={post.id} item={post} />
-            ))}
+            {activeCategory === "QNA" ? (
+              <QNACard />
+            ) : (
+              activePosts.map((post) => (
+                <FreeBoardNewsCard key={post.id} item={post} />
+              ))
+            )}
           </Stack>
         </Stack>
       </Stack>
