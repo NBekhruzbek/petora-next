@@ -11,15 +11,13 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
-import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
-import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import FreeBoardNewsCard from "@/libs/components/community/FreeBoardNewsCard";
 
-type CategoryKey = "FREE" | "RECOMMENDATION" | "NEWS" | "HUMOR" | "QNA";
+type CategoryKey = "FREE" | "NEWS" | "QNA";
 
 type CommunityPost = {
   id: string;
@@ -45,20 +43,10 @@ const categoryMeta: Record<
       "Share your thoughts, ideas, and experiences with the community",
     icon: <ChatBubbleOutlineRoundedIcon />,
   },
-  RECOMMENDATION: {
-    label: "Recommendation",
-    description: "Discover curated recommendations from the community",
-    icon: <Groups2OutlinedIcon />,
-  },
   NEWS: {
     label: "News",
     description: "Stay updated with the latest stories and announcements",
     icon: <FeedOutlinedIcon />,
-  },
-  HUMOR: {
-    label: "Humor",
-    description: "Enjoy lighthearted community posts, fun stories, and memes",
-    icon: <SentimentSatisfiedAltOutlinedIcon />,
   },
   QNA: {
     label: "Q&A",
@@ -110,38 +98,6 @@ const communityPosts: Record<CategoryKey, CommunityPost[]> = {
       likes: 51,
     },
   ],
-  RECOMMENDATION: [
-    {
-      id: "rec-1",
-      title: "Creative Design Workspace Setup Guide",
-      description:
-        "Transform your workspace into a creative haven with these design tips, organization ideas, and productivity hacks.",
-      date: "Mar 26, 2026",
-      image: "/img/services/training.jpg",
-      views: 2156,
-      likes: 143,
-    },
-    {
-      id: "rec-2",
-      title: "Team Brainstorming: Maximizing Creative Output",
-      description:
-        "Learn effective brainstorming techniques that actually generate innovative ideas and lead to clearer execution.",
-      date: "Mar 23, 2026",
-      image: "/img/services/grooming.jpg",
-      views: 1876,
-      likes: 134,
-    },
-    {
-      id: "rec-3",
-      title: "Digital Nomad Life: Working Remotely from Anywhere",
-      description:
-        "A comprehensive guide to living the digital nomad lifestyle while maintaining productivity and work-life balance.",
-      date: "Mar 20, 2026",
-      image: "/img/agents/topAgent1.jpg",
-      views: 5678,
-      likes: 456,
-    },
-  ],
   NEWS: [
     {
       id: "news-1",
@@ -172,38 +128,6 @@ const communityPosts: Record<CategoryKey, CommunityPost[]> = {
       image: "/img/services/walking.jpg",
       views: 801,
       likes: 39,
-    },
-  ],
-  HUMOR: [
-    {
-      id: "humor-1",
-      title: "That One Teammate Who Says “Quick Call?” at 5:58 PM",
-      description:
-        "A very serious community discussion about the universal fear of the late-day surprise meeting invitation.",
-      date: "Mar 31, 2026",
-      image: "/img/agents/topAgent4.jpg",
-      views: 2320,
-      likes: 311,
-    },
-    {
-      id: "humor-2",
-      title: "Mood Board vs. Reality Board",
-      description:
-        "The design looked premium in Figma. The deployment looked... educational.",
-      date: "Mar 28, 2026",
-      image: "/img/agents/topAgent6.jpg",
-      views: 1708,
-      likes: 201,
-    },
-    {
-      id: "humor-3",
-      title: "Remote Work Bingo: “You’re On Mute” Edition",
-      description:
-        "From frozen cameras to accidental screen shares, here are the classic moments everyone recognizes instantly.",
-      date: "Mar 22, 2026",
-      image: "/img/agents/topAgent7.jpeg",
-      views: 2644,
-      likes: 390,
     },
   ],
   QNA: [
