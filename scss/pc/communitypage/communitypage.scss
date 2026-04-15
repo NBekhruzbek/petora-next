@@ -775,9 +775,25 @@
   }
 }
 
+.qna-reveal-image {
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 0.35s ease,
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.qna-reveal-image.is-loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .qna-dialog-paper {
   border-radius: 24px !important;
   overflow: hidden;
+  transform-origin: center top;
+  animation: qnaDialogReveal 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
 
   .qna-dialog-header {
     display: flex;
@@ -787,6 +803,9 @@
     gap: 16px;
     padding: 18px 18px 14px;
     border-bottom: 1px solid #ebedf4;
+    opacity: 0;
+    animation: qnaContentReveal 0.38s cubic-bezier(0.22, 1, 0.36, 1) 0.06s
+      forwards;
 
     .qna-dialog-heading {
       gap: 10px;
@@ -815,6 +834,20 @@
     padding: 18px;
     border-bottom: 1px solid #edf0f6;
     gap: 16px;
+    opacity: 0;
+    animation: qnaContentReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+    &:nth-of-type(1) {
+      animation-delay: 0.12s;
+    }
+
+    &:nth-of-type(2) {
+      animation-delay: 0.18s;
+    }
+
+    &:nth-of-type(3) {
+      animation-delay: 0.24s;
+    }
 
     &:last-child {
       border-bottom: none;
@@ -853,6 +886,9 @@
       flex-wrap: wrap;
       gap: 10px;
       padding-top: 2px;
+      opacity: 0;
+      animation: qnaContentReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.16s
+        forwards;
 
       .qna-seledted-question-image-thumb {
         width: 162px;
@@ -1111,6 +1147,7 @@
   overflow: visible;
   margin-top: 100px !important;
   box-shadow: none;
+  transform-origin: center top;
 
   .qna-image-dialog-body {
     position: relative;
@@ -1122,6 +1159,7 @@
     border-radius: 28px;
     background: rgba(241, 243, 247, 0.96);
     box-shadow: 0 24px 60px rgba(70, 77, 92, 0.14);
+    animation: qnaDialogReveal 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 
     .qna-image-dialog-close {
       position: absolute;
@@ -1157,12 +1195,15 @@
       border: 1px solid rgba(198, 206, 218, 0.9);
       overflow: hidden;
 
-      img {
+      .qna-stage-image {
         width: 100%;
         height: 100%;
         display: block;
         object-fit: contain;
         background: #e8ecf2;
+        animation: qnaGalleryImageReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1)
+          both;
+        will-change: opacity, transform;
       }
     }
 
@@ -1213,6 +1254,9 @@
       justify-content: center;
       gap: 10px;
       max-width: min(900px, 82vw);
+      opacity: 0;
+      animation: qnaContentReveal 0.38s cubic-bezier(0.22, 1, 0.36, 1) 0.1s
+        forwards;
     }
 
     .qna-image-dialog-thumb {
@@ -1282,6 +1326,39 @@
 }
 
 /* Keyframes */
+@keyframes qnaDialogReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes qnaContentReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes qnaGalleryImageReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.965) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 @keyframes fadeUp {
   to {
     opacity: 1;

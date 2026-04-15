@@ -341,6 +341,7 @@ const QNACard = () => {
     images: string[];
     index: number;
   } | null>(null);
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
   const boardRef = useRef<HTMLDivElement | null>(null);
   const answerSectionRef = useRef<HTMLDivElement | null>(null);
   const previousPageRef = useRef(page);
@@ -377,6 +378,9 @@ const QNACard = () => {
         currentAnswerPage * ANSWERS_PER_PAGE,
       )
     : [];
+  const activeGalleryImage = imageGallery
+    ? imageGallery.images[imageGallery.index]
+    : null;
 
   useEffect(() => {
     setPage(1);
@@ -424,6 +428,20 @@ const QNACard = () => {
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value);
   };
+
+  const handleImageLoad = (imageKey: string) => {
+    setLoadedImages((prev) =>
+      prev[imageKey]
+        ? prev
+        : {
+            ...prev,
+            [imageKey]: true,
+          },
+    );
+  };
+
+  const getLoadedImageClassName = (imageKey: string) =>
+    `qna-reveal-image ${loadedImages[imageKey] ? "is-loaded" : ""}`.trim();
 
   const handleOpenQuestion = (questionId: string) => {
     setSelectedQuestionId(questionId);
@@ -544,17 +562,24 @@ const QNACard = () => {
 
                   {question.images?.length ? (
                     <Stack className="qna-question-image-row">
-                      {question.images.slice(0, 3).map((image, index) => (
-                        <Box
-                          key={`${question.id}-image-${index}`}
-                          className="qna-question-image-thumb"
-                        >
-                          <img
-                            src={image}
-                            alt={`${question.title} preview ${index + 1}`}
-                          />
-                        </Box>
-                      ))}
+                      {question.images.slice(0, 3).map((image, index) => {
+                        const imageKey = `${question.id}-list-${index}`;
+
+                        return (
+                          <Box
+                            key={`${question.id}-image-${index}`}
+                            className="qna-question-image-thumb"
+                          >
+                            <img
+                              className={getLoadedImageClassName(imageKey)}
+                              src={image}
+                              alt={`${question.title} preview ${index + 1}`}
+                              loading="lazy"
+                              onLoad={() => handleImageLoad(imageKey)}
+                            />
+                          </Box>
+                        );
+                      })}
                     </Stack>
                   ) : null}
 
@@ -617,6 +642,7 @@ const QNACard = () => {
         onClose={handleCloseDialog}
         fullWidth
         maxWidth="md"
+        transitionDuration={{ enter: 320, exit: 220 }}
         sx={{
           "& .MuiDialog-container": {
             alignItems: "flex-start",
@@ -658,23 +684,30 @@ const QNACard = () => {
                       <Stack className="qna-seledted-question-image-row">
                         {selectedQuestion.images
                           .slice(0, 3)
-                          .map((image, index) => (
-                            <Box
-                              key={`${selectedQuestion.id}-image-${index}`}
-                              className="qna-seledted-question-image-thumb"
-                              onClick={() =>
-                                handleOpenImage(
-                                  selectedQuestion.images ?? [],
-                                  index,
-                                )
-                              }
-                            >
-                              <img
-                                src={image}
-                                alt={`${selectedQuestion.title} preview ${index + 1}`}
-                              />
-                            </Box>
-                          ))}
+                          .map((image, index) => {
+                            const imageKey = `${selectedQuestion.id}-detail-${index}`;
+
+                            return (
+                              <Box
+                                key={`${selectedQuestion.id}-image-${index}`}
+                                className="qna-seledted-question-image-thumb"
+                                onClick={() =>
+                                  handleOpenImage(
+                                    selectedQuestion.images ?? [],
+                                    index,
+                                  )
+                                }
+                              >
+                                <img
+                                  className={getLoadedImageClassName(imageKey)}
+                                  src={image}
+                                  alt={`${selectedQuestion.title} preview ${index + 1}`}
+                                  loading="lazy"
+                                  onLoad={() => handleImageLoad(imageKey)}
+                                />
+                              </Box>
+                            );
+                          })}
                       </Stack>
                     ) : null}
 
@@ -786,6 +819,7 @@ const QNACard = () => {
         open={Boolean(imageGallery)}
         onClose={handleCloseImage}
         maxWidth="lg"
+        transitionDuration={{ enter: 280, exit: 200 }}
         PaperProps={{ className: "qna-image-dialog-paper" }}
       >
         {imageGallery ? (
@@ -808,7 +842,9 @@ const QNACard = () => {
 
             <Stack className="qna-image-stage">
               <img
-                src={imageGallery.images[imageGallery.index]}
+                key={`${imageGallery.index}-${activeGalleryImage}`}
+                className="qna-stage-image"
+                src={activeGalleryImage ?? ""}
                 alt={`Selected question preview ${imageGallery.index + 1}`}
               />
             </Stack>
@@ -830,15 +866,25 @@ const QNACard = () => {
 
             {imageGallery.images.length > 1 ? (
               <Stack className="qna-image-dialog-thumbs">
-                {imageGallery.images.map((image, index) => (
-                  <Box
-                    key={`${image}-${index}`}
-                    className={`qna-image-dialog-thumb ${imageGallery.index === index ? "active" : ""}`}
-                    onClick={() => handleSelectImage(index)}
-                  >
-                    <img src={image} alt={`Gallery thumbnail ${index + 1}`} />
-                  </Box>
-                ))}
+                {imageGallery.images.map((image, index) => {
+                  const imageKey = `gallery-thumb-${index}-${image}`;
+
+                  return (
+                    <Box
+                      key={`${image}-${index}`}
+                      className={`qna-image-dialog-thumb ${imageGallery.index === index ? "active" : ""}`}
+                      onClick={() => handleSelectImage(index)}
+                    >
+                      <img
+                        className={getLoadedImageClassName(imageKey)}
+                        src={image}
+                        alt={`Gallery thumbnail ${index + 1}`}
+                        loading="lazy"
+                        onLoad={() => handleImageLoad(imageKey)}
+                      />
+                    </Box>
+                  );
+                })}
               </Stack>
             ) : null}
           </Stack>
