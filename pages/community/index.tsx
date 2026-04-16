@@ -17,6 +17,7 @@ import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import FreeBoardNewsCard from "@/libs/components/community/FreeBoardNewsCard";
 import QNACard from "@/libs/components/community/QNACard";
+import BoardList from "@/libs/components/community/BoardList";
 
 type CategoryKey = "FREE" | "NEWS" | "QNA";
 
@@ -179,6 +180,7 @@ const Community: NextPage = () => {
   const activeMeta = categoryMeta[activeCategory];
   const activePosts = communityPosts[activeCategory];
   const [isAskOpen, setIsAskOpen] = useState(false);
+  const [isWriteOpen, setIsWriteOpen] = useState(false);
 
   const handleCategoryChange = (category: CategoryKey) => {
     void router.push(
@@ -255,7 +257,7 @@ const Community: NextPage = () => {
               onClick={
                 activeCategory === "QNA"
                   ? () => setIsAskOpen(true)
-                  : undefined
+                  : () => setIsWriteOpen(true)
               }
             >
               {activeCategory === "QNA" ? "Ask Question" : "Write"}
@@ -286,9 +288,13 @@ const Community: NextPage = () => {
                 onAskClose={() => setIsAskOpen(false)}
               />
             ) : (
-              activePosts.map((post) => (
-                <FreeBoardNewsCard key={post.id} item={post} />
-              ))
+              <BoardList
+                key={activeCategory}
+                category={activeCategory as "FREE" | "NEWS"}
+                initialPosts={activePosts}
+                isWriteOpen={isWriteOpen}
+                onWriteClose={() => setIsWriteOpen(false)}
+              />
             )}
           </Stack>
         </Stack>

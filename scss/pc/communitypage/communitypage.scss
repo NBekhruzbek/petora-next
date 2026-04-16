@@ -1401,16 +1401,81 @@
           color: #cb33df;
         }
       }
+
+      .qna-image-upload-btn {
+        width: 120px;
+        height: 120px;
+        border-radius: 16px;
+        border: 2px dashed #dfe5f0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        color: #6d7485;
+        background: transparent;
+        transition: all 0.2s ease;
+        text-transform: none;
+
+        &:hover {
+          border-color: #cb33df;
+          color: #cb33df;
+          background: rgba(203, 51, 223, 0.04);
+        }
+
+        svg {
+          font-size: 32px;
+        }
+
+        span {
+          font-size: 12px;
+          font-weight: 700;
+        }
+      }
+
+      .qna-image-preview-wrap {
+        position: relative;
+        width: 120px;
+        height: 120px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 16px;
+          border: 1px solid #e7ebf3;
+        }
+      }
+
+      .qna-delete-img-btn {
+        position: absolute !important;
+        top: -8px !important;
+        right: -8px !important;
+        background: #ff4d4f !important;
+        color: white !important;
+        padding: 4px !important;
+        box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+        min-width: unset !important;
+        
+        &:hover {
+          background: #d9363e !important;
+        }
+
+        svg {
+          font-size: 16px !important;
+        }
+      }
+
+      .qna-write-content-area {
+        min-height: 180px !important;
+      }
     }
 
     // "Post Question" submit button — sits outside field groups, aligned right
     
     .qna-ask-submit-btn {
       align-self: flex-end;
-      margin-top: 6px;
-      min-width: 110px;
-      height: 46px;
-      border: 1.5px solid #d8d2e6;
+      min-width: 160px;
+      height: 48px;
+      border: 1.1px solid #d8d2e6;
       padding: 10px 30px;
       justify-content: center;
       align-items: center;
@@ -1738,38 +1803,6 @@
         height: 100%;
         display: block;
         object-fit: cover;
-      }
-    }
-  }
-}
-
-@media (max-width: 640px) {
-  .qna-image-dialog-paper {
-    .qna-image-dialog-body {
-      padding: 18px 14px 16px;
-      gap: 14px;
-
-      .qna-image-stage {
-        width: min(100%, 86vw);
-        height: min(420px, 56vh);
-      }
-
-      .qna-image-dialog-nav {
-        width: 42px;
-        height: 42px;
-
-        &.prev {
-          left: 20px;
-        }
-
-        &.next {
-          right: 20px;
-        }
-      }
-
-      .qna-image-dialog-thumb {
-        width: 60px;
-        height: 46px;
       }
     }
   }
