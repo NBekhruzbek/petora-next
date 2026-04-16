@@ -775,6 +775,60 @@
   }
 }
 
+.qna-ask-dialog {
+  overflow: hidden !important;
+  
+  .MuiDialog-container {
+    overflow: hidden !important;
+  }
+
+  .qna-dialog-content {
+    overflow-y: hidden;
+    animation: qnaAskOverflowFix 0s linear 0.6s forwards;
+  }
+
+  .qna-dialog-paper {
+    animation: qnaAskDialogReveal 0.35s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+  }
+
+  .qna-dialog-section {
+    animation: qnaAskContentReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+    
+    &:nth-of-type(1) { animation-delay: 0.1s; }
+    &:nth-of-type(2) { animation-delay: 0.16s; }
+    &:nth-of-type(3) { animation-delay: 0.22s; }
+  }
+}
+
+@keyframes qnaAskDialogReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes qnaAskContentReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes qnaAskOverflowFix {
+  to {
+    overflow-y: auto;
+  }
+}
+
+
 .qna-reveal-image {
   opacity: 0;
   transform: scale(1.06);
@@ -1021,6 +1075,252 @@
     gap: 14px;
   }
 
+  .qna-ask-form-section {
+    gap: 22px;
+    padding: 24px 22px 28px;
+
+    // Each form field group: label + input stacked
+    .qna-ask-field-group {
+      gap: 8px;
+
+      .qna-ask-label {
+        font-family: $font;
+        font-size: 15px;
+        font-weight: 700;
+        color: #3a4558;
+        letter-spacing: 0.2px;
+      }
+
+      // Shared input wrapper used for both title <input> and body <textarea>
+      .qna-answer-input {
+        width: 100%;
+        border-radius: 16px;
+        border: 1px solid #dfe5f0;
+        background: #ffffff;
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+
+        &:focus-within {
+          border-color: #cb33df;
+          box-shadow: 0 0 0 3px rgba(203, 51, 223, 0.12);
+        }
+
+        // Title single-line input
+        .qna-ask-title-input {
+          width: 100%;
+          display: block;
+          padding: 14px 18px;
+          border: none;
+          outline: none;
+          background: transparent;
+          box-sizing: border-box;
+          font-family: $font;
+          font-size: 16px;
+          font-weight: 600;
+          line-height: 1.5;
+          color: #293446;
+
+          &::placeholder {
+            color: #a2abba;
+          }
+        }
+
+        // Body multi-line textarea
+        textarea {
+          width: 100%;
+          display: block;
+          resize: vertical;
+          padding: 16px 18px;
+          border: none;
+          outline: none;
+          background: transparent;
+          box-sizing: border-box;
+          font-family: $font;
+          font-size: 15px;
+          font-weight: 600;
+          line-height: 1.6;
+          color: #293446;
+
+          &::placeholder {
+            color: #a2abba;
+          }
+        }
+      }
+
+      // "X / 5" counter shown next to Images label
+      .qna-ask-image-count {
+        font-family: $font;
+        font-size: 13px;
+        font-weight: 700;
+        color: #8a95a8;
+      }
+
+      // Row of uploaded image thumbnails
+      .qna-ask-image-preview-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-top: 2px;
+        opacity: 0;
+        animation: qnaContentReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.06s forwards;
+
+        // Individual thumbnail card
+        .qna-ask-image-preview-thumb {
+          position: relative;
+          width: 140px;
+          height: 100px;
+          overflow: hidden;
+          border-radius: 14px;
+          border: 1px solid #e7ebf3;
+          background: #f5f7fb;
+          box-shadow: 0 6px 16px rgba(31, 41, 55, 0.06);
+          flex: 0 0 auto;
+          transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(31, 41, 55, 0.12);
+
+            // Show the remove X on hover
+            .qna-ask-image-remove-btn {
+              opacity: 1;
+            }
+          }
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+
+          // Floating × button top-right corner
+          .qna-ask-image-remove-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 26px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(188, 196, 210, 0.8);
+            color: #5a6475;
+            opacity: 0;
+            transition: opacity 0.2s ease, background 0.15s ease;
+            backdrop-filter: blur(4px);
+
+            svg {
+              font-size: 16px;
+            }
+
+            &:hover {
+              background: #ffffff;
+              color: #e53935;
+            }
+          }
+        }
+      }
+
+      // "Add Image" dashed button
+      .qna-ask-upload-btn {
+        align-self: flex-start;
+        min-height: 42px;
+        padding: 8px 22px;
+        border-radius: 14px;
+        border: 1.5px dashed #c5cad8;
+        background: #f9fafb;
+        font-family: $font;
+        font-size: 14px;
+        font-weight: 700;
+        color: #6b7a8d;
+        text-transform: none;
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease,
+          color 0.2s ease;
+
+        .MuiButton-startIcon svg {
+          font-size: 20px;
+        }
+
+        &:hover {
+          border-color: #cb33df;
+          background: #fdf5ff;
+          color: #cb33df;
+        }
+      }
+    }
+
+    // "Post Question" submit button — sits outside field groups, aligned right
+    
+    .qna-ask-submit-btn {
+      align-self: flex-end;
+      margin-top: 6px;
+      min-width: 110px;
+      height: 46px;
+      border: 1.5px solid #d8d2e6;
+      padding: 10px 30px;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background:
+        linear-gradient(#cda6ed, #cb33df) padding-box,
+        linear-gradient(
+            120deg,
+            #e83333 0%,
+            #d3b7ff 35%,
+            #ffffff 55%,
+            #b56cff 75%,
+            #5f18b7 100%
+          )
+          border-box;
+      background-size:
+        100% 100%,
+        250% 250%;
+      background-position:
+        0 0,
+        0% 50%;
+      animation: ctaBorderFlow 3.6s linear infinite;
+      color: #fff;
+      font-family: $font;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 1;
+      text-transform: none;
+      box-shadow: none;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &:hover {
+        background:
+          linear-gradient(#d3acf2, #8527d3) padding-box,
+          linear-gradient(
+              120deg,
+              #c27bff 0%,
+              #f3e4ff 45%,
+              #ffffff 60%,
+              #d190ff 78%,
+              #7f2ed8 100%
+            )
+            border-box;
+        box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+        transform: translateY(-1px);
+      }
+
+      &.Mui-disabled {
+        opacity: 0.55;
+        color: #ffffff;
+      }
+    }
+  }
+
   .qna-answer-form {
     display: flex;
     flex-direction: row;
@@ -1075,62 +1375,63 @@
     }
 
     .qna-post-answer-btn {
-      align-self: flex-start;
-      min-width: 160px;
-      height: 46px;
-      padding: 10px 30px;
-      border-radius: 999px;
-      border: 2px solid transparent;
-      background:
-        linear-gradient(#cda6ed, #cb33df) padding-box,
-        linear-gradient(
-            120deg,
-            #e83333 0%,
-            #d3b7ff 35%,
-            #ffffff 55%,
-            #b56cff 75%,
-            #5f18b7 100%
-          )
-          border-box;
-      background-size:
-        100% 100%,
-        250% 250%;
-      background-position:
-        0 0,
-        0% 50%;
-      animation: ctaBorderFlow 3.6s linear infinite;
-      color: #fff;
-      font-family: $font;
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1;
-      text-transform: none;
-      box-shadow: none;
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+          min-width: 110px;
+          height: 46px;
+          border: 1.5px solid #d8d2e6;
 
-      &:hover {
-        background:
-          linear-gradient(#d3acf2, #8527d3) padding-box,
-          linear-gradient(
-              120deg,
-              #c27bff 0%,
-              #f3e4ff 45%,
-              #ffffff 60%,
-              #d190ff 78%,
-              #7f2ed8 100%
-            )
-            border-box;
-        box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
-        transform: translateY(-1px);
-      }
+          padding: 10px 30px;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
 
-      &.Mui-disabled {
-        opacity: 0.55;
-        color: #ffffff;
-      }
-    }
+          border-radius: 999px;
+          border: 2px solid transparent;
+          background:
+            linear-gradient(#cda6ed, #cb33df) padding-box,
+            linear-gradient(
+                120deg,
+                #e83333 0%,
+                #d3b7ff 35%,
+                #ffffff 55%,
+                #b56cff 75%,
+                #5f18b7 100%
+              )
+              border-box;
+          background-size:
+            100% 100%,
+            250% 250%;
+          background-position:
+            0 0,
+            0% 50%;
+          animation: ctaBorderFlow 3.6s linear infinite;
+          color: #fff;
+          font-family: $font;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 1;
+          text-transform: none;
+          box-shadow: none;
+          transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+
+          &:hover {
+            background:
+              linear-gradient(#d3acf2, #8527d3) padding-box,
+              linear-gradient(
+                  120deg,
+                  #c27bff 0%,
+                  #f3e4ff 45%,
+                  #ffffff 60%,
+                  #d190ff 78%,
+                  #7f2ed8 100%
+                )
+                border-box;
+            box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+            transform: translateY(-1px);
+          }
+        }
   }
 }
 

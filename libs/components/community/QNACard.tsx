@@ -19,6 +19,8 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
+import QuestionAnswerOutlinedIcon from "@mui/icons-material/QuestionAnswerOutlined";
 
 type QNAAnswer = {
   id: string;
@@ -43,9 +45,16 @@ export type QNAQuestion = {
 const QUESTIONS_PER_PAGE = 8;
 const ANSWERS_PER_PAGE = 10;
 const SUMMARY_PREVIEW_LIMIT = 120;
+const MAX_QUESTION_IMAGES = 5;
 const CURRENT_USER = {
   name: "You",
   image: undefined as string | undefined,
+};
+
+type AskQuestionForm = {
+  title: string;
+  body: string;
+  images: { file: File; preview: string }[];
 };
 
 const INITIAL_QNA_QUESTIONS: QNAQuestion[] = [
@@ -327,7 +336,12 @@ const renderUserAvatar = (name: string, image?: string, extraClassName = "") => 
   </Avatar>
 );
 
-const QNACard = () => {
+type QNACardProps = {
+  isAskOpen?: boolean;
+  onAskClose?: () => void;
+};
+
+const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
   const [questions, setQuestions] = useState(INITIAL_QNA_QUESTIONS);
   const [searchValue, setSearchValue] = useState("");
   const [page, setPage] = useState(1);
@@ -342,8 +356,14 @@ const QNACard = () => {
     index: number;
   } | null>(null);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  const [askForm, setAskForm] = useState<AskQuestionForm>({
+    title: "",
+    body: "",
+    images: [],
+  });
   const boardRef = useRef<HTMLDivElement | null>(null);
   const answerSectionRef = useRef<HTMLDivElement | null>(null);
+  const askImageInputRef = useRef<HTMLInputElement | null>(null);
   const previousPageRef = useRef(page);
   const previousAnswerPageRef = useRef(answerPage);
 
@@ -521,6 +541,72 @@ const QNACard = () => {
       (selectedQuestion?.answers.length ?? 0) + 1;
     setAnswerPage(Math.ceil(nextAnswerCount / ANSWERS_PER_PAGE));
     setDraftAnswer("");
+  };
+
+  const handleAskClose = () => {
+    onAskClose?.();
+  };
+
+  const handleAskFormReset = () => {
+    askForm.images.forEach((img) => URL.revokeObjectURL(img.preview));
+    setAskForm({ title: "", body: "", images: [] });
+  };
+
+  const handleAskImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const remaining = MAX_QUESTION_IMAGES - askForm.images.length;
+    const newFiles = Array.from(files).slice(0, remaining);
+
+    const newImages = newFiles.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setAskForm((prev) => ({
+      ...prev,
+      images: [...prev.images, ...newImages],
+    }));
+
+    // Reset input so the same file can be re-selected
+    event.target.value = "";
+  };
+
+  const handleRemoveAskImage = (index: number) => {
+    setAskForm((prev) => {
+      const updated = [...prev.images];
+      URL.revokeObjectURL(updated[index].preview);
+      updated.splice(index, 1);
+      return { ...prev, images: updated };
+    });
+  };
+
+  const handleSubmitQuestion = () => {
+    const trimmedTitle = askForm.title.trim();
+    const trimmedBody = askForm.body.trim();
+
+    if (!trimmedTitle || !trimmedBody) return;
+
+    const newQuestion: QNAQuestion = {
+      id: `qna-user-${Date.now()}`,
+      title: trimmedTitle,
+      summary: trimmedBody,
+      images: askForm.images.length
+        ? askForm.images.map((img) => img.preview)
+        : undefined,
+      views: 0,
+      author: CURRENT_USER.name,
+      authorImage: CURRENT_USER.image,
+      timeAgo: "Just now",
+      answers: [],
+    };
+
+    setQuestions((prev) => [newQuestion, ...prev]);
+    setPage(1);
+    // Don't revoke blob URLs — the new question card still needs them
+    setAskForm({ title: "", body: "", images: [] });
+    handleAskClose();
   };
 
   return (
@@ -889,6 +975,158 @@ const QNACard = () => {
             ) : null}
           </Stack>
         ) : null}
+      </Dialog>
+
+      {/* Ask Question Dialog */}
+      <Dialog
+        className="qna-dialog qna-ask-dialog"
+        open={isAskOpen}
+        onClose={handleAskClose}
+        fullWidth
+        maxWidth="md"
+        transitionDuration={{ enter: 320, exit: 220 }}
+        sx={{
+          "& .MuiDialog-container": {
+            alignItems: "flex-start",
+          },
+          "& .MuiDialog-paper": {
+            marginTop: {
+              xs: "64px",
+              sm: "88px",
+              md: "120px",
+            },
+            maxHeight: "780px",
+          },
+        }}
+        PaperProps={{ className: "qna-dialog-paper" }}
+      >
+        <Stack className="qna-dialog-header">
+          <Stack className="qna-dialog-heading">
+            <Stack direction="row" alignItems="center" gap={1.2}>
+              <QuestionAnswerOutlinedIcon
+                sx={{ fontSize: 26, color: "#cb33df" }}
+              />
+              <Typography className="qna-dialog-title">
+                Ask a Question
+              </Typography>
+            </Stack>
+          </Stack>
+
+          <IconButton onClick={handleAskClose} className="qna-close-btn">
+            <CloseRoundedIcon />
+          </IconButton>
+        </Stack>
+
+        <DialogContent className="qna-dialog-content">
+          <Stack className="qna-dialog-section qna-ask-form-section">
+            {/* Title Field */}
+            <Stack className="qna-ask-field-group">
+              <Typography className="qna-ask-label">Title</Typography>
+              <Box className="qna-answer-input">
+                <input
+                  type="text"
+                  placeholder="What's your question about?"
+                  value={askForm.title}
+                  onChange={(e) =>
+                    setAskForm((prev) => ({ ...prev, title: e.target.value }))
+                  }
+                  className="qna-ask-title-input"
+                />
+              </Box>
+            </Stack>
+
+            {/* Body Field */}
+            <Stack className="qna-ask-field-group">
+              <Typography className="qna-ask-label">Description</Typography>
+              <Box className="qna-answer-input">
+                <textarea
+                  rows={6}
+                  placeholder="Describe your question in detail..."
+                  value={askForm.body}
+                  onChange={(e) =>
+                    setAskForm((prev) => ({ ...prev, body: e.target.value }))
+                  }
+                />
+              </Box>
+            </Stack>
+
+            {/* Image Upload */}
+            <Stack className="qna-ask-field-group">
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Typography className="qna-ask-label">Images</Typography>
+                <Typography className="qna-ask-image-count">
+                  {askForm.images.length} / {MAX_QUESTION_IMAGES}
+                </Typography>
+              </Stack>
+
+              {/* Image Previews */}
+              {askForm.images.length > 0 && (
+                <Stack className="qna-ask-image-preview-row">
+                  {askForm.images.map((img, index) => {
+                    const imageKey = `ask-preview-${index}`;
+
+                    return (
+                      <Box
+                        key={`ask-img-${index}`}
+                        className="qna-ask-image-preview-thumb"
+                      >
+                        <img
+                          className={getLoadedImageClassName(imageKey)}
+                          src={img.preview}
+                          alt={`Upload preview ${index + 1}`}
+                          onLoad={() => handleImageLoad(imageKey)}
+                        />
+                        <IconButton
+                          className="qna-ask-image-remove-btn"
+                          onClick={() => handleRemoveAskImage(index)}
+                          size="small"
+                        >
+                          <CloseRoundedIcon />
+                        </IconButton>
+                      </Box>
+                    );
+                  })}
+                </Stack>
+              )}
+
+              {/* Upload Button */}
+              {askForm.images.length < MAX_QUESTION_IMAGES && (
+                <Button
+                  className="qna-ask-upload-btn"
+                  variant="outlined"
+                  startIcon={<AddPhotoAlternateOutlinedIcon />}
+                  onClick={() => askImageInputRef.current?.click()}
+                >
+                  Add Image
+                </Button>
+              )}
+
+              <input
+                ref={askImageInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                onChange={handleAskImageUpload}
+              />
+            </Stack>
+
+            {/* Submit Button */}
+            <Button
+              className="community-write-btn qna-post-answer-btn qna-ask-submit-btn"
+              variant="contained"
+              startIcon={<SendRoundedIcon />}
+              onClick={handleSubmitQuestion}
+              disabled={!askForm.title.trim() || !askForm.body.trim()}
+            >
+              Post Question
+            </Button>
+          </Stack>
+        </DialogContent>
       </Dialog>
     </>
   );

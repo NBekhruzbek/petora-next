@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
@@ -178,6 +178,7 @@ const Community: NextPage = () => {
 
   const activeMeta = categoryMeta[activeCategory];
   const activePosts = communityPosts[activeCategory];
+  const [isAskOpen, setIsAskOpen] = useState(false);
 
   const handleCategoryChange = (category: CategoryKey) => {
     void router.push(
@@ -251,6 +252,11 @@ const Community: NextPage = () => {
               className="community-write-btn"
               variant="contained"
               startIcon={<DrawOutlinedIcon />}
+              onClick={
+                activeCategory === "QNA"
+                  ? () => setIsAskOpen(true)
+                  : undefined
+              }
             >
               {activeCategory === "QNA" ? "Ask Question" : "Write"}
             </Button>
@@ -275,7 +281,10 @@ const Community: NextPage = () => {
 
           <Stack className="community-card-flex">
             {activeCategory === "QNA" ? (
-              <QNACard />
+              <QNACard
+                isAskOpen={isAskOpen}
+                onAskClose={() => setIsAskOpen(false)}
+              />
             ) : (
               activePosts.map((post) => (
                 <FreeBoardNewsCard key={post.id} item={post} />
