@@ -823,29 +823,46 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
                 </Typography>
 
                 <Stack className="qna-answer-list">
-                  {pagedAnswers.map((answer) => (
-                    <Stack key={answer.id} className="qna-answer-main">
-                      <Stack className="qna-question-meta">
-                        <Stack className="qna-author-group">
-                          {renderUserAvatar(answer.author, answer.authorImage)}
-                          <Typography className="qna-author-name">
-                            {answer.author}
-                          </Typography>
-                        </Stack>
-
-                        <Typography className="qna-meta-dot">•</Typography>
-                        <Typography className="qna-meta-text">
-                          {answer.timeAgo}
-                        </Typography>
-                      </Stack>
-                      <Typography
-                        component="pre"
-                        className="qna-answer-content"
-                      >
-                        {answer.content}
+                  {selectedQuestion.answers.length === 0 ? (
+                    <Stack className="qna-empty-answers">
+                      <Box className="qna-empty-icon-wrap">
+                        <ChatBubbleOutlineRoundedIcon />
+                      </Box>
+                      <Typography className="qna-empty-title">
+                        No answers yet
+                      </Typography>
+                      <Typography className="qna-empty-subtitle">
+                        Be the first to share your knowledge and help others!
                       </Typography>
                     </Stack>
-                  ))}
+                  ) : (
+                    pagedAnswers.map((answer) => (
+                      <Stack key={answer.id} className="qna-answer-main">
+                        <Stack className="qna-question-meta">
+                          <Stack className="qna-author-group">
+                            {renderUserAvatar(
+                              answer.author,
+                              answer.authorImage,
+                            )}
+                            <Typography className="qna-author-name">
+                              {answer.author}
+                            </Typography>
+                          </Stack>
+
+                          <Typography className="qna-meta-dot">•</Typography>
+                          <Typography className="qna-meta-text">
+                            {answer.timeAgo}
+                          </Typography>
+                        </Stack>
+                        <Typography
+                          component="pre"
+                          className="qna-answer-content"
+                        >
+                          {answer.content}
+                        </Typography>
+                      </Stack>
+                    ))
+                  )}
                 </Stack>
 
                 {selectedQuestion.answers.length > ANSWERS_PER_PAGE ? (

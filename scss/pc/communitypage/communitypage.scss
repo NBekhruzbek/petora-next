@@ -1053,6 +1053,50 @@
       background: #ffffff;
       box-shadow: 0 10px 24px rgba(31, 41, 55, 0.05);
     }
+
+    .qna-empty-answers {
+      align-items: center;
+      justify-content: center;
+      padding: 20px 20px;
+      text-align: center;
+      gap: 5px;
+      background: #f9fafb;
+      border-radius: 20px;
+      border: 1.5px dashed #e3e7ef;
+
+      .qna-empty-icon-wrap {
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f3e8ff 0%, #faebff 100%);
+        color: #cb33df;
+        margin-bottom: 4px;
+
+        svg {
+          font-size: 28px;
+        }
+      }
+
+      .qna-empty-title {
+        font-family: $font;
+        font-size: 18px;
+        font-weight: 800;
+        color: #293446;
+        letter-spacing: -0.2px;
+      }
+
+      .qna-empty-subtitle {
+        font-family: $font;
+        font-size: 14px;
+        font-weight: 600;
+        color: #8a95a8;
+        max-width: 320px;
+        line-height: 1.5;
+      }
+    }
   }
 
   .qna-answer-pagination-wrap {
