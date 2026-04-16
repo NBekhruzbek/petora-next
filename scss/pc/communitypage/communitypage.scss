@@ -664,6 +664,7 @@
           border: 1px solid #e6e8ef;
           background: #ffffff;
           box-shadow: 0 8px 24px rgba(31, 41, 55, 0.06);
+          cursor: pointer;
           transition:
             transform 0.2s ease,
             box-shadow 0.2s ease;
@@ -768,10 +769,12 @@
 }
 
 .qna-dialog {
+  z-index: 1500 !important;
+
   .MuiDialog-container {
     align-items: flex-start;
     backdrop-filter: blur(1.5px);
-    background: rgba(255, 255, 255, 0.398);
+    background: rgba(255, 255, 255, 0.25);
   }
 }
 
@@ -848,6 +851,10 @@
   overflow: hidden;
   transform-origin: center top;
   animation: qnaDialogReveal 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  margin-top: 120px !important;
+  max-height: calc(100vh - 160px) !important;
+  margin-bottom: 60px;
 
   .qna-dialog-header {
     display: flex;
@@ -1035,6 +1042,104 @@
       transform: none;
       border-color: transparent;
       box-shadow: none;
+    }
+  }
+
+  .free-board-detail-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px !important;
+
+    .free-board-detail-image {
+      width: 100%;
+      height: auto;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 20px;
+      border: 1px solid #eef1f6;
+      display: block;
+    }
+
+    .free-board-detail-body {
+      gap: 16px;
+
+      .free-board-detail-content {
+        font-family: $font;
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 1.65;
+        color: #3b4455;
+      }
+
+      .free-board-detail-meta {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+        padding-top: 4px;
+
+        .free-board-news-stat {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          cursor: default;
+          transition: transform 0.2s ease;
+
+          svg {
+            font-size: 18px;
+            color: #636c7e;
+            transition: color 0.2s ease, transform 0.2s ease;
+          }
+
+          span {
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 700;
+            color: #636c7e;
+            transition: color 0.2s ease;
+          }
+
+          &.liked {
+            svg {
+              color: #e53935;
+              animation: heartBeat 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+          }
+
+          &.like-btn {
+            cursor: pointer;
+            padding: 4px 8px;
+            margin: -4px -8px;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+
+            &:hover {
+              background: rgba(229, 57, 53, 0.05);
+              svg {
+                transform: scale(1.15);
+                color: #e53935;
+              }
+            }
+
+            &:active {
+              transform: scale(0.92);
+            }
+          }
+        }
+
+        .qna-meta-text {
+          font-family: $font;
+          font-size: 14px;
+          font-weight: 600;
+          color: #8c96a7;
+        }
+
+        .qna-meta-dot {
+          color: #cdd4df;
+          font-size: 14px;
+        }
+      }
     }
   }
 
@@ -1756,4 +1861,12 @@
   100% {
     transform: translateX(0) rotate(0deg);
   }
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.35); }
+  50% { transform: scale(0.95); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
