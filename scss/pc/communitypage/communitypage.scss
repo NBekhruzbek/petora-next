@@ -447,6 +447,7 @@
 
           .qna-question-card {
             width: 100%;
+            position: relative;
             display: flex;
             flex-direction: row;
             gap: 18px;
@@ -461,10 +462,35 @@
               box-shadow 0.2s ease,
               border-color 0.2s ease;
 
+            .qna-number-tag {
+              position: absolute;
+              top: 0;
+              left: 0;
+              padding: 5px 14px;
+              background: #f8faff;
+              border-bottom: 1px solid #e7ebf3;
+              border-right: 1px solid #e7ebf3;
+              border-top-left-radius: 20px;
+              border-bottom-right-radius: 14px;
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 800;
+              color: #af2bc1;
+              z-index: 10;
+              box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.02);
+            }
+
             &:hover {
               transform: translateY(-2px);
               border-color: rgba(203, 51, 223, 0.25);
               box-shadow: 0 16px 36px rgba(29, 36, 51, 0.08);
+
+              .qna-number-tag {
+                background: #fdf5ff;
+                color: #cb33df;
+                border-bottom-color: rgba(203, 51, 223, 0.2);
+                border-right-color: rgba(203, 51, 223, 0.2);
+              }
             }
 
             .qna-question-votes {
@@ -1650,6 +1676,8 @@
 }
 
 .qna-image-dialog {
+  z-index: 2000 !important;
+
   .MuiBackdrop-root {
     background: rgba(255, 255, 255, 0.398);
   }

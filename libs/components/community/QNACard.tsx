@@ -629,13 +629,20 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
 
         <Stack className="qna-card-list">
           {pagedQuestions.length ? (
-            pagedQuestions.map((question) => (
-              <Stack
-                key={question.id}
-                className="qna-question-card"
-                onClick={() => handleOpenQuestion(question.id)}
-              >
-                <Stack className="qna-question-votes"></Stack>
+            pagedQuestions.map((question, index) => {
+              const questionNumber = filteredQuestions.length - (currentPage - 1) * QUESTIONS_PER_PAGE - index;
+
+              return (
+                <Stack
+                  key={question.id}
+                  className="qna-question-card"
+                  onClick={() => handleOpenQuestion(question.id)}
+                >
+                  <Stack className="qna-question-votes">
+                    <Box className="qna-number-tag">
+                      {String(questionNumber).padStart(2, '0')}
+                    </Box>
+                  </Stack>
 
                 <Stack className="qna-question-main">
                   <Typography className="qna-question-title">
@@ -696,8 +703,9 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
                   </Stack>
                 </Stack>
               </Stack>
-            ))
-          ) : (
+            );
+          })
+        ) : (
             <Stack className="qna-empty-state">
               <Typography className="qna-empty-title">
                 No questions found
