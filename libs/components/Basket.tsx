@@ -1,14 +1,46 @@
-import React from "react";
-import { Box, Button, Stack } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Menu from "@mui/material/Menu";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
+interface BasketItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
+
 const Basket = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const [items, setItems] = useState<BasketItem[]>([
+    {
+      id: "prod-1",
+      name: "Cat Fillet",
+      description: "Cold treat for pets",
+      price: 10,
+      quantity: 1,
+      image: "/img/products/fillet.png",
+    },
+    {
+      id: "prod-2",
+      name: "Bone Toy",
+      description: "Chew toy for pets",
+      price: 15,
+      quantity: 1,
+      image: "/img/products/bone-toy.png",
+    },
+  ]);
+
+  const totalItemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const totalPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const deliveryFee = items.length > 0 ? 5 : 0;
 
   /** HANDLERS **/
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -16,6 +48,32 @@ const Basket = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleClearAll = () => {
+    setItems([]);
+  };
+
+  const removeItem = (id: string) => {
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
+  
+  const increaseQuantity = (id: string) => {
+    setItems((prev) => prev.map((item) => item.id === id ? {...item, quantity: item.quantity + 1} : item))
+  }
+
+  const decreaseQuantity = (id: string) => {
+    setItems((prev) =>
+      prev.flatMap((item) => {
+        if (item.id !== id) return item;
+
+        if (item.quantity === 1) {
+          return []; // remove item
+        }
+
+        return { ...item, quantity: item.quantity - 1 };
+      })
+    );
   };
 
   return (
@@ -55,7 +113,7 @@ const Basket = () => {
         }}
       >
         <Badge
-          badgeContent={3}
+          badgeContent={totalItemCount}
           sx={{
             "& .MuiBadge-badge": {
               minWidth: "20px",
@@ -68,24 +126,14 @@ const Basket = () => {
               color: "#fff",
               fontSize: "12px",
               fontWeight: 700,
-
               animation: "pulseGlow 1.8s infinite ease-in-out",
             },
-
             "@keyframes pulseGlow": {
-              "0%": {
-                boxShadow: "0 0 5px rgba(250, 63, 244, 0.6)",
-              },
+              "0%": { boxShadow: "0 0 5px rgba(250, 63, 244, 0.6)" },
               "50%": {
-                boxShadow: `
-        0 0 10px rgba(250, 63, 244, 0.9),
-        0 0 20px rgba(250, 63, 244, 0.7),
-        0 0 30px rgba(250, 63, 244, 0.5)
-      `,
+                boxShadow: `0 0 10px rgba(250, 63, 244, 0.9), 0 0 20px rgba(250, 63, 244, 0.7), 0 0 30px rgba(250, 63, 244, 0.5)`,
               },
-              "100%": {
-                boxShadow: "0 0 5px rgba(250, 63, 244, 0.6)",
-              },
+              "100%": { boxShadow: "0 0 5px rgba(250, 63, 244, 0.6)" },
             },
           }}
         >
@@ -152,16 +200,33 @@ const Basket = () => {
               pb: "4px",
             }}
           >
-            <Box
-              sx={{
-                fontSize: "18px",
-                fontWeight: 800,
-                color: "#2c1243",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Your Basket
-            </Box>
+            <Stack direction="row" alignItems="center" spacing={1.5}>
+              <Box
+                sx={{
+                  fontSize: "18px",
+                  fontWeight: 800,
+                  color: "#2c1243",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                Your Basket
+              </Box>
+              {items.length > 0 && (
+                <Typography
+                  onClick={handleClearAll}
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "#ff4d4f",
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                    "&:hover": { opacity: 0.8 }
+                  }}
+                >
+                  Clear All
+                </Typography>
+              )}
+            </Stack>
             <Box
               sx={{
                 px: "10px",
@@ -173,7 +238,7 @@ const Basket = () => {
                 background: "rgba(111, 0, 198, 0.08)",
               }}
             >
-              1 item
+              {totalItemCount} {totalItemCount === 1 ? "item" : "items"}
             </Box>
           </Stack>
 
@@ -191,7 +256,10 @@ const Basket = () => {
               color: "#6a5878",
             }}
           >
-            Ready to checkout? Review your items before placing the order.
+            {items.length > 0 
+              ? "Ready to checkout? Review your items before placing the order."
+              : "Your basket is currently empty."
+            }
           </Box>
 
           <Box
@@ -202,175 +270,177 @@ const Basket = () => {
               gap: "12px",
             }}
           >
-            <Box
-              className={"orders-wrapper"}
-              sx={{
-                p: "14px",
-                borderRadius: "22px",
-                background: "#fff",
-                border: "1px solid rgba(111, 0, 198, 0.08)",
-                boxShadow: "0 16px 32px rgba(65, 0, 117, 0.08)",
-              }}
-            >
-              <Stack
-                className={"basket-info-box"}
-                direction="row"
-                alignItems="center"
-                spacing={1.5}
+            {items.map((item) => (
+              <Box
+                key={item.id}
+                className={"orders-wrapper"}
+                sx={{
+                  p: "12px",
+                  borderRadius: "22px",
+                  background: "#fff",
+                  border: "1px solid rgba(111, 0, 198, 0.08)",
+                  boxShadow: "0 16px 32px rgba(65, 0, 117, 0.08)",
+                }}
               >
-                <Box
-                  sx={{
-                    width: "82px",
-                    height: "82px",
-                    borderRadius: "20px",
-                    overflow: "hidden",
-                    flexShrink: 0,
-                    background:
-                      "linear-gradient(135deg, rgba(111, 0, 198, 0.08) 0%, rgba(255, 191, 115, 0.14) 100%)",
-                  }}
+                <Stack
+                  className={"basket-info-box"}
+                  direction="row"
+                  alignItems="center"
+                  spacing={1.5}
                 >
-                  <img
-                    src={"/img/products/fillet.png"}
-                    className={"product-img"}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Box>
-
-                <Stack sx={{ minWidth: 0, flex: 1, gap: "6px" }}>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                  >
-                    <Box
-                      sx={{
-                        fontSize: "16px",
-                        fontWeight: 800,
-                        color: "#291243",
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      Cat Fillet
-                    </Box>
-                    <Box
-                      className={"cancel-btn"}
-                      sx={{
-                        width: "32px",
-                        height: "32px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "999px",
-                        color: "#8c68af",
-                        background: "rgba(111, 0, 198, 0.06)",
-                        cursor: "pointer",
-                        transition:
-                          "background-color 0.2s ease, color 0.2s ease, transform 0.2s ease",
-                        "&:hover": {
-                          background: "rgba(200, 0, 6, 0.08)",
-                          color: "#c80006",
-                          transform: "scale(1.04)",
-                        },
-                      }}
-                    >
-                      <CancelIcon fontSize="small" />
-                    </Box>
-                  </Stack>
-
                   <Box
                     sx={{
-                      fontSize: "13px",
-                      fontWeight: 600,
-                      color: "#7d6a8d",
+                      width: "82px",
+                      height: "82px",
+                      borderRadius: "20px",
+                      overflow: "hidden",
+                      flexShrink: 0,
+                      background:
+                        "linear-gradient(135deg, rgba(111, 0, 198, 0.08) 0%, rgba(255, 191, 115, 0.14) 100%)",
                     }}
                   >
-                    Cold treat for pets
+                    <img
+                      src={item.image}
+                      className={"product-img"}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
                   </Box>
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
+                  <Stack sx={{ minWidth: 0, flex: 1 }}>
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="flex-start"
+                    >
+                      <Box
+                        sx={{
+                          fontSize: "16px",
+                          fontWeight: 800,
+                          color: "#291243",
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {item.name}
+                      </Box>
+                      <Box
+                        className={"cancel-btn"}
+                        onClick={() => removeItem(item.id)}
+                        sx={{
+                          width: "26px",
+                          height: "26px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "999px",
+                          color: "#8c68af",
+                          background: "rgba(111, 0, 198, 0.06)",
+                          cursor: "pointer",
+                          transition:
+                            "background-color 0.2s ease, color 0.2s ease, transform 0.2s ease",
+                          "&:hover": {
+                            background: "rgba(200, 0, 6, 0.08)",
+                            color: "#c80006",
+                            transform: "scale(1.04)",
+                          },
+                        }}
+                      >
+                        <CancelIcon fontSize="small" />
+                      </Box>
+                    </Stack>
+
                     <Box
-                      className={"product-price"}
                       sx={{
-                        fontSize: "15px",
-                        fontWeight: 800,
-                        color: "#410075",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        color: "#7d6a8d",
                       }}
                     >
-                      $10 x 1
+                      {item.description}
                     </Box>
 
                     <Stack
                       direction="row"
+                      justifyContent="space-between"
                       alignItems="center"
-                      spacing={1}
-                      sx={{
-                        px: "8px",
-                        py: "6px",
-                        borderRadius: "999px",
-                        background: "rgba(111, 0, 198, 0.06)",
-                        border: "1px solid rgba(111, 0, 198, 0.08)",
-                      }}
                     >
                       <Box
-                        component="button"
-                        type="button"
+                        className={"product-price"}
                         sx={{
-                          width: "28px",
-                          height: "28px",
-                          border: "none",
+                          fontSize: "15px",
+                          fontWeight: 800,
+                          color: "#410075",
+                        }}
+                      >
+                        ${item.price} x {item.quantity}
+                      </Box>
+
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={1}
+                        sx={{
+                          px: "6px",
+                          py: "4px",
                           borderRadius: "999px",
-                          background: "#fff",
-                          color: "#6f00c6",
-                          fontSize: "18px",
-                          fontWeight: 700,
-                          cursor: "pointer",
-                          boxShadow: "0 6px 14px rgba(65, 0, 117, 0.08)",
+                          background: "rgba(111, 0, 198, 0.06)",
+                          border: "1px solid rgba(111, 0, 198, 0.08)",
                         }}
                       >
-                        -
-                      </Box>
-                      <Box
-                        sx={{
-                          minWidth: "18px",
-                          textAlign: "center",
-                          fontSize: "14px",
-                          fontWeight: 700,
-                          color: "#32164d",
-                        }}
-                      >
-                        1
-                      </Box>
-                      <Box
-                        component="button"
-                        type="button"
-                        sx={{
-                          width: "28px",
-                          height: "28px",
-                          border: "none",
-                          borderRadius: "999px",
-                          background: "#6f00c6",
-                          color: "#fff",
-                          fontSize: "18px",
-                          fontWeight: 700,
-                          cursor: "pointer",
-                          boxShadow: "0 10px 18px rgba(111, 0, 198, 0.28)",
-                        }}
-                      >
-                        +
-                      </Box>
+                        <Button
+                          onClick={() => decreaseQuantity(item.id)}
+                          sx={{
+                            width: "26px",
+                            height: "26px",
+                            border: "none",
+                            borderRadius: "999px",
+                            background: "#fff",
+                            color: "#6f00c6",
+                            fontSize: "20px",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            boxShadow: "0 6px 14px rgba(65, 0, 117, 0.08)",
+                          }}
+                        >
+                          -
+                        </Button>
+                        <Box
+                          sx={{
+                            minWidth: "18px",
+                            textAlign: "center",
+                            fontSize: "17px",
+                            fontWeight: 700,
+                            color: "#32164d",
+                          }}
+                        >
+                          {item.quantity}
+                        </Box>
+                        <Button
+                          onClick={() => increaseQuantity(item.id)}
+                          sx={{
+                            width: "26px",
+                            height: "26px",
+                            border: "none",
+                            borderRadius: "999px",
+                            background: "#fff",
+                            color: "#6f00c6",
+                            fontSize: "20px",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                            boxShadow: "0 10px 18px rgba(111, 0, 198, 0.28)",
+                          }}
+                        >
+                          +
+                        </Button>
+                      </Stack>
                     </Stack>
                   </Stack>
                 </Stack>
-              </Stack>
-            </Box>
+              </Box>
+            ))}
           </Box>
 
           <Stack
@@ -380,7 +450,7 @@ const Basket = () => {
               borderRadius: "22px",
               background: "rgba(255, 255, 255, 0.84)",
               border: "1px solid rgba(111, 0, 198, 0.08)",
-              gap: "12px",
+              gap: "8px",
             }}
           >
             <Stack
@@ -390,9 +460,9 @@ const Basket = () => {
             >
               <Box
                 sx={{
-                  fontSize: "13px",
+                  fontSize: "15px",
                   fontWeight: 600,
-                  color: "#7c6890",
+                  color: "#6b468fff",
                 }}
               >
                 Total
@@ -400,38 +470,81 @@ const Basket = () => {
               <Box
                 className={"price"}
                 sx={{
-                  fontSize: "18px",
+                  fontSize: "20px",
                   fontWeight: 800,
                   color: "#2c1243",
                 }}
               >
-                $100
+                ${totalPrice + deliveryFee}
               </Box>
             </Stack>
             <Box
               sx={{
-                fontSize: "12px",
+                fontSize: "14px",
                 color: "#8a7897",
-                mt: "-6px",
+                mt: "-8px",
               }}
             >
-              Includes $98 items + $2 service fee
+              Includes ${totalPrice} items + ${deliveryFee} delivery fee
             </Box>
             <Button
               startIcon={<ShoppingCartIcon />}
               variant={"contained"}
+              disabled={items.length === 0}
               sx={{
                 minHeight: "46px",
-                borderRadius: "16px",
+                padding: "10px 30px",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                borderRadius: "999px",
+                border: "2px solid transparent",
+                background: `
+                  linear-gradient(#cda6ed, #cb33df) padding-box,
+                  linear-gradient(
+                    120deg,
+                    #e83333 0%,
+                    #d3b7ff 35%,
+                    #ffffff 55%,
+                    #b56cff 75%,
+                    #5f18b7 100%
+                  ) border-box
+                `,
+                backgroundSize: "100% 100%, 250% 250%",
+                backgroundPosition: "0 0, 0% 50%",
+                animation: "ctaBorderFlow 3.6s linear infinite",
+                color: "#fff",
+                fontSize: "16px",
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: 1,
                 textTransform: "none",
-                fontSize: "15px",
-                fontWeight: 800,
-                background: "linear-gradient(135deg, #6f00c6 0%, #410075 100%)",
-                boxShadow: "0 16px 26px rgba(65, 0, 117, 0.28)",
+                boxShadow: "none",
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 "&:hover": {
-                  background:
-                    "linear-gradient(135deg, #7d18d1 0%, #4f0b8c 100%)",
-                  boxShadow: "0 20px 30px rgba(65, 0, 117, 0.34)",
+                  background: `
+                    linear-gradient(#d3acf2, #8527d3) padding-box,
+                    linear-gradient(
+                      120deg,
+                      #c27bff 0%,
+                      #f3e4ff 45%,
+                      #ffffff 60%,
+                      #d190ff 78%,
+                      #7f2ed8 100%
+                    ) border-box
+                  `,
+                  boxShadow: "0 8px 20px rgba(65, 0, 117, 0.25)",
+                  transform: "translateY(-1px)",
+                },
+                "&.Mui-disabled": {
+                  background: "#eee",
+                  color: "#aaa",
+                  border: "none",
+                },
+                "@keyframes ctaBorderFlow": {
+                  "0%": { backgroundPosition: "0 0, 0% 50%" },
+                  "50%": { backgroundPosition: "0 0, 100% 50%" },
+                  "100%": { backgroundPosition: "0 0, 0% 50%" },
                 },
               }}
             >
