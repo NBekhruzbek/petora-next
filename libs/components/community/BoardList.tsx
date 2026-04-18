@@ -95,6 +95,7 @@ const BoardList = ({
         className="qna-dialog qna-ask-dialog"
         open={isWriteOpen}
         onClose={onWriteClose}
+        disableScrollLock
         fullWidth
         maxWidth="md"
         PaperProps={{ className: "qna-dialog-paper" }}

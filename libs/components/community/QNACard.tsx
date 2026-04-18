@@ -736,6 +736,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
         onClose={handleCloseDialog}
         fullWidth
         maxWidth="md"
+        disableScrollLock
         transitionDuration={{ enter: 320, exit: 220 }}
         sx={{
           "& .MuiDialog-container": {
@@ -1009,6 +1010,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
         onClose={handleAskClose}
         fullWidth
         maxWidth="md"
+        disableScrollLock
         transitionDuration={{ enter: 320, exit: 220 }}
         sx={{
           "& .MuiDialog-container": {

@@ -173,6 +173,7 @@ const FreeBoardNewsCard = ({ item }: FreeBoardNewsCardProps) => {
         onClose={handleCloseDialog}
         fullWidth
         maxWidth="md"
+        disableScrollLock
         transitionDuration={{ enter: 320, exit: 220 }}
         PaperProps={{ className: "qna-dialog-paper" }}
       >
