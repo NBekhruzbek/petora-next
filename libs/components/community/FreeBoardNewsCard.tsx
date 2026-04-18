@@ -8,6 +8,7 @@ import {
   IconButton,
   Stack,
   Typography,
+  Pagination,
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
@@ -42,6 +43,7 @@ type FreeBoardNewsCardProps = {
 };
 
 const DESCRIPTION_LIMIT = 80;
+const COMMENTS_PER_PAGE = 10;
 const CURRENT_USER = {
   name: "You",
   image: "/img/avatar/member-1.png",
@@ -53,7 +55,14 @@ const FreeBoardNewsCard = ({ item }: FreeBoardNewsCardProps) => {
   const [draftComment, setDraftComment] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(item.likes);
+  const [commentPage, setCommentPage] = useState(1);
   const commentSectionRef = useRef<HTMLDivElement>(null);
+
+  const totalCommentPages = Math.ceil(comments.length / COMMENTS_PER_PAGE);
+  const pagedComments = comments.slice(
+    (commentPage - 1) * COMMENTS_PER_PAGE,
+    commentPage * COMMENTS_PER_PAGE,
+  );
 
   const shortDescription =
     item.description.length > DESCRIPTION_LIMIT
@@ -89,7 +98,18 @@ const FreeBoardNewsCard = ({ item }: FreeBoardNewsCardProps) => {
 
     setComments((prev) => [newComment, ...prev]);
     setDraftComment("");
+    setCommentPage(1);
 
+    if (commentSectionRef.current) {
+      commentSectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  const handleCommentPageChange = (_: React.ChangeEvent<unknown>, value: number) => {
+    setCommentPage(value);
     if (commentSectionRef.current) {
       commentSectionRef.current.scrollIntoView({
         behavior: "smooth",
@@ -222,7 +242,7 @@ const FreeBoardNewsCard = ({ item }: FreeBoardNewsCardProps) => {
                   </Typography>
                 </Stack>
               ) : (
-                comments.map((comment) => (
+                pagedComments.map((comment) => (
                   <Stack key={comment.id} className="qna-answer-main">
                     <Stack className="qna-question-meta">
                       <Stack className="qna-author-group">
@@ -247,6 +267,18 @@ const FreeBoardNewsCard = ({ item }: FreeBoardNewsCardProps) => {
                 ))
               )}
             </Stack>
+
+            {totalCommentPages > 1 && (
+              <Stack className="qna-answer-pagination-wrap">
+                <Pagination
+                  count={totalCommentPages}
+                  page={commentPage}
+                  onChange={handleCommentPageChange}
+                  shape="rounded"
+                  className="qna-pagination"
+                />
+              </Stack>
+            )}
           </Stack>
 
           {/* Add Comment Section */}
