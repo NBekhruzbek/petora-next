@@ -27,6 +27,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.4,
     bookings: 111,
+    location: "Seoul",
   },
   {
     _id: "agent-2",
@@ -37,6 +38,7 @@ const agents: AgentItem[] = [
     likes: 2022,
     rating: 4.2,
     bookings: 111,
+    location: "Busan",
   },
   {
     _id: "agent-3",
@@ -47,6 +49,7 @@ const agents: AgentItem[] = [
     likes: 321,
     rating: 4.2,
     bookings: 111,
+    location: "Incheon",
   },
   {
     _id: "agent-4",
@@ -57,6 +60,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.2,
     bookings: 111,
+    location: "Daegu",
   },
   {
     _id: "agent-5",
@@ -67,6 +71,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.9,
     bookings: 111,
+    location: "Suwon",
   },
   {
     _id: "agent-6",
@@ -77,6 +82,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.2,
     bookings: 111,
+    location: "Gyeongju",
   },
   {
     _id: "agent-7",
@@ -87,6 +93,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.2,
     bookings: 211,
+    location: "Jeju",
   },
   {
     _id: "agent-8",
@@ -97,6 +104,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.2,
     bookings: 111,
+    location: "Daejon",
   },
 ];
 
@@ -104,9 +112,11 @@ const Agents = () => {
   const [value, setValue] = useState<number[]>([10, 1000]);
   const [isPriceOpen, setIsPriceOpen] = useState(true);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
+  const [isLocationOpen, setIsLocationOpen] = useState(true);
   const [isLikedOpen, setIsLikedOpen] = useState(true);
   const [likedSelected, setLikedSelected] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("new");
   const agentsTopRef = useRef<HTMLDivElement | null>(null);
@@ -129,6 +139,19 @@ const Agents = () => {
     "Veterinary",
   ];
 
+  const locations = [
+    "Seoul",
+    "Busan",
+    "Incheon",
+    "Daegu",
+    "Suwon",
+    "Gyeongju",
+    "Gwangju",
+    "Chonju",
+    "Daejon",
+    "Jeju",
+  ];
+
   const handleChange = (event: Event, newValue: number | number[]) => {
     setValue(newValue as number[]);
   };
@@ -141,8 +164,20 @@ const Agents = () => {
     setIsPriceOpen((prev) => !prev);
   };
 
+  const toggleLocationOpen = () => {
+    setIsLocationOpen((prev) => !prev);
+  };
+
   const toggleCategory = (name: string) => {
     setSelectedCategories((prev) =>
+      prev.includes(name)
+        ? prev.filter((item) => item !== name)
+        : [...prev, name],
+    );
+  };
+
+  const toggleLocation = (name: string) => {
+    setSelectedLocations((prev) =>
       prev.includes(name)
         ? prev.filter((item) => item !== name)
         : [...prev, name],
@@ -201,14 +236,19 @@ const Agents = () => {
           selectedCategories.includes(category),
         );
 
+      const matchesLocation =
+        selectedLocations.length === 0 ||
+        (agent.location && selectedLocations.includes(agent.location));
+
       const matchesSearch =
         normalizedSearch.length === 0 ||
         agent.name.toLowerCase().includes(normalizedSearch) ||
-        agent.serviceType.toLowerCase().includes(normalizedSearch);
+        agent.serviceType.toLowerCase().includes(normalizedSearch) ||
+        (agent.location && agent.location.toLowerCase().includes(normalizedSearch));
 
-      return matchesPrice && matchesCategory && matchesSearch;
+      return matchesPrice && matchesCategory && matchesLocation && matchesSearch;
     });
-  }, [searchText, selectedCategories, value]);
+  }, [searchText, selectedCategories, selectedLocations, value]);
 
   const sortedAgents = useMemo(() => {
     if (sortBy === "new") return filteredAgents;
@@ -231,7 +271,7 @@ const Agents = () => {
 
   useEffect(() => {
     setAgentSearch((prev) => ({ ...prev, page: 1 }));
-  }, [searchText, selectedCategories, value, sortBy]);
+  }, [searchText, selectedCategories, selectedLocations, value, sortBy]);
 
   const totalPages = Math.max(
     1,
@@ -335,6 +375,41 @@ const Agents = () => {
                 })}
               </Stack>
             </Stack>
+            <Divider className="divider"></Divider>
+
+            <Stack className="category-section">
+              <Stack className="category-header" onClick={toggleLocationOpen}>
+                <Typography className="category-title">Location</Typography>
+                <Box
+                  className={`category-toggle ${
+                    isLocationOpen ? "is-open" : ""
+                  }`}
+                  aria-hidden="true"
+                />
+              </Stack>
+              <Stack
+                className={`category-list ${isLocationOpen ? "is-open" : ""}`}
+              >
+                {locations.map((location) => {
+                  const isSelected = selectedLocations.includes(location);
+                  return (
+                    <Stack
+                      key={location}
+                      className={`category-option ${
+                        isSelected ? "is-selected" : ""
+                      }`}
+                      onClick={() => toggleLocation(location)}
+                    >
+                      <Box className="category-checkbox" aria-hidden="true" />
+                      <Typography className="category-label">
+                        {location}
+                      </Typography>
+                    </Stack>
+                  );
+                })}
+              </Stack>
+            </Stack>
+
             <Divider className="divider"></Divider>
 
             <Stack className="liked-agents-section">

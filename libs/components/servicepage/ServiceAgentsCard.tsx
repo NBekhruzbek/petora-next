@@ -14,6 +14,7 @@ export type AgentItem = {
   likes: number;
   rating: number;
   bookings: number;
+  location: string;
 };
 
 type AgentsCardProps = {
