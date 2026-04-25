@@ -1,9 +1,14 @@
 import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
-import { Container } from "@mui/material";
+import SupportHub from "@/libs/components/cspage/SupportHub";
+import { Stack } from "@mui/material";
 import { NextPage } from "next";
 
 const CS: NextPage = () => {
-  return <Container>CS PAGE</Container>;
+  return (
+    <Stack className="cs-page">
+      <SupportHub />
+    </Stack>
+  );
 };
 
 export default withLayoutBasic(CS);
