@@ -1,5 +1,4 @@
 import { Box, Pagination, Stack } from "@mui/material";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -8,10 +7,8 @@ import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
 import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
-import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import LaunchRoundedIcon from "@mui/icons-material/LaunchRounded";
-import { ComponentType, FocusEvent, useMemo, useState } from "react";
+import { ComponentType, useMemo, useState } from "react";
 import { useEffect, useRef } from "react";
 
 type CategoryId =
@@ -57,13 +54,6 @@ const categories: CategoryItem[] = [
   { id: "account", label: "Account & Security", icon: ShieldOutlinedIcon },
   { id: "services", label: "Pet Services", icon: PetsOutlinedIcon },
   { id: "notices", label: "Notices", icon: NotificationsOutlinedIcon },
-];
-
-const popularTopics = [
-  "Track my order",
-  "Return policy",
-  "Reschedule grooming",
-  "Payment security",
 ];
 
 const faqs: FaqItem[] = [
@@ -368,55 +358,18 @@ const NOTICE_PAGE_LIMIT = 8;
 const SupportHub = () => {
   const [activeCategory, setActiveCategory] = useState<CategoryId>("orders");
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
-  const [searchValue, setSearchValue] = useState("");
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [selectedNotice, setSelectedNotice] = useState<NoticeItem | null>(null);
-  const [feedback, setFeedback] = useState<Record<string, "up" | "down">>({});
   const [viewedNoticeIds, setViewedNoticeIds] = useState<string[]>([]);
   const [noticePage, setNoticePage] = useState(1);
   const noticeTopRef = useRef<HTMLDivElement | null>(null);
 
-  const normalizedSearch = searchValue.trim().toLowerCase();
-
   const filteredFaqs = useMemo(() => {
-    const baseFaqs =
-      activeCategory === "notices"
-        ? faqs
-        : faqs.filter((item) => item.category === activeCategory);
+    return activeCategory === "notices"
+      ? faqs
+      : faqs.filter((item) => item.category === activeCategory);
+  }, [activeCategory]);
 
-    if (!normalizedSearch) return baseFaqs;
-
-    return faqs.filter((item) => {
-      const haystack = [
-        item.title,
-        item.description,
-        item.answer,
-        item.category,
-        item.bullets.join(" "),
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      return haystack.includes(normalizedSearch);
-    });
-  }, [activeCategory, normalizedSearch]);
-
-  const filteredNotices = useMemo(() => {
-    if (!normalizedSearch) return notices;
-
-    return notices.filter((item) =>
-      [item.title, item.summary, item.badge, item.fullText.join(" ")]
-        .join(" ")
-        .toLowerCase()
-        .includes(normalizedSearch),
-    );
-  }, [normalizedSearch]);
-
-  const handleSearchBlur = (event: FocusEvent<HTMLDivElement>) => {
-    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-      setIsSearchFocused(false);
-    }
-  };
+  const filteredNotices = notices;
 
   const handleCategorySelect = (categoryId: CategoryId) => {
     setActiveCategory(categoryId);
@@ -428,13 +381,6 @@ const SupportHub = () => {
 
   const handleFaqToggle = (faqId: string) => {
     setExpandedFaqId((prev) => (prev === faqId ? null : faqId));
-  };
-
-  const handleSuggestionSelect = (value: string) => {
-    setSearchValue(value);
-    setIsSearchFocused(false);
-    setExpandedFaqId(null);
-    setActiveCategory("orders");
   };
 
   const openNoticeModal = (notice: NoticeItem) => {
@@ -451,7 +397,6 @@ const SupportHub = () => {
   };
 
   const unviewedNoticeCount = notices.length - viewedNoticeIds.length;
-  const searchDropdownVisible = isSearchFocused && !selectedNotice;
   const isNoticeView = activeCategory === "notices";
   const totalNoticePages = Math.max(
     1,
@@ -483,48 +428,6 @@ const SupportHub = () => {
   return (
     <Stack className="support-hub-section">
       <Stack className="container">
-        <Stack
-          className="support-hub-search"
-          onBlur={handleSearchBlur}
-          tabIndex={-1}
-        >
-          <Box className="search-shell">
-            <SearchRoundedIcon className="search-icon" />
-            <input
-              value={searchValue}
-              onChange={(event) => {
-                setSearchValue(event.target.value);
-                setExpandedFaqId(null);
-              }}
-              onFocus={() => setIsSearchFocused(true)}
-              placeholder="Search for help, orders, delivery..."
-              aria-label="Search support topics"
-            />
-          </Box>
-
-          {searchDropdownVisible ? (
-            <Stack className="search-dropdown">
-              <Stack className="search-group">
-                <Box className="group-label">Popular topics</Box>
-                <Stack className="topic-list">
-                  {popularTopics.map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      className="topic-link"
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => handleSuggestionSelect(item)}
-                    >
-                      <span>{item}</span>
-                      <KeyboardArrowRightRoundedIcon />
-                    </button>
-                  ))}
-                </Stack>
-              </Stack>
-            </Stack>
-          ) : null}
-        </Stack>
-
         <button
           type="button"
           className="support-notice-highlight"
@@ -564,9 +467,6 @@ const SupportHub = () => {
                   >
                     <Icon className="sidebar-icon" />
                     <span>{category.label}</span>
-                    {category.id === "notices" ? (
-                      <Box className="sidebar-badge">{unviewedNoticeCount}</Box>
-                    ) : null}
                   </button>
                 );
               })}
@@ -577,9 +477,7 @@ const SupportHub = () => {
             {!isNoticeView ? (
               <>
                 <Stack className="panel-head" direction="row">
-                  <Box className="panel-title">
-                    {normalizedSearch ? "Search Results" : "Popular Questions"}
-                  </Box>
+                  <Box className="panel-title">Popular Questions</Box>
                 </Stack>
 
                 {filteredFaqs.length ? (
@@ -630,43 +528,6 @@ const SupportHub = () => {
                                 <Box className="feedback-label">
                                   Was this helpful?
                                 </Box>
-                                <Stack
-                                  className="feedback-actions"
-                                  direction="row"
-                                >
-                                  <button
-                                    type="button"
-                                    className={`feedback-btn ${
-                                      feedback[faq.id] === "up"
-                                        ? "selected"
-                                        : ""
-                                    }`}
-                                    onClick={() =>
-                                      setFeedback((prev) => ({
-                                        ...prev,
-                                        [faq.id]: "up",
-                                      }))
-                                    }
-                                  >
-                                    <ThumbUpAltOutlinedIcon />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className={`feedback-btn ${
-                                      feedback[faq.id] === "down"
-                                        ? "selected down"
-                                        : ""
-                                    }`}
-                                    onClick={() =>
-                                      setFeedback((prev) => ({
-                                        ...prev,
-                                        [faq.id]: "down",
-                                      }))
-                                    }
-                                  >
-                                    <ThumbDownAltOutlinedIcon />
-                                  </button>
-                                </Stack>
                                 <button
                                   type="button"
                                   className="close-expanded"
@@ -772,7 +633,13 @@ const SupportHub = () => {
               <CloseRoundedIcon />
             </button>
 
-            <Box className="modal-kicker">{selectedNotice.badge}</Box>
+            <Box
+              className={`${
+                selectedNotice.badge === "Important" ? "important" : "update"
+              }`}
+            >
+              {selectedNotice.badge}
+            </Box>
             <Box className="modal-title">{selectedNotice.title}</Box>
             <Box className="modal-date">{selectedNotice.date}</Box>
 
