@@ -80,7 +80,10 @@ const NotFoundPage = () => {
           <span className="soft-orbit orbit-two" aria-hidden="true" />
           <span className="soft-orbit orbit-three" aria-hidden="true" />
 
-          <section className="storybook-stage" aria-labelledby="not-found-title">
+          <section
+            className="storybook-stage"
+            aria-labelledby="not-found-title"
+          >
             <div className="floating-detail detail-one" aria-hidden="true">
               <AutoAwesomeRoundedIcon />
             </div>
@@ -128,7 +131,7 @@ const NotFoundPage = () => {
             </div>
 
             <div className="copy-card">
-              <span className="eyebrow">Error 404</span>
+              <span className="eyebrow">Error - 404</span>
               <h1 id="not-found-title">
                 404 - Page Not Found <PetsRoundedIcon />
               </h1>
@@ -145,14 +148,6 @@ const NotFoundPage = () => {
                 >
                   <HomeRoundedIcon />
                   <span>Take Me Home</span>
-                </button>
-                <button
-                  className="petora-404-btn secondary"
-                  type="button"
-                  onClick={() => router.push("/discovery")}
-                >
-                  <SearchRoundedIcon />
-                  <span>Explore Petora</span>
                 </button>
               </div>
             </div>
