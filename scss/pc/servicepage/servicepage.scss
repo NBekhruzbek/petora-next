@@ -257,6 +257,7 @@
             flex-direction: row;
             gap: 18px;
             padding-right: 18px;
+            padding-bottom: 50px;
             .service-item {
               flex: 0 0 auto;
               .service-card {
@@ -300,7 +301,6 @@
                   justify-content: flex-end;
                   gap: 10px;
                   padding: 20px 18px 14px;
-                  bottom: -60px;
                   text-align: center;
                   color: #fff;
                   pointer-events: none;
@@ -333,38 +333,6 @@
                       opacity 0.35s ease,
                       transform 0.35s ease,
                       max-height 0.35s ease;
-                  }
-
-                  .btn {
-                    margin-top: 4px;
-                    width: 160px;
-                    height: 40px;
-                    border-radius: 20px;
-                    border: 2px solid transparent;
-                    background:
-                      linear-gradient(#c390ed, #410075) padding-box,
-                      linear-gradient(
-                          120deg,
-                          #e83333 0%,
-                          #d3b7ff 35%,
-                          #ffffff 55%,
-                          #b56cff 75%,
-                          #5f18b7 100%
-                        )
-                        border-box;
-                    color: #fff;
-                    font-family: $font;
-                    font-size: 13px;
-                    font-style: normal;
-                    font-weight: 600;
-                    line-height: 1;
-                    letter-spacing: 0.6px;
-                    text-transform: uppercase;
-                    opacity: 0;
-                    transform: translateY(10px);
-                    transition:
-                      opacity 0.35s ease,
-                      transform 0.35s ease;
                   }
                 }
 
@@ -405,7 +373,7 @@
     .services-agents-page {
       width: 100%;
       height: auto;
-      padding-top: 100px;
+      padding-top: 70px;
       background-color: #fff;
       .container {
         .title {

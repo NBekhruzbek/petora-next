@@ -22,14 +22,6 @@ const AboutServicesCard = ({ item }: ServicesCardProps) => {
       <Stack className="content">
         <Box className="title">{item.title}</Box>
         <Box className="copy">{item.description}</Box>
-        <Button
-          variant="contained"
-          className="btn"
-          LinkComponent={Link}
-          href="/service/detail"
-        >
-          Learn More
-        </Button>
       </Stack>
     </Stack>
   );
