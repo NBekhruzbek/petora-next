@@ -9,11 +9,6 @@ const CsHeader = () => {
     <Stack className="container">
       <Stack className="cs-top">
         <Stack className="text-area">
-          <Stack className="support-badge" direction="row">
-            <SupportAgentRoundedIcon className="badge-icon" />
-            <Box>Customer Support</Box>
-          </Stack>
-
           <Box className="hero-title">
             Need help? We've got you{" "}
             <span className="accent-line">
@@ -29,23 +24,13 @@ const CsHeader = () => {
           <Stack className="support-highlights" direction="row">
             <Stack className="support-pill-wrap">
               <Stack className="support-pill" direction="row">
+                <SupportAgentRoundedIcon className="pill-icon purple" />
                 <AccessTimeRoundedIcon className="pill-icon purple" />
                 <Box>24/7 Support</Box>
               </Stack>
-              <Stack className="support-pill" direction="row">
-                <BoltRoundedIcon className="pill-icon gold" />
-                <Box>Fast Response</Box>
-              </Stack>
-            </Stack>
-            <Stack className="support-pill" direction="row">
-              <ChatRoundedIcon className="pill-icon lilac" />
-              <Box>Friendly Service</Box>
             </Stack>
           </Stack>
         </Stack>
-        <Box>
-          <img className="typing-icon" src="./img/headers/typing.png" alt="" />
-        </Box>
         <Stack sx={{ position: "relative" }}>
           <Box className={"circle-background"}>
             <img
