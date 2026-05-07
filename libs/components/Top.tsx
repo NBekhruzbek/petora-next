@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import React from "react";
 import Basket from "./Basket";
+import LoginRegister from "./account/LoginRegister";
 
 const Top = () => {
   const authMember = false;
@@ -16,6 +17,11 @@ const Top = () => {
     null,
   );
   const logoutOpen = Boolean(logoutAnchor);
+
+  const [loginOpen, setLoginOpen] = useState(false);
+
+  const handleLoginOpen = () => setLoginOpen(true);
+  const handleLoginClose = () => setLoginOpen(false);
 
   /** LIFECYCLES **/
   useEffect(() => {
@@ -198,16 +204,16 @@ const Top = () => {
                 </Menu>
               </>
             ) : (
-              <Link href={"/account/join"}>
-                <div className={"join-box"}>
-                  <AccountCircleOutlinedIcon />
-                  <span>Login / Sign Up</span>
-                </div>
-              </Link>
+              <div className={"join-box"} onClick={handleLoginOpen}>
+                <AccountCircleOutlinedIcon />
+                <span>Login / Sign Up</span>
+              </div>
             )}
           </Box>
         </Stack>
       </Stack>
+
+      <LoginRegister open={loginOpen} onClose={handleLoginClose} />
     </Stack>
   );
 };
