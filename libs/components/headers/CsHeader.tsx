@@ -1,8 +1,6 @@
 import { Box, Stack } from "@mui/material";
 import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
-import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
-import ChatRoundedIcon from "@mui/icons-material/ChatRounded";
 
 const CsHeader = () => {
   return (
