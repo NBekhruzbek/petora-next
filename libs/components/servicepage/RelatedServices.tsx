@@ -11,6 +11,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.4,
     bookings: 111,
+    location: "Seoul",
   },
   {
     _id: "agent-4",
@@ -21,6 +22,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.2,
     bookings: 111,
+    location: "Daegu",
   },
   {
     _id: "agent-6",
@@ -31,6 +33,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.2,
     bookings: 111,
+    location: "Gyeongju",
   },
   {
     _id: "agent-7",
@@ -41,6 +44,7 @@ const agents: AgentItem[] = [
     likes: 121,
     rating: 4.2,
     bookings: 211,
+    location: "Jeju",
   },
   {
     _id: "agent-8",
@@ -51,6 +55,7 @@ const agents: AgentItem[] = [
     likes: 138,
     rating: 4.7,
     bookings: 164,
+    location: "Incheon",
   },
 ];
 
