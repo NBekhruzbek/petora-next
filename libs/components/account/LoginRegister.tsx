@@ -25,7 +25,7 @@ interface LoginRegisterProps {
   onClose: () => void;
 }
 
-type AuthMode = "login" | "register" | "verify";
+type AuthMode = "login" | "register" | "verify" | "forgot" | "reset";
 type UserType = "admin" | "agent" | "user";
 type IdStatus = "idle" | "checking" | "available" | "taken";
 
@@ -81,12 +81,18 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     password: "",
     confirmPassword: "",
   });
+  const [forgotForm, setForgotForm] = useState({ name: "", email: "" });
+  const [resetForm, setResetForm] = useState({
+    password: "",
+    confirmPassword: "",
+  });
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(180);
   const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   const isRegister = mode !== "login";
+  const isResetFlow = mode === "forgot" || mode === "reset";
   const sideImage = isRegister
     ? "/img/pets/PetSignUp.png"
     : "/img/pets/PetLogin.png";
@@ -94,6 +100,8 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
   const title = useMemo(() => {
     if (mode === "login") return "Welcome to";
     if (mode === "register") return "Create Account";
+    if (mode === "forgot") return "Reset Password";
+    if (mode === "reset") return "Set New Password";
     return "Check Your Email";
   }, [mode]);
 
@@ -104,8 +112,14 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     if (mode === "register") {
       return "Join Petora to book trusted care, shop smarter, and protect pets together.";
     }
-    return `We sent a 6-digit verification code to ${maskId(registerForm.email)}.`;
-  }, [mode, registerForm.email]);
+    if (mode === "forgot") {
+      return "Enter your name and email to receive a verification code.";
+    }
+    if (mode === "reset") {
+      return "Create a strong new password to keep your account secure.";
+    }
+    return `We sent a 6-digit verification code to ${maskId(forgotForm.email || registerForm.email)}.`;
+  }, [mode, registerForm.email, forgotForm.email]);
 
   useEffect(() => {
     if (open) {
@@ -144,6 +158,18 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
       setRegisterError("");
     };
 
+  const handleForgotChange =
+    (field: keyof typeof forgotForm) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setForgotForm((prev) => ({ ...prev, [field]: event.target.value }));
+    };
+
+  const handleResetChange =
+    (field: keyof typeof resetForm) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setResetForm((prev) => ({ ...prev, [field]: event.target.value }));
+    };
+
   // Removed handleCheckId
 
   const handleSwitchToRegister = () => {
@@ -171,6 +197,36 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     setMode("verify");
     setTimeLeft(180);
     window.setTimeout(() => otpRefs.current[0]?.focus(), 80);
+  };
+
+  const handleForgotSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setMode("verify");
+    setTimeLeft(180);
+    window.setTimeout(() => otpRefs.current[0]?.focus(), 80);
+  };
+
+  const handleResetSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (resetForm.password !== resetForm.confirmPassword) {
+      setRegisterError("Passwords do not match.");
+      return;
+    }
+    setMode("login");
+  };
+
+  const handleVerifySubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (mode === "verify") {
+      // In a real app, check if we came from 'forgot'
+      // For this demo, let's assume if name in forgotForm is filled, we go to reset
+      if (forgotForm.name) {
+        setMode("reset");
+      } else {
+        // Successful registration logic
+        setMode("login");
+      }
+    }
   };
 
   const handleResendOtp = () => {
@@ -318,7 +374,11 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                   />
                   <span>Remember me</span>
                 </label>
-                <button type="button" className="auth-link-button">
+                <button
+                  type="button"
+                  className="auth-link-button"
+                  onClick={() => setMode("forgot")}
+                >
                   Forgot password?
                 </button>
               </div>
@@ -530,10 +590,149 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
             </form>
           )}
 
+          {mode === "forgot" && (
+            <form className="auth-form" onSubmit={handleForgotSubmit}>
+              <label className="auth-field">
+                <div className="auth-input-wrap">
+                  <PersonOutline fontSize="small" />
+                  <input
+                    value={forgotForm.name}
+                    onChange={handleForgotChange("name")}
+                    onFocus={() => setFocusedField("forgot-name")}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder=" "
+                    required
+                  />
+                  <span
+                    className={
+                      focusedField === "forgot-name" || forgotForm.name
+                        ? "floating"
+                        : ""
+                    }
+                  >
+                    Name
+                  </span>
+                </div>
+              </label>
+
+              <label className="auth-field">
+                <div className="auth-input-wrap">
+                  <AlternateEmail fontSize="small" />
+                  <input
+                    value={forgotForm.email}
+                    onChange={handleForgotChange("email")}
+                    onFocus={() => setFocusedField("forgot-email")}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder=" "
+                    type="email"
+                    required
+                  />
+                  <span
+                    className={
+                      focusedField === "forgot-email" || forgotForm.email
+                        ? "floating"
+                        : ""
+                    }
+                  >
+                    Email
+                  </span>
+                </div>
+              </label>
+
+              <button className="auth-primary-button" type="submit">
+                Send Reset Code
+              </button>
+
+              <p className="auth-switch-copy">
+                Remember your password?
+                <button type="button" onClick={() => setMode("login")}>
+                  Back to Login
+                </button>
+              </p>
+            </form>
+          )}
+
+          {mode === "reset" && (
+            <form className="auth-form" onSubmit={handleResetSubmit}>
+              <label className="auth-field">
+                <div className="auth-input-wrap">
+                  <LockOutlined fontSize="small" />
+                  <input
+                    value={resetForm.password}
+                    onChange={handleResetChange("password")}
+                    onFocus={() => setFocusedField("reset-password")}
+                    onBlur={() => setFocusedField(null)}
+                    type={showPassword ? "text" : "password"}
+                    placeholder=" "
+                    required
+                  />
+                  <span
+                    className={
+                      focusedField === "reset-password" || resetForm.password
+                        ? "floating"
+                        : ""
+                    }
+                  >
+                    New Password
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? (
+                      <VisibilityOff fontSize="small" />
+                    ) : (
+                      <Visibility fontSize="small" />
+                    )}
+                  </button>
+                </div>
+              </label>
+
+              <label className="auth-field">
+                <div className="auth-input-wrap">
+                  <LockOutlined fontSize="small" />
+                  <input
+                    value={resetForm.confirmPassword}
+                    onChange={handleResetChange("confirmPassword")}
+                    onFocus={() => setFocusedField("reset-confirm")}
+                    onBlur={() => setFocusedField(null)}
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder=" "
+                    required
+                  />
+                  <span
+                    className={
+                      focusedField === "reset-confirm" ||
+                      resetForm.confirmPassword
+                        ? "floating"
+                        : ""
+                    }
+                  >
+                    Confirm Password
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  >
+                    {showConfirmPassword ? (
+                      <VisibilityOff fontSize="small" />
+                    ) : (
+                      <Visibility fontSize="small" />
+                    )}
+                  </button>
+                </div>
+              </label>
+
+              <button className="auth-primary-button" type="submit">
+                Reset Password
+              </button>
+            </form>
+          )}
+
           {mode === "verify" && (
             <form
               className="auth-form auth-verify-form"
-              onSubmit={handleLoginSubmit}
+              onSubmit={handleVerifySubmit}
             >
               <div className="auth-otp-grid">
                 {otp.map((digit, index) => (
@@ -589,13 +788,15 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
         </div>
 
         <aside
-          className={`auth-visual-panel ${isRegister ? "signup" : "login"}`}
+          className={`auth-visual-panel ${isRegister ? "signup" : "login"} ${isResetFlow ? "reset-flow" : ""}`}
         >
           <div className="auth-visual-copy">
             <h3>
-              {isRegister
-                ? "Become a member today and help protect animals!"
-                : "Healthy pets bring joy and enrich your life."}
+              {isResetFlow
+                ? "Secure your account and continue your journey with Petora."
+                : isRegister
+                  ? "Become a member today and help protect animals!"
+                  : "Healthy pets bring joy and enrich your life."}
             </h3>
           </div>
 
@@ -606,35 +807,37 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
             }
           />
 
-          <div className="auth-benefit-card">
-            {isRegister ? (
-              <>
-                <h4>Member Benefits: Exclusive Discounts, Rewards</h4>
-                <p>
-                  Enjoy special pricing on pet food, toys, accessories, and care
-                  services.
-                </p>
-                <p>
-                  Get early access to new products, events, and protection
-                  programs.
-                </p>
-              </>
-            ) : (
-              <>
-                <h4>Join Our Online Pet Care & Protection Community</h4>
-                <p>
-                  Share knowledge, meet trusted caregivers, and help pets live
-                  better lives.
-                </p>
-                <div>
-                  <span>
-                    <CheckCircle fontSize="small" />
-                    Join with 100k+ pet people
-                  </span>
-                </div>
-              </>
-            )}
-          </div>
+          {!isResetFlow && (
+            <div className="auth-benefit-card">
+              {isRegister ? (
+                <>
+                  <h4>Member Benefits: Exclusive Discounts, Rewards</h4>
+                  <p>
+                    Enjoy special pricing on pet food, toys, accessories, and
+                    care services.
+                  </p>
+                  <p>
+                    Get early access to new products, events, and protection
+                    programs.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h4>Join Our Online Pet Care & Protection Community</h4>
+                  <p>
+                    Share knowledge, meet trusted caregivers, and help pets live
+                    better lives.
+                  </p>
+                  <div>
+                    <span>
+                      <CheckCircle fontSize="small" />
+                      Join with 100k+ pet people
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </aside>
       </section>
     </Dialog>
