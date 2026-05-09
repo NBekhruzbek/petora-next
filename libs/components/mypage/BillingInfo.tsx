@@ -12,8 +12,13 @@ import BusinessIcon from "@mui/icons-material/Business";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import VerifiedIcon from "@mui/icons-material/Verified";
 
-const BillingInfo = ({ isEditable }: { isEditable: boolean }) => {
-  const [billing, setBilling] = useState({
+interface BillingInfoProps {
+  isEditable: boolean;
+  cancelTrigger?: number;
+}
+
+const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
+  const [originalBilling, setOriginalBilling] = useState({
     cardHolder: "JOHN DOE",
     cardNumber: "4242 4242 4242 4242",
     expiryDate: "12/28",
@@ -25,6 +30,20 @@ const BillingInfo = ({ isEditable }: { isEditable: boolean }) => {
     zipCode: "06234",
     country: "South Korea",
   });
+
+  const [billing, setBilling] = useState(originalBilling);
+
+  React.useEffect(() => {
+    if (isEditable) {
+      setOriginalBilling(billing);
+    }
+  }, [isEditable]);
+
+  React.useEffect(() => {
+    if (cancelTrigger && cancelTrigger > 0) {
+      setBilling(originalBilling);
+    }
+  }, [cancelTrigger]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

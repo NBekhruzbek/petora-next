@@ -314,13 +314,55 @@
             padding: 8px 16px;
           }
 
-          .btn-save,
           .btn-edit {
-            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            background:
+              linear-gradient(#c390ed, #410075) 0 0 / 100% 100% padding-box
+                padding-box,
+              linear-gradient(
+                  120deg,
+                  #e83333 0%,
+                  #d3b7ff 35%,
+                  #fff 55%,
+                  #b56cff 75%,
+                  #5f18b7 100%
+                )
+                0% / 250% 250% border-box;
+            border: 2px solid #0000;
+            border-radius: 10px;
+            width: 100%;
+            height: 42px;
+            margin-top: 4px;
+            padding: 0 22px;
+            font-family: $font;
+            font-size: 16px;
+            font-weight: 900;
+            transition:
+              transform 0.2s,
+              box-shadow 0.2s;
+            animation: 3.6s linear infinite ctaBorderFlow;
+          }
+
+          .btn-save {
+            border-radius: 10px;
             text-transform: none;
             font-weight: 600;
             padding: 8px 24px;
-            background-color: #410075;
+            font-family: $font;
+            font-size: 16px;
+            background:
+              linear-gradient(#c390ed, #410075) 0 0 / 100% 100% padding-box
+                padding-box,
+              linear-gradient(
+                  120deg,
+                  #e83333 0%,
+                  #d3b7ff 35%,
+                  #fff 55%,
+                  #b56cff 75%,
+                  #5f18b7 100%
+                )
+                0% / 250% 250% border-box;
             color: #ffffff;
             &:hover {
               background-color: #2d0052;
@@ -360,6 +402,33 @@
             }
           }
 
+          .upload-btn-wrapper {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: #ffffff;
+            border-radius: 50%;
+            border: 1px solid #e5e7eb;
+            box-shadow:
+              0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background-color: #f9fafb;
+              transform: scale(1.05);
+            }
+
+            .upload-btn {
+              padding: 6px;
+            }
+          }
+
           .verified-badge {
             background-color: #ffffffff !important;
             border-radius: 6px !important;
@@ -378,6 +447,43 @@
           box-shadow: 0 10px 40px rgba(65, 0, 117, 0.06) !important;
         }
 
+        .check-username-btn {
+          height: 30px !important;
+          min-width: 60px !important;
+          border-radius: 6px !important;
+          border: 1px solid #c1aed0 !important;
+          background-color: #ffffff !important;
+          text-transform: none !important;
+          font-weight: 600 !important;
+          padding: 0 16px !important;
+          color: #454545 !important;
+          box-shadow: none !important;
+          &:hover {
+            background-color: #dfbdfb !important;
+          }
+          &.Mui-disabled {
+            background-color: #e5e7eb !important;
+            color: #9ca3af !important;
+          }
+        }
+
+        .username-status-text {
+          font-size: 12px !important;
+          position: absolute;
+          bottom: -22px;
+          left: 8px;
+          font-weight: 600 !important;
+          &.checking {
+            color: #6b7280 !important;
+          }
+          &.available {
+            color: #10b981 !important;
+          }
+          &.taken {
+            color: #ef4444 !important;
+          }
+        }
+
         // TextFields
         .MuiTextField-root {
           .MuiOutlinedInput-root {
@@ -388,6 +494,7 @@
             &.MuiInputBase-multiline {
               align-items: flex-start !important;
               padding: 12px 14px !important;
+              height: 120px !important;
             }
 
             input,
@@ -399,7 +506,6 @@
 
             textarea {
               padding: 0 !important;
-              height: 100px !important;
             }
           }
         }

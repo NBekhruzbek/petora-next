@@ -10,13 +10,25 @@ import CloseIcon from "@mui/icons-material/Close";
 const MyProfile = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isEditable, setIsEditable] = useState(false);
+  const [cancelTrigger, setCancelTrigger] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
+    setIsEditable(false); // also exit edit mode on tab change
   };
 
   const toggleEdit = () => {
     setIsEditable(!isEditable);
+  };
+
+  const handleCancel = () => {
+    setCancelTrigger((prev) => prev + 1);
+    setIsEditable(false);
+  };
+
+  const handleSave = () => {
+    // API call or save logic would go here
+    setIsEditable(false);
   };
 
   return (
@@ -44,7 +56,7 @@ const MyProfile = () => {
                 color="error"
                 className="btn-cancel"
                 startIcon={<CloseIcon />}
-                onClick={() => setIsEditable(false)}
+                onClick={handleCancel}
               >
                 Cancel
               </Button>
@@ -52,7 +64,7 @@ const MyProfile = () => {
                 variant="contained"
                 className="btn-save"
                 startIcon={<SaveIcon />}
-                onClick={() => setIsEditable(false)}
+                onClick={handleSave}
               >
                 Save Changes
               </Button>
@@ -71,8 +83,12 @@ const MyProfile = () => {
       </Stack>
 
       <Box className="tab-content">
-        {activeTab === 0 && <PersonalInfo isEditable={isEditable} />}
-        {activeTab === 1 && <BillingInfo isEditable={isEditable} />}
+        {activeTab === 0 && (
+          <PersonalInfo isEditable={isEditable} cancelTrigger={cancelTrigger} />
+        )}
+        {activeTab === 1 && (
+          <BillingInfo isEditable={isEditable} cancelTrigger={cancelTrigger} />
+        )}
       </Box>
     </Stack>
   );

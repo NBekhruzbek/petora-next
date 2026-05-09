@@ -7,6 +7,7 @@ import {
   Box,
   IconButton,
   Grid,
+  Button,
 } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import PersonIcon from "@mui/icons-material/Person";
@@ -15,8 +16,13 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import BadgeIcon from "@mui/icons-material/Badge";
 
-const PersonalInfo = ({ isEditable }: { isEditable: boolean }) => {
-  const [profile, setProfile] = useState({
+interface PersonalInfoProps {
+  isEditable: boolean;
+  cancelTrigger?: number;
+}
+
+const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
+  const [originalProfile, setOriginalProfile] = useState({
     fullName: "John Doe",
     username: "johndoe",
     email: "john.doe@company.com",
@@ -26,9 +32,47 @@ const PersonalInfo = ({ isEditable }: { isEditable: boolean }) => {
     image: "/img/profile/defaultUser.png",
   });
 
+  const [profile, setProfile] = useState(originalProfile);
+  const [usernameStatus, setUsernameStatus] = useState<
+    "checking" | "available" | "taken" | null
+  >(null);
+
+  React.useEffect(() => {
+    if (isEditable) {
+      setOriginalProfile(profile);
+    }
+  }, [isEditable]);
+
+  React.useEffect(() => {
+    if (cancelTrigger && cancelTrigger > 0) {
+      setProfile(originalProfile);
+      setUsernameStatus(null);
+    }
+  }, [cancelTrigger]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    if (name === "username") {
+      setUsernameStatus(null);
+    }
     setProfile((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const checkUsername = () => {
+    if (!profile.username || profile.username.trim() === "") return;
+    setUsernameStatus("checking");
+    // Mock API call
+    setTimeout(() => {
+      // Just a mock: if it's exactly 'admin' or 'johndoe', say taken
+      if (
+        profile.username.toLowerCase() === "admin" ||
+        profile.username.toLowerCase() === "johndoe"
+      ) {
+        setUsernameStatus("taken");
+      } else {
+        setUsernameStatus("available");
+      }
+    }, 600);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,18 +103,35 @@ const PersonalInfo = ({ isEditable }: { isEditable: boolean }) => {
         className="profile-header-card"
         sx={{ p: 4 }}
       >
-        <Box sx={{ position: "relative" }}>
-          <Avatar src={profile.image}>
-            {profile.fullName
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
-          </Avatar>
-          {isEditable && (
-            <IconButton className="upload-btn" component="label">
+        <Box sx={{ position: "relative", display: "inline-block" }}>
+          {isEditable ? (
+            <label
+              style={{
+                cursor: "pointer",
+                display: "block",
+                position: "relative",
+              }}
+            >
+              <Avatar src={profile.image}>
+                {profile.fullName
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </Avatar>
               <input hidden accept="image/*" type="file" />
-              <PhotoCameraIcon sx={{ fontSize: 20, color: "#410075" }} />
-            </IconButton>
+              <Box className="upload-btn-wrapper">
+                <IconButton component="span" className="upload-btn">
+                  <PhotoCameraIcon sx={{ fontSize: 20, color: "#4b5563" }} />
+                </IconButton>
+              </Box>
+            </label>
+          ) : (
+            <Avatar src={profile.image}>
+              {profile.fullName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </Avatar>
           )}
         </Box>
         <Stack spacing={0.5}>
@@ -140,15 +201,48 @@ const PersonalInfo = ({ isEditable }: { isEditable: boolean }) => {
                   Username
                 </Typography>
               </Stack>
-              <TextField
-                fullWidth
-                name="username"
-                disabled={!isEditable}
-                value={profile.username}
-                onChange={handleChange}
-                placeholder="Choose a username"
-                sx={commonTextFieldStyles}
-              />
+              <Box sx={{ position: "relative" }}>
+                <TextField
+                  fullWidth
+                  name="username"
+                  disabled={!isEditable}
+                  value={profile.username}
+                  onChange={handleChange}
+                  placeholder="Choose a username"
+                  sx={commonTextFieldStyles}
+                  InputProps={{
+                    endAdornment: isEditable ? (
+                      <Box mr={-0.5}>
+                        <Button
+                          variant="contained"
+                          className="check-username-btn"
+                          onClick={checkUsername}
+                          disabled={usernameStatus === "checking"}
+                        >
+                          Check
+                        </Button>
+                      </Box>
+                    ) : null,
+                  }}
+                />
+                {usernameStatus && (
+                  <Typography
+                    className={`username-status-text ${
+                      usernameStatus === "checking"
+                        ? "checking"
+                        : usernameStatus === "available"
+                        ? "available"
+                        : "taken"
+                    }`}
+                  >
+                    {usernameStatus === "checking"
+                      ? "Checking availability..."
+                      : usernameStatus === "available"
+                      ? "✓ This username is available"
+                      : "✗ Username is already taken"}
+                  </Typography>
+                )}
+              </Box>
             </Stack>
           </Grid>
           <Grid item xs={12} md={6}>
