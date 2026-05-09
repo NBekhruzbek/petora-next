@@ -39,7 +39,10 @@ const Basket = () => {
   ]);
 
   const totalItemCount = items.reduce((acc, item) => acc + item.quantity, 0);
-  const totalPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalPrice = items.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0,
+  );
   const deliveryFee = items.length > 0 ? 5 : 0;
 
   /** HANDLERS **/
@@ -57,10 +60,14 @@ const Basket = () => {
   const removeItem = (id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
-  
+
   const increaseQuantity = (id: string) => {
-    setItems((prev) => prev.map((item) => item.id === id ? {...item, quantity: item.quantity + 1} : item))
-  }
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
+      ),
+    );
+  };
 
   const decreaseQuantity = (id: string) => {
     setItems((prev) =>
@@ -72,7 +79,7 @@ const Basket = () => {
         }
 
         return { ...item, quantity: item.quantity - 1 };
-      })
+      }),
     );
   };
 
@@ -122,18 +129,23 @@ const Basket = () => {
               borderRadius: "999px",
               top: 0,
               right: -1,
-              background: "linear-gradient(135deg, #ff6bff, #fa3ff4)",
+              background: "linear-gradient(135deg, #32ff5e, #00c853)",
               color: "#fff",
-              fontSize: "12px",
+              fontSize: "12x",
               fontWeight: 700,
-              animation: "pulseGlow 1.8s infinite ease-in-out",
+              animation: "basketPulseGlow 1.8s infinite ease-in-out",
             },
-            "@keyframes pulseGlow": {
-              "0%": { boxShadow: "0 0 5px rgba(250, 63, 244, 0.6)" },
-              "50%": {
-                boxShadow: `0 0 10px rgba(250, 63, 244, 0.9), 0 0 20px rgba(250, 63, 244, 0.7), 0 0 30px rgba(250, 63, 244, 0.5)`,
+            "@keyframes basketPulseGlow": {
+              "0%": {
+                boxShadow: "0 0 5px rgba(50, 255, 94, 0.5)",
               },
-              "100%": { boxShadow: "0 0 5px rgba(250, 63, 244, 0.6)" },
+              "50%": {
+                boxShadow:
+                  "0 0 10px rgba(50, 255, 94, 0.9), 0 0 20px rgba(0, 200, 83, 0.7), 0 0 30px rgba(50, 255, 94, 0.5)",
+              },
+              "100%": {
+                boxShadow: "0 0 5px rgba(50, 255, 94, 0.5)",
+              },
             },
           }}
         >
@@ -220,7 +232,7 @@ const Basket = () => {
                     color: "#ff4d4f",
                     cursor: "pointer",
                     textDecoration: "underline",
-                    "&:hover": { opacity: 0.8 }
+                    "&:hover": { opacity: 0.8 },
                   }}
                 >
                   Clear All
@@ -256,10 +268,9 @@ const Basket = () => {
               color: "#6a5878",
             }}
           >
-            {items.length > 0 
+            {items.length > 0
               ? "Ready to checkout? Review your items before placing the order."
-              : "Your basket is currently empty."
-            }
+              : "Your basket is currently empty."}
           </Box>
 
           <Box
