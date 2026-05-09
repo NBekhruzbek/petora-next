@@ -17,6 +17,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import BuildIcon from "@mui/icons-material/Build";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import MyProfile from "@/libs/components/mypage/MyProfile";
 
 type MemberType = "USER" | "SERVICE_AGENT";
 
@@ -199,7 +200,10 @@ const MyPage: NextPage = () => {
             </Stack>
           </Stack>
 
-          <Stack>{/* Content for selected category */}</Stack>
+          <Stack>
+            {activeCategory === "MY_PROFILE" && <MyProfile />}
+            {/* Content for other categories will be added here */}
+          </Stack>
         </Stack>
       </Stack>
     </Stack>
