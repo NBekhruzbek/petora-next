@@ -1,3 +1,5 @@
+@use "../../variables.scss" as *;
+
 #pc-wrap {
   #mypage-top {
     background-color: #f2e2ff;
@@ -126,30 +128,162 @@
   .my-page {
     position: relative;
     width: 100%;
-    height: auto;
-  }
-}
+    min-height: auto;
+    padding: 130px 0 90px;
+    background: #ffffff;
 
-@keyframes productReveal {
-  0% {
-    opacity: 0;
-    transform: scale(1.1) translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
+    .container {
+      display: flex;
+      flex-direction: row;
+      align-items: start;
+      gap: 48px;
+    }
 
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
+    .my-page-sidebar {
+      position: sticky;
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 255px;
+      width: 255px;
+      min-height: 360px;
+      border-radius: 14px;
+      border: 1px solid #939393;
+      background: #ffffff;
+      box-shadow: 0 16px 50px rgba(24, 31, 56, 0.06);
+      overflow: hidden;
+
+      .my-page-sidebar-brand {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 24px 20px 22px;
+        border-bottom: 1px solid #bbbbbb;
+
+        .member-img {
+          width: 50px;
+          height: 50px;
+          margin-top: -6px;
+          border-radius: 50%;
+        }
+
+        .my-page-brand-copy {
+          gap: 2px;
+          padding-top: 1px;
+
+          .my-page-brand-title {
+            font-family: $font;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #1d2433;
+          }
+
+          .my-page-brand-subtitle {
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 500;
+            color: #410075;
+          }
+        }
+      }
+
+      .my-page-category-list {
+        gap: 8px;
+        padding: 18px 12px;
+
+        .my-page-category-btn {
+          justify-content: flex-start;
+          min-height: 46px;
+          padding: 12px 14px;
+          border-radius: 8px;
+          color: #505a6e;
+          font-family: $font;
+          font-size: 15px;
+          font-weight: 700;
+          line-height: 1.2;
+          text-transform: none;
+
+          .MuiButton-startIcon {
+            margin-right: 12px;
+            svg {
+              font-size: 20px;
+            }
+          }
+
+          &:hover {
+            background: #f6f6fb;
+          }
+
+          &.active {
+            color: #111827;
+            background: linear-gradient(90deg, #e7e7e7, #ecebeb);
+            border: 1px solid rgba(142, 142, 142, 0.42);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            font-weight: 600;
+            transition: all 0.25s ease;
+          }
+
+          .MuiBadge-badge {
+            font-size: 12px !important;
+            background-color: #fa3ff4 !important;
+            animation: 1.8s ease-in-out 0s infinite normal none running
+              pulseGlow;
+          }
+        }
+      }
+
+      .my-page-sidebar-footer {
+        margin-top: auto;
+        padding: 18px 20px 22px;
+        border-top: 1px solid #ececf3;
+
+        .my-page-footer-title {
+          font-family: $font;
+          font-size: 14px;
+          font-weight: 700;
+          color: #4b5568;
+        }
+
+        .my-page-footer-copy {
+          margin-top: 4px;
+          font-family: $font;
+          font-size: 13px;
+          font-weight: 500;
+          color: #9098a9;
+        }
+      }
+    }
+
+    .my-page-content {
+      flex: 1;
+      min-width: 0;
+      align-self: start;
+      gap: 24px;
+      padding: 6px 0 0;
+
+      .my-page-content-top {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+
+        .my-page-content-heading {
+          gap: 8px;
+
+          .my-page-board-title {
+            font-family: $font;
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #202635;
+            letter-spacing: 0.2px;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -174,5 +308,20 @@
   }
   100% {
     transform: translateX(0) rotate(0deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 5px rgba(250, 63, 244, 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 10px rgba(250, 63, 244, 0.9),
+      0 0 20px rgba(250, 63, 244, 0.7),
+      0 0 30px rgba(250, 63, 244, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(250, 63, 244, 0.6);
   }
 }
