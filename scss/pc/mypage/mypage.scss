@@ -635,57 +635,758 @@
           }
         }
       }
+
+      // =============================================
+      // SERVICE MANAGEMENT — Global Container
+      // =============================================
+      .service-mgmt-container {
+        display: flex;
+        flex-direction: column;
+
+        .service-mgmt-tabs-wrapper {
+          border-bottom: 1px solid #dedede;
+          padding-bottom: 8px;
+          .MuiTabs-root {
+            .MuiTab-root {
+              text-transform: none;
+              font-family: $font;
+              font-weight: 700;
+              font-size: 15px;
+              color: #9ca3af;
+              min-width: 100px;
+              padding: 10px 16px;
+              transition: all 0.3s ease;
+              &.Mui-selected {
+                color: #410075;
+              }
+            }
+            .MuiTabs-indicator {
+              background-color: #410075;
+              height: 3px;
+              border-radius: 3px 3px 0 0;
+            }
+          }
+        }
+
+        .service-mgmt-tab-content {
+          animation: smFadeIn 0.4s ease-out;
+        }
+
+        // SHARED: Summary Cards Row
+        .summary-cards-row {
+          display: flex;
+          flex-direction: row;
+          gap: 16px;
+          .summary-card {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 14px;
+            padding: 20px 22px;
+            background: #ffffff;
+            border: 1px solid rgba(143, 143, 143, 0.25);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            &:hover {
+              box-shadow: 0 8px 24px rgba(111, 44, 255, 0.08);
+              transform: translateY(-2px);
+            }
+            .summary-card-icon {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 44px;
+              height: 44px;
+              border-radius: 10px;
+              flex-shrink: 0;
+              svg {
+                font-size: 22px;
+              }
+            }
+            .summary-count {
+              font-family: $font;
+              font-size: 22px;
+              font-weight: 800;
+              color: #111827;
+              line-height: 1.1;
+            }
+            .summary-label {
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 500;
+              color: #9ca3af;
+            }
+            .summary-change {
+              font-family: $font;
+              font-size: 12px;
+              font-weight: 600;
+            }
+          }
+        }
+
+        // SHARED: Filter Controls
+        .filter-select,
+        .sort-select,
+        .search-field {
+          .MuiOutlinedInput-root {
+            border-radius: 8px !important;
+            background: #fff;
+            font-family: $font;
+            font-size: 14px;
+            color: #000 !important;
+            &:hover fieldset {
+              border-color: #6f2cff;
+            }
+            &.Mui-focused fieldset {
+              border-color: #6f2cff;
+            }
+            input {
+              color: #000 !important;
+            }
+            .MuiSelect-select {
+              color: #000 !important;
+            }
+          }
+        }
+        .search-field {
+          flex: 0 0 240px;
+          min-width: 200px;
+        }
+        .filter-select .MuiOutlinedInput-root,
+        .sort-select .MuiOutlinedInput-root {
+          min-width: 120px;
+        }
+
+        // Dropdown Menu Styles (Opened state)
+        .custom-filter-menu {
+          z-index: 9999 !important;
+          .MuiPaper-root {
+            border-radius: 12px !important;
+            margin-top: 4px !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+            border: 1px solid rgba(0, 0, 0, 0.05) !important;
+          }
+          .MuiList-root {
+            padding: 8px !important;
+          }
+          .MuiMenuItem-root {
+            font-family: $font !important;
+            font-size: 14px !important;
+            color: #000 !important;
+            font-weight: 500 !important;
+            padding: 10px 16px !important;
+            border-radius: 8px !important;
+            margin: 2px 0 !important;
+            transition: all 0.2s !important;
+
+            // Force black on all children
+            * {
+              color: #000 !important;
+            }
+
+            &:hover {
+              background-color: #f3f4f6 !important;
+              color: #000 !important;
+              * {
+                color: #000 !important;
+              }
+            }
+            &.Mui-selected {
+              background-color: #f3f4f6 !important;
+              color: #000 !important;
+              font-weight: 700 !important;
+              * {
+                color: #000 !important;
+              }
+              &:hover {
+                background-color: #e5e7eb !important;
+              }
+            }
+          }
+        }
+
+        // TAB 1: MY SERVICES
+        .my-services-tab {
+          .services-toolbar {
+            padding: 4px 0;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+          }
+          .btn-add-service {
+            background: linear-gradient(135deg, #7c3aed, #6f2cff);
+            color: #fff;
+            border-radius: 10px;
+            text-transform: none;
+            font-family: $font;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 8px 22px;
+            box-shadow: 0 4px 14px rgba(111, 44, 255, 0.25);
+            transition: all 0.25s ease;
+            &:hover {
+              background: linear-gradient(135deg, #6d28d9, #5b21b6);
+              box-shadow: 0 6px 20px rgba(111, 44, 255, 0.35);
+              transform: translateY(-1px);
+            }
+          }
+          .service-card {
+            background: #ffffff;
+            border: 1px solid rgba(143, 143, 143, 0.2);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.35s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            text-align: left;
+
+            &:hover {
+              box-shadow: 0 16px 40px rgba(111, 44, 255, 0.1);
+              transform: translateY(-4px);
+            }
+            &.paused {
+              opacity: 0.6;
+            }
+
+            .agent-media {
+              display: flex;
+              justify-content: center;
+              margin-bottom: 20px;
+              .agent-image-wrap {
+                width: 150px;
+                height: 150px;
+                border-radius: 50%;
+                background: #f3f3f3;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                border: 1px solid #eee;
+                .thumb-emoji {
+                  font-size: 70px;
+                }
+              }
+            }
+
+            .agent-content {
+              .name-row {
+                margin-bottom: 4px;
+                .agent-name {
+                  font-family: $font;
+                  font-size: 22px;
+                  font-weight: 800;
+                  color: #000;
+                }
+                .bookings-row {
+                  background: #410075;
+                  color: #fff;
+                  font-size: 12px;
+                  font-weight: 700;
+                  padding: 4px 14px;
+                  border-radius: 999px;
+                  white-space: nowrap;
+                }
+              }
+
+              .agent-service-type {
+                font-family: $font;
+                font-size: 16px;
+                font-weight: 500;
+                color: #000;
+                margin-bottom: 8px;
+              }
+
+              .service-price {
+                font-family: $font;
+                font-size: 20px;
+                font-weight: 700;
+                color: #000;
+                margin-bottom: 12px;
+              }
+
+              .rating-row {
+                .MuiRating-root {
+                  color: #f59e0b;
+                }
+                .rating-value {
+                  font-size: 16px;
+                  font-weight: 800;
+                  color: #000;
+                }
+              }
+            }
+          }
+        }
+
+        // Add Service Dialog
+        .add-service-dialog {
+          .MuiDialog-paper {
+            border-radius: 16px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
+          }
+          .add-dialog-title {
+            font-family: $font;
+            font-weight: 800;
+            font-size: 20px;
+            color: #111827;
+            border-bottom: 1px solid #f3f4f6;
+            padding: 20px 28px;
+          }
+          .add-dialog-content {
+            padding: 24px 28px;
+            .MuiStepLabel-label {
+              font-family: $font;
+              font-size: 12px;
+              font-weight: 600;
+              &.Mui-active {
+                color: #6f2cff;
+              }
+              &.Mui-completed {
+                color: #10b981;
+              }
+            }
+            .MuiStepIcon-root {
+              &.Mui-active {
+                color: #6f2cff;
+              }
+              &.Mui-completed {
+                color: #10b981;
+              }
+            }
+            .upload-zone {
+              width: 100%;
+              padding: 40px;
+              border: 2px dashed #d1d5db;
+              border-radius: 12px;
+              text-align: center;
+              cursor: pointer;
+              transition: all 0.2s;
+              &:hover {
+                border-color: #6f2cff;
+                background: #faf5ff;
+              }
+            }
+          }
+          .btn-step-next {
+            background: linear-gradient(135deg, #7c3aed, #6f2cff);
+            color: #fff;
+            border-radius: 8px;
+            text-transform: none;
+            font-weight: 700;
+            font-family: $font;
+            padding: 8px 24px;
+            &:hover {
+              background: linear-gradient(135deg, #6d28d9, #5b21b6);
+            }
+          }
+        }
+
+        // TAB 2: BOOKING REQUESTS
+        .booking-requests-tab {
+          .requests-list {
+            .request-card {
+              background: #ffffff;
+              border: 1px solid rgba(143, 143, 143, 0.2);
+              border-radius: 12px;
+              padding: 18px 22px;
+              transition: all 0.3s ease;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+              &:hover {
+                box-shadow: 0 8px 24px rgba(111, 44, 255, 0.06);
+                border-color: rgba(111, 44, 255, 0.15);
+              }
+              &.urgent {
+                border-left: 4px solid #ef4444;
+                background: #fffbfb;
+              }
+              .request-customer {
+                font-family: $font;
+                font-size: 15px;
+                font-weight: 700;
+                color: #111827;
+              }
+              .request-pet {
+                font-size: 13px;
+                color: #6b7280;
+                font-weight: 500;
+              }
+              .request-service {
+                font-size: 13px;
+                color: #6f2cff;
+                font-weight: 600;
+              }
+              .request-date {
+                font-size: 13px;
+                color: #374151;
+                font-weight: 600;
+              }
+              .request-notes {
+                font-size: 12px;
+                color: #9ca3af;
+              }
+              .urgent-chip {
+                background: #fef2f2;
+                color: #ef4444;
+                font-weight: 700;
+                font-size: 11px;
+                .MuiChip-icon {
+                  color: #ef4444;
+                  font-size: 14px;
+                }
+              }
+              .request-status-chip {
+                font-weight: 700;
+                font-size: 11px;
+                &.new {
+                  background: #eff6ff;
+                  color: #3b82f6;
+                }
+                &.pending {
+                  background: #fef3c7;
+                  color: #f59e0b;
+                }
+              }
+              .request-actions {
+                .MuiIconButton-root {
+                  transition: all 0.2s;
+                }
+                .action-accept {
+                  color: #10b981;
+                  &:hover {
+                    background: #ecfdf5;
+                  }
+                }
+                .action-decline {
+                  color: #ef4444;
+                  &:hover {
+                    background: #fef2f2;
+                  }
+                }
+                .action-message {
+                  color: #6f2cff;
+                  &:hover {
+                    background: #f5f3ff;
+                  }
+                }
+                .action-view {
+                  color: #6b7280;
+                  &:hover {
+                    background: #f9fafb;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // TAB 3: UPCOMING SERVICES
+        .upcoming-services-tab {
+          .weekly-calendar-card {
+            background: #fff;
+            border: 1px solid rgba(143, 143, 143, 0.25);
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            .calendar-title {
+              font-family: $font;
+              font-size: 17px;
+              font-weight: 700;
+              color: #111827;
+              margin-bottom: 16px;
+            }
+            .calendar-grid {
+              display: flex;
+              flex-direction: column;
+              .calendar-header,
+              .calendar-row {
+                display: flex;
+                flex-direction: row;
+              }
+              .calendar-header {
+                .day-col-header {
+                  flex: 1;
+                  text-align: center;
+                  font-family: $font;
+                  font-size: 13px;
+                  font-weight: 700;
+                  color: #6b7280;
+                  padding: 8px 0;
+                  &.today {
+                    color: #6f2cff;
+                    background: #f5f3ff;
+                    border-radius: 8px;
+                  }
+                }
+              }
+              .time-col {
+                width: 56px;
+                flex-shrink: 0;
+                font-family: $font;
+                font-size: 12px;
+                font-weight: 500;
+                color: #9ca3af;
+                padding: 6px 0;
+              }
+              .calendar-row {
+                border-top: 1px solid #f3f4f6;
+                .day-cell {
+                  flex: 1;
+                  min-height: 32px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  position: relative;
+                  &.has-event {
+                    .event-dot {
+                      width: 10px;
+                      height: 10px;
+                      border-radius: 50%;
+                      background: #6f2cff;
+                      box-shadow: 0 0 0 3px rgba(111, 44, 255, 0.2);
+                      animation: smPulse 2s ease infinite;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          .upcoming-card {
+            background: #fff;
+            border: 1px solid rgba(143, 143, 143, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            &:hover {
+              box-shadow: 0 8px 24px rgba(111, 44, 255, 0.06);
+              transform: translateY(-2px);
+            }
+            .upcoming-emoji {
+              font-size: 36px;
+              flex-shrink: 0;
+            }
+            .upcoming-pet {
+              font-family: $font;
+              font-size: 16px;
+              font-weight: 700;
+              color: #111827;
+            }
+            .upcoming-owner {
+              font-size: 13px;
+              color: #6b7280;
+              font-weight: 500;
+            }
+            .upcoming-type {
+              font-size: 13px;
+              color: #6f2cff;
+              font-weight: 600;
+            }
+            .upcoming-date {
+              font-size: 14px;
+              font-weight: 700;
+              color: #374151;
+            }
+            .upcoming-time {
+              font-size: 13px;
+              color: #6b7280;
+            }
+            .status-chip-confirmed {
+              background: #ecfdf5;
+              color: #10b981;
+              font-weight: 700;
+              font-size: 11px;
+            }
+            .countdown-badge {
+              background: #fef3c7;
+              padding: 2px 8px;
+              border-radius: 6px;
+              .countdown-text {
+                font-size: 12px;
+                font-weight: 700;
+                color: #f59e0b;
+              }
+              svg {
+                color: #f59e0b;
+              }
+            }
+            .checklist-mini {
+              min-width: 160px;
+              .checklist-text {
+                font-size: 12px;
+                color: #6b7280;
+              }
+            }
+            .btn-start-service {
+              background: linear-gradient(135deg, #7c3aed, #6f2cff);
+              color: #fff;
+              border-radius: 8px;
+              text-transform: none;
+              font-weight: 700;
+              font-size: 13px;
+              font-family: $font;
+              &:hover {
+                background: linear-gradient(135deg, #6d28d9, #5b21b6);
+              }
+            }
+            .btn-contact {
+              border-color: #d1d5db;
+              color: #374151;
+              border-radius: 8px;
+              text-transform: none;
+              font-weight: 600;
+              font-size: 13px;
+              font-family: $font;
+              &:hover {
+                border-color: #6f2cff;
+                color: #6f2cff;
+              }
+            }
+          }
+        }
+
+        // TAB 4: COMPLETED SERVICES
+        .completed-services-tab {
+          .completed-card {
+            background: #fff;
+            border: 1px solid rgba(143, 143, 143, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            &:hover {
+              box-shadow: 0 8px 24px rgba(111, 44, 255, 0.06);
+            }
+            .completed-emoji {
+              font-size: 36px;
+              flex-shrink: 0;
+            }
+            .completed-pet {
+              font-family: $font;
+              font-size: 15px;
+              font-weight: 700;
+              color: #111827;
+            }
+            .completed-owner {
+              font-size: 13px;
+              color: #6b7280;
+            }
+            .completed-date {
+              font-size: 12px;
+              color: #9ca3af;
+            }
+            .completed-revenue {
+              font-family: $font;
+              font-size: 17px;
+              font-weight: 800;
+              color: #10b981;
+            }
+            .completed-feedback {
+              font-size: 12px;
+              color: #9ca3af;
+              font-style: italic;
+              max-width: 280px;
+            }
+            .completed-chip {
+              background: #ecfdf5;
+              color: #10b981;
+              font-weight: 700;
+              font-size: 11px;
+              .MuiChip-icon {
+                color: #10b981;
+                font-size: 14px;
+              }
+            }
+            .btn-invoice,
+            .btn-rebook {
+              border-radius: 7px;
+              text-transform: none;
+              font-weight: 600;
+              font-family: $font;
+              font-size: 12px;
+              border-color: #e5e7eb;
+              color: #374151;
+              &:hover {
+                border-color: #6f2cff;
+                color: #6f2cff;
+              }
+            }
+          }
+        }
+      }
     }
   }
-}
 
-@keyframes floatSide {
-  0%,
-  100% {
-    transform: translateX(0);
+  @keyframes floatSide {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(15px);
+    }
   }
-  50% {
-    transform: translateX(15px);
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+  @keyframes popIn {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  @keyframes scrollWiggle {
+    0%,
+    100% {
+      transform: translateX(0) rotate(0deg);
+    }
+    50% {
+      transform: translateX(20px) rotate(2deg);
+    }
   }
-}
-@keyframes popIn {
-  from {
-    transform: scale(0);
+  @keyframes categoryPulseGlow {
+    0% {
+      box-shadow: 0 0 5px rgba(250, 63, 244, 0.6);
+    }
+    50% {
+      box-shadow:
+        0 0 10px rgba(250, 63, 244, 0.9),
+        0 0 20px rgba(250, 63, 244, 0.7),
+        0 0 30px rgba(250, 63, 244, 0.5);
+    }
+    100% {
+      box-shadow: 0 0 5px rgba(250, 63, 244, 0.6);
+    }
   }
-  to {
-    transform: scale(1);
+  @keyframes smFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-}
-@keyframes scrollWiggle {
-  0%,
-  100% {
-    transform: translateX(0) rotate(0deg);
-  }
-  50% {
-    transform: translateX(20px) rotate(2deg);
-  }
-}
-@keyframes categoryPulseGlow {
-  0% {
-    box-shadow: 0 0 5px rgba(250, 63, 244, 0.6);
-  }
-  50% {
-    box-shadow:
-      0 0 10px rgba(250, 63, 244, 0.9),
-      0 0 20px rgba(250, 63, 244, 0.7),
-      0 0 30px rgba(250, 63, 244, 0.5);
-  }
-  100% {
-    box-shadow: 0 0 5px rgba(250, 63, 244, 0.6);
+  @keyframes smPulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 3px rgba(111, 44, 255, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(111, 44, 255, 0.1);
+    }
   }
 }
