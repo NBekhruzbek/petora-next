@@ -14,12 +14,8 @@ import {
   DialogContent,
   DialogActions,
   Alert,
+  Chip,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import PauseCircleIcon from "@mui/icons-material/PauseCircle";
 import PetsIcon from "@mui/icons-material/Pets";
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -41,6 +37,7 @@ const MOCK_SERVICES = [
     name: "Premium Dog Grooming",
     category: "Grooming",
     price: "₩45,000",
+    duration: "1 hour",
     rating: 4.8,
     bookings: 128,
     status: "active",
@@ -54,6 +51,7 @@ const MOCK_SERVICES = [
     name: "Cat Boarding Suite",
     category: "Boarding",
     price: "₩65,000/night",
+    duration: "Overnight",
     rating: 4.9,
     bookings: 89,
     status: "active",
@@ -67,6 +65,7 @@ const MOCK_SERVICES = [
     name: "Daily Dog Walking",
     category: "Walking",
     price: "₩25,000",
+    duration: "1 hour",
     rating: 4.7,
     bookings: 256,
     status: "active",
@@ -80,6 +79,7 @@ const MOCK_SERVICES = [
     name: "Puppy Training Course",
     category: "Training",
     price: "₩120,000",
+    duration: "8 weeks",
     rating: 4.6,
     bookings: 45,
     status: "paused",
@@ -92,6 +92,7 @@ const MOCK_SERVICES = [
     name: "Pet Health Checkup",
     category: "Vet",
     price: "₩80,000",
+    duration: "45 minutes",
     rating: 4.9,
     bookings: 167,
     status: "active",
@@ -105,6 +106,7 @@ const MOCK_SERVICES = [
     name: "Pet Hotel Deluxe",
     category: "Hotel",
     price: "₩95,000/night",
+    duration: "Overnight",
     rating: 4.8,
     bookings: 73,
     status: "active",
@@ -118,6 +120,10 @@ const MOCK_SERVICES = [
 const MyServicesTab = () => {
   const [category, setCategory] = useState("All");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingServiceId, setEditingServiceId] = useState<number | null>(null);
+  const [serviceStatuses, setServiceStatuses] = useState<
+    Record<number, string>
+  >({});
 
   // Form state
   const [formData, setFormData] = useState({
@@ -133,11 +139,48 @@ const MyServicesTab = () => {
     return category === "All" || s.category === category;
   });
 
+  const getServiceStatus = (service: (typeof MOCK_SERVICES)[number]) => {
+    return serviceStatuses[service.id] || service.status;
+  };
+
+  const formatPrice = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "");
+    return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const openAddModal = () => {
+    setEditingServiceId(null);
+    setFormData({ title: "", description: "", duration: "", price: "" });
+    setImages([]);
+    setImageError("");
+    setShowAddModal(true);
+  };
+
+  const openEditModal = (service: (typeof MOCK_SERVICES)[number]) => {
+    setEditingServiceId(service.id);
+    setFormData({
+      title: service.name,
+      description: service.description,
+      duration: service.duration,
+      price: formatPrice(service.price),
+    });
+    setImages([]);
+    setImageError("");
+    setShowAddModal(true);
+  };
+
+  const updateServiceStatus = (serviceId: number, status: string) => {
+    setServiceStatuses((prev) => ({ ...prev, [serviceId]: status }));
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "price" ? formatPrice(value) : value,
+    }));
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,18 +221,23 @@ const MyServicesTab = () => {
       alert("Please enter price");
       return;
     }
-    if (images.length === 0) {
+    if (!editingServiceId && images.length === 0) {
       alert("Please upload at least 1 image");
       return;
     }
 
     // TODO: Submit form data and images to backend
-    console.log("Publishing service:", formData, images);
+    console.log(
+      editingServiceId ? "Updating service:" : "Publishing service:",
+      { serviceId: editingServiceId, ...formData },
+      images,
+    );
     resetModal();
   };
 
   const resetModal = () => {
     setShowAddModal(false);
+    setEditingServiceId(null);
     setFormData({ title: "", description: "", duration: "", price: "" });
     setImages([]);
     setImageError("");
@@ -211,7 +259,7 @@ const MyServicesTab = () => {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="filter-select"
-          sx={{ minWidth: 140 }}
+          sx={{ width: 220, maxWidth: 220 }}
           SelectProps={{
             MenuProps: {
               className: "custom-filter-menu",
@@ -232,89 +280,124 @@ const MyServicesTab = () => {
         <Box flex={1} />
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
           className="btn-add-service"
-          onClick={() => setShowAddModal(true)}
+          onClick={openAddModal}
         >
           Add New Service
         </Button>
       </Stack>
 
-      {/* Service Cards Grid */}
-      <Grid container spacing={3}>
-        {filtered.map((service) => (
-          <Grid item xs={12} md={6} lg={4} key={service.id}>
+      {/* Services List */}
+      <Stack spacing={1.5} className="services-list">
+        {filtered.map((service) => {
+          const serviceStatus = getServiceStatus(service);
+
+          return (
             <Stack
-              className={`service-card ${service.status === "paused" ? "paused" : ""}`}
+              key={service.id}
+              direction="row"
+              alignItems="center"
+              className={`service-row ${serviceStatus}`}
             >
-              <Box className="agent-media">
-                <Box className="agent-image-wrap">
-                  <span className="thumb-emoji">{service.image}</span>
-                </Box>
+              <Box className="service-row-media">
+                <span className="thumb-emoji">{service.image}</span>
               </Box>
 
-              <Stack className="agent-content" spacing={1}>
+              <Stack className="service-row-main" spacing={0.75}>
                 <Stack
                   direction="row"
-                  justifyContent="space-between"
                   alignItems="center"
-                  className="name-row"
+                  spacing={1.25}
+                  className="service-row-title-line"
                 >
                   <Typography className="agent-name">{service.name}</Typography>
-                  <Box className="bookings-row">
-                    Bookings: {service.bookings}
+                  <Box className={`service-status ${serviceStatus}`}>
+                    {serviceStatus}
                   </Box>
                 </Stack>
-
-                <Typography className="agent-service-type">
-                  {service.category}
+                <Typography className="service-description">
+                  {service.description}
                 </Typography>
-                <Typography className="service-price">
-                  {service.price}
-                </Typography>
-
                 <Stack
                   direction="row"
                   spacing={1}
                   alignItems="center"
-                  className="rating-row"
+                  className="service-tags"
                 >
-                  <Rating
-                    value={service.rating}
-                    precision={0.5}
-                    readOnly
-                    size="small"
-                  />
-                  <Typography className="rating-value">
-                    {service.rating}
+                  <Typography className="agent-service-type">
+                    {service.category}
+                  </Typography>
+                  {service.tags.slice(0, 2).map((tag) => (
+                    <Box className="service-tag" key={tag}>
+                      {tag}
+                    </Box>
+                  ))}
+                </Stack>
+              </Stack>
+
+              <Stack
+                direction="row"
+                alignItems="center"
+                className="service-row-metrics"
+              >
+                <Stack className="metric-block">
+                  <Typography className="metric-label">Price</Typography>
+                  <Typography className="service-price">
+                    {service.price}
                   </Typography>
                 </Stack>
+                <Stack className="metric-block">
+                  <Typography className="metric-label">Rating</Typography>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={0.5}
+                    className="rating-row"
+                  >
+                    <Rating
+                      value={service.rating}
+                      precision={0.5}
+                      readOnly
+                      size="small"
+                    />
+                    <Typography className="rating-value">
+                      {service.rating}
+                    </Typography>
+                  </Stack>
+                </Stack>
+                <Stack className="metric-block">
+                  <Typography className="metric-label">Bookings</Typography>
+                  <Typography className="bookings-row">
+                    {service.bookings}
+                  </Typography>
+                </Stack>
+              </Stack>
 
-                {/* Management Actions (Subtle) */}
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  justifyContent="flex-end"
-                  sx={{ mt: 1, pt: 1, borderTop: "1px solid #f3f4f6" }}
+              <Stack className="service-row-actions" spacing={1}>
+                <Button
+                  className="service-action-tab edit"
+                  onClick={() => openEditModal(service)}
                 >
-                  <IconButton size="small" title="Edit">
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton size="small" title="Duplicate">
-                    <ContentCopyIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton size="small" title="Pause">
-                    <PauseCircleIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton size="small" title="Delete" color="error">
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
+                  Edit
+                </Button>
+                <Stack direction="row" className="service-status-tabs">
+                  {["active", "paused", "deleted"].map((status) => (
+                    <Button
+                      key={status}
+                      className={`status-tab ${status} ${
+                        serviceStatus === status ? "selected" : ""
+                      }`}
+                      onClick={() => updateServiceStatus(service.id, status)}
+                    >
+                      {status === "paused" ? "Pause" : status}
+                    </Button>
+                  ))}
                 </Stack>
               </Stack>
             </Stack>
-          </Grid>
-        ))}
-      </Grid>
+          );
+        })}
+      </Stack>
 
       {/* Add New Service Modal */}
       <Dialog
@@ -322,7 +405,7 @@ const MyServicesTab = () => {
         open={showAddModal}
         onClose={resetModal}
         fullWidth
-        maxWidth="sm"
+        maxWidth="md"
         disableScrollLock
         transitionDuration={{ enter: 320, exit: 220 }}
         PaperProps={{ className: "qna-dialog-paper" }}
@@ -335,88 +418,112 @@ const MyServicesTab = () => {
             justifyContent="space-between"
           >
             <Stack direction="row" alignItems="center" spacing={1}>
-              <PetsIcon sx={{ color: "#6F2CFF" }} />
-              <span>Create New Service</span>
+              <Box className="add-dialog-icon">
+                <PetsIcon />
+              </Box>
+              <Stack spacing={0.25}>
+                <span>
+                  {editingServiceId ? "Edit Service" : "Create New Service"}
+                </span>
+                <Typography className="add-dialog-subtitle">
+                  {editingServiceId
+                    ? "Update the selected offer details."
+                    : "Publish a bookable offer for pet owners."}
+                </Typography>
+              </Stack>
             </Stack>
-            <IconButton size="small" onClick={resetModal}>
+            <IconButton
+              size="small"
+              onClick={resetModal}
+              className="dialog-close-btn"
+            >
               <CloseIcon />
             </IconButton>
           </Stack>
         </DialogTitle>
 
-        <DialogContent className="add-dialog-content" sx={{ pt: 2 }}>
-          <Stack spacing={3}>
-            {/* Service Title */}
-            <TextField
-              fullWidth
-              label="Service Title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              placeholder="e.g., Premium Dog Grooming"
-              variant="outlined"
-            />
+        <DialogContent className="add-dialog-content">
+          <Stack spacing={3} className="add-service-form">
+            <Box className="form-grid">
+              <TextField
+                fullWidth
+                label="Service Title"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="Premium Dog Grooming"
+                variant="outlined"
+                className="add-service-field wide"
+              />
 
-            {/* Description */}
-            <TextField
-              fullWidth
-              label="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Describe your service..."
-              multiline
-              rows={3}
-              variant="outlined"
-            />
+              <TextField
+                fullWidth
+                label="Service Duration"
+                name="duration"
+                type="text"
+                value={formData.duration}
+                onChange={handleInputChange}
+                placeholder="1 hour"
+                variant="outlined"
+                className="add-service-field"
+              />
 
-            {/* Duration */}
-            <TextField
-              fullWidth
-              label="Service Duration (minutes)"
-              name="duration"
-              type="number"
-              value={formData.duration}
-              onChange={handleInputChange}
-              placeholder="e.g., 60"
-              variant="outlined"
-            />
+              <TextField
+                fullWidth
+                label="Price"
+                name="price"
+                type="text"
+                value={formData.price}
+                onChange={handleInputChange}
+                placeholder="45000"
+                variant="outlined"
+                className="add-service-field price-field"
+                inputProps={{
+                  inputMode: "numeric",
+                }}
+                InputProps={{
+                  startAdornment: <span className="field-prefix">₩</span>,
+                }}
+              />
 
-            {/* Price */}
-            <TextField
-              fullWidth
-              label="Price (₩)"
-              name="price"
-              type="number"
-              value={formData.price}
-              onChange={handleInputChange}
-              placeholder="e.g., 45000"
-              variant="outlined"
-            />
+              <TextField
+                fullWidth
+                label="Description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Bath, haircut, nail trim, and ear cleaning."
+                multiline
+                rows={4}
+                variant="outlined"
+                className="add-service-field description-field wide"
+              />
+            </Box>
 
-            {/* Image Upload */}
-            <Stack spacing={2}>
-              <Typography sx={{ fontWeight: 600, color: "#1f2937" }}>
-                Service Images (Min 1, Max 4)
-              </Typography>
+            <Stack spacing={2} className="image-upload-section">
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                className="image-upload-heading"
+              >
+                <Typography>Service Images</Typography>
+                <Chip
+                  label={
+                    editingServiceId
+                      ? `${images.length}/4 replacement`
+                      : `${images.length}/4 selected`
+                  }
+                  className="image-count-chip"
+                />
+              </Stack>
 
               {imageError && <Alert severity="error">{imageError}</Alert>}
 
-              {/* Upload Zone */}
               <Box
-                sx={{
-                  border: "2px dashed #6F2CFF",
-                  borderRadius: "12px",
-                  p: 3,
-                  textAlign: "center",
-                  cursor: "pointer",
-                  transition: "all 0.3s",
-                  bgcolor: "#f9f5ff",
-                  "&:hover": {
-                    bgcolor: "#f3e8ff",
-                    borderColor: "#7c3aed",
-                  },
-                }}
+                className={`upload-dropzone ${
+                  images.length >= 4 ? "disabled" : ""
+                }`}
               >
                 <input
                   type="file"
@@ -427,67 +534,43 @@ const MyServicesTab = () => {
                   id="image-upload"
                   disabled={images.length >= 4}
                 />
-                <label
-                  htmlFor="image-upload"
-                  style={{ cursor: "pointer", display: "block" }}
-                >
-                  <CloudUploadIcon
-                    sx={{ fontSize: 40, color: "#6F2CFF", mb: 1 }}
-                  />
-                  <Typography
-                    sx={{ fontWeight: 600, color: "#6F2CFF", mb: 0.5 }}
-                  >
-                    Click to upload images
-                  </Typography>
-                  <Typography sx={{ fontSize: 14, color: "#6b7280" }}>
-                    or drag and drop
-                  </Typography>
-                  <Typography sx={{ fontSize: 12, color: "#9ca3af", mt: 1 }}>
-                    {images.length}/4 images selected
-                  </Typography>
+                <label htmlFor="image-upload">
+                  <Box className="upload-icon-wrap">
+                    <CloudUploadIcon />
+                  </Box>
+                  <Stack spacing={0.25} className="upload-copy">
+                    <Typography className="upload-title">
+                      Upload service photos
+                    </Typography>
+                    <Typography className="upload-note">
+                      {editingServiceId
+                        ? "JPG, PNG, or WEBP. Upload only if you want to replace photos."
+                        : "JPG, PNG, or WEBP. Add at least one image."}
+                    </Typography>
+                  </Stack>
                 </label>
               </Box>
 
-              {/* Uploaded Images Preview */}
               {images.length > 0 && (
-                <Grid container spacing={2}>
+                <Grid container spacing={1.5} className="image-preview-grid">
                   {images.map((image, index) => (
-                    <Grid item xs={6} sm={4} key={index}>
-                      <Box
-                        sx={{
-                          position: "relative",
-                          paddingBottom: "100%",
-                          bgcolor: "#f3f4f6",
-                          borderRadius: "8px",
-                          overflow: "hidden",
-                        }}
-                      >
+                    <Grid item xs={6} sm={3} key={`${image.name}-${index}`}>
+                      <Box className="image-preview-card">
                         <Box
                           component="img"
                           src={URL.createObjectURL(image)}
-                          sx={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
+                          alt={image.name}
                         />
                         <IconButton
                           size="small"
                           onClick={() => removeImage(index)}
-                          sx={{
-                            position: "absolute",
-                            top: 4,
-                            right: 4,
-                            bgcolor: "rgba(0,0,0,0.6)",
-                            color: "#fff",
-                            "&:hover": { bgcolor: "rgba(0,0,0,0.8)" },
-                          }}
+                          className="remove-image-btn"
                         >
                           <CloseIcon fontSize="small" />
                         </IconButton>
+                        <Typography className="image-file-name">
+                          {image.name}
+                        </Typography>
                       </Box>
                     </Grid>
                   ))}
@@ -497,20 +580,16 @@ const MyServicesTab = () => {
           </Stack>
         </DialogContent>
 
-        <DialogActions sx={{ p: 2, borderTop: "1px solid #f3f4f6" }}>
-          <Button onClick={resetModal} sx={{ color: "#6b7280" }}>
+        <DialogActions className="add-dialog-actions">
+          <Button onClick={resetModal} className="btn-dialog-cancel">
             Cancel
           </Button>
           <Button
             variant="contained"
             onClick={handlePublish}
-            sx={{
-              background: "linear-gradient(135deg, #7c3aed, #6F2CFF)",
-              textTransform: "none",
-              fontWeight: 600,
-            }}
+            className="btn-dialog-publish"
           >
-            Publish Service
+            {editingServiceId ? "Update Service" : "Publish Service"}
           </Button>
         </DialogActions>
       </Dialog>
