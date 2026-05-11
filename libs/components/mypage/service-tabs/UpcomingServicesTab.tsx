@@ -42,7 +42,7 @@ const UpcomingServicesTab = () => {
   };
 
   const completeService = (serviceId: number) => {
-    setServiceStatuses((prev) => ({ ...prev, [serviceId]: "completed" }));
+    setServiceStatuses((prev) => ({ ...prev, [serviceId]: "complete" }));
   };
 
   return (
@@ -85,16 +85,16 @@ const UpcomingServicesTab = () => {
                 className="request-status-actions"
               >
                 <Chip
-                  label={status === "completed" ? "Completed" : "Upcoming"}
+                  label={status === "complete" ? "Complete" : "Upcoming"}
                   size="small"
                   className={`request-status-chip ${status}`}
                 />
-                {status !== "completed" && (
+                {status !== "complete" && (
                   <Button
                     className="request-complete-btn"
                     onClick={() => completeService(item.id)}
                   >
-                    Completed
+                    Complete
                   </Button>
                 )}
               </Stack>
