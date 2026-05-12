@@ -11,20 +11,19 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { ReactNode, useMemo } from "react";
 import PersonIcon from "@mui/icons-material/Person";
-import EventIcon from "@mui/icons-material/Event";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import FactCheckIcon from "@mui/icons-material/FactCheck";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import BuildIcon from "@mui/icons-material/Build";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import MyProfile from "@/libs/components/mypage/MyProfile";
 import ServiceManagement from "@/libs/components/mypage/ServiceManagement";
+import BookingsOrders from "@/libs/components/mypage/BookingsOrders";
 
 type MemberType = "USER" | "SERVICE_AGENT";
 
 type CategoryKey =
-  | "BOOKINGS"
-  | "ORDERS"
+  | "BOOKINGS_ORDERS"
   | "MY_FAVORITES"
   | "SERVICE_MANAGEMENT"
   | "MY_ARTICLES"
@@ -33,8 +32,7 @@ type CategoryKey =
 
 const userCategories: CategoryKey[] = [
   "MY_PROFILE",
-  "BOOKINGS",
-  "ORDERS",
+  "BOOKINGS_ORDERS",
   "MY_FAVORITES",
   "MY_ARTICLES",
   "NOTIFICATIONS",
@@ -43,8 +41,7 @@ const userCategories: CategoryKey[] = [
 const serviceAgentCategories: CategoryKey[] = [
   "MY_PROFILE",
   "SERVICE_MANAGEMENT",
-  "BOOKINGS",
-  "ORDERS",
+  "BOOKINGS_ORDERS",
   "MY_FAVORITES",
   "MY_ARTICLES",
   "NOTIFICATIONS",
@@ -59,15 +56,10 @@ const categoryMeta: Record<
     description: "",
     icon: <PersonIcon />,
   },
-  BOOKINGS: {
-    label: "Bookings",
+  BOOKINGS_ORDERS: {
+    label: "Bookings & Orders",
     description: "",
-    icon: <EventIcon />,
-  },
-  ORDERS: {
-    label: "Orders",
-    description: "",
-    icon: <ShoppingCartIcon />,
+    icon: <FactCheckIcon />,
   },
   MY_FAVORITES: {
     label: "My Favorites",
@@ -105,10 +97,14 @@ const MyPage: NextPage = () => {
   }, [memberType]);
 
   const rawCategory = router.query.articleCategory;
+  const normalizedCategory =
+    rawCategory === "BOOKINGS" || rawCategory === "ORDERS"
+      ? "BOOKINGS_ORDERS"
+      : rawCategory;
   const activeCategory: CategoryKey =
-    typeof rawCategory === "string" &&
-    categoryOrder.includes(rawCategory as CategoryKey)
-      ? (rawCategory as CategoryKey)
+    typeof normalizedCategory === "string" &&
+    categoryOrder.includes(normalizedCategory as CategoryKey)
+      ? (normalizedCategory as CategoryKey)
       : categoryOrder[0];
 
   const activeMeta = categoryMeta[activeCategory];
@@ -204,6 +200,7 @@ const MyPage: NextPage = () => {
           <Stack>
             {activeCategory === "MY_PROFILE" && <MyProfile />}
             {activeCategory === "SERVICE_MANAGEMENT" && <ServiceManagement />}
+            {activeCategory === "BOOKINGS_ORDERS" && <BookingsOrders />}
             {/* Content for other categories will be added here */}
           </Stack>
         </Stack>
