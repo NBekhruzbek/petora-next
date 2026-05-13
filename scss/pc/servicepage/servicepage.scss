@@ -743,224 +743,241 @@
             background: #4b158d;
             color: #fff;
           }
-          .agents-card {
+          .service-card {
             width: 100%;
-            border-radius: 22px;
-            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            border: 1px solid #ede0f9;
             background: #fff;
             overflow: hidden;
-            box-shadow: 0 10px 24px rgba(18, 18, 25, 0.1);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(18, 18, 25, 0.06);
             transition:
               transform 0.25s ease,
               box-shadow 0.25s ease;
 
             &:hover {
               transform: translateY(-4px);
-              box-shadow: 0 16px 34px rgba(18, 18, 25, 0.16);
-              .agent-image {
-                transform: scale(1.04);
+              box-shadow: 0 16px 32px rgba(65, 0, 117, 0.12);
+
+              .service-card-image {
+                transform: scale(1.05);
               }
             }
-          }
-          .agent-media {
-            position: relative;
-            padding: 15px 0 5px;
-            .agent-image-wrap {
-              width: 150px;
-              height: 150px;
-              margin: 0 auto;
-              background: #e9e4e1;
-              overflow: visible;
-              position: relative;
-              border-radius: 999px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
 
-              .agent-image {
+            .service-card-image-wrap {
+              position: relative;
+              height: 160px;
+              overflow: hidden;
+              background: #f3e8ff;
+
+              .service-card-image {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 transition: transform 0.3s ease;
-                border-radius: 999px;
               }
-            }
 
-            .like-fab {
-              position: absolute;
-              right: 16px;
-              top: 90%;
-              transform: translateY(-50%);
-              width: 36px;
-              height: 36px;
-              border-radius: 999px;
-              background: #f7ede4;
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-              color: #8a8a8a;
-              box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
-              cursor: pointer;
-              transition:
-                color 0.2s ease,
-                transform 0.2s ease;
-              z-index: 2;
-              .like-count {
+              .service-category-badge {
                 position: absolute;
-                top: -14px;
-                right: -12px;
-                min-width: 10px;
-                height: 20px;
-                padding: 0 6px;
+                top: 12px;
+                left: 12px;
+                z-index: 2;
+                padding: 4px 10px;
                 border-radius: 999px;
-                background: #e11d48;
+                background: rgba(65, 0, 117, 0.82);
+                backdrop-filter: blur(6px);
                 color: #fff;
                 font-family: $font;
                 font-size: 11px;
-                font-style: normal;
                 font-weight: 700;
-                line-height: 20px;
-                text-align: center;
-                box-shadow: 0 6px 12px rgba(225, 29, 72, 0.28);
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+              }
+
+              .service-like-btn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                z-index: 2;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 5px;
+                cursor: pointer;
+                background: rgba(0, 0, 0, 0.42);
+                backdrop-filter: blur(8px);
+                border-radius: 999px;
+                padding: 5px 9px 5px 7px;
+                transition: background 0.2s ease;
+
+                &:hover {
+                  background: rgba(0, 0, 0, 0.58);
+                }
+
+                svg {
+                  font-size: 17px;
+                  color: #fff;
+                  transition:
+                    color 0.2s ease,
+                    transform 0.2s ease;
+                  flex-shrink: 0;
+                }
+
+                &.is-liked svg {
+                  color: #f43f5e;
+                  transform: scale(1.15);
+                }
+
+                .like-count {
+                  color: #fff;
+                  font-family: $font;
+                  font-size: 12px;
+                  font-weight: 700;
+                  line-height: 1;
+                }
               }
             }
-            .is-liked {
-              color: #e11d48;
-              transform: translateY(-50%) scale(1.03);
-            }
-          }
-        }
 
-        .agent-content {
-          padding: 14px 16px 18px;
-          gap: 6px;
-          .name-row {
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            .agent-name {
-              font-family: $font;
-              font-size: 18px;
-              font-style: normal;
-              font-weight: 700;
-              color: #111827;
-            }
-            .bookings-row {
-              font-family: $font;
-              font-size: 12px;
-              font-style: normal;
-              font-weight: 600;
-              color: #ffffff;
-              background: #4b158d;
-              padding: 4px 8px;
-              border-radius: 999px;
-              white-space: nowrap;
-            }
-          }
-          .agent-service-type {
-            font-family: $font;
-            font-size: 13px;
-            font-style: normal;
-            font-weight: 500;
-            color: #6b7280;
-          }
-          .service-price {
-            font-family: $font;
-            font-size: 14px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #4b5563;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-          }
-          .rating-row {
-            flex-direction: row;
-            align-items: center;
-            gap: 6px;
-            .rating-stars {
-              font-size: 18px;
-              .MuiRating-iconFilled {
-                color: #f6c200;
+            .service-card-content {
+              padding: 14px 16px 16px;
+              gap: 7px;
+
+              .service-card-name {
+                font-family: $font;
+                font-size: 16px;
+                font-weight: 700;
+                color: #111827;
+                line-height: 1.2;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
               }
-              .MuiRating-iconEmpty {
-                color: #e5e7eb;
+
+              .service-price-row {
+                gap: 6px;
+
+                .service-price {
+                  font-family: $font;
+                  font-size: 22px;
+                  font-weight: 800;
+                  color: #7100ff;
+                  line-height: 1;
+                }
+
+                .service-price-sep {
+                  color: #d1d5db;
+                  font-size: 16px;
+                  line-height: 1;
+                }
+
+                .duration-icon {
+                  font-size: 14px;
+                  color: #9ca3af;
+                }
+
+                .service-duration {
+                  font-family: $font;
+                  font-size: 13px;
+                  font-weight: 500;
+                  color: #6b7280;
+                }
               }
-            }
-            .rating-value {
-              font-family: $font;
-              font-size: 14px;
-              font-style: normal;
-              font-weight: 700;
-              color: #6b7280;
-            }
-          }
-          .agent-actions {
-            margin-top: 10px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            .booking-btn {
-              display: flex;
-              width: 160px;
-              height: 35px;
-              border: 1.5px solid #d8d2e6;
 
-              padding: 10px 30px;
-              justify-content: center;
-              align-items: center;
-              gap: 10px;
-              cursor: pointer;
+              .service-location-row {
+                gap: 4px;
 
-              border-radius: 999px;
-              border: 2px solid transparent;
-              background:
-                linear-gradient(#c390ed, #410075) padding-box,
-                linear-gradient(
-                    120deg,
-                    #e83333 0%,
-                    #d3b7ff 35%,
-                    #ffffff 55%,
-                    #b56cff 75%,
-                    #5f18b7 100%
-                  )
-                  border-box;
-              background-size:
-                100% 100%,
-                250% 250%;
-              background-position:
-                0 0,
-                0% 50%;
-              animation: ctaBorderFlow 3.6s linear infinite;
-              color: #fff;
-              font-family: $font;
-              font-size: 16px;
-              font-style: normal;
-              font-weight: 700;
-              line-height: 1;
-              text-transform: none;
-              box-shadow: none;
-              transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
+                .location-icon {
+                  font-size: 15px;
+                  color: #9ca3af;
+                }
 
-              &:hover {
+                .service-location {
+                  font-family: $font;
+                  font-size: 13px;
+                  font-weight: 500;
+                  color: #6b7280;
+                }
+              }
+
+              .service-rating-row {
+                gap: 6px;
+
+                .rating-stars {
+                  .MuiRating-iconFilled {
+                    color: #f6c200;
+                  }
+                  .MuiRating-iconEmpty {
+                    color: #e5e7eb;
+                  }
+                  .MuiSvgIcon-root {
+                    font-size: 15px;
+                  }
+                }
+
+                .rating-value {
+                  font-family: $font;
+                  font-size: 13px;
+                  font-weight: 700;
+                  color: #374151;
+                }
+
+                .review-count {
+                  font-family: $font;
+                  font-size: 12px;
+                  font-weight: 400;
+                  color: #9ca3af;
+                }
+              }
+
+              .service-book-btn {
+                width: 100%;
+                height: 38px;
+                margin-top: 6px;
+                border-radius: 10px;
+                border: 2px solid transparent;
                 background:
-                  linear-gradient(#d3acf2, #8527d3) padding-box,
+                  linear-gradient(#c390ed, #410075) padding-box,
                   linear-gradient(
                       120deg,
-                      #c27bff 0%,
-                      #f3e4ff 45%,
-                      #ffffff 60%,
-                      #d190ff 78%,
-                      #7f2ed8 100%
+                      #e83333 0%,
+                      #d3b7ff 35%,
+                      #ffffff 55%,
+                      #b56cff 75%,
+                      #5f18b7 100%
                     )
                     border-box;
-                box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
-                transform: translateY(-1px);
+                background-size:
+                  100% 100%,
+                  250% 250%;
+                background-position:
+                  0 0,
+                  0% 50%;
+                animation: ctaBorderFlow 3.6s linear infinite;
+                color: #fff;
+                font-family: $font;
+                font-size: 15px;
+                font-weight: 700;
+                text-transform: none;
+                box-shadow: none;
+                transition:
+                  transform 0.2s ease,
+                  box-shadow 0.2s ease;
+
+                &:hover {
+                  background:
+                    linear-gradient(#d3acf2, #8527d3) padding-box,
+                    linear-gradient(
+                        120deg,
+                        #c27bff 0%,
+                        #f3e4ff 45%,
+                        #ffffff 60%,
+                        #d190ff 78%,
+                        #7f2ed8 100%
+                      )
+                      border-box;
+                  box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+                  transform: translateY(-1px);
+                }
               }
             }
           }
@@ -1069,13 +1086,75 @@
               font-size: 14px;
               color: #6e6e6e;
             }
-            .price-range {
+            .booking-rating-row {
+              margin-top: 10px;
+              gap: 6px;
+
+              .MuiRating-iconFilled { color: #f6c200; }
+              .MuiRating-iconEmpty  { color: #e5e7eb; }
+              .MuiSvgIcon-root      { font-size: 16px; }
+
+              .booking-rating-score {
+                font-family: $font;
+                font-size: 14px;
+                font-weight: 700;
+                color: #111;
+              }
+
+              .booking-rating-sep {
+                color: #d1d5db;
+                font-size: 14px;
+              }
+
+              .booking-rating-count {
+                font-family: $font;
+                font-size: 13px;
+                color: #6b7280;
+              }
+            }
+
+            .booking-chips {
+              margin-top: 14px;
+              gap: 8px;
+
+              .booking-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 5px 11px;
+                border-radius: 999px;
+                background: #f3e8ff;
+                border: 1px solid #e4d0f9;
+                color: #5b21b6;
+                font-family: $font;
+                font-size: 12px;
+                font-weight: 600;
+
+                svg {
+                  font-size: 14px;
+                  color: #7c3aed;
+                }
+              }
+            }
+
+            .price-display {
               margin-top: 18px;
               font-family: $font;
-              font-size: 20px;
-              font-weight: 700;
-              color: #111;
+              font-size: 28px;
+              font-weight: 800;
+              color: #7100ff;
+
+              .price-unit {
+                font-size: 14px;
+                font-weight: 500;
+                color: #9ca3af;
+              }
             }
+
+            .date-time-row {
+              margin-top: 4px;
+            }
+
             .field {
               margin-top: 16px;
               display: flex;
@@ -1108,6 +1187,7 @@
 
                 .MuiInputBase-input {
                   padding: 10px 12px;
+                  cursor: pointer;
                 }
 
                 .MuiSelect-select {
@@ -1149,20 +1229,13 @@
             }
             .cta-row {
               display: flex;
-              flex-direction: row;
-              align-items: center;
-              gap: 12px;
-              margin-top: 18px;
-              .add-btn {
-                display: flex;
-                width: 210px;
-                height: 44px;
-                padding: 10px 30px;
-                justify-content: center;
-                align-items: center;
-                gap: 10px;
-                cursor: pointer;
+              flex-direction: column;
+              gap: 10px;
+              margin-top: 20px;
 
+              .book-now-btn {
+                width: 100%;
+                height: 48px;
                 border-radius: 12px;
                 border: 2px solid transparent;
                 background:
@@ -1176,19 +1249,13 @@
                       #5f18b7 100%
                     )
                     border-box;
-                background-size:
-                  100% 100%,
-                  250% 250%;
-                background-position:
-                  0 0,
-                  0% 50%;
+                background-size: 100% 100%, 250% 250%;
+                background-position: 0 0, 0% 50%;
                 animation: ctaBorderFlow 3.6s linear infinite;
                 color: #fff;
                 font-family: $font;
-                font-size: 18px;
-                font-style: normal;
+                font-size: 17px;
                 font-weight: 700;
-                line-height: 1;
                 text-transform: none;
                 box-shadow: none;
                 transition:
@@ -1211,106 +1278,38 @@
                   transform: translateY(-1px);
                 }
               }
-              .pay-btn {
-                display: flex;
-                width: 210px;
-                height: 44px;
-                padding: 10px 30px;
-                justify-content: center;
-                align-items: center;
-                gap: 10px;
-                cursor: pointer;
 
-                border-radius: 12px;
-                border: 2px solid transparent;
-                background:
-                  linear-gradient(#c390ed, #410075) padding-box,
-                  linear-gradient(
-                      120deg,
-                      #e83333 0%,
-                      #d3b7ff 35%,
-                      #ffffff 55%,
-                      #b56cff 75%,
-                      #5f18b7 100%
-                    )
-                    border-box;
-                background-size:
-                  100% 100%,
-                  250% 250%;
-                background-position:
-                  0 0,
-                  0% 50%;
-                animation: ctaBorderFlow 3.6s linear infinite;
-                color: #fff;
+              .save-favorites-btn {
+                width: 100%;
+                height: 40px;
+                border-radius: 10px;
+                border: 1.5px solid #e2d4f5;
+                background: transparent;
+                color: #7a7a7a;
                 font-family: $font;
-                font-size: 18px;
-                font-style: normal;
-                font-weight: 700;
-                line-height: 1;
+                font-size: 14px;
+                font-weight: 600;
                 text-transform: none;
-                box-shadow: none;
+                gap: 6px;
                 transition:
-                  transform 0.2s ease,
-                  box-shadow 0.2s ease;
+                  background 0.2s ease,
+                  border-color 0.2s ease,
+                  color 0.2s ease;
+
+                svg { font-size: 18px; }
 
                 &:hover {
-                  background:
-                    linear-gradient(#d3acf2, #8527d3) padding-box,
-                    linear-gradient(
-                        120deg,
-                        #c27bff 0%,
-                        #f3e4ff 45%,
-                        #ffffff 60%,
-                        #d190ff 78%,
-                        #7f2ed8 100%
-                      )
-                      border-box;
-                  box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
-                  transform: translateY(-1px);
+                  background: #fdf2f8;
+                  border-color: #f9a8c9;
+                  color: #be185d;
                 }
-              }
-              .like-badge {
-                .MuiBadge-badge {
-                  top: -7px;
-                  right: -7px;
-                  background: #e6224a;
-                  color: #fff;
-                  font-family: $font;
-                  font-size: 11px;
-                  font-weight: 600;
-                  padding: 4px 5px;
-                  min-width: 14px;
-                  height: 20px;
-                  border-radius: 999px;
-                  box-shadow: 0 8px 18px rgba(230, 34, 74, 0.3);
-                  transform: translate(16%, -16%);
-                }
-                .heart-btn {
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 50%;
-                  border: none;
-                  background: #f7eee5;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  cursor: pointer;
-                  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-                  transition:
-                    transform 0.2s ease,
-                    box-shadow 0.2s ease;
 
-                  svg {
-                    color: #7a7a7a;
-                    font-size: 28px;
-                  }
-                }
-                .liked {
-                  background: #f7eee5;
+                &.is-liked {
+                  background: #fff1f5;
+                  border-color: #f9a8c9;
+                  color: #e6224a;
 
-                  svg {
-                    color: #e6224a;
-                  }
+                  svg { color: #e6224a; }
                 }
               }
             }
@@ -2176,179 +2175,198 @@
         display: grid;
         grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 20px;
-        .agents-card {
+
+        .service-card {
           width: 100%;
-          border-radius: 22px;
-          border: 1px solid #e5e7eb;
+          border-radius: 16px;
+          border: 1px solid #ede0f9;
           background: #fff;
           overflow: hidden;
-          box-shadow: 0 10px 24px rgba(18, 18, 25, 0.1);
+          cursor: pointer;
+          box-shadow: 0 4px 16px rgba(18, 18, 25, 0.06);
           transition:
             transform 0.25s ease,
             box-shadow 0.25s ease;
 
           &:hover {
             transform: translateY(-4px);
-            box-shadow: 0 16px 34px rgba(18, 18, 25, 0.16);
-          }
-          .agent-media {
-            position: relative;
-            .agent-image-wrap {
-              width: 100%;
-              height: 220px;
-              margin: 0 auto;
-              background: #e9e4e1;
-              overflow: hidden;
-              position: relative;
-              border-radius: 22px 22px 0 0;
-              display: flex;
-              align-items: center;
-              justify-content: center;
+            box-shadow: 0 16px 32px rgba(65, 0, 117, 0.12);
 
-              .agent-image {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                object-position: center 24%;
-                transition: transform 0.3s ease;
-              }
+            .service-card-image {
+              transform: scale(1.05);
             }
-            .like-fab {
+          }
+
+          .service-card-image-wrap {
+            position: relative;
+            height: 150px;
+            overflow: hidden;
+            background: #f3e8ff;
+
+            .service-card-image {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              transition: transform 0.3s ease;
+            }
+
+            .service-category-badge {
               position: absolute;
-              right: 12px;
-              bottom: 12px;
-              width: 34px;
-              height: 34px;
-              border-radius: 999px;
-              background: #f7ede4;
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-              color: #8a8a8a;
-              box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
-              cursor: pointer;
-              transition:
-                color 0.2s ease,
-                transform 0.2s ease;
+              top: 10px;
+              left: 10px;
               z-index: 2;
+              padding: 3px 8px;
+              border-radius: 999px;
+              background: rgba(65, 0, 117, 0.82);
+              backdrop-filter: blur(6px);
+              color: #fff;
+              font-family: $font;
+              font-size: 10px;
+              font-weight: 700;
+              letter-spacing: 0.5px;
+              text-transform: uppercase;
+            }
+
+            .service-like-btn {
+              position: absolute;
+              top: 8px;
+              right: 8px;
+              z-index: 2;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              gap: 4px;
+              cursor: pointer;
+              background: rgba(0, 0, 0, 0.42);
+              backdrop-filter: blur(8px);
+              border-radius: 999px;
+              padding: 4px 7px 4px 6px;
+              transition: background 0.2s ease;
+
+              &:hover {
+                background: rgba(0, 0, 0, 0.58);
+              }
+
+              svg {
+                font-size: 15px;
+                color: #fff;
+                transition:
+                  color 0.2s ease,
+                  transform 0.2s ease;
+                flex-shrink: 0;
+              }
+
+              &.is-liked svg {
+                color: #f43f5e;
+                transform: scale(1.15);
+              }
+
               .like-count {
-                position: absolute;
-                top: -14px;
-                right: -12px;
-                min-width: 10px;
-                height: 20px;
-                padding: 0 6px;
-                border-radius: 999px;
-                background: #e11d48;
                 color: #fff;
                 font-family: $font;
                 font-size: 11px;
-                font-style: normal;
                 font-weight: 700;
-                line-height: 20px;
-                text-align: center;
-                box-shadow: 0 6px 12px rgba(225, 29, 72, 0.28);
+                line-height: 1;
               }
             }
-            .is-liked {
-              color: #e11d48;
-              transform: scale(1.03);
-            }
           }
-        }
-        :hover .agent-image {
-          transform: scale(1.04);
-        }
 
-        .agent-content {
-          padding: 12px 14px 16px;
-          gap: 5px;
+          .service-card-content {
+            padding: 12px 14px 14px;
+            gap: 6px;
 
-          .name-row {
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-
-            .agent-name {
+            .service-card-name {
               font-family: $font;
-              font-size: 16px;
-              font-style: normal;
+              font-size: 14px;
               font-weight: 700;
               color: #111827;
-            }
-            .bookings-row {
-              font-family: $font;
-              font-size: 11px;
-              font-style: normal;
-              font-weight: 600;
-              color: #ffffff;
-              background: #4b158d;
-              padding: 4px 7px;
-              border-radius: 999px;
+              line-height: 1.2;
               white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
-          }
-          .agent-service-type {
-            font-family: $font;
-            font-size: 12px;
-            font-style: normal;
-            font-weight: 500;
-            color: #6b7280;
-          }
-          .service-price {
-            font-family: $font;
-            font-size: 13px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #4b5563;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-          }
-          .rating-row {
-            flex-direction: row;
-            align-items: center;
-            gap: 5px;
 
-            .rating-stars {
-              font-size: 16px;
-              .MuiRating-iconFilled {
-                color: #f6c200;
-              }
-              .MuiRating-iconEmpty {
-                color: #e5e7eb;
-              }
-            }
-            .rating-value {
-              font-family: $font;
-              font-size: 13px;
-              font-style: normal;
-              font-weight: 700;
-              color: #6b7280;
-            }
-          }
-          .agent-actions {
-            margin-top: 8px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            .service-price-row {
+              gap: 5px;
 
-            .booking-btn {
-              display: flex;
-              width: 142px;
+              .service-price {
+                font-family: $font;
+                font-size: 18px;
+                font-weight: 800;
+                color: #7100ff;
+                line-height: 1;
+              }
+
+              .service-price-sep {
+                color: #d1d5db;
+                font-size: 14px;
+                line-height: 1;
+              }
+
+              .duration-icon {
+                font-size: 13px;
+                color: #9ca3af;
+              }
+
+              .service-duration {
+                font-family: $font;
+                font-size: 12px;
+                font-weight: 500;
+                color: #6b7280;
+              }
+            }
+
+            .service-location-row {
+              gap: 3px;
+
+              .location-icon {
+                font-size: 13px;
+                color: #9ca3af;
+              }
+
+              .service-location {
+                font-family: $font;
+                font-size: 12px;
+                font-weight: 500;
+                color: #6b7280;
+              }
+            }
+
+            .service-rating-row {
+              gap: 5px;
+
+              .rating-stars {
+                .MuiRating-iconFilled {
+                  color: #f6c200;
+                }
+                .MuiRating-iconEmpty {
+                  color: #e5e7eb;
+                }
+                .MuiSvgIcon-root {
+                  font-size: 13px;
+                }
+              }
+
+              .rating-value {
+                font-family: $font;
+                font-size: 12px;
+                font-weight: 700;
+                color: #374151;
+              }
+
+              .review-count {
+                font-family: $font;
+                font-size: 11px;
+                font-weight: 400;
+                color: #9ca3af;
+              }
+            }
+
+            .service-book-btn {
+              width: 100%;
               height: 34px;
-              border: 1.5px solid #d8d2e6;
-
-              padding: 8px 20px;
-              justify-content: center;
-              align-items: center;
-              gap: 10px;
-              cursor: pointer;
-
-              border-radius: 999px;
+              margin-top: 4px;
+              border-radius: 10px;
               border: 2px solid transparent;
               background:
                 linear-gradient(#c390ed, #410075) padding-box,
@@ -2370,10 +2388,8 @@
               animation: ctaBorderFlow 3.6s linear infinite;
               color: #fff;
               font-family: $font;
-              font-size: 14px;
-              font-style: normal;
+              font-size: 13px;
               font-weight: 700;
-              line-height: 1;
               text-transform: none;
               box-shadow: none;
               transition:

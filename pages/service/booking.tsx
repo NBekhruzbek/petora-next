@@ -3,11 +3,9 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Badge,
   Box,
   Button,
   ButtonBase,
-  IconButton,
   MenuItem,
   Pagination,
   Paper,
@@ -22,12 +20,13 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlined";
 import { useRef, useState } from "react";
 import moment from "moment";
 import RelatedServices from "@/libs/components/servicepage/RelatedServices";
 import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
 import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 
@@ -164,13 +163,20 @@ const Booking = () => {
       photos: [],
     },
   ];
+
+  const serviceChips = [
+    { icon: <PlaceOutlinedIcon />, label: "At your location" },
+    { icon: <EventAvailableOutlinedIcon />, label: "Mon – Sat" },
+  ];
+
   const [selectedImage, setSelectedImage] = useState(0);
-  const [openItems, setOpenItems] = useState([false, false, false]);
-  const [trainingOption, setTrainingOption] = useState("");
+  const [openItems, setOpenItems] = useState([false, false, false, false]);
   const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
+  const [time, setTime] = useState("10:00");
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(312);
   const dateInputRef = useRef<HTMLInputElement | null>(null);
+  const timeInputRef = useRef<HTMLInputElement | null>(null);
   const [value, setValue] = useState(0);
   const [reviewPage, setReviewPage] = useState(1);
   const [expandedReviews, setExpandedReviews] = useState<
@@ -250,101 +256,84 @@ const Booking = () => {
           </Stack>
 
           <Stack className="booking-sidebar">
+            {/* ── Booking card ── */}
             <Paper className="booking-card" elevation={0}>
               <Typography className="title">Training</Typography>
               <Typography className="subtitle">
                 All training sessions are 60 min
               </Typography>
 
-              <Typography className="price-range">$195.00–$565.00</Typography>
+              {/* Rating */}
+              <Stack className="booking-rating-row" direction="row" alignItems="center">
+                <Rating value={agentProfile.rating} precision={0.1} readOnly size="small" />
+                <Typography className="booking-rating-score">{agentProfile.rating.toFixed(1)}</Typography>
+                <Typography className="booking-rating-sep">·</Typography>
+                <Typography className="booking-rating-count">{agentProfile.reviewCount} reviews</Typography>
+              </Stack>
 
-              <Stack className="field">
-                <Typography className="field-label">
-                  Training Options
-                </Typography>
-                <TextField
-                  className="input"
-                  select
-                  size="small"
-                  value={trainingOption}
-                  onChange={(event) => setTrainingOption(event.target.value)}
-                  SelectProps={{
-                    displayEmpty: true,
-                    renderValue: (selected) =>
-                      (selected as string) || "Choose training option",
-                    MenuProps: {
-                      disablePortal: true,
-                      PaperProps: { className: "booking-menu" },
-                    },
+              {/* Service chips */}
+              <Stack className="booking-chips" direction="row" flexWrap="wrap">
+                {serviceChips.map((chip) => (
+                  <Box key={chip.label} className="booking-chip">
+                    {chip.icon}
+                    <span>{chip.label}</span>
+                  </Box>
+                ))}
+              </Stack>
+
+              {/* Price */}
+              <Typography className="price-display">$195 <span className="price-unit">/ session</span></Typography>
+
+              {/* Date + Time */}
+              <Stack className="date-time-row" direction="row" gap={2}>
+                <Stack className="field" flex={1}>
+                  <Typography className="field-label">Date</Typography>
+                  <TextField
+                    className="input"
+                    type="date"
+                    size="small"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    inputRef={dateInputRef}
+                    onClick={() => dateInputRef.current?.showPicker?.()}
+                  />
+                </Stack>
+                <Stack className="field" flex={1}>
+                  <Typography className="field-label">Time</Typography>
+                  <TextField
+                    className="input"
+                    type="time"
+                    size="small"
+                    value={time}
+                    onChange={(e) => setTime(e.target.value)}
+                    inputRef={timeInputRef}
+                    onClick={() => timeInputRef.current?.showPicker?.()}
+                  />
+                </Stack>
+              </Stack>
+
+              {/* CTAs */}
+              <Stack className="cta-row">
+                <Button className="book-now-btn" variant="contained" fullWidth>
+                  Book Now
+                </Button>
+                <Button
+                  className={`save-favorites-btn ${liked ? "is-liked" : ""}`}
+                  fullWidth
+                  startIcon={liked ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
+                  onClick={() => {
+                    setLiked((prev) => {
+                      setLikeCount((c) => Math.max(0, c + (prev ? -1 : 1)));
+                      return !prev;
+                    });
                   }}
                 >
-                  <MenuItem value="">Choose training option</MenuItem>
-                  <MenuItem value="Standard Training Session">
-                    Standard Training Session
-                  </MenuItem>
-                  <MenuItem value="Training Package">Training Package</MenuItem>
-                </TextField>
-              </Stack>
-
-              {trainingOption ? (
-                <Typography className="price">
-                  {trainingOption === "Standard Training Session"
-                    ? "$195.00"
-                    : "$565.00"}
-                </Typography>
-              ) : null}
-
-              <Stack className="field">
-                <Typography className="field-label">Date</Typography>
-                <TextField
-                  className="input"
-                  type="date"
-                  size="small"
-                  value={date}
-                  onChange={(event) => setDate(event.target.value)}
-                  inputRef={dateInputRef}
-                  onClick={() => dateInputRef.current?.showPicker?.()}
-                />
-              </Stack>
-
-              <Stack className="cta-row">
-                <Button className="add-btn" variant="contained">
-                  Add to cart
+                  {liked ? "Saved to favorites" : "Save to favorites"} · {likeCount}
                 </Button>
-                <Button className="pay-btn" variant="contained">
-                  Pay
-                </Button>
-                <Badge
-                  className="like-badge"
-                  badgeContent={likeCount}
-                  overlap="circular"
-                  max={99999}
-                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                >
-                  <IconButton
-                    className={`heart-btn ${liked ? "liked" : ""}`}
-                    aria-label="Add to favorites"
-                    aria-pressed={liked}
-                    onClick={() => {
-                      setLiked((prev) => {
-                        const next = !prev;
-                        setLikeCount((count) =>
-                          Math.max(0, count + (next ? 1 : -1)),
-                        );
-                        return next;
-                      });
-                    }}
-                  >
-                    {liked ? (
-                      <FavoriteIcon fontSize="small" />
-                    ) : (
-                      <FavoriteBorderOutlinedIcon fontSize="small" />
-                    )}
-                  </IconButton>
-                </Badge>
               </Stack>
             </Paper>
 
+            {/* ── Details accordion card ── */}
             <Paper className="details-card" elevation={0}>
               <Accordion
                 className="detail-item"
@@ -411,6 +400,28 @@ const Booking = () => {
                     We require proof of vaccinations from your veterinarian
                     prior to using any of our services, in compliance with local
                     health guidelines.
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+
+              <Accordion
+                className="detail-item"
+                expanded={openItems[3]}
+                onChange={() => toggleDetail(3)}
+                disableGutters
+                square
+              >
+                <AccordionSummary
+                  className="detail-title"
+                  expandIcon={openItems[3] ? <RemoveIcon /> : <AddIcon />}
+                >
+                  <Typography>Cancellation Policy</Typography>
+                </AccordionSummary>
+                <AccordionDetails className="detail-body">
+                  <Typography>
+                    Free cancellation up to 24 hours before the session.
+                    Cancellations within 24 hours are subject to a 50% charge.
+                    No-shows are charged in full.
                   </Typography>
                 </AccordionDetails>
               </Accordion>
