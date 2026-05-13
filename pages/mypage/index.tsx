@@ -19,6 +19,7 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import MyProfile from "@/libs/components/mypage/MyProfile";
 import ServiceManagement from "@/libs/components/mypage/ServiceManagement";
 import BookingsOrders from "@/libs/components/mypage/BookingsOrders";
+import MyFavorites from "@/libs/components/mypage/MyFavorites";
 
 type MemberType = "USER" | "SERVICE_AGENT";
 
@@ -201,7 +202,7 @@ const MyPage: NextPage = () => {
             {activeCategory === "MY_PROFILE" && <MyProfile />}
             {activeCategory === "SERVICE_MANAGEMENT" && <ServiceManagement />}
             {activeCategory === "BOOKINGS_ORDERS" && <BookingsOrders />}
-            {/* Content for other categories will be added here */}
+            {activeCategory === "MY_FAVORITES" && <MyFavorites />}
           </Stack>
         </Stack>
       </Stack>
