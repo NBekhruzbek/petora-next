@@ -44,7 +44,7 @@ const MOCK_SERVICES = [
     description:
       "Full grooming service including bath, haircut, nail trim, and ear cleaning.",
     tags: ["Dog", "Bath", "Haircut"],
-    image: "🐕",
+    image: "/img/services/grooming.jpg",
   },
   {
     id: 2,
@@ -58,7 +58,7 @@ const MOCK_SERVICES = [
     description:
       "Luxury cat boarding with private rooms, webcam monitoring, and playtime.",
     tags: ["Cat", "Luxury", "Overnight"],
-    image: "🐈",
+    image: "/img/services/boarding.png",
   },
   {
     id: 3,
@@ -72,7 +72,7 @@ const MOCK_SERVICES = [
     description:
       "1-hour professional dog walking with GPS tracking and photo updates.",
     tags: ["Dog", "Exercise", "Outdoor"],
-    image: "🦮",
+    image: "/img/services/walking.jpg",
   },
   {
     id: 4,
@@ -85,7 +85,7 @@ const MOCK_SERVICES = [
     status: "paused",
     description: "8-week basic obedience training for puppies aged 3-6 months.",
     tags: ["Puppy", "Obedience", "Course"],
-    image: "🐶",
+    image: "/img/services/training.jpg",
   },
   {
     id: 5,
@@ -99,7 +99,7 @@ const MOCK_SERVICES = [
     description:
       "Comprehensive health examination with blood work and vaccination.",
     tags: ["Health", "Checkup", "Vaccination"],
-    image: "🏥",
+    image: "/img/services/veterinary.png",
   },
   {
     id: 6,
@@ -113,7 +113,7 @@ const MOCK_SERVICES = [
     description:
       "5-star pet hotel with room service, grooming, and outdoor activities.",
     tags: ["Luxury", "Hotel", "Activities"],
-    image: "🏨",
+    image: "/img/services/day-care.jpg",
   },
 ];
 
@@ -300,7 +300,12 @@ const MyServicesTab = () => {
               className={`service-row ${serviceStatus}`}
             >
               <Box className="service-row-media">
-                <span className="thumb-emoji">{service.image}</span>
+                <Box
+                  component="img"
+                  src={service.image}
+                  alt={service.name}
+                  className="thumb-img"
+                />
               </Box>
 
               <Stack className="service-row-main" spacing={0.75}>
@@ -318,21 +323,9 @@ const MyServicesTab = () => {
                 <Typography className="service-description">
                   {service.description}
                 </Typography>
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  alignItems="center"
-                  className="service-tags"
-                >
-                  <Typography className="agent-service-type">
-                    {service.category}
-                  </Typography>
-                  {service.tags.slice(0, 2).map((tag) => (
-                    <Box className="service-tag" key={tag}>
-                      {tag}
-                    </Box>
-                  ))}
-                </Stack>
+                <Typography className="agent-service-type">
+                  {service.category}
+                </Typography>
               </Stack>
 
               <Stack
