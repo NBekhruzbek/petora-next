@@ -9,13 +9,12 @@ import {
 } from "@mui/material";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import FeedOutlinedIcon from "@mui/icons-material/FeedOutlined";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
-import FreeBoardNewsCard from "@/libs/components/community/FreeBoardNewsCard";
 import QNACard from "@/libs/components/community/QNACard";
 import BoardList from "@/libs/components/community/BoardList";
 
@@ -181,6 +180,17 @@ const Community: NextPage = () => {
   const activePosts = communityPosts[activeCategory];
   const [isAskOpen, setIsAskOpen] = useState(false);
   const [isWriteOpen, setIsWriteOpen] = useState(false);
+
+  useEffect(() => {
+    if (router.query.write === "true") {
+      setIsWriteOpen(true);
+      void router.replace(
+        { pathname: "/community", query: { articleCategory: activeCategory } },
+        undefined,
+        { shallow: true },
+      );
+    }
+  }, [router.query.write]);
 
   const handleCategoryChange = (category: CategoryKey) => {
     void router.push(

@@ -20,6 +20,7 @@ import MyProfile from "@/libs/components/mypage/MyProfile";
 import ServiceManagement from "@/libs/components/mypage/ServiceManagement";
 import BookingsOrders from "@/libs/components/mypage/BookingsOrders";
 import MyFavorites from "@/libs/components/mypage/MyFavorites";
+import MyArticles from "@/libs/components/mypage/MyArticles";
 
 type MemberType = "USER" | "SERVICE_AGENT";
 
@@ -203,6 +204,7 @@ const MyPage: NextPage = () => {
             {activeCategory === "SERVICE_MANAGEMENT" && <ServiceManagement />}
             {activeCategory === "BOOKINGS_ORDERS" && <BookingsOrders />}
             {activeCategory === "MY_FAVORITES" && <MyFavorites />}
+            {activeCategory === "MY_ARTICLES" && <MyArticles />}
           </Stack>
         </Stack>
       </Stack>
