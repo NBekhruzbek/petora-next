@@ -2453,3 +2453,462 @@
     transform: translateX(0) rotate(0deg);
   }
 }
+
+// =============================================
+// BOOKING DIALOG
+// =============================================
+
+@at-root .booking-dialog {
+  .MuiBackdrop-root {
+    background-color: rgba(25, 17, 35, 0.38);
+    backdrop-filter: blur(5px);
+  }
+
+  .booking-dialog-paper {
+    width: min(520px, calc(100vw - 32px));
+    border-radius: 22px !important;
+    border: 1px solid rgba(65, 0, 117, 0.12) !important;
+    background: #ffffff !important;
+    box-shadow: 0 28px 72px rgba(41, 12, 72, 0.2) !important;
+    overflow: hidden !important;
+  }
+
+  .booking-dialog-header {
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid rgba(143, 143, 143, 0.18);
+
+    .booking-dialog-title {
+      font-family: $font;
+      font-size: 18px;
+      font-weight: 800;
+      color: #111827;
+      letter-spacing: -0.01em;
+    }
+
+    .booking-dialog-step {
+      font-family: $font;
+      font-size: 12px;
+      font-weight: 600;
+      color: #9ca3af;
+    }
+
+    .booking-dialog-close {
+      width: 32px;
+      height: 32px;
+      color: #9ca3af;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      background: #f9fafb;
+      transition:
+        color 0.2s,
+        background 0.2s,
+        transform 0.25s;
+
+      &:hover {
+        color: #dc2626;
+        background: #fff0f0;
+        border-color: #fca5a5;
+        transform: rotate(90deg);
+      }
+
+      svg { font-size: 16px; }
+    }
+  }
+
+  .booking-dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 22px 24px;
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: rgba(65, 0, 117, 0.15); border-radius: 999px; }
+  }
+
+  .booking-dialog-divider {
+    border-color: rgba(143, 143, 143, 0.18) !important;
+  }
+
+  // ── Service summary strip ──
+  .booking-service-summary {
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(143, 143, 143, 0.3);
+    background: #f9fafb;
+
+    .booking-summary-img {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 1px solid rgba(143, 143, 143, 0.2);
+
+      img { width: 100%; height: 100%; object-fit: cover; }
+    }
+
+    .booking-summary-name {
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .booking-summary-meta {
+      font-family: $font;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+
+      svg { font-size: 14px; color: #9ca3af; }
+      span { font-family: $font; }
+    }
+
+    .booking-summary-price {
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 800;
+      color: #410075;
+    }
+  }
+
+  // ── Step label ──
+  .booking-section-label {
+    font-family: $font;
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+
+    svg { color: #7c3aed; font-size: 17px; }
+
+    .MuiTypography-root { font-family: $font; font-size: 13px; font-weight: 700; color: #374151; }
+  }
+
+  // ── Fields ──
+  .booking-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .booking-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    .booking-field-label {
+      font-family: $font;
+      font-size: 12px;
+      font-weight: 700;
+      color: #4b5563;
+    }
+
+    .booking-input {
+      .MuiOutlinedInput-root {
+        border-radius: 10px !important;
+        background: #ffffff !important;
+        font-family: $font !important;
+
+        input, textarea {
+          font-family: $font !important;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          color: #111827 !important;
+          -webkit-text-fill-color: #111827 !important;
+        }
+
+        fieldset { border-color: rgba(143, 143, 143, 0.5) !important; }
+        &:hover fieldset { border-color: #7c3aed !important; }
+        &.Mui-focused fieldset { border-color: #410075 !important; }
+      }
+
+      .MuiFormHelperText-root {
+        font-family: $font;
+        font-size: 11px;
+        font-weight: 600;
+        color: #dc2626;
+        margin-top: 3px;
+      }
+    }
+  }
+
+  // ── Pet chips ──
+  .pet-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(143, 143, 143, 0.4);
+    background: #ffffff;
+    font-family: $font;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      border-color 0.18s ease,
+      background 0.18s ease,
+      color 0.18s ease,
+      box-shadow 0.18s ease;
+
+    &:hover {
+      border-color: #7c3aed;
+      color: #410075;
+      background: #faf5ff;
+    }
+
+    &.selected {
+      border-color: #410075;
+      background: #f3e8ff;
+      color: #410075;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(65, 0, 117, 0.14);
+    }
+  }
+
+  .booking-chip-error {
+    font-family: $font;
+    font-size: 11px;
+    font-weight: 600;
+    color: #dc2626;
+    margin-top: 2px;
+  }
+
+  // ── Notes textarea alignment ──
+  .booking-notes-input {
+    .MuiInputBase-root {
+      align-items: flex-start !important;
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+    }
+
+    textarea {
+      text-align: left !important;
+      vertical-align: top !important;
+      resize: none !important;
+    }
+  }
+
+  // ── Action buttons ──
+  .btn-booking-next {
+    height: 46px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background:
+      linear-gradient(#c390ed, #410075) padding-box,
+      linear-gradient(120deg, #e83333 0%, #d3b7ff 35%, #fff 55%, #b56cff 75%, #5f18b7 100%) border-box;
+    background-size: 100% 100%, 250% 250%;
+    animation: bookingCtaFlow 3.6s linear infinite;
+    color: #fff;
+    font-family: $font;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: none;
+    box-shadow: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 4px;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(65, 0, 117, 0.28);
+    }
+  }
+
+  // ── Confirm step ──
+  .booking-confirm-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(143, 143, 143, 0.3);
+    background: #f9fafb;
+
+    .confirm-section-title {
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .confirm-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+
+      .confirm-label {
+        font-family: $font;
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+        flex-shrink: 0;
+      }
+
+      .confirm-value {
+        font-family: $font;
+        font-size: 13px;
+        font-weight: 700;
+        color: #111827;
+        text-align: right;
+      }
+
+      .confirm-notes {
+        font-weight: 500;
+        color: #4b5563;
+        text-align: right;
+      }
+
+      &.confirm-price-row {
+        .confirm-total-label {
+          font-family: $font;
+          font-size: 15px;
+          font-weight: 700;
+          color: #374151;
+        }
+
+        .confirm-total-value {
+          font-family: $font;
+          font-size: 22px;
+          font-weight: 800;
+          color: #111827;
+          letter-spacing: -0.03em;
+        }
+      }
+    }
+  }
+
+  .booking-confirm-policy {
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #faf5ff;
+    border: 1px solid rgba(65, 0, 117, 0.1);
+
+    .MuiTypography-root {
+      font-family: $font;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+    }
+  }
+
+  .btn-booking-back {
+    height: 46px;
+    min-width: 90px;
+    border-radius: 999px;
+    font-family: $font;
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: none;
+    border: 1px solid #e5e7eb;
+    background: transparent;
+    flex-shrink: 0;
+    transition: background 0.2s;
+
+    &:hover { background: #f9fafb; }
+  }
+
+  .btn-booking-confirm {
+    height: 46px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background:
+      linear-gradient(#c390ed, #410075) padding-box,
+      linear-gradient(120deg, #e83333 0%, #d3b7ff 35%, #fff 55%, #b56cff 75%, #5f18b7 100%) border-box;
+    background-size: 100% 100%, 250% 250%;
+    animation: bookingCtaFlow 3.6s linear infinite;
+    color: #fff;
+    font-family: $font;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: none;
+    box-shadow: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(65, 0, 117, 0.28);
+    }
+  }
+
+  // ── Success step ──
+  .booking-success-body {
+    align-items: center;
+    text-align: center;
+    padding: 32px 28px 28px;
+
+    .booking-success-icon {
+      font-size: 60px;
+      color: #16a34a;
+    }
+
+    .booking-pending-badge {
+      padding: 5px 16px;
+      border-radius: 999px;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      font-family: $font;
+      font-size: 12px;
+      font-weight: 700;
+      color: #92400e;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .booking-success-title {
+      font-family: $font;
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+      letter-spacing: -0.02em;
+    }
+
+    .booking-success-ref {
+      font-family: $font;
+      font-size: 12px;
+      font-weight: 700;
+      color: #410075;
+      background: #faf5ff;
+      border: 1px solid rgba(65, 0, 117, 0.15);
+      padding: 4px 14px;
+      border-radius: 999px;
+    }
+
+    .booking-success-msg {
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 500;
+      color: #6b7280;
+      line-height: 1.65;
+      max-width: 380px;
+    }
+
+    .btn-booking-done {
+      margin-top: 8px;
+      height: 46px;
+      border-radius: 999px;
+      font-family: $font;
+      font-size: 15px;
+      font-weight: 700;
+      color: #410075;
+      text-transform: none;
+      border: 1.5px solid rgba(65, 0, 117, 0.3);
+      background: transparent;
+      transition: background 0.2s;
+
+      &:hover { background: #faf5ff; }
+    }
+  }
+}
+
+@keyframes bookingCtaFlow {
+  0%   { background-position: 0 0, 0% 50%;   }
+  100% { background-position: 0 0, 250% 50%; }
+}

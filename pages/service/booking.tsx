@@ -6,6 +6,9 @@ import {
   Box,
   Button,
   ButtonBase,
+  Dialog,
+  Divider,
+  IconButton,
   MenuItem,
   Pagination,
   Paper,
@@ -22,6 +25,11 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlined";
+import CloseIcon from "@mui/icons-material/Close";
+import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRef, useState } from "react";
 import moment from "moment";
 import RelatedServices from "@/libs/components/servicepage/RelatedServices";
@@ -175,6 +183,30 @@ const Booking = () => {
   const [time, setTime] = useState("10:00");
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(312);
+
+  // Booking dialog
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [bookingStep, setBookingStep] = useState<1 | 2 | 3>(1);
+  const [petName, setPetName] = useState("");
+  const [petType, setPetType] = useState("");
+  const [petAge, setPetAge] = useState("");
+  const [specialNotes, setSpecialNotes] = useState("");
+  const [bookingRef] = useState(`BK-${Math.floor(10000 + Math.random() * 90000)}`);
+  const [petErrors, setPetErrors] = useState({ petName: "", petType: "" });
+
+  const openBookingDialog = () => { setBookingStep(1); setBookingOpen(true); };
+  const closeBookingDialog = () => { setBookingOpen(false); };
+
+  const handleBookingNext = () => {
+    const errors = { petName: "", petType: "" };
+    if (!petName.trim()) errors.petName = "Pet name is required";
+    if (!petType.trim()) errors.petType = "Please select a pet type";
+    if (errors.petName || errors.petType) { setPetErrors(errors); return; }
+    setPetErrors({ petName: "", petType: "" });
+    setBookingStep(2);
+  };
+
+  const handleConfirmBooking = () => setBookingStep(3);
   const dateInputRef = useRef<HTMLInputElement | null>(null);
   const timeInputRef = useRef<HTMLInputElement | null>(null);
   const [value, setValue] = useState(0);
@@ -314,7 +346,7 @@ const Booking = () => {
 
               {/* CTAs */}
               <Stack className="cta-row">
-                <Button className="book-now-btn" variant="contained" fullWidth>
+                <Button className="book-now-btn" variant="contained" fullWidth onClick={openBookingDialog}>
                   Book Now
                 </Button>
                 <Button
@@ -787,6 +819,199 @@ const Booking = () => {
         </Stack>
       </Stack>
       <RelatedServices />
+
+      {/* ── Booking Dialog ── */}
+      <Dialog
+        open={bookingOpen}
+        onClose={bookingStep === 3 ? closeBookingDialog : undefined}
+        className="booking-dialog"
+        PaperProps={{ className: "booking-dialog-paper" }}
+      >
+        {/* Header */}
+        <Stack className="booking-dialog-header" direction="row" alignItems="center" justifyContent="space-between">
+          <Stack gap="2px">
+            <Typography className="booking-dialog-title">
+              {bookingStep === 1 && "Pet Details"}
+              {bookingStep === 2 && "Confirm Booking"}
+              {bookingStep === 3 && "Request Submitted"}
+            </Typography>
+            {bookingStep < 3 && (
+              <Typography className="booking-dialog-step">Step {bookingStep} of 2</Typography>
+            )}
+          </Stack>
+          <IconButton className="booking-dialog-close" onClick={closeBookingDialog}>
+            <CloseIcon />
+          </IconButton>
+        </Stack>
+
+        {/* Step 1 — Pet Details */}
+        {bookingStep === 1 && (
+          <Stack className="booking-dialog-body">
+            <Stack className="booking-service-summary" direction="row" alignItems="center" gap="12px">
+              <Box className="booking-summary-img">
+                <img src={images[selectedImage]} alt="service" />
+              </Box>
+              <Stack gap="2px">
+                <Typography className="booking-summary-name">Training with {agentProfile.name}</Typography>
+                <Stack direction="row" alignItems="center" gap="10px">
+                  <Stack direction="row" alignItems="center" gap="5px" className="booking-summary-meta">
+                    <CalendarMonthOutlinedIcon fontSize="small" />
+                    <span>{moment(date).format("MMM D, YYYY")}</span>
+                  </Stack>
+                  <Stack direction="row" alignItems="center" gap="5px" className="booking-summary-meta">
+                    <AccessTimeOutlinedIcon fontSize="small" />
+                    <span>{time}</span>
+                  </Stack>
+                </Stack>
+                <Typography className="booking-summary-price">$195 / session</Typography>
+              </Stack>
+            </Stack>
+
+            <Divider className="booking-dialog-divider" />
+
+            <Stack gap="14px">
+              <Stack direction="row" alignItems="center" gap="8px" className="booking-section-label">
+                <PetsOutlinedIcon fontSize="small" />
+                <Typography>Tell us about your pet</Typography>
+              </Stack>
+
+              <Stack className="booking-field">
+                <Typography className="booking-field-label">Your Pet's Name *</Typography>
+                <TextField
+                  size="small"
+                  placeholder="e.g. Max, Luna, Buddy…"
+                  value={petName}
+                  onChange={(e) => { setPetName(e.target.value); setPetErrors((p) => ({ ...p, petName: "" })); }}
+                  error={!!petErrors.petName}
+                  helperText={petErrors.petName}
+                  className="booking-input"
+                />
+              </Stack>
+
+              <Stack className="booking-field">
+                <Typography className="booking-field-label">Pet Type *</Typography>
+                <Stack direction="row" flexWrap="wrap" gap="8px">
+                  {["Dog", "Cat", "Bird", "Rabbit", "Other"].map((value) => (
+                    <Box
+                      key={value}
+                      className={`pet-chip ${petType === value ? "selected" : ""}`}
+                      onClick={() => { setPetType(value); setPetErrors((p) => ({ ...p, petType: "" })); }}
+                    >
+                      <span>{value}</span>
+                    </Box>
+                  ))}
+                </Stack>
+                {petErrors.petType && <Typography className="booking-chip-error">{petErrors.petType}</Typography>}
+              </Stack>
+
+              <Stack className="booking-field">
+                <Typography className="booking-field-label">Pet Age</Typography>
+                <Stack direction="row" flexWrap="wrap" gap="8px">
+                  {[
+                    { value: "Under 1 year", label: "Under 1 yr" },
+                    { value: "1–3 years",    label: "1–3 yrs"    },
+                    { value: "3–7 years",    label: "3–7 yrs"    },
+                    { value: "7+ years",     label: "7+ yrs"     },
+                  ].map(({ value, label }) => (
+                    <Box
+                      key={value}
+                      className={`pet-chip ${petAge === value ? "selected" : ""}`}
+                      onClick={() => setPetAge(value)}
+                    >
+                      <span>{label}</span>
+                    </Box>
+                  ))}
+                </Stack>
+              </Stack>
+
+              <Stack className="booking-field">
+                <Typography className="booking-field-label">Special Requests / Notes</Typography>
+                <TextField
+                  size="small"
+                  multiline
+                  rows={3}
+                  placeholder="Any allergies, behavioral notes, or special care instructions…"
+                  value={specialNotes}
+                  onChange={(e) => setSpecialNotes(e.target.value)}
+                  className="booking-input booking-notes-input"
+                  inputProps={{ style: { textAlign: "left" } }}
+                />
+              </Stack>
+            </Stack>
+
+            <Button className="btn-booking-next" endIcon={<ArrowForwardIcon />} onClick={handleBookingNext} fullWidth>
+              Continue to Confirm
+            </Button>
+          </Stack>
+        )}
+
+        {/* Step 2 — Confirm */}
+        {bookingStep === 2 && (
+          <Stack className="booking-dialog-body">
+            <Stack className="booking-confirm-card">
+              <Typography className="confirm-section-title">Booking Summary</Typography>
+
+              <Stack className="confirm-row">
+                <Typography className="confirm-label">Service</Typography>
+                <Typography className="confirm-value">Training Session</Typography>
+              </Stack>
+              <Stack className="confirm-row">
+                <Typography className="confirm-label">Agent</Typography>
+                <Typography className="confirm-value">{agentProfile.name}</Typography>
+              </Stack>
+              <Stack className="confirm-row">
+                <Typography className="confirm-label">Date</Typography>
+                <Typography className="confirm-value">{moment(date).format("MMMM D, YYYY")}</Typography>
+              </Stack>
+              <Stack className="confirm-row">
+                <Typography className="confirm-label">Time</Typography>
+                <Typography className="confirm-value">{time}</Typography>
+              </Stack>
+              <Stack className="confirm-row">
+                <Typography className="confirm-label">Pet</Typography>
+                <Typography className="confirm-value">{petName} · {petType}{petAge ? ` · ${petAge}` : ""}</Typography>
+              </Stack>
+              {specialNotes && (
+                <Stack className="confirm-row confirm-row-notes">
+                  <Typography className="confirm-label">Notes</Typography>
+                  <Typography className="confirm-value confirm-notes">{specialNotes}</Typography>
+                </Stack>
+              )}
+              <Divider className="booking-dialog-divider" />
+              <Stack className="confirm-row confirm-price-row">
+                <Typography className="confirm-total-label">Total</Typography>
+                <Typography className="confirm-total-value">$195</Typography>
+              </Stack>
+            </Stack>
+
+            <Stack className="booking-confirm-policy">
+              <Typography>Free cancellation up to 24 hours before the session.</Typography>
+            </Stack>
+
+            <Stack direction="row" gap="10px">
+              <Button className="btn-booking-back" onClick={() => setBookingStep(1)}>Back</Button>
+              <Button className="btn-booking-confirm" onClick={handleConfirmBooking} fullWidth>
+                Confirm Booking
+              </Button>
+            </Stack>
+          </Stack>
+        )}
+
+        {/* Step 3 — Pending */}
+        {bookingStep === 3 && (
+          <Stack className="booking-dialog-body booking-success-body">
+            <Box className="booking-pending-badge">Pending</Box>
+            <Typography className="booking-success-title">Booking Request Sent!</Typography>
+            <Typography className="booking-success-ref">Ref: {bookingRef}</Typography>
+            <Typography className="booking-success-msg">
+              Your request has been sent to {agentProfile.name} for {moment(date).format("MMMM D, YYYY")} at {time}. The agent will review and accept your booking shortly. You'll be notified once it's confirmed.
+            </Typography>
+            <Button className="btn-booking-done" onClick={closeBookingDialog} fullWidth>
+              Done
+            </Button>
+          </Stack>
+        )}
+      </Dialog>
     </Stack>
   );
 };
