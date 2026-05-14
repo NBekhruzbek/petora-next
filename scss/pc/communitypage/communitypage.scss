@@ -2,20 +2,30 @@
 
 #pc-wrap {
   #community-top {
-    position: relative;
-    z-index: 2;
-    overflow: visible;
     background-color: #f2e2ff;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 270px;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C360,120 1080,0 1440,60 L1440,120 L0,120 Z' fill='%23ffffff'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
 
     .community-top {
-      position: relative;
       flex-direction: row;
       justify-content: space-between;
-      height: 600px;
-      overflow: visible;
+
       .text-area {
         position: relative;
-        margin-top: 170px;
+        margin-top: 260px;
+        min-height: 560px;
         width: 100%;
         gap: 10px;
         .text1 {
@@ -51,17 +61,6 @@
           line-height: 30px; /* 125% */
           color: var(--Neutral-700, #595959);
         }
-        .community-stats {
-          width: 387px;
-          height: 90px;
-          /* Web/24px-Display/Regular */
-          font-family: $font;
-          font-size: 20px;
-          font-style: normal;
-          font-weight: 400;
-          line-height: 30px; /* 125% */
-          color: var(--Neutral-700, #595959);
-        }
       }
       .icon-image {
         position: absolute;
@@ -74,34 +73,34 @@
       .news-logo {
         position: absolute;
         width: 320px;
-        top: 80px;
+        top: 120px;
         z-index: 2;
         animation: float 3s ease-in-out infinite;
         z-index: 1;
       }
       .circle-background {
         position: initial;
-        width: 826px;
+        width: 836px;
         z-index: 0;
         margin-top: 10px;
         .ellipse {
           position: absolute;
-          top: 142.8px;
-          left: 66px;
-          width: 80%;
+          top: 192.8px;
+          left: 22px;
+          width: 100%;
           z-index: -1;
         }
         .ellipse2 {
           position: absolute;
-          top: 228px;
-          left: 129px;
-          width: 65%;
+          top: 308px;
+          left: 84px;
+          width: 85%;
           z-index: -1;
         }
         .dog-icon {
           position: absolute;
           border-radius: 167.764px;
-          top: 200px;
+          top: 270px;
           left: 650px;
           z-index: 9999;
           background: var(--Secondary-Green4, #6ab052);
@@ -112,7 +111,7 @@
         .cat-icon {
           position: absolute;
           border-radius: 213.931px;
-          top: 280px;
+          top: 340px;
           left: 30px;
           background: var(--Secondary-Red2, #c80006);
           animation: scrollWiggle linear both;
@@ -122,7 +121,7 @@
       }
       .community-image-wrapper {
         position: relative;
-        width: 640px;
+        width: 740px;
         min-height: 100%;
         flex-shrink: 0;
         overflow: visible;
@@ -132,7 +131,7 @@
         .community-image {
           position: absolute;
           right: -198px;
-          bottom: -62px;
+          bottom: -15px;
           width: 140%;
           max-width: none;
           margin-top: 0;

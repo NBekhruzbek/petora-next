@@ -16,10 +16,6 @@ const CommunityHeader = () => {
             Share your pet stories, ask questions, and connect with fellow pet
             lovers.
           </Box>
-          <Box className={"community-stats"}>
-            <Typography>🐾 12,000+ Members</Typography>
-            <Typography>📚 3,500+ Articles</Typography>
-          </Box>
         </Stack>
         <Box>
           <img className="news-logo" src="./img/headers/news-logo.png" alt="" />
