@@ -3,15 +3,29 @@
 #pc-wrap {
   #mypage-top {
     background-color: #f2e2ff;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 270px;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C360,120 1080,0 1440,60 L1440,120 L0,120 Z' fill='%23ffffff'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
 
     .mypage-top {
       padding-top: 40px;
       flex-direction: row;
       justify-content: space-between;
-      height: 615px;
+      height: 765px;
       .text-area {
         position: relative;
-        margin-top: 120px;
+        margin-top: 180px;
         width: 100%;
         gap: 20px;
         .text1 {
@@ -49,10 +63,9 @@
       .pets-image {
         position: absolute;
         width: 400px;
-        bottom: -55px;
-        left: -30px;
+        bottom: 50px;
+        left: -40px;
         z-index: 1;
-        animation: floatSide 4s ease-in-out infinite;
       }
       .cat {
         position: absolute;
@@ -60,7 +73,6 @@
         top: 120px;
         left: 330px;
         z-index: 1;
-        animation: floatSide 4s ease-in-out infinite;
       }
       .circle-background {
         position: initial;
@@ -70,15 +82,15 @@
         .ellipse {
           position: absolute;
           top: 118px;
-          left: 130px;
-          width: 80%;
+          left: 85px;
+          width: 92%;
           z-index: -1;
         }
         .ellipse2 {
           position: absolute;
           top: 202px;
-          left: 193px;
-          width: 65%;
+          left: 148px;
+          width: 77%;
           z-index: -1;
         }
         .dog-icon {
@@ -106,8 +118,8 @@
       .girl-image-wrapper {
         overflow: hidden;
         .girl-image {
-          width: 90%;
-          margin-top: 116.5px;
+          width: 92%;
+          margin-top: 118.5px;
           margin-left: 80px;
           overflow: hidden;
           display: block;
@@ -123,7 +135,7 @@
     position: relative;
     width: 100%;
     min-height: auto;
-    padding: 130px 0 90px;
+    padding: 20px 0 90px;
     background: #ffffff;
 
     .container {
