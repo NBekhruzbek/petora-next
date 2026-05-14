@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { MOCK_BILLING_INFO } from "@/libs/data/userProfile";
 import {
   Stack,
   Typography,
@@ -45,18 +46,7 @@ const COUNTRIES = [
 
 const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
   const [showCvv, setShowCvv] = useState(false);
-  const [originalBilling, setOriginalBilling] = useState({
-    cardHolder: "JOHN DOE",
-    cardNumber: "4242 4242 4242 4242",
-    expiryDate: "12/28",
-    cvv: "281",
-    companyName: "Acme Inc.",
-    vatNumber: "GB123456789",
-    address: "123 Market Street",
-    city: "Seoul",
-    zipCode: "06234",
-    country: "South Korea",
-  });
+  const [originalBilling, setOriginalBilling] = useState(MOCK_BILLING_INFO);
 
   const [billing, setBilling] = useState(originalBilling);
 

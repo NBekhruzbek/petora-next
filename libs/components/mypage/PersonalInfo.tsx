@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { MOCK_PERSONAL_INFO } from "@/libs/data/userProfile";
 import {
   Stack,
   Typography,
@@ -22,15 +23,7 @@ interface PersonalInfoProps {
 }
 
 const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
-  const [originalProfile, setOriginalProfile] = useState({
-    fullName: "John Doe",
-    username: "johndoe",
-    email: "john.doe@company.com",
-    phone: "010-1234-5678",
-    address: "Seoul, Gangnam-gu, Teheran-ro 123",
-    bio: "Product designer and entrepreneur passionate about creating meaningful digital experiences.",
-    image: "/img/profile/defaultUser.png",
-  });
+  const [originalProfile, setOriginalProfile] = useState(MOCK_PERSONAL_INFO);
 
   const [profile, setProfile] = useState(originalProfile);
   const [usernameStatus, setUsernameStatus] = useState<

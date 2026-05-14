@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import { Box, Rating, Stack, Tab, Tabs, Typography } from "@mui/material";
 import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
 import CheckIcon from "@mui/icons-material/Check";
@@ -230,7 +231,9 @@ const DeliveryTracker = ({
 };
 
 const BookingsOrders = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const router = useRouter();
+  const initialTab = router.query.tab === "ORDERS" ? 1 : 0;
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [bookingStatuses, setBookingStatuses] = useState<
     Record<number, string>
   >({});
