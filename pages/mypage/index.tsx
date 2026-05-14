@@ -16,6 +16,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import BuildIcon from "@mui/icons-material/Build";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MyProfile from "@/libs/components/mypage/MyProfile";
 import ServiceManagement from "@/libs/components/mypage/ServiceManagement";
 import BookingsOrders from "@/libs/components/mypage/BookingsOrders";
@@ -179,9 +180,13 @@ const MyPage: NextPage = () => {
           </Stack>
 
           <Stack className="my-page-sidebar-footer">
-            <Typography className="my-page-footer-title">
-              My Page Hub
-            </Typography>
+            <Button
+              className="btn-logout"
+              startIcon={<LogoutIcon />}
+              onClick={() => void router.push("/")}
+            >
+              Logout
+            </Button>
             <Typography className="my-page-footer-copy">
               © 2026 All rights reserved
             </Typography>

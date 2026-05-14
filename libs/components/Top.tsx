@@ -1,15 +1,26 @@
 import { Logout } from "@mui/icons-material";
-import { Box, Menu, MenuItem, Stack } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Divider,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import React from "react";
 import Basket from "./Basket";
 import LoginRegister from "./account/LoginRegister";
 
 const Top = () => {
-  const authMember = false;
+  const authMember = true;
   const router = useRouter();
   const [colorChange, setColorChange] = useState<boolean>(false);
   const [bgColor, setBgColor] = useState<boolean>(false);
@@ -130,20 +141,13 @@ const Top = () => {
             {authMember ? (
               <>
                 <div
-                  className={"login-user"}
+                  className="login-user"
                   onClick={handleLogoutMenuOpen}
                   aria-controls={logoutOpen ? "basic-menu" : undefined}
                   aria-haspopup="true"
                   aria-expanded={logoutOpen ? "true" : undefined}
                 >
-                  <img
-                    src={
-                      authMember
-                        ? `/img/profile/defaultUser.png`
-                        : "/img/profile/defaultUser.png"
-                    }
-                    alt=""
-                  />
+                  <img src="/img/profile/defaultUser.png" alt="profile" />
                 </div>
 
                 <Menu
@@ -152,55 +156,191 @@ const Top = () => {
                   open={logoutOpen}
                   onClose={handleLogoutMenuClose}
                   disableScrollLock
-                  sx={{ mt: "5px", zIndex: 12000 }}
+                  sx={{ mt: "10px", zIndex: 12000 }}
                   PaperProps={{
+                    elevation: 0,
                     sx: {
-                      border: "1px solid rgba(65, 0, 117, 0.14)",
-                      borderRadius: "18px",
-                      boxShadow: "0 18px 40px rgba(65, 0, 117, 0.14)",
-                      overflow: "hidden",
+                      width: 256,
+                      border: "1px solid rgba(65, 0, 117, 0.12)",
+                      borderRadius: "20px",
+                      boxShadow: "0 24px 56px rgba(41, 12, 72, 0.18)",
+                      overflow: "visible",
+                      background: "#ffffff",
+                      transformOrigin: "top right !important",
+                      animation:
+                        "dropdownOpen 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+                      "@keyframes dropdownOpen": {
+                        from: {
+                          opacity: 0,
+                          transform: "scale(0.88) translateY(-6px)",
+                        },
+                        to: {
+                          opacity: 1,
+                          transform: "scale(1)    translateY(0)",
+                        },
+                      },
+                      "&::before": {
+                        content: '""',
+                        display: "block",
+                        position: "absolute",
+                        top: -7,
+                        right: 20,
+                        width: 14,
+                        height: 14,
+                        background: "#ffffff",
+                        borderTop: "1px solid rgba(65, 0, 117, 0.12)",
+                        borderLeft: "1px solid rgba(65, 0, 117, 0.12)",
+                        transform: "rotate(45deg)",
+                        borderTopLeftRadius: "3px",
+                        zIndex: 0,
+                      },
                     },
                   }}
-                  MenuListProps={{
-                    sx: {
-                      p: 1,
-                      background:
-                        "linear-gradient(180deg, #fffdfd 0%, #f7efff 100%)",
-                    },
-                  }}
+                  transformOrigin={{ horizontal: "right", vertical: "top" }}
+                  anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                  MenuListProps={{ sx: { p: 0 } }}
                 >
-                  <MenuItem
-                    onClick={handleLogoutMenuClose}
+                  {/* Header */}
+                  <Box
                     sx={{
-                      minHeight: "44px",
-                      px: "14px",
-                      borderRadius: "12px",
-                      fontSize: "14px",
-                      fontWeight: 700,
-                      lineHeight: 1.2,
-                      color: "#4a2a64",
-                      transition:
-                        "background-color 0.2s ease, color 0.2s ease, transform 0.2s ease",
-                      "&:hover": {
-                        backgroundColor: "rgba(65, 0, 117, 0.08)",
-                        color: "#410075",
-                        transform: "translateX(2px)",
-                      },
-                      "&:hover .MuiSvgIcon-root": {
-                        color: "#410075",
-                      },
+                      px: "18px",
+                      py: "16px",
+                      background: "#ffffff",
+                      borderBottom: "1px solid rgba(65, 0, 117, 0.08)",
+                      borderRadius: "20px 20px 0 0",
                     }}
                   >
-                    <Logout
-                      fontSize="small"
-                      sx={{
-                        mr: "10px",
-                        color: "#8a4dc1",
-                        transition: "color 0.2s ease",
+                    <Stack direction="row" alignItems="center" gap="12px">
+                      <Avatar
+                        src="/img/profile/defaultUser.png"
+                        sx={{ width: 52, height: 52 }}
+                      />
+                      <Stack gap="4px">
+                        <Typography
+                          sx={{
+                            fontFamily: "Assistant",
+                            fontSize: "15px",
+                            fontWeight: 800,
+                            color: "#1a1333",
+                            lineHeight: 1,
+                          }}
+                        >
+                          John Doe
+                        </Typography>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          gap="4px"
+                          sx={{
+                            alignSelf: "flex-start",
+                            px: "8px",
+                            py: "2px",
+                            borderRadius: "999px",
+                            background: "rgba(65, 0, 117, 0.1)",
+                          }}
+                        >
+                          <VerifiedUserOutlinedIcon
+                            sx={{ fontSize: "11px", color: "#6d28d9" }}
+                          />
+                          <Typography
+                            sx={{
+                              fontFamily: "Assistant",
+                              fontSize: "11px",
+                              fontWeight: 700,
+                              color: "#6d28d9",
+                            }}
+                          >
+                            Service Agent
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </Stack>
+                  </Box>
+
+                  {/* Menu items */}
+                  <Box sx={{ p: "8px" }}>
+                    <MenuItem
+                      onClick={() => {
+                        handleLogoutMenuClose();
+                        void router.push("/mypage");
                       }}
+                      sx={{
+                        minHeight: "42px",
+                        px: "12px",
+                        borderRadius: "12px",
+                        fontFamily: "Assistant",
+                        fontSize: "14px",
+                        fontWeight: 700,
+                        color: "#374151",
+                        gap: "10px",
+                        transition: "background 0.2s, color 0.2s",
+                        "&:hover": {
+                          background: "rgba(65, 0, 117, 0.07)",
+                          color: "#410075",
+                        },
+                        "& .menu-icon": { color: "#7c3aed", fontSize: "20px" },
+                        "&:hover .menu-icon": { color: "#410075" },
+                      }}
+                    >
+                      <PersonOutlineIcon className="menu-icon" />
+                      My Page
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        handleLogoutMenuClose();
+                        void router.push(
+                          "/mypage?articleCategory=NOTIFICATIONS",
+                        );
+                      }}
+                      sx={{
+                        minHeight: "42px",
+                        px: "12px",
+                        borderRadius: "12px",
+                        fontFamily: "Assistant",
+                        fontSize: "14px",
+                        fontWeight: 700,
+                        color: "#374151",
+                        gap: "10px",
+                        transition: "background 0.2s, color 0.2s",
+                        "&:hover": {
+                          background: "rgba(65, 0, 117, 0.07)",
+                          color: "#410075",
+                        },
+                        "& .menu-icon": { color: "#7c3aed", fontSize: "20px" },
+                        "&:hover .menu-icon": { color: "#410075" },
+                      }}
+                    >
+                      <NotificationsOutlinedIcon className="menu-icon" />
+                      Notifications
+                    </MenuItem>
+
+                    <Divider
+                      sx={{ borderColor: "rgba(65, 0, 117, 0.07)", my: "6px" }}
                     />
-                    Logout
-                  </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        handleLogoutMenuClose();
+                        void router.push("/");
+                      }}
+                      sx={{
+                        minHeight: "42px",
+                        px: "12px",
+                        borderRadius: "12px",
+                        fontFamily: "Assistant",
+                        fontSize: "14px",
+                        fontWeight: 700,
+                        color: "#dc2626",
+                        gap: "10px",
+                        transition: "background 0.2s",
+                        "&:hover": { background: "rgba(220, 38, 38, 0.06)" },
+                      }}
+                    >
+                      <Logout sx={{ fontSize: "20px", color: "#dc2626" }} />
+                      Logout
+                    </MenuItem>
+                  </Box>
                 </Menu>
               </>
             ) : (

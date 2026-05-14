@@ -244,18 +244,40 @@
         margin-top: auto;
         padding: 18px 20px 22px;
         border-top: 1px solid #ececf3;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
 
-        .my-page-footer-title {
+        .btn-logout {
+          width: 100%;
+          height: 40px;
+          border-radius: 10px;
+          border: 1px solid rgba(220, 38, 38, 0.25);
+          background: transparent;
           font-family: $font;
           font-size: 14px;
           font-weight: 700;
-          color: #4b5568;
+          color: #dc2626;
+          text-transform: none;
+          justify-content: flex-start;
+          padding: 0 14px;
+          transition:
+            background 0.2s,
+            border-color 0.2s;
+
+          &:hover {
+            background: #fff4f4;
+            border-color: rgba(220, 38, 38, 0.5);
+          }
+
+          svg {
+            font-size: 18px;
+          }
         }
 
         .my-page-footer-copy {
-          margin-top: 4px;
           font-family: $font;
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 500;
           color: #9098a9;
         }
