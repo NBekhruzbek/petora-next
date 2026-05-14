@@ -21,6 +21,7 @@ import ServiceManagement from "@/libs/components/mypage/ServiceManagement";
 import BookingsOrders from "@/libs/components/mypage/BookingsOrders";
 import MyFavorites from "@/libs/components/mypage/MyFavorites";
 import MyArticles from "@/libs/components/mypage/MyArticles";
+import Notifications from "@/libs/components/mypage/Notifications";
 
 type MemberType = "USER" | "SERVICE_AGENT";
 
@@ -205,6 +206,7 @@ const MyPage: NextPage = () => {
             {activeCategory === "BOOKINGS_ORDERS" && <BookingsOrders />}
             {activeCategory === "MY_FAVORITES" && <MyFavorites />}
             {activeCategory === "MY_ARTICLES" && <MyArticles />}
+            {activeCategory === "NOTIFICATIONS" && <Notifications />}
           </Stack>
         </Stack>
       </Stack>
