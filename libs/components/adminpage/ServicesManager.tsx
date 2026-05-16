@@ -41,51 +41,8 @@ const CATEGORIES = [
   "Health",
 ];
 
-const inputSx = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "10px",
-    fontSize: "14px",
-    color: "#111827",
-    background: "#fff",
-    height: 42,
-    "& fieldset": { borderColor: "#E5E7EB" },
-    "&:hover fieldset": { borderColor: "#C7D2FE" },
-    "&.Mui-focused fieldset": {
-      borderColor: "#6366F1",
-      borderWidth: "1.5px",
-      boxShadow: "0 0 0 3px rgba(99,102,241,0.08)",
-    },
-  },
-  "& .MuiInputLabel-root": { fontSize: "13px", color: "#9CA3AF" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "#6366F1" },
-  "& .MuiInputBase-input": { color: "#111827" },
-};
-
-const selectSx = {
-  borderRadius: "10px",
-  fontSize: "14px",
-  color: "#111827",
-  background: "#fff",
-  height: 42,
-  "& fieldset": { borderColor: "#E5E7EB" },
-  "&:hover fieldset": { borderColor: "#C7D2FE" },
-  "&.Mui-focused fieldset": { borderColor: "#6366F1", borderWidth: "1.5px" },
-  "& .MuiSelect-icon": { color: "#9CA3AF" },
-};
-
 const FieldLabel = ({ children }: { children: React.ReactNode }) => (
-  <Typography
-    sx={{
-      fontSize: "11px",
-      fontWeight: 700,
-      color: "#9CA3AF",
-      mb: 0.8,
-      textTransform: "uppercase",
-      letterSpacing: "0.05em",
-    }}
-  >
-    {children}
-  </Typography>
+  <Typography className="admin-svc-field-label">{children}</Typography>
 );
 
 const Section = ({
@@ -95,28 +52,11 @@ const Section = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <Stack
-    sx={{
-      background: "#fff",
-      border: "1px solid #F3F4F6",
-      borderRadius: "14px",
-      overflow: "hidden",
-    }}
-  >
-    <Stack sx={{ px: 2.5, py: 1.5, borderBottom: "1px solid #F3F4F6" }}>
-      <Typography
-        sx={{
-          fontSize: "11px",
-          fontWeight: 700,
-          color: "#9CA3AF",
-          textTransform: "uppercase",
-          letterSpacing: "0.08em",
-        }}
-      >
-        {title}
-      </Typography>
+  <Stack className="admin-svc-section">
+    <Stack className="admin-svc-section-header">
+      <Typography className="admin-svc-section-title">{title}</Typography>
     </Stack>
-    <Stack sx={{ p: 2.5, gap: 2 }}>{children}</Stack>
+    <Stack className="admin-svc-section-body">{children}</Stack>
   </Stack>
 );
 
@@ -174,11 +114,9 @@ const SortCell = ({
   return (
     <TableCell
       onClick={() => onSort(col)}
+      className="admin-svc-sort-cell"
       sx={{
-        cursor: "pointer",
-        userSelect: "none",
-        whiteSpace: "nowrap",
-        "&:hover .sort-icon": { opacity: 1 },
+        // color is dynamic: active changes it
         color: active ? "#6366F1 !important" : undefined,
       }}
     >
@@ -188,6 +126,7 @@ const SortCell = ({
           className="sort-icon"
           sx={{
             fontSize: 14,
+            // opacity and color are dynamic based on active
             opacity: active ? 1 : 0.3,
             color: active ? "#6366F1" : "#9CA3AF",
             transition: "opacity 0.15s",
@@ -299,15 +238,13 @@ const ServicesManager = () => {
             placeholder="Search name, agent, location…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="admin-toolbar-search"
-            sx={{ width: 260 }}
+            className="admin-toolbar-search admin-svc-search"
           />
           <Select
             size="small"
             value={filterCat}
             onChange={(e) => setFilterCat(e.target.value)}
-            className="admin-toolbar-select"
-            sx={{ width: 160 }}
+            className="admin-toolbar-select admin-svc-cat-filter"
           >
             <MenuItem value="ALL">All Categories</MenuItem>
             {CATEGORIES.map((c) => (
@@ -337,42 +274,29 @@ const ServicesManager = () => {
             <TableBody>
               {displayed.map((service) => (
                 <TableRow key={service.id}>
-                  <TableCell sx={{ fontWeight: 600, fontSize: "13px" }}>
+                  <TableCell className="admin-svc-name-cell">
                     {service.name}
                   </TableCell>
                   <TableCell>
                     <Stack gap={0.3}>
-                      <Typography
-                        className="admin-cell-name"
-                        sx={{
-                          fontWeight: 500,
-                          fontSize: "13px",
-                          color: "#111827",
-                        }}
-                      >
+                      <Typography className="admin-cell-name">
                         {service.agentName || "—"}
                       </Typography>
                       {service.agentUsername && (
-                        <Typography sx={{ fontSize: "11px", color: "#9CA3AF" }}>
+                        <Typography className="admin-agt-handle">
                           {service.agentUsername}
                         </Typography>
                       )}
                     </Stack>
                   </TableCell>
-                  <TableCell sx={{ fontSize: "12px" }}>
+                  <TableCell className="admin-svc-cat-cell">
                     {service.category}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "12px", color: "#6B7280" }}>
+                  <TableCell className="admin-svc-location-cell">
                     {service.location || "—"}
                   </TableCell>
                   <TableCell>
-                    <Typography
-                      sx={{
-                        fontSize: "13px",
-                        fontWeight: 700,
-                        color: "#6366F1",
-                      }}
-                    >
+                    <Typography className="admin-svc-price-text">
                       ₩{service.priceMin.toLocaleString()}
                     </Typography>
                   </TableCell>
@@ -431,7 +355,7 @@ const ServicesManager = () => {
                   <TableCell
                     colSpan={8}
                     align="center"
-                    sx={{ py: 4, color: "#9CA3AF" }}
+                    className="admin-svc-empty-cell"
                   >
                     No services found
                   </TableCell>
@@ -443,41 +367,26 @@ const ServicesManager = () => {
       </Stack>
 
       {/* Delete Confirmation */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs">
-        <DialogTitle
-          sx={{ fontWeight: 700, fontSize: "16px", color: "#111827" }}
-        >
+      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs" disablePortal>
+        <DialogTitle className="admin-svc-dialog-title">
           Delete Service?
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ fontSize: "14px", color: "#6B7280" }}>
+          <Typography className="admin-svc-dialog-body">
             This service will be permanently removed.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+        <DialogActions className="admin-svc-dialog-actions">
           <Button
             onClick={() => setDeleteId(null)}
-            sx={{
-              textTransform: "none",
-              color: "#6B7280",
-              border: "1px solid #E8ECF0",
-              borderRadius: "8px",
-            }}
+            className="admin-svc-dialog-cancel-btn"
           >
             Cancel
           </Button>
           <Button
             variant="contained"
             onClick={confirmDelete}
-            sx={{
-              textTransform: "none",
-              fontWeight: 700,
-              color: "#ffffff",
-              backgroundColor: "#EF4444",
-              boxShadow: "none",
-              borderRadius: "8px",
-              "&:hover": { backgroundColor: "#DC2626", boxShadow: "none" },
-            }}
+            className="admin-svc-dialog-delete-btn"
           >
             Delete
           </Button>
@@ -489,72 +398,42 @@ const ServicesManager = () => {
         anchor="right"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        PaperProps={{
-          sx: {
-            width: 520,
-            boxShadow: "-8px 0 32px rgba(0,0,0,0.10)",
-            background: "#F4F5FA",
-            overflowY: "auto",
-          },
-        }}
+        PaperProps={{ className: "admin-svc-drawer-paper" }}
+        disablePortal
       >
         {/* Sticky Header */}
         <Stack
           direction="row"
           alignItems="center"
           gap={2}
-          sx={{
-            px: 3,
-            py: 2.5,
-            background: "#fff",
-            borderBottom: "1px solid #E8ECF0",
-            position: "sticky",
-            top: 0,
-            zIndex: 10,
-          }}
+          className="admin-svc-drawer-header"
         >
           <Stack
             alignItems="center"
             justifyContent="center"
-            sx={{
-              width: 40,
-              height: 40,
-              borderRadius: "12px",
-              background: "#EEF2FF",
-              flexShrink: 0,
-            }}
+            className="admin-svc-header-icon-box"
           >
-            <RoomServiceIcon sx={{ fontSize: 20, color: "#6366F1" }} />
+            <RoomServiceIcon className="admin-icon-20-indigo" />
           </Stack>
           <Stack flex={1} minWidth={0}>
-            <Typography
-              sx={{
-                fontSize: "16px",
-                fontWeight: 700,
-                color: "#111827",
-                lineHeight: 1.2,
-              }}
-            >
+            <Typography className="admin-svc-drawer-title">
               Edit Service
             </Typography>
-            <Typography sx={{ fontSize: "12px", color: "#9CA3AF", mt: 0.3 }}>
+            <Typography className="admin-svc-drawer-subtitle">
               {editingService?.name ?? ""}
             </Typography>
           </Stack>
           <IconButton
             onClick={() => setDrawerOpen(false)}
             size="small"
-            sx={{
-              color: "#6B7280",
-              "&:hover": { background: "#F3F4F6", color: "#111827" },
-            }}
+            className="admin-svc-close-btn"
           >
             <CloseIcon fontSize="small" />
           </IconButton>
         </Stack>
 
         {/* Sections */}
-        <Stack sx={{ p: 2.5, gap: 2, pb: 14 }}>
+        <Stack className="admin-svc-drawer-body">
           {/* Service Info */}
           <Section title="Service Info">
             <Stack>
@@ -565,7 +444,7 @@ const ServicesManager = () => {
                 size="small"
                 fullWidth
                 placeholder="e.g. Premium Dog Grooming"
-                sx={inputSx}
+                className="admin-svc-input"
               />
             </Stack>
             <Stack>
@@ -575,7 +454,7 @@ const ServicesManager = () => {
                 onChange={(e) => handleChange("category", e.target.value)}
                 size="small"
                 fullWidth
-                sx={selectSx}
+                className="admin-svc-select"
               >
                 {CATEGORIES.map((c) => (
                   <MenuItem key={c} value={c}>
@@ -598,7 +477,7 @@ const ServicesManager = () => {
                   }
                   size="small"
                   placeholder="e.g. @maria.garcia"
-                  sx={inputSx}
+                  className="admin-svc-input"
                 />
               </Stack>
               <Stack flex={1}>
@@ -608,7 +487,7 @@ const ServicesManager = () => {
                   onChange={(e) => handleChange("agentName", e.target.value)}
                   size="small"
                   placeholder="e.g. Maria Garcia"
-                  sx={inputSx}
+                  className="admin-svc-input"
                 />
               </Stack>
             </Stack>
@@ -620,7 +499,7 @@ const ServicesManager = () => {
                 size="small"
                 fullWidth
                 placeholder="e.g. Gangnam, Seoul"
-                sx={inputSx}
+                className="admin-svc-input"
               />
             </Stack>
           </Section>
@@ -644,13 +523,13 @@ const ServicesManager = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Typography sx={{ fontSize: "14px", color: "#9CA3AF" }}>
+                        <Typography className="admin-svc-adornment-text">
                           ₩
                         </Typography>
                       </InputAdornment>
                     ),
                   }}
-                  sx={inputSx}
+                  className="admin-svc-input"
                 />
               </Stack>
               <Stack flex={1}>
@@ -669,13 +548,13 @@ const ServicesManager = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Typography sx={{ fontSize: "14px", color: "#9CA3AF" }}>
+                        <Typography className="admin-svc-adornment-text">
                           ₩
                         </Typography>
                       </InputAdornment>
                     ),
                   }}
-                  sx={inputSx}
+                  className="admin-svc-input"
                 />
               </Stack>
             </Stack>
@@ -696,7 +575,7 @@ const ServicesManager = () => {
                       (val as string).slice(1)}
                   </span>
                 )}
-                sx={selectSx}
+                className="admin-svc-select"
               >
                 {STATUS_OPTIONS.map((s) => (
                   <MenuItem key={s} value={s}>
@@ -715,29 +594,11 @@ const ServicesManager = () => {
           direction="row"
           justifyContent="flex-end"
           gap={1.5}
-          sx={{
-            px: 3,
-            py: 2,
-            background: "#fff",
-            borderTop: "1px solid #E8ECF0",
-            position: "sticky",
-            bottom: 0,
-            zIndex: 10,
-          }}
+          className="admin-svc-drawer-footer"
         >
           <Button
             onClick={() => setDrawerOpen(false)}
-            sx={{
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 600,
-              color: "#6B7280",
-              border: "1px solid #E8ECF0",
-              borderRadius: "10px",
-              height: "40px",
-              px: 2.5,
-              "&:hover": { background: "#F9FAFB" },
-            }}
+            className="admin-svc-cancel-btn"
           >
             Cancel
           </Button>
@@ -745,23 +606,7 @@ const ServicesManager = () => {
             variant="contained"
             onClick={save}
             disabled={!form.name.trim()}
-            sx={{
-              color: "#ffffff",
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 700,
-              backgroundColor: "#6366F1",
-              boxShadow: "0 2px 8px rgba(99,102,241,0.35)",
-              borderRadius: "10px",
-              height: "40px",
-              px: 3,
-              "&:hover": { backgroundColor: "#5254CC" },
-              "&:disabled": {
-                backgroundColor: "#E5E7EB",
-                color: "#9CA3AF",
-                boxShadow: "none",
-              },
-            }}
+            className="admin-svc-save-btn"
           >
             Save Changes
           </Button>

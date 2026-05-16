@@ -80,14 +80,7 @@ const AdminDashboard = () => {
             <Button
               size="small"
               onClick={() => router.push("/admin/orders")}
-              sx={{
-                fontSize: "12px",
-                textTransform: "none",
-                color: "#6366F1",
-                fontWeight: 700,
-                padding: 0,
-                minWidth: "auto",
-              }}
+              className="admin-db-view-all-btn"
             >
               View all →
             </Button>
@@ -105,17 +98,11 @@ const AdminDashboard = () => {
               <TableBody>
                 {recentOrders.map((order) => (
                   <TableRow key={order.id}>
-                    <TableCell
-                      sx={{
-                        fontWeight: 600,
-                        color: "#6366F1",
-                        fontSize: "12px",
-                      }}
-                    >
+                    <TableCell className="admin-db-order-no-cell">
                       {order.orderNo}
                     </TableCell>
                     <TableCell>{order.customerName}</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>
+                    <TableCell className="admin-db-order-total-cell">
                       ₩{order.total.toLocaleString()}
                     </TableCell>
                     <TableCell>
@@ -144,14 +131,7 @@ const AdminDashboard = () => {
             <Button
               size="small"
               onClick={() => router.push("/admin/users")}
-              sx={{
-                fontSize: "12px",
-                textTransform: "none",
-                color: "#6366F1",
-                fontWeight: 700,
-                padding: 0,
-                minWidth: "auto",
-              }}
+              className="admin-db-view-all-btn"
             >
               View all →
             </Button>
@@ -171,16 +151,10 @@ const AdminDashboard = () => {
                   <TableRow key={user.id}>
                     <TableCell>
                       <Stack>
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            fontWeight: 600,
-                            color: "#111827",
-                          }}
-                        >
+                        <Typography className="admin-db-user-name">
                           {user.fullName}
                         </Typography>
-                        <Typography sx={{ fontSize: "11px", color: "#9CA3AF" }}>
+                        <Typography className="admin-db-user-handle">
                           @{user.username}
                         </Typography>
                       </Stack>
@@ -202,7 +176,7 @@ const AdminDashboard = () => {
                         {user.memberType === "SERVICE_AGENT" ? "Agent" : "User"}
                       </span>
                     </TableCell>
-                    <TableCell sx={{ color: "#9CA3AF", fontSize: "12px" }}>
+                    <TableCell className="admin-db-user-joined">
                       {user.joinDate}
                     </TableCell>
                     <TableCell>
@@ -224,24 +198,9 @@ const AdminDashboard = () => {
         alignItems="center"
         gap={2}
         flexWrap="wrap"
-        sx={{
-          background: "#fff",
-          borderRadius: "14px",
-          border: "1px solid #E8ECF0",
-          padding: "16px 20px",
-        }}
+        className="admin-db-quick-actions"
       >
-        <Typography
-          sx={{
-            fontSize: "12px",
-            fontWeight: 700,
-            color: "#9CA3AF",
-            textTransform: "uppercase",
-            letterSpacing: "0.07em",
-            mr: 1,
-            whiteSpace: "nowrap",
-          }}
-        >
+        <Typography className="admin-db-qa-label">
           Quick Actions
         </Typography>
         {[
@@ -253,35 +212,9 @@ const AdminDashboard = () => {
           <Button
             key={href}
             onClick={() => router.push(href)}
-            sx={{
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 700,
-              borderRadius: "9px",
-              height: "36px",
-              px: 2,
-              boxShadow: "none",
-              ...(primary
-                ? {
-                    backgroundColor: "#6366F1",
-                    color: "#fff",
-                    "&:hover": {
-                      backgroundColor: "#5254CC",
-                      boxShadow: "none",
-                    },
-                  }
-                : {
-                    backgroundColor: "#F4F5FA",
-                    color: "#374151",
-                    border: "1px solid #E8ECF0",
-                    "&:hover": {
-                      backgroundColor: "#F0F0FF",
-                      borderColor: "#C7D2FE",
-                      color: "#6366F1",
-                      boxShadow: "none",
-                    },
-                  }),
-            }}
+            className={
+              primary ? "admin-db-btn-primary" : "admin-db-btn-secondary"
+            }
           >
             {label}
           </Button>

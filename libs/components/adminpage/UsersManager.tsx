@@ -54,15 +54,13 @@ const UsersManager = () => {
             placeholder="Search name, username, email…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="admin-toolbar-search"
-            sx={{ width: 260 }}
+            className="admin-toolbar-search admin-usr-search"
           />
           <Select
             size="small"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as any)}
-            className="admin-toolbar-select"
-            sx={{ width: 150 }}
+            className="admin-toolbar-select admin-usr-status-filter"
           >
             <MenuItem value="ALL">All Statuses</MenuItem>
             {STATUS_OPTIONS.map((s) => (
@@ -146,7 +144,7 @@ const UsersManager = () => {
               ))}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
+                  <TableCell colSpan={5} align="center" className="admin-usr-empty-cell">
                     <Typography className="admin-table-empty">
                       No users found
                     </Typography>

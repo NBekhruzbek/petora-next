@@ -40,7 +40,7 @@ const StatCard = ({
           <Typography className="stat-trend-neutral">{trendNeutral}</Typography>
         )}
         {!trend && !trendNeutral && (
-          <Typography className="stat-trend-neutral" sx={{ opacity: 0 }}>
+          <Typography className="stat-trend-neutral stat-icon-box-invisible">
             ·
           </Typography>
         )}

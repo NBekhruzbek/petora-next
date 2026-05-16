@@ -51,7 +51,7 @@ const OrdersManager = () => {
     <Stack gap={0}>
       <Stack className="admin-page-header">
         <Typography className="admin-page-title">Orders</Typography>
-        <Typography sx={{ fontSize: "13px", color: "#9CA3AF" }}>
+        <Typography className="admin-ord-pending-count">
           {
             mockOrders.filter(
               (o) => (orderStatuses[o.id] ?? o.status) === "pending",
@@ -69,7 +69,7 @@ const OrdersManager = () => {
           justifyContent="space-between"
         >
           <Typography className="admin-card-title">All Orders</Typography>
-          <Typography sx={{ fontSize: "12px", color: "#9CA3AF" }}>
+          <Typography className="admin-ord-total-count">
             {mockOrders.length} total
           </Typography>
         </Stack>
@@ -92,30 +92,24 @@ const OrdersManager = () => {
                 const status = getStatus(order);
                 return (
                   <TableRow key={order.id}>
-                    <TableCell
-                      sx={{
-                        fontWeight: 700,
-                        color: "#6366F1",
-                        fontSize: "12px",
-                      }}
-                    >
+                    <TableCell className="admin-ord-no-cell">
                       {order.orderNo}
                     </TableCell>
                     <TableCell>
                       <Stack>
-                        <Typography sx={{ fontSize: "13px", fontWeight: 600 }}>
+                        <Typography className="admin-ord-customer-name">
                           {order.customerName}
                         </Typography>
-                        <Typography sx={{ fontSize: "11px", color: "#9CA3AF" }}>
+                        <Typography className="admin-ord-customer-email">
                           {order.customerEmail}
                         </Typography>
                       </Stack>
                     </TableCell>
-                    <TableCell sx={{ fontSize: "12px", color: "#6B7280" }}>
+                    <TableCell className="admin-ord-items-cell">
                       {order.products.length} item
                       {order.products.length !== 1 ? "s" : ""}
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 700, fontSize: "13px" }}>
+                    <TableCell className="admin-ord-total-cell">
                       ₩{order.total.toLocaleString()}
                     </TableCell>
                     <TableCell>
@@ -141,7 +135,7 @@ const OrdersManager = () => {
                         ))}
                       </Select>
                     </TableCell>
-                    <TableCell sx={{ fontSize: "12px", color: "#9CA3AF" }}>
+                    <TableCell className="admin-ord-date-cell">
                       {order.date}
                     </TableCell>
                     <TableCell>
@@ -166,29 +160,13 @@ const OrdersManager = () => {
         anchor="right"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        PaperProps={{
-          sx: {
-            width: 480,
-            boxShadow: "-8px 0 32px rgba(0,0,0,0.10)",
-            background: "#F4F5FA",
-            overflowY: "auto",
-          },
-        }}
+        PaperProps={{ className: "admin-ord-drawer-paper" }}
+        disablePortal
       >
         {selectedOrder && (
           <>
             {/* Sticky Header */}
-            <Stack
-              sx={{
-                px: 3,
-                py: 2.5,
-                background: "#fff",
-                borderBottom: "1px solid #E8ECF0",
-                position: "sticky",
-                top: 0,
-                zIndex: 10,
-              }}
-            >
+            <Stack className="admin-ord-drawer-header">
               <Stack
                 direction="row"
                 alignItems="flex-start"
@@ -198,30 +176,15 @@ const OrdersManager = () => {
                   <Stack
                     alignItems="center"
                     justifyContent="center"
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "12px",
-                      background: "#EEF2FF",
-                      flexShrink: 0,
-                    }}
+                    className="admin-ord-header-icon-box"
                   >
-                    <ReceiptLongIcon sx={{ fontSize: 20, color: "#6366F1" }} />
+                    <ReceiptLongIcon className="admin-icon-20-indigo" />
                   </Stack>
                   <Stack>
-                    <Typography
-                      sx={{
-                        fontSize: "16px",
-                        fontWeight: 800,
-                        color: "#111827",
-                        letterSpacing: "-0.01em",
-                      }}
-                    >
+                    <Typography className="admin-ord-header-title">
                       {selectedOrder.orderNo}
                     </Typography>
-                    <Typography
-                      sx={{ fontSize: "12px", color: "#9CA3AF", mt: 0.2 }}
-                    >
+                    <Typography className="admin-ord-header-date">
                       Placed on {selectedOrder.date}
                     </Typography>
                   </Stack>
@@ -229,10 +192,7 @@ const OrdersManager = () => {
                 <IconButton
                   onClick={() => setDrawerOpen(false)}
                   size="small"
-                  sx={{
-                    color: "#6B7280",
-                    "&:hover": { background: "#F3F4F6" },
-                  }}
+                  className="admin-ord-close-btn"
                 >
                   <CloseIcon fontSize="small" />
                 </IconButton>
@@ -240,27 +200,12 @@ const OrdersManager = () => {
             </Stack>
 
             {/* Scrollable Body */}
-            <Stack sx={{ p: 2.5, gap: 2, pb: 12 }}>
+            <Stack className="admin-ord-drawer-body">
               {/* Status Card */}
-              <Stack
-                sx={{
-                  background: "#fff",
-                  borderRadius: "14px",
-                  border: "1px solid #F3F4F6",
-                  p: 2.5,
-                }}
-              >
+              <Stack className="admin-ord-section-card">
                 <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
-                  <LocalShippingIcon sx={{ fontSize: 16, color: "#6366F1" }} />
-                  <Typography
-                    sx={{
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "#9CA3AF",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                    }}
-                  >
+                  <LocalShippingIcon className="admin-icon-16-indigo" />
+                  <Typography className="admin-ord-section-heading">
                     Order Status
                   </Typography>
                 </Stack>
@@ -276,24 +221,7 @@ const OrdersManager = () => {
                   renderValue={(val) => (
                     <span className={`status-chip status-${val}`}>{val}</span>
                   )}
-                  sx={{
-                    height: 38,
-                    borderRadius: "9px",
-                    fontSize: "13px",
-                    background: "#F9FAFB",
-                    color: "#111827",
-                    ".MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#E8ECF0",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#C7D2FE",
-                    },
-                    ".MuiSelect-icon": { color: "#9CA3AF" },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderWidth: "1.4px",
-                      borderColor: "#6366F1",
-                    },
-                  }}
+                  className="admin-ord-status-select"
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
@@ -304,25 +232,10 @@ const OrdersManager = () => {
               </Stack>
 
               {/* Customer Card */}
-              <Stack
-                sx={{
-                  background: "#fff",
-                  borderRadius: "14px",
-                  border: "1px solid #F3F4F6",
-                  p: 2.5,
-                }}
-              >
+              <Stack className="admin-ord-section-card">
                 <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
-                  <PersonIcon sx={{ fontSize: 16, color: "#6366F1" }} />
-                  <Typography
-                    sx={{
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "#9CA3AF",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                    }}
-                  >
+                  <PersonIcon className="admin-icon-16-indigo" />
+                  <Typography className="admin-ord-section-heading">
                     Customer
                   </Typography>
                 </Stack>
@@ -330,35 +243,17 @@ const OrdersManager = () => {
                   <Stack
                     alignItems="center"
                     justifyContent="center"
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      background: "#EEF2FF",
-                      flexShrink: 0,
-                    }}
+                    className="admin-ord-customer-avatar"
                   >
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: 700,
-                        color: "#6366F1",
-                      }}
-                    >
+                    <Typography className="admin-ord-customer-avatar-letter">
                       {selectedOrder.customerName.charAt(0)}
                     </Typography>
                   </Stack>
                   <Stack>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: 700,
-                        color: "#111827",
-                      }}
-                    >
+                    <Typography className="admin-ord-customer-name-text">
                       {selectedOrder.customerName}
                     </Typography>
-                    <Typography sx={{ fontSize: "12px", color: "#9CA3AF" }}>
+                    <Typography className="admin-ord-customer-email-text">
                       {selectedOrder.customerEmail}
                     </Typography>
                   </Stack>
@@ -366,26 +261,9 @@ const OrdersManager = () => {
               </Stack>
 
               {/* Items Card */}
-              <Stack
-                sx={{
-                  background: "#fff",
-                  borderRadius: "14px",
-                  border: "1px solid #F3F4F6",
-                  overflow: "hidden",
-                }}
-              >
-                <Stack
-                  sx={{ px: 2.5, py: 1.5, borderBottom: "1px solid #F3F4F6" }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "#9CA3AF",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                    }}
-                  >
+              <Stack className="admin-ord-items-card">
+                <Stack className="admin-ord-items-header">
+                  <Typography className="admin-ord-items-heading">
                     Items ({selectedOrder.products.length})
                   </Typography>
                 </Stack>
@@ -397,20 +275,10 @@ const OrdersManager = () => {
                         direction="row"
                         alignItems="center"
                         gap={2}
-                        sx={{ px: 2.5, py: 2 }}
+                        className="admin-ord-item-row"
                       >
                         {/* Product thumbnail */}
-                        <Stack
-                          sx={{
-                            width: 44,
-                            height: 44,
-                            borderRadius: "10px",
-                            background: "#F3F4F6",
-                            flexShrink: 0,
-                            overflow: "hidden",
-                            border: "1px solid #E8ECF0",
-                          }}
-                        >
+                        <Stack className="admin-ord-item-thumb">
                           <img
                             src={p.image}
                             alt=""
@@ -429,16 +297,7 @@ const OrdersManager = () => {
                           />
                         </Stack>
                         <Stack flex={1} minWidth={0}>
-                          <Typography
-                            sx={{
-                              fontSize: "13px",
-                              fontWeight: 600,
-                              color: "#111827",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
+                          <Typography className="admin-ord-item-name">
                             {p.name}
                           </Typography>
                           <Stack
@@ -447,38 +306,25 @@ const OrdersManager = () => {
                             gap={1}
                             mt={0.3}
                           >
-                            <Typography
-                              sx={{ fontSize: "11px", color: "#9CA3AF" }}
-                            >
+                            <Typography className="admin-ord-item-qty">
                               ×{p.quantity}
                             </Typography>
-                            <Typography
-                              sx={{ fontSize: "11px", color: "#D1D5DB" }}
-                            >
+                            <Typography className="admin-ord-item-dot">
                               ·
                             </Typography>
-                            <Typography
-                              sx={{ fontSize: "11px", color: "#9CA3AF" }}
-                            >
+                            <Typography className="admin-ord-item-unit-price">
                               ₩{p.unitPrice.toLocaleString()} each
                             </Typography>
                           </Stack>
                         </Stack>
-                        <Typography
-                          sx={{
-                            fontSize: "14px",
-                            fontWeight: 700,
-                            color: "#374151",
-                            flexShrink: 0,
-                          }}
-                        >
+                        <Typography className="admin-ord-item-total">
                           ₩{(p.quantity * p.unitPrice).toLocaleString()}
                         </Typography>
                       </Stack>
                       {i < selectedOrder.products.length - 1 && (
                         <Divider
                           key={`d-${i}`}
-                          sx={{ mx: 2.5, borderColor: "#F3F4F6" }}
+                          className="admin-ord-items-divider"
                         />
                       )}
                     </>
@@ -490,28 +336,13 @@ const OrdersManager = () => {
                   direction="row"
                   alignItems="center"
                   justifyContent="space-between"
-                  sx={{
-                    px: 2.5,
-                    py: 2,
-                    borderTop: "1px solid #F3F4F6",
-                    background: "linear-gradient(135deg, #EEF2FF, #F5F3FF)",
-                  }}
+                  className="admin-ord-total-row"
                 >
                   <Stack>
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        fontWeight: 700,
-                        color: "#9CA3AF",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.08em",
-                      }}
-                    >
+                    <Typography className="admin-ord-total-label">
                       Order Total
                     </Typography>
-                    <Typography
-                      sx={{ fontSize: "11px", color: "#9CA3AF", mt: 0.3 }}
-                    >
+                    <Typography className="admin-ord-total-sub">
                       {selectedOrder.products.reduce(
                         (sum, p) => sum + p.quantity,
                         0,
@@ -525,14 +356,7 @@ const OrdersManager = () => {
                         : ""}
                     </Typography>
                   </Stack>
-                  <Typography
-                    sx={{
-                      fontSize: "24px",
-                      fontWeight: 800,
-                      color: "#6366F1",
-                      letterSpacing: "-0.02em",
-                    }}
-                  >
+                  <Typography className="admin-ord-total-amount">
                     ₩{selectedOrder.total.toLocaleString()}
                   </Typography>
                 </Stack>
@@ -543,29 +367,11 @@ const OrdersManager = () => {
             <Stack
               direction="row"
               justifyContent="flex-end"
-              sx={{
-                px: 3,
-                py: 2,
-                background: "#fff",
-                borderTop: "1px solid #E8ECF0",
-                position: "sticky",
-                bottom: 0,
-                zIndex: 10,
-              }}
+              className="admin-ord-drawer-footer"
             >
               <Button
                 onClick={() => setDrawerOpen(false)}
-                sx={{
-                  textTransform: "none",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  color: "#6B7280",
-                  border: "1px solid #E8ECF0",
-                  borderRadius: "10px",
-                  height: "40px",
-                  px: 3,
-                  "&:hover": { background: "#F9FAFB" },
-                }}
+                className="admin-ord-close-footer-btn"
               >
                 Close
               </Button>

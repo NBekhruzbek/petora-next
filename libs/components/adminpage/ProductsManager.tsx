@@ -40,35 +40,6 @@ const CATEGORIES = [
 ];
 const PET_TYPES = ["Dogs", "Cats", "All"];
 
-const inputSx = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "10px",
-    fontSize: "14px",
-    color: "#111827",
-    background: "#fff",
-    "& fieldset": { borderColor: "#E5E7EB" },
-    "&:hover fieldset": { borderColor: "#C7D2FE" },
-    "&.Mui-focused fieldset": {
-      borderColor: "#6366F1",
-      borderWidth: "1.5px",
-      boxShadow: "0 0 0 3px rgba(99,102,241,0.08)",
-    },
-  },
-  "& .MuiInputLabel-root": { fontSize: "13px", color: "#9CA3AF" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "#6366F1" },
-  "& .MuiInputBase-input": { color: "#111827" },
-};
-const selectSx = {
-  borderRadius: "10px",
-  fontSize: "14px",
-  color: "#111827",
-  background: "#fff",
-  "& fieldset": { borderColor: "#E5E7EB" },
-  "&:hover fieldset": { borderColor: "#C7D2FE" },
-  "&.Mui-focused fieldset": { borderColor: "#6366F1", borderWidth: "1.5px" },
-  "& .MuiSelect-icon": { color: "#9CA3AF" },
-};
-
 interface FormShape {
   name: string;
   category: string;
@@ -100,28 +71,11 @@ const Section = ({
   title: string;
   children: React.ReactNode;
 }) => (
-  <Stack
-    sx={{
-      background: "#fff",
-      border: "1px solid #F3F4F6",
-      borderRadius: "14px",
-      overflow: "hidden",
-    }}
-  >
-    <Stack sx={{ px: 2.5, py: 1.5, borderBottom: "1px solid #F3F4F6" }}>
-      <Typography
-        sx={{
-          fontSize: "11px",
-          fontWeight: 700,
-          color: "#9CA3AF",
-          textTransform: "uppercase",
-          letterSpacing: "0.08em",
-        }}
-      >
-        {title}
-      </Typography>
+  <Stack className="admin-prd-section">
+    <Stack className="admin-prd-section-header">
+      <Typography className="admin-prd-section-title">{title}</Typography>
     </Stack>
-    <Stack sx={{ p: 2.5, gap: 2 }}>{children}</Stack>
+    <Stack className="admin-prd-section-body">{children}</Stack>
   </Stack>
 );
 
@@ -289,17 +243,7 @@ const ProductsManager = () => {
         <Button
           variant="contained"
           onClick={openAdd}
-          sx={{
-            color: "#ffffff",
-            backgroundColor: "#6366F1",
-            textTransform: "none",
-            fontWeight: 700,
-            fontSize: "13px",
-            borderRadius: "9px",
-            height: "36px",
-            boxShadow: "none",
-            "&:hover": { backgroundColor: "#5254CC", boxShadow: "none" },
-          }}
+          className="admin-prd-add-btn"
         >
           Add New Product
         </Button>
@@ -312,15 +256,13 @@ const ProductsManager = () => {
             placeholder="Search products…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="admin-toolbar-search"
-            sx={{ width: 240 }}
+            className="admin-toolbar-search admin-prd-search"
           />
           <Select
             size="small"
             value={filterCat}
             onChange={(e) => setFilterCat(e.target.value)}
-            className="admin-toolbar-select"
-            sx={{ width: 150 }}
+            className="admin-toolbar-select admin-prd-cat-filter"
           >
             <MenuItem value="ALL">All Categories</MenuItem>
             {CATEGORIES.map((c) => (
@@ -351,29 +293,13 @@ const ProductsManager = () => {
             <TableBody>
               {filtered.map((product) => (
                 <TableRow key={product.id}>
-                  <TableCell sx={{ minWidth: 220 }}>
+                  <TableCell className="admin-prd-name-cell">
                     <Stack className="admin-name-cell">
-                      <Stack
-                        sx={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: "8px",
-                          background: "#F3F4F6",
-                          flexShrink: 0,
-                          overflow: "hidden",
-                          border: "1px solid #E8ECF0",
-                        }}
-                      >
+                      <Stack className="admin-prd-thumb-box">
                         {product.images[0] && (
                           <img
                             src={product.images[0]}
                             alt=""
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                              display: "block",
-                            }}
                             onError={(e) => {
                               const img = e.target as HTMLImageElement;
                               img.src =
@@ -383,61 +309,29 @@ const ProductsManager = () => {
                           />
                         )}
                       </Stack>
-                      <Typography
-                        sx={{
-                          fontSize: "13px",
-                          fontWeight: 600,
-                          minWidth: 0,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
+                      <Typography className="admin-prd-name-text">
                         {product.name}
                       </Typography>
                     </Stack>
                   </TableCell>
-                  <TableCell sx={{ fontSize: "12px" }}>
+                  <TableCell className="admin-prd-cat-cell">
                     {product.category}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "12px" }}>
+                  <TableCell className="admin-prd-pet-cell">
                     {product.petType}
                   </TableCell>
                   <TableCell>
                     <Stack gap={0.4}>
                       {product.price !== product.discountedPrice ? (
                         <>
-                          <Typography
-                            sx={{
-                              fontSize: "11px",
-                              color: "#9CA3AF",
-                              textDecoration: "line-through",
-                              lineHeight: 1.2,
-                            }}
-                          >
+                          <Typography className="admin-prd-old-price">
                             ₩{product.price.toLocaleString()}
                           </Typography>
                           <Stack direction="row" alignItems="center" gap={0.8}>
-                            <Typography
-                              sx={{
-                                fontSize: "13px",
-                                fontWeight: 700,
-                                color: "#6366F1",
-                                lineHeight: 1.2,
-                              }}
-                            >
+                            <Typography className="admin-prd-new-price">
                               ₩{product.discountedPrice.toLocaleString()}
                             </Typography>
-                            <span
-                              style={{
-                                fontSize: "10px",
-                                fontWeight: 700,
-                                color: "#EF4444",
-                                background: "#FEF2F2",
-                                borderRadius: "4px",
-                                padding: "1px 5px",
-                              }}
-                            >
+                            <span className="admin-prd-discount-badge">
                               -
                               {Math.round(
                                 ((product.price - product.discountedPrice) /
@@ -449,13 +343,7 @@ const ProductsManager = () => {
                           </Stack>
                         </>
                       ) : (
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            fontWeight: 700,
-                            color: "#111827",
-                          }}
-                        >
+                        <Typography className="admin-prd-price-text">
                           ₩{product.price.toLocaleString()}
                         </Typography>
                       )}
@@ -472,7 +360,7 @@ const ProductsManager = () => {
                       {product.stock === 0 ? "Out" : product.stock}
                     </Typography>
                   </TableCell>
-                  <TableCell sx={{ fontSize: "12px", color: "#6B7280" }}>
+                  <TableCell className="admin-prd-sold-cell">
                     {product.sold}
                   </TableCell>
                   <TableCell>
@@ -535,55 +423,28 @@ const ProductsManager = () => {
         anchor="right"
         open={drawerOpen}
         onClose={closeDrawer}
-        PaperProps={{
-          sx: {
-            width: 560,
-            boxShadow: "-8px 0 32px rgba(0,0,0,0.10)",
-            background: "#F4F5FA",
-            overflowY: "auto",
-          },
-        }}
+        PaperProps={{ className: "admin-prd-drawer-paper" }}
+        disablePortal
       >
         {/* Sticky Header */}
         <Stack
           direction="row"
           alignItems="center"
           gap={2}
-          sx={{
-            px: 3,
-            py: 2.5,
-            background: "#fff",
-            borderBottom: "1px solid #E8ECF0",
-            position: "sticky",
-            top: 0,
-            zIndex: 10,
-          }}
+          className="admin-prd-drawer-header"
         >
           <Stack
             alignItems="center"
             justifyContent="center"
-            sx={{
-              width: 40,
-              height: 40,
-              borderRadius: "12px",
-              background: "#EEF2FF",
-              flexShrink: 0,
-            }}
+            className="admin-prd-header-icon-box"
           >
-            <InventoryIcon sx={{ fontSize: 20, color: "#6366F1" }} />
+            <InventoryIcon className="admin-icon-20-indigo" />
           </Stack>
           <Stack flex={1} minWidth={0}>
-            <Typography
-              sx={{
-                fontSize: "16px",
-                fontWeight: 700,
-                color: "#111827",
-                lineHeight: 1.2,
-              }}
-            >
+            <Typography className="admin-prd-drawer-title">
               {editingProduct ? "Edit Product" : "Add New Product"}
             </Typography>
-            <Typography sx={{ fontSize: "12px", color: "#9CA3AF", mt: 0.3 }}>
+            <Typography className="admin-prd-drawer-subtitle">
               {editingProduct
                 ? editingProduct.name
                 : "Fill in the details below"}
@@ -592,30 +453,18 @@ const ProductsManager = () => {
           <IconButton
             onClick={closeDrawer}
             size="small"
-            sx={{
-              color: "#6B7280",
-              "&:hover": { background: "#F3F4F6", color: "#111827" },
-            }}
+            className="admin-prd-close-btn"
           >
             <CloseIcon fontSize="small" />
           </IconButton>
         </Stack>
 
         {/* Scrollable Sections */}
-        <Stack sx={{ p: 2.5, gap: 2, pb: 14 }}>
+        <Stack className="admin-prd-drawer-body">
           {/* Basic Info */}
           <Section title="Basic Info">
             <Stack>
-              <Typography
-                sx={{
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  color: "#9CA3AF",
-                  mb: 0.8,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <Typography className="admin-prd-field-label">
                 Product Name
               </Typography>
               <TextField
@@ -623,34 +472,19 @@ const ProductsManager = () => {
                 onChange={(e) => handleChange("name", e.target.value)}
                 size="small"
                 fullWidth
-                sx={{
-                  ...inputSx,
-                  "& .MuiOutlinedInput-root": {
-                    ...inputSx["& .MuiOutlinedInput-root"],
-                    height: 42,
-                  },
-                }}
+                className="admin-prd-input-h42"
               />
             </Stack>
             <Stack direction="row" gap={1.5}>
               <Stack flex={1}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    color: "#9CA3AF",
-                    mb: 0.8,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
+                <Typography className="admin-prd-field-label">
                   Category
                 </Typography>
                 <Select
                   size="small"
                   value={form.category}
                   onChange={(e) => handleChange("category", e.target.value)}
-                  sx={{ ...selectSx, height: 42 }}
+                  className="admin-prd-select"
                 >
                   {CATEGORIES.map((c) => (
                     <MenuItem key={c} value={c}>
@@ -660,23 +494,14 @@ const ProductsManager = () => {
                 </Select>
               </Stack>
               <Stack flex={1}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    color: "#9CA3AF",
-                    mb: 0.8,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
+                <Typography className="admin-prd-field-label">
                   Pet Type
                 </Typography>
                 <Select
                   size="small"
                   value={form.petType}
                   onChange={(e) => handleChange("petType", e.target.value)}
-                  sx={{ ...selectSx, height: 42 }}
+                  className="admin-prd-select"
                 >
                   {PET_TYPES.map((t) => (
                     <MenuItem key={t} value={t}>
@@ -692,16 +517,7 @@ const ProductsManager = () => {
           <Section title="Pricing & Stock">
             <Stack direction="row" gap={1.5}>
               <Stack flex={1}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    color: "#9CA3AF",
-                    mb: 0.8,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
+                <Typography className="admin-prd-field-label">
                   Original Price
                 </Typography>
                 <TextField
@@ -716,17 +532,11 @@ const ProductsManager = () => {
                   }
                   size="small"
                   fullWidth
-                  sx={{
-                    ...inputSx,
-                    "& .MuiOutlinedInput-root": {
-                      ...inputSx["& .MuiOutlinedInput-root"],
-                      height: 42,
-                    },
-                  }}
+                  className="admin-prd-input-h42"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Typography sx={{ fontSize: "13px", color: "#9CA3AF" }}>
+                        <Typography className="admin-prd-adornment-text">
                           ₩
                         </Typography>
                       </InputAdornment>
@@ -735,16 +545,7 @@ const ProductsManager = () => {
                 />
               </Stack>
               <Stack flex={1}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    color: "#9CA3AF",
-                    mb: 0.8,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
+                <Typography className="admin-prd-field-label">
                   Discount
                 </Typography>
                 <TextField
@@ -762,17 +563,11 @@ const ProductsManager = () => {
                   size="small"
                   fullWidth
                   inputProps={{ min: 0, max: 100 }}
-                  sx={{
-                    ...inputSx,
-                    "& .MuiOutlinedInput-root": {
-                      ...inputSx["& .MuiOutlinedInput-root"],
-                      height: 42,
-                    },
-                  }}
+                  className="admin-prd-input-h42"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Typography sx={{ fontSize: "13px", color: "#9CA3AF" }}>
+                        <Typography className="admin-prd-adornment-text">
                           %
                         </Typography>
                       </InputAdornment>
@@ -782,7 +577,7 @@ const ProductsManager = () => {
               </Stack>
             </Stack>
 
-            {/* Price breakdown */}
+            {/* Price breakdown — borderColor and background are dynamic */}
             <Stack
               sx={{
                 borderRadius: "12px",
@@ -798,99 +593,35 @@ const ProductsManager = () => {
               {form.discountPercent > 0 ? (
                 <Stack direction="row" alignItems="center">
                   <Stack alignItems="center" flex={1}>
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        color: "#9CA3AF",
-                        fontWeight: 600,
-                        mb: 0.5,
-                      }}
-                    >
+                    <Typography className="admin-prd-pb-orig-label">
                       Original
                     </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "15px",
-                        fontWeight: 700,
-                        color: "#9CA3AF",
-                        textDecoration: "line-through",
-                      }}
-                    >
+                    <Typography className="admin-prd-pb-orig-value">
                       ₩{form.price.toLocaleString()}
                     </Typography>
                   </Stack>
-                  <Stack alignItems="center" sx={{ px: 1 }}>
-                    <Stack
-                      sx={{
-                        background: "#EF4444",
-                        borderRadius: "20px",
-                        px: 1.5,
-                        py: 0.5,
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: "12px",
-                          fontWeight: 800,
-                          color: "#fff",
-                        }}
-                      >
+                  <Stack alignItems="center" className="admin-prd-pb-center">
+                    <Stack className="admin-prd-pb-disc-badge">
+                      <Typography className="admin-prd-pb-disc-text">
                         -{form.discountPercent}%
                       </Typography>
                     </Stack>
-                    <Typography
-                      sx={{ fontSize: "16px", color: "#C7D2FE", mt: 0.3 }}
-                    >
-                      →
-                    </Typography>
+                    <Typography className="admin-prd-pb-arrow">→</Typography>
                   </Stack>
                   <Stack alignItems="center" flex={1}>
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        color: "#6366F1",
-                        fontWeight: 600,
-                        mb: 0.5,
-                      }}
-                    >
+                    <Typography className="admin-prd-pb-final-label">
                       Final Price
                     </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "20px",
-                        fontWeight: 800,
-                        color: "#6366F1",
-                      }}
-                    >
+                    <Typography className="admin-prd-pb-final-value">
                       ₩{afterDiscount.toLocaleString()}
                     </Typography>
                   </Stack>
-                  <Stack
-                    sx={{
-                      width: "1px",
-                      height: 40,
-                      background: "#C7D2FE",
-                      mx: 1,
-                    }}
-                  />
+                  <Stack className="admin-prd-pb-divider-v" />
                   <Stack alignItems="center" flex={1}>
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        color: "#059669",
-                        fontWeight: 600,
-                        mb: 0.5,
-                      }}
-                    >
+                    <Typography className="admin-prd-pb-saves-label">
                       Customer Saves
                     </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "15px",
-                        fontWeight: 700,
-                        color: "#059669",
-                      }}
-                    >
+                    <Typography className="admin-prd-pb-saves-value">
                       ₩{savings.toLocaleString()}
                     </Typography>
                   </Stack>
@@ -901,12 +632,10 @@ const ProductsManager = () => {
                   alignItems="center"
                   justifyContent="space-between"
                 >
-                  <Typography sx={{ fontSize: "13px", color: "#9CA3AF" }}>
+                  <Typography className="admin-prd-pb-no-disc-label">
                     No discount applied
                   </Typography>
-                  <Typography
-                    sx={{ fontSize: "16px", fontWeight: 700, color: "#111827" }}
-                  >
+                  <Typography className="admin-prd-pb-no-disc-value">
                     ₩{form.price.toLocaleString()}
                   </Typography>
                 </Stack>
@@ -915,16 +644,7 @@ const ProductsManager = () => {
 
             <Stack direction="row" gap={1.5}>
               <Stack flex={1}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    color: "#9CA3AF",
-                    mb: 0.8,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
+                <Typography className="admin-prd-field-label">
                   Stock
                 </Typography>
                 <TextField
@@ -939,26 +659,11 @@ const ProductsManager = () => {
                   }
                   size="small"
                   fullWidth
-                  sx={{
-                    ...inputSx,
-                    "& .MuiOutlinedInput-root": {
-                      ...inputSx["& .MuiOutlinedInput-root"],
-                      height: 42,
-                    },
-                  }}
+                  className="admin-prd-input-h42"
                 />
               </Stack>
               <Stack flex={1}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    color: "#9CA3AF",
-                    mb: 0.8,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
+                <Typography className="admin-prd-field-label">
                   Status
                 </Typography>
                 <Select
@@ -967,7 +672,7 @@ const ProductsManager = () => {
                   onChange={(e) =>
                     handleChange("status", e.target.value as ProductStatus)
                   }
-                  sx={{ ...selectSx, height: 42 }}
+                  className="admin-prd-select"
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
@@ -997,13 +702,7 @@ const ProductsManager = () => {
                   alignItems: "flex-start",
                 },
               }}
-              sx={{
-                ...inputSx,
-                "& .MuiOutlinedInput-root": {
-                  ...inputSx["& .MuiOutlinedInput-root"],
-                  height: "auto !important",
-                },
-              }}
+              className="admin-prd-input-auto"
             />
             <TextField
               label="Benefits"
@@ -1011,7 +710,7 @@ const ProductsManager = () => {
               onChange={(e) => handleChange("benefitsInput", e.target.value)}
               size="small"
               fullWidth
-              sx={inputSx}
+              className="admin-prd-input"
               placeholder="e.g. High protein, Shiny coat"
             />
           </Section>
@@ -1022,28 +721,10 @@ const ProductsManager = () => {
             {allPreviewUrls.length > 0 && (
               <Stack direction="row" flexWrap="wrap" gap={1.5}>
                 {existingImageUrls.map((url, i) => (
-                  <Stack
-                    key={`ex-${i}`}
-                    sx={{
-                      position: "relative",
-                      width: 88,
-                      height: 88,
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                      border: "1px solid #E8ECF0",
-                      flexShrink: 0,
-                      "&:hover .rm": { opacity: 1 },
-                    }}
-                  >
+                  <Stack key={`ex-${i}`} className="admin-prd-img-existing">
                     <img
                       src={url}
                       alt=""
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
                       onError={(e) => {
                         const img = e.target as HTMLImageElement;
                         img.src =
@@ -1052,41 +733,15 @@ const ProductsManager = () => {
                       }}
                     />
                     <Stack
-                      className="rm"
+                      className="rm admin-prd-img-remove-btn"
                       onClick={() => removeExisting(i)}
-                      sx={{
-                        position: "absolute",
-                        top: 4,
-                        right: 4,
-                        width: 22,
-                        height: 22,
-                        borderRadius: "50%",
-                        background: "rgba(0,0,0,0.6)",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: "pointer",
-                        opacity: 0,
-                        transition: "opacity 0.15s",
-                      }}
                     >
-                      <CloseIcon sx={{ fontSize: 12, color: "#fff" }} />
+                      <CloseIcon className="admin-icon-12-white" />
                     </Stack>
                   </Stack>
                 ))}
                 {newImagePreviews.map((url, i) => (
-                  <Stack
-                    key={`new-${i}`}
-                    sx={{
-                      position: "relative",
-                      width: 88,
-                      height: 88,
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                      border: "2px solid #6366F1",
-                      flexShrink: 0,
-                      "&:hover .rm": { opacity: 1 },
-                    }}
-                  >
+                  <Stack key={`new-${i}`} className="admin-prd-img-new">
                     <img
                       src={url}
                       alt=""
@@ -1098,31 +753,17 @@ const ProductsManager = () => {
                       }}
                     />
                     <Stack
-                      className="rm"
+                      className="rm admin-prd-img-remove-btn"
                       onClick={() => removeNew(i)}
-                      sx={{
-                        position: "absolute",
-                        top: 4,
-                        right: 4,
-                        width: 22,
-                        height: 22,
-                        borderRadius: "50%",
-                        background: "rgba(0,0,0,0.6)",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: "pointer",
-                        opacity: 0,
-                        transition: "opacity 0.15s",
-                      }}
                     >
-                      <CloseIcon sx={{ fontSize: 12, color: "#fff" }} />
+                      <CloseIcon className="admin-icon-12-white" />
                     </Stack>
                   </Stack>
                 ))}
               </Stack>
             )}
 
-            {/* Upload zone AFTER previews */}
+            {/* Upload zone — isDragging is dynamic so keep sx for those props */}
             {canUploadMore && (
               <Stack
                 onClick={() => fileInputRef.current?.click()}
@@ -1136,30 +777,10 @@ const ProductsManager = () => {
                   setIsDragging(false);
                   addFiles(Array.from(e.dataTransfer.files));
                 }}
-                sx={{
-                  border: "2px dashed",
-                  borderColor: isDragging ? "#6366F1" : "#E5E7EB",
-                  borderRadius: "12px",
-                  py: 4,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  background: isDragging ? "#EEF2FF" : "#FAFAFA",
-                  transition: "all 0.2s",
-                  "&:hover": { borderColor: "#6366F1", background: "#EEF2FF" },
-                }}
+                className={`admin-prd-upload-zone${isDragging ? " dragging" : ""}`}
               >
                 <Stack
-                  sx={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: "12px",
-                    background: isDragging ? "#6366F1" : "#E5E7EB",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    mb: 1.5,
-                    transition: "background 0.2s",
-                  }}
+                  className={`admin-prd-upload-icon-box${isDragging ? " dragging" : ""}`}
                 >
                   <CloudUploadIcon
                     sx={{
@@ -1168,14 +789,10 @@ const ProductsManager = () => {
                     }}
                   />
                 </Stack>
-                <Typography
-                  sx={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}
-                >
-                  Click to upload or drag & drop
+                <Typography className="admin-prd-upload-label">
+                  Click to upload or drag &amp; drop
                 </Typography>
-                <Typography
-                  sx={{ fontSize: "12px", color: "#9CA3AF", mt: 0.5 }}
-                >
+                <Typography className="admin-prd-upload-hint">
                   PNG, JPG, WEBP · {5 - allPreviewUrls.length} slot
                   {5 - allPreviewUrls.length !== 1 ? "s" : ""} remaining
                 </Typography>
@@ -1191,9 +808,7 @@ const ProductsManager = () => {
             )}
 
             {allPreviewUrls.length < 1 && (
-              <Typography
-                sx={{ fontSize: "11.5px", color: "#EF4444", fontWeight: 600 }}
-              >
+              <Typography className="admin-prd-img-required-msg">
                 At least 1 image is required
               </Typography>
             )}
@@ -1205,53 +820,16 @@ const ProductsManager = () => {
           direction="row"
           justifyContent="flex-end"
           gap={1.5}
-          sx={{
-            px: 3,
-            py: 2,
-            background: "#fff",
-            borderTop: "1px solid #E8ECF0",
-            position: "sticky",
-            bottom: 0,
-            zIndex: 10,
-          }}
+          className="admin-prd-drawer-footer"
         >
-          <Button
-            onClick={closeDrawer}
-            sx={{
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 600,
-              color: "#6B7280",
-              border: "1px solid #E8ECF0",
-              borderRadius: "10px",
-              height: "40px",
-              px: 2.5,
-              "&:hover": { background: "#F9FAFB" },
-            }}
-          >
+          <Button onClick={closeDrawer} className="admin-prd-cancel-btn">
             Cancel
           </Button>
           <Button
             variant="contained"
             onClick={save}
             disabled={!isSaveEnabled}
-            sx={{
-              color: "#ffffff",
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 700,
-              backgroundColor: "#6366F1",
-              boxShadow: "0 2px 8px rgba(99,102,241,0.35)",
-              borderRadius: "10px",
-              height: "40px",
-              px: 3,
-              "&:hover": { backgroundColor: "#5254CC" },
-              "&:disabled": {
-                backgroundColor: "#E5E7EB",
-                color: "#9CA3AF",
-                boxShadow: "none",
-              },
-            }}
+            className="admin-prd-save-btn"
           >
             {editingProduct ? "Save Changes" : "Add New Product"}
           </Button>
@@ -1259,27 +837,20 @@ const ProductsManager = () => {
       </Drawer>
 
       {/* Delete Confirmation */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs">
-        <DialogTitle
-          sx={{ fontWeight: 700, fontSize: "16px", color: "#111827" }}
-        >
+      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs" disablePortal>
+        <DialogTitle className="admin-prd-dialog-title">
           Delete Product?
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ fontSize: "14px", color: "#6B7280" }}>
+          <Typography className="admin-prd-dialog-body">
             This product will be permanently removed. This action cannot be
             undone.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+        <DialogActions className="admin-prd-dialog-actions">
           <Button
             onClick={() => setDeleteId(null)}
-            sx={{
-              textTransform: "none",
-              color: "#6B7280",
-              border: "1px solid #E8ECF0",
-              borderRadius: "8px",
-            }}
+            className="admin-prd-dialog-cancel-btn"
           >
             Cancel
           </Button>
@@ -1291,15 +862,7 @@ const ProductsManager = () => {
                 setDeleteId(null);
               }
             }}
-            sx={{
-              color: "#ffffff",
-              textTransform: "none",
-              fontWeight: 700,
-              backgroundColor: "#EF4444",
-              boxShadow: "none",
-              borderRadius: "8px",
-              "&:hover": { backgroundColor: "#DC2626", boxShadow: "none" },
-            }}
+            className="admin-prd-dialog-delete-btn"
           >
             Delete
           </Button>

@@ -17,7 +17,6 @@ import {
   Rating,
   Switch,
   FormControlLabel,
-  Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import VerifiedIcon from "@mui/icons-material/Verified";
@@ -50,26 +49,10 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
     justifyContent="space-between"
     alignItems="flex-start"
     gap={2}
-    sx={{ py: 0.8, borderBottom: "1px solid #F9FAFB" }}
+    className="admin-agt-info-row"
   >
-    <Typography
-      sx={{
-        fontSize: "12px",
-        color: "#9CA3AF",
-        fontWeight: 600,
-        flexShrink: 0,
-      }}
-    >
-      {label}
-    </Typography>
-    <Typography
-      sx={{
-        fontSize: "12.5px",
-        color: "#374151",
-        fontWeight: 600,
-        textAlign: "right",
-      }}
-    >
+    <Typography className="admin-agt-info-label">{label}</Typography>
+    <Typography className="admin-agt-info-value" style={{ textAlign: "right" }}>
       {value}
     </Typography>
   </Stack>
@@ -175,7 +158,7 @@ const AgentsManager = () => {
     <Stack gap={0}>
       <Stack className="admin-page-header">
         <Typography className="admin-page-title">Agents</Typography>
-        <Typography sx={{ fontSize: "13px", color: "#9CA3AF" }}>
+        <Typography className="admin-agt-pending-count">
           {agents.filter((a) => a.status === "paused").length} pending approval
         </Typography>
       </Stack>
@@ -187,15 +170,13 @@ const AgentsManager = () => {
             placeholder="Search name, email, service…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="admin-toolbar-search"
-            sx={{ width: 260 }}
+            className="admin-toolbar-search admin-agt-search"
           />
           <Select
             size="small"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as any)}
-            className="admin-toolbar-select"
-            sx={{ width: 160 }}
+            className="admin-toolbar-select admin-agt-status-filter"
           >
             <MenuItem value="ALL">All Statuses</MenuItem>
             {STATUS_OPTIONS.map((s) => (
@@ -227,24 +208,10 @@ const AgentsManager = () => {
                 <TableRow key={agent.id}>
                   <TableCell>
                     <Stack className="admin-name-cell">
-                      <Stack
-                        sx={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: "50%",
-                          overflow: "hidden",
-                          border: "1.5px solid #E8ECF0",
-                          flexShrink: 0,
-                        }}
-                      >
+                      <Stack className="admin-agt-avatar-wrap">
                         <img
                           src={agent.avatar}
                           alt={agent.fullName}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src =
                               `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.fullName)}&background=0ea5e9&color=fff`;
@@ -253,28 +220,20 @@ const AgentsManager = () => {
                       </Stack>
                       <Stack>
                         <Stack direction="row" alignItems="center" gap={0.5}>
-                          <Typography
-                            sx={{
-                              fontSize: "13px",
-                              fontWeight: 600,
-                              color: "#111827",
-                            }}
-                          >
+                          <Typography className="admin-agt-name">
                             {agent.fullName}
                           </Typography>
                           {agent.verified && (
-                            <VerifiedIcon
-                              sx={{ fontSize: 13, color: "#3B82F6" }}
-                            />
+                            <VerifiedIcon className="admin-icon-13-blue" />
                           )}
                         </Stack>
-                        <Typography sx={{ fontSize: "11px", color: "#9CA3AF" }}>
+                        <Typography className="admin-agt-handle">
                           @{agent.username}
                         </Typography>
                       </Stack>
                     </Stack>
                   </TableCell>
-                  <TableCell sx={{ fontSize: "12px" }}>
+                  <TableCell className="admin-agt-service-cell">
                     {agent.serviceType}
                   </TableCell>
                   <TableCell>
@@ -284,14 +243,14 @@ const AgentsManager = () => {
                         precision={0.1}
                         readOnly
                         size="small"
-                        sx={{ fontSize: "13px" }}
+                        className="admin-agt-rating-stars"
                       />
-                      <Typography sx={{ fontSize: "11px", color: "#9CA3AF" }}>
+                      <Typography className="admin-agt-rating-value">
                         {agent.rating}
                       </Typography>
                     </Stack>
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>
+                  <TableCell className="admin-agt-bookings-cell">
                     {agent.totalBookings}
                   </TableCell>
                   <TableCell>
@@ -315,7 +274,7 @@ const AgentsManager = () => {
                       ))}
                     </Select>
                   </TableCell>
-                  <TableCell sx={{ color: "#9CA3AF", fontSize: "12px" }}>
+                  <TableCell className="admin-agt-joined-cell">
                     {agent.joinDate}
                   </TableCell>
                   <TableCell>
@@ -348,14 +307,8 @@ const AgentsManager = () => {
         anchor="right"
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
-        PaperProps={{
-          sx: {
-            width: 500,
-            boxShadow: "-8px 0 32px rgba(0,0,0,0.10)",
-            background: "#F4F5FA",
-            overflowY: "auto",
-          },
-        }}
+        PaperProps={{ className: "admin-agt-detail-paper" }}
+        disablePortal
       >
         {detailAgent &&
           (() => {
@@ -367,72 +320,32 @@ const AgentsManager = () => {
                   direction="row"
                   alignItems="center"
                   justifyContent="space-between"
-                  sx={{
-                    px: 3,
-                    py: 2,
-                    background: "#fff",
-                    borderBottom: "1px solid #E8ECF0",
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 10,
-                  }}
+                  className="admin-agt-detail-header"
                 >
-                  <Typography
-                    sx={{ fontSize: "16px", fontWeight: 700, color: "#111827" }}
-                  >
+                  <Typography className="admin-agt-detail-header-title">
                     Agent Profile
                   </Typography>
                   <IconButton
                     onClick={() => setDetailOpen(false)}
                     size="small"
-                    sx={{
-                      color: "#6B7280",
-                      "&:hover": { background: "#F3F4F6" },
-                    }}
+                    className="admin-agt-detail-close-btn"
                   >
                     <CloseIcon fontSize="small" />
                   </IconButton>
                 </Stack>
 
-                <Stack sx={{ p: 2, gap: 2, pb: 14 }}>
+                <Stack className="admin-agt-detail-body">
                   {/* Profile card */}
-                  <Stack
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "16px",
-                      border: "1px solid #F0F1F5",
-                      overflow: "hidden",
-                    }}
-                  >
+                  <Stack className="admin-agt-profile-card">
                     {/* Cover strip */}
-                    <Stack
-                      sx={{
-                        height: 72,
-                        background: "linear-gradient(135deg, #EEF2FF, #E0E7FF)",
-                      }}
-                    />
-                    <Stack sx={{ px: 2.5, pb: 2.5 }}>
+                    <Stack className="admin-agt-cover-strip" />
+                    <Stack className="admin-agt-profile-body">
                       {/* Avatar */}
-                      <Stack sx={{ mt: -4, mb: 1.5 }}>
-                        <Stack
-                          sx={{
-                            width: 72,
-                            height: 72,
-                            borderRadius: "50%",
-                            overflow: "hidden",
-                            border: "3px solid #fff",
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-                          }}
-                        >
+                      <Stack className="admin-agt-avatar-outer">
+                        <Stack className="admin-agt-avatar-lg">
                           <img
                             src={detailAgent.avatar}
                             alt={detailAgent.fullName}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                              display: "block",
-                            }}
                             onError={(e) => {
                               (e.target as HTMLImageElement).src =
                                 `https://ui-avatars.com/api/?name=${encodeURIComponent(detailAgent.fullName)}&background=6366f1&color=fff&size=72`;
@@ -447,29 +360,15 @@ const AgentsManager = () => {
                       >
                         <Stack>
                           <Stack direction="row" alignItems="center" gap={0.8}>
-                            <Typography
-                              sx={{
-                                fontSize: "18px",
-                                fontWeight: 800,
-                                color: "#111827",
-                              }}
-                            >
+                            <Typography className="admin-agt-fullname">
                               {detailAgent.fullName}
                             </Typography>
                             {detailAgent.verified && (
-                              <VerifiedIcon
-                                sx={{ fontSize: 16, color: "#3B82F6" }}
-                              />
+                              <VerifiedIcon className="admin-icon-16-blue" />
                             )}
                           </Stack>
                           {detailAgent.role && (
-                            <Typography
-                              sx={{
-                                fontSize: "12.5px",
-                                color: "#6B7280",
-                                mt: 0.3,
-                              }}
-                            >
+                            <Typography className="admin-agt-role">
                               {detailAgent.role}
                             </Typography>
                           )}
@@ -494,94 +393,37 @@ const AgentsManager = () => {
                       <Stack
                         direction="row"
                         gap={2}
-                        sx={{ mt: 2, pt: 2, borderTop: "1px solid #F3F4F6" }}
+                        className="admin-agt-stats-row"
                       >
                         <Stack alignItems="center" flex={1}>
-                          <Typography
-                            sx={{
-                              fontSize: "20px",
-                              fontWeight: 800,
-                              color: "#111827",
-                            }}
-                          >
+                          <Typography className="admin-agt-stat-value">
                             {detailAgent.rating}
                           </Typography>
                           <Rating
                             value={detailAgent.rating}
                             readOnly
                             size="small"
-                            sx={{ fontSize: "12px" }}
+                            className="admin-agt-rating-sm"
                           />
-                          <Typography
-                            sx={{
-                              fontSize: "10px",
-                              color: "#9CA3AF",
-                              fontWeight: 600,
-                              textTransform: "uppercase",
-                              letterSpacing: "0.05em",
-                              mt: 0.3,
-                            }}
-                          >
+                          <Typography className="admin-agt-stat-label">
                             Rating
                           </Typography>
                         </Stack>
-                        <Stack
-                          sx={{
-                            width: "1px",
-                            alignSelf: "stretch",
-                            background: "#E5E7EB",
-                          }}
-                        />
+                        <Stack className="admin-agt-divider-v" />
                         <Stack alignItems="center" flex={1}>
-                          <Typography
-                            sx={{
-                              fontSize: "20px",
-                              fontWeight: 800,
-                              color: "#111827",
-                            }}
-                          >
+                          <Typography className="admin-agt-stat-value">
                             {detailAgent.totalBookings}
                           </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: "10px",
-                              color: "#9CA3AF",
-                              fontWeight: 600,
-                              textTransform: "uppercase",
-                              letterSpacing: "0.05em",
-                              mt: 0.3,
-                            }}
-                          >
+                          <Typography className="admin-agt-stat-label">
                             Bookings
                           </Typography>
                         </Stack>
-                        <Stack
-                          sx={{
-                            width: "1px",
-                            alignSelf: "stretch",
-                            background: "#E5E7EB",
-                          }}
-                        />
+                        <Stack className="admin-agt-divider-v" />
                         <Stack alignItems="center" flex={1}>
-                          <Typography
-                            sx={{
-                              fontSize: "20px",
-                              fontWeight: 800,
-                              color: "#111827",
-                            }}
-                          >
+                          <Typography className="admin-agt-stat-value">
                             {(detailAgent.certifications ?? []).length}
                           </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: "10px",
-                              color: "#9CA3AF",
-                              fontWeight: 600,
-                              textTransform: "uppercase",
-                              letterSpacing: "0.05em",
-                              mt: 0.3,
-                            }}
-                          >
+                          <Typography className="admin-agt-stat-label">
                             Certs
                           </Typography>
                         </Stack>
@@ -591,57 +433,19 @@ const AgentsManager = () => {
 
                   {/* Bio */}
                   {detailAgent.bio && (
-                    <Stack
-                      sx={{
-                        background: "#fff",
-                        borderRadius: "14px",
-                        border: "1px solid #F0F1F5",
-                        p: 2.5,
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: "11px",
-                          fontWeight: 700,
-                          color: "#9CA3AF",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.08em",
-                          mb: 1.2,
-                        }}
-                      >
+                    <Stack className="admin-agt-section-card">
+                      <Typography className="admin-agt-section-heading">
                         About
                       </Typography>
-                      <Typography
-                        sx={{
-                          fontSize: "13px",
-                          color: "#374151",
-                          lineHeight: 1.75,
-                        }}
-                      >
+                      <Typography className="admin-agt-bio-text">
                         {detailAgent.bio}
                       </Typography>
                     </Stack>
                   )}
 
                   {/* Contact & Location */}
-                  <Stack
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "14px",
-                      border: "1px solid #F0F1F5",
-                      p: 2.5,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        fontWeight: 700,
-                        color: "#9CA3AF",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.08em",
-                        mb: 1.5,
-                      }}
-                    >
+                  <Stack className="admin-agt-section-card">
+                    <Typography className="admin-agt-section-heading-lg">
                       Contact & Location
                     </Typography>
                     <Stack gap={1}>
@@ -659,29 +463,15 @@ const AgentsManager = () => {
                           justifyContent="space-between"
                           alignItems="center"
                           gap={2}
-                          sx={{ py: 0.8, borderBottom: "1px solid #F9FAFB" }}
+                          className="admin-agt-info-row"
                         >
                           <Stack direction="row" alignItems="center" gap={0.5}>
-                            <PlaceIcon
-                              sx={{ fontSize: 13, color: "#9CA3AF" }}
-                            />
-                            <Typography
-                              sx={{
-                                fontSize: "12px",
-                                color: "#9CA3AF",
-                                fontWeight: 600,
-                              }}
-                            >
+                            <PlaceIcon className="admin-icon-13-gray" />
+                            <Typography className="admin-agt-info-label">
                               Service Area
                             </Typography>
                           </Stack>
-                          <Typography
-                            sx={{
-                              fontSize: "12.5px",
-                              color: "#374151",
-                              fontWeight: 600,
-                            }}
-                          >
+                          <Typography className="admin-agt-info-value">
                             {detailAgent.serviceArea}
                           </Typography>
                         </Stack>
@@ -692,29 +482,15 @@ const AgentsManager = () => {
                           justifyContent="space-between"
                           alignItems="center"
                           gap={2}
-                          sx={{ py: 0.8 }}
+                          className="admin-agt-info-row-last"
                         >
                           <Stack direction="row" alignItems="center" gap={0.5}>
-                            <AccessTimeIcon
-                              sx={{ fontSize: 13, color: "#9CA3AF" }}
-                            />
-                            <Typography
-                              sx={{
-                                fontSize: "12px",
-                                color: "#9CA3AF",
-                                fontWeight: 600,
-                              }}
-                            >
+                            <AccessTimeIcon className="admin-icon-13-gray" />
+                            <Typography className="admin-agt-info-label">
                               Response
                             </Typography>
                           </Stack>
-                          <Typography
-                            sx={{
-                              fontSize: "12.5px",
-                              color: "#374151",
-                              fontWeight: 600,
-                            }}
-                          >
+                          <Typography className="admin-agt-info-value">
                             {detailAgent.responseTime}
                           </Typography>
                         </Stack>
@@ -723,24 +499,8 @@ const AgentsManager = () => {
                   </Stack>
 
                   {/* Basic Info */}
-                  <Stack
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "14px",
-                      border: "1px solid #F0F1F5",
-                      p: 2.5,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        fontWeight: 700,
-                        color: "#9CA3AF",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.08em",
-                        mb: 1.5,
-                      }}
-                    >
+                  <Stack className="admin-agt-section-card">
+                    <Typography className="admin-agt-section-heading-lg">
                       Basic Information
                     </Typography>
                     <Stack gap={0}>
@@ -772,67 +532,27 @@ const AgentsManager = () => {
 
                   {/* Certifications */}
                   {(detailAgent.certifications ?? []).length > 0 && (
-                    <Stack
-                      sx={{
-                        background: "#fff",
-                        borderRadius: "14px",
-                        border: "1px solid #F0F1F5",
-                        p: 2.5,
-                      }}
-                    >
+                    <Stack className="admin-agt-section-card">
                       <Stack direction="row" alignItems="center" gap={1} mb={2}>
-                        <WorkspacePremiumIcon
-                          sx={{ fontSize: 16, color: "#6366F1" }}
-                        />
-                        <Typography
-                          sx={{
-                            fontSize: "11px",
-                            fontWeight: 700,
-                            color: "#9CA3AF",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.08em",
-                          }}
-                        >
+                        <WorkspacePremiumIcon className="admin-icon-16-indigo" />
+                        <Typography className="admin-agt-section-heading">
                           Certifications
                         </Typography>
                       </Stack>
                       <Stack direction="row" flexWrap="wrap" gap={1.5}>
                         {(detailAgent.certifications ?? []).map((cert, i) => (
-                          <Stack key={i} sx={{ width: 130, gap: 1 }}>
-                            <Stack
-                              sx={{
-                                height: 90,
-                                borderRadius: "10px",
-                                overflow: "hidden",
-                                border: "1px solid #E8ECF0",
-                                background: "#F9FAFB",
-                              }}
-                            >
+                          <Stack key={i} className="admin-agt-cert-wrap">
+                            <Stack className="admin-agt-cert-img-box">
                               <img
                                 src={cert.image}
                                 alt={cert.title}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  objectFit: "contain",
-                                  padding: "6px",
-                                  display: "block",
-                                }}
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).style.opacity =
                                     "0";
                                 }}
                               />
                             </Stack>
-                            <Typography
-                              sx={{
-                                fontSize: "11px",
-                                fontWeight: 600,
-                                color: "#374151",
-                                lineHeight: 1.4,
-                                textAlign: "center",
-                              }}
-                            >
+                            <Typography className="admin-agt-cert-title">
                               {cert.title}
                             </Typography>
                           </Stack>
@@ -847,45 +567,17 @@ const AgentsManager = () => {
                   direction="row"
                   justifyContent="space-between"
                   alignItems="center"
-                  sx={{
-                    px: 3,
-                    py: 2,
-                    background: "#fff",
-                    borderTop: "1px solid #E8ECF0",
-                    position: "sticky",
-                    bottom: 0,
-                    zIndex: 10,
-                  }}
+                  className="admin-agt-detail-footer"
                 >
                   <Button
                     onClick={() => openEdit(detailAgent)}
-                    sx={{
-                      textTransform: "none",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                      color: "#6366F1",
-                      border: "1px solid #E0E7FF",
-                      borderRadius: "10px",
-                      height: "40px",
-                      px: 2.5,
-                      "&:hover": { background: "#EEF2FF" },
-                    }}
+                    className="admin-agt-footer-edit-btn"
                   >
                     Edit Agent
                   </Button>
                   <Button
                     onClick={() => setDetailOpen(false)}
-                    sx={{
-                      textTransform: "none",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                      color: "#6B7280",
-                      border: "1px solid #E8ECF0",
-                      borderRadius: "10px",
-                      height: "40px",
-                      px: 3,
-                      "&:hover": { background: "#F9FAFB" },
-                    }}
+                    className="admin-agt-footer-close-btn"
                   >
                     Close
                   </Button>
@@ -900,14 +592,8 @@ const AgentsManager = () => {
         anchor="right"
         open={editOpen}
         onClose={() => setEditOpen(false)}
-        PaperProps={{
-          sx: {
-            width: 500,
-            boxShadow: "-4px 0 24px rgba(0,0,0,0.08)",
-            background: "#F4F5FA",
-            overflowY: "auto",
-          },
-        }}
+        PaperProps={{ className: "admin-agt-edit-paper" }}
+        disablePortal
       >
         {editingAgent && (
           <>
@@ -915,25 +601,13 @@ const AgentsManager = () => {
               direction="row"
               alignItems="center"
               justifyContent="space-between"
-              sx={{
-                px: 3,
-                py: 2.5,
-                background: "#fff",
-                borderBottom: "1px solid #E8ECF0",
-                position: "sticky",
-                top: 0,
-                zIndex: 10,
-              }}
+              className="admin-agt-edit-header"
             >
               <Stack>
-                <Typography
-                  sx={{ fontSize: "16px", fontWeight: 700, color: "#111827" }}
-                >
+                <Typography className="admin-agt-edit-title">
                   Edit Agent
                 </Typography>
-                <Typography
-                  sx={{ fontSize: "12px", color: "#9CA3AF", mt: 0.2 }}
-                >
+                <Typography className="admin-agt-edit-subtitle">
                   {editingAgent.fullName}
                 </Typography>
               </Stack>
@@ -942,7 +616,7 @@ const AgentsManager = () => {
               </IconButton>
             </Stack>
 
-            <Stack sx={{ p: 2.5, gap: 2, pb: 14 }}>
+            <Stack className="admin-agt-edit-body">
               {[
                 { label: "Full Name", field: "fullName" },
                 { label: "Username", field: "username" },
@@ -956,15 +630,7 @@ const AgentsManager = () => {
                 { label: "Response Time", field: "responseTime" },
               ].map(({ label, field }) => (
                 <Stack key={field} gap={0.7}>
-                  <Typography
-                    sx={{
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "#9CA3AF",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                    }}
-                  >
+                  <Typography className="admin-agt-field-label">
                     {label}
                   </Typography>
                   <TextField
@@ -975,35 +641,13 @@ const AgentsManager = () => {
                       setForm((p) => ({ ...p, [field]: e.target.value }))
                     }
                     inputProps={{ style: { color: "#111827" } }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        height: 42,
-                        borderRadius: "10px",
-                        fontSize: "14px",
-                        color: "#111827",
-                        background: "#fff",
-                        "& fieldset": { borderColor: "#E5E7EB" },
-                        "&:hover fieldset": { borderColor: "#C7D2FE" },
-                        "&.Mui-focused fieldset": {
-                          borderColor: "#6366F1",
-                          borderWidth: "1.5px",
-                        },
-                      },
-                    }}
+                    className="admin-agt-input"
                   />
                 </Stack>
               ))}
 
               <Stack gap={0.7}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "#9CA3AF",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                  }}
-                >
+                <Typography className="admin-agt-field-label">
                   Service Type
                 </Typography>
                 <Select
@@ -1012,17 +656,7 @@ const AgentsManager = () => {
                   onChange={(e) =>
                     setForm((p) => ({ ...p, serviceType: e.target.value }))
                   }
-                  sx={{
-                    height: 42,
-                    borderRadius: "10px",
-                    fontSize: "14px",
-                    color: "#111827",
-                    background: "#fff",
-                    "& fieldset": { borderColor: "#E5E7EB" },
-                    "&:hover fieldset": { borderColor: "#C7D2FE" },
-                    "&.Mui-focused fieldset": { borderColor: "#6366F1" },
-                    "& .MuiSelect-icon": { color: "#9CA3AF" },
-                  }}
+                  className="admin-agt-select"
                 >
                   {SERVICE_TYPES.map((t) => (
                     <MenuItem key={t} value={t}>
@@ -1033,15 +667,7 @@ const AgentsManager = () => {
               </Stack>
 
               <Stack gap={0.7}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "#9CA3AF",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                  }}
-                >
+                <Typography className="admin-agt-field-label">
                   Status
                 </Typography>
                 <Select
@@ -1053,17 +679,7 @@ const AgentsManager = () => {
                       status: e.target.value as UserStatus,
                     }))
                   }
-                  sx={{
-                    height: 42,
-                    borderRadius: "10px",
-                    fontSize: "14px",
-                    color: "#111827",
-                    background: "#fff",
-                    "& fieldset": { borderColor: "#E5E7EB" },
-                    "&:hover fieldset": { borderColor: "#C7D2FE" },
-                    "&.Mui-focused fieldset": { borderColor: "#6366F1" },
-                    "& .MuiSelect-icon": { color: "#9CA3AF" },
-                  }}
+                  className="admin-agt-select"
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
@@ -1080,19 +696,11 @@ const AgentsManager = () => {
                     onChange={(e) =>
                       setForm((p) => ({ ...p, verified: e.target.checked }))
                     }
-                    sx={{
-                      "& .MuiSwitch-switchBase.Mui-checked": {
-                        color: "#6366F1",
-                      },
-                      "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                        { backgroundColor: "#6366F1" },
-                    }}
+                    className="admin-agt-verified-switch"
                   />
                 }
                 label={
-                  <Typography
-                    sx={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}
-                  >
+                  <Typography className="admin-agt-verified-label">
                     Verified Agent
                   </Typography>
                 }
@@ -1103,46 +711,18 @@ const AgentsManager = () => {
               direction="row"
               justifyContent="flex-end"
               gap={1.5}
-              sx={{
-                px: 3,
-                py: 2,
-                background: "#fff",
-                borderTop: "1px solid #E8ECF0",
-                position: "sticky",
-                bottom: 0,
-                zIndex: 10,
-              }}
+              className="admin-agt-edit-footer"
             >
               <Button
                 onClick={() => setEditOpen(false)}
-                sx={{
-                  textTransform: "none",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  color: "#6B7280",
-                  border: "1px solid #E8ECF0",
-                  borderRadius: "9px",
-                  height: "38px",
-                  px: 2,
-                }}
+                className="admin-agt-cancel-btn"
               >
                 Cancel
               </Button>
               <Button
                 variant="contained"
                 onClick={saveEdit}
-                sx={{
-                  textTransform: "none",
-                  fontSize: "13px",
-                  fontWeight: 700,
-                  color: "#ffffff",
-                  backgroundColor: "#6366F1",
-                  boxShadow: "none",
-                  borderRadius: "9px",
-                  height: "38px",
-                  px: 3,
-                  "&:hover": { backgroundColor: "#5254CC", boxShadow: "none" },
-                }}
+                className="admin-agt-save-btn"
               >
                 Save Changes
               </Button>

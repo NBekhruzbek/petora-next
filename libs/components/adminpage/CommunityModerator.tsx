@@ -10,6 +10,10 @@ import {
   IconButton,
   Tabs,
   Tab,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -49,7 +53,7 @@ const StatBadge = ({
 }) => (
   <Stack direction="row" alignItems="center" gap={0.4}>
     {icon}
-    <Typography sx={{ fontSize: "11px", color: "#9CA3AF", fontWeight: 500 }}>
+    <Typography className="admin-cm-author-handle" style={{ fontWeight: 500 }}>
       {value}
     </Typography>
   </Stack>
@@ -67,10 +71,11 @@ const CommunityModerator = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // ── Write Post ───────────────────────────────────────────
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [writeOpen, setWriteOpen] = useState(false);
   const [writeTitle, setWriteTitle] = useState("");
   const [writeContent, setWriteContent] = useState("");
-  const [writeImageFile, setWriteImageFile] = useState<File | null>(null);
+  const [, setWriteImageFile] = useState<File | null>(null);
   const [writeImagePreview, setWriteImagePreview] = useState<string>("");
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -169,17 +174,7 @@ const CommunityModerator = () => {
             variant="contained"
             startIcon={<EditIcon />}
             onClick={openWrite}
-            sx={{
-              backgroundColor: "#6366F1",
-              color: "#ffffff",
-              textTransform: "none",
-              fontWeight: 700,
-              fontSize: "13px",
-              borderRadius: "9px",
-              height: "36px",
-              boxShadow: "none",
-              "&:hover": { backgroundColor: "#5254CC", boxShadow: "none" },
-            }}
+            className="admin-cm-write-btn"
           >
             Write {writeBoard === "NEWS" ? "News" : "Post"}
           </Button>
@@ -191,26 +186,7 @@ const CommunityModerator = () => {
         <Tabs
           value={boardTab}
           onChange={(_, v) => setBoardTab(v)}
-          sx={{
-            px: 2,
-            borderBottom: "1px solid #E8ECF0",
-            minHeight: 46,
-            "& .MuiTab-root": {
-              fontSize: "13px",
-              fontWeight: 600,
-              color: "#6B7280",
-              textTransform: "none",
-              minHeight: 46,
-              py: 0,
-              px: 2,
-            },
-            "& .Mui-selected": { color: "#6366F1" },
-            "& .MuiTabs-indicator": {
-              background: "#6366F1",
-              height: "2.5px",
-              borderRadius: "3px 3px 0 0",
-            },
-          }}
+          className="admin-cm-tabs"
         >
           {TABS.map((t) => (
             <Tab
@@ -219,6 +195,7 @@ const CommunityModerator = () => {
               label={
                 <Stack direction="row" alignItems="center" gap={0.8}>
                   {t.label}
+                  {/* bg and color are dynamic based on boardTab === t.value */}
                   <Stack
                     sx={{
                       background: boardTab === t.value ? "#EEF2FF" : "#F3F4F6",
@@ -250,15 +227,13 @@ const CommunityModerator = () => {
             placeholder="Search title or author…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="admin-toolbar-search"
-            sx={{ width: 240 }}
+            className="admin-toolbar-search admin-cm-search"
           />
           <Select
             size="small"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as StatusFilter)}
-            className="admin-toolbar-select"
-            sx={{ width: 140 }}
+            className="admin-toolbar-select admin-cm-status-filter"
           >
             <MenuItem value="ALL">All Statuses</MenuItem>
             <MenuItem value="visible">Visible</MenuItem>
@@ -270,7 +245,7 @@ const CommunityModerator = () => {
         </Stack>
 
         {/* Card list */}
-        <Stack sx={{ p: 1.5, gap: 1, overflowX: "hidden" }}>
+        <Stack className="admin-cm-card-list">
           {filtered.map((post) => {
             const status = getStatus(post);
             const isQna = post.board === "QNA";
@@ -283,52 +258,20 @@ const CommunityModerator = () => {
                 alignItems="center"
                 gap={0}
                 width="100%"
-                sx={{
-                  background: "#fff",
-                  border: "1px solid",
-                  borderColor: status === "hidden" ? "#FEF3C7" : "#F0F1F5",
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                  transition: "border-color 0.15s, box-shadow 0.15s",
-                  "&:hover": {
-                    borderColor: "#C7D2FE",
-                    boxShadow: "0 2px 8px rgba(99,102,241,0.06)",
-                  },
-                }}
+                className={`admin-cm-post-card${status === "hidden" ? " hidden-post" : ""}`}
               >
-                {/* Board color strip */}
+                {/* Board color strip — color is dynamic (bc.color) */}
                 <Stack
-                  sx={{
-                    width: 4,
-                    alignSelf: "stretch",
-                    background: bc.color,
-                    flexShrink: 0,
-                  }}
+                  className="admin-cm-color-strip"
+                  sx={{ background: bc.color }}
                 />
 
                 {/* Thumbnail */}
                 {post.image && (
-                  <Stack
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      flexShrink: 0,
-                      overflow: "hidden",
-                      m: 1.5,
-                      mr: 0,
-                      borderRadius: "8px",
-                      border: "1px solid #F0F1F5",
-                    }}
-                  >
+                  <Stack className="admin-cm-thumb">
                     <img
                       src={post.image}
                       alt=""
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
                       onError={(e) => {
                         const img = e.target as HTMLImageElement;
                         img.src =
@@ -340,19 +283,16 @@ const CommunityModerator = () => {
                 )}
 
                 {/* Main content */}
-                <Stack
-                  flex={1}
-                  minWidth={0}
-                  sx={{ px: 1.5, py: 1.2, overflow: "hidden" }}
-                >
+                <Stack flex={1} minWidth={0} className="admin-cm-post-body">
                   {/* Title row */}
                   <Stack
                     direction="row"
                     alignItems="center"
                     gap={1}
                     mb={0.4}
-                    sx={{ minWidth: 0 }}
+                    className="admin-cm-title-row"
                   >
+                    {/* Board badge — bg/color are dynamic (bc.bg, bc.color) */}
                     <span
                       style={{
                         fontSize: "9.5px",
@@ -376,17 +316,7 @@ const CommunityModerator = () => {
                         Hidden
                       </span>
                     )}
-                    <Typography
-                      sx={{
-                        fontSize: "13px",
-                        fontWeight: 700,
-                        color: "#111827",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        flex: 1,
-                      }}
-                    >
+                    <Typography className="admin-cm-post-title">
                       {post.title}
                     </Typography>
                   </Stack>
@@ -396,18 +326,9 @@ const CommunityModerator = () => {
                     direction="row"
                     alignItems="center"
                     gap={1.5}
-                    sx={{ minWidth: 0 }}
+                    className="admin-cm-meta-row"
                   >
-                    <Typography
-                      sx={{
-                        fontSize: "11.5px",
-                        color: "#6B7280",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        flex: 1,
-                      }}
-                    >
+                    <Typography className="admin-cm-post-desc">
                       {post.description}
                     </Typography>
                     <Stack
@@ -432,58 +353,36 @@ const CommunityModerator = () => {
                               "none";
                           }}
                         />
-                        <Typography sx={{ fontSize: "11px", color: "#9CA3AF" }}>
+                        <Typography className="admin-cm-author-handle">
                           @{post.author}
                         </Typography>
                       </Stack>
-                      <Typography sx={{ fontSize: "10.5px", color: "#D1D5DB" }}>
-                        ·
-                      </Typography>
+                      <Typography className="admin-cm-dot">·</Typography>
                       <StatBadge
-                        icon={
-                          <VisibilityIcon
-                            sx={{ fontSize: 11, color: "#9CA3AF" }}
-                          />
-                        }
+                        icon={<VisibilityIcon className="admin-icon-11-gray" />}
                         value={post.views.toLocaleString()}
                       />
                       <StatBadge
-                        icon={
-                          <FavoriteIcon
-                            sx={{ fontSize: 10, color: "#9CA3AF" }}
-                          />
-                        }
+                        icon={<FavoriteIcon className="admin-icon-10-gray" />}
                         value={post.likes}
                       />
                       {isQna ? (
                         <StatBadge
                           icon={
-                            <QuestionAnswerIcon
-                              sx={{ fontSize: 11, color: "#9CA3AF" }}
-                            />
+                            <QuestionAnswerIcon className="admin-icon-11-gray" />
                           }
                           value={`${post.answersCount ?? 0}`}
                         />
                       ) : (
                         <StatBadge
                           icon={
-                            <ChatBubbleOutlineIcon
-                              sx={{ fontSize: 11, color: "#9CA3AF" }}
-                            />
+                            <ChatBubbleOutlineIcon className="admin-icon-11-gray" />
                           }
                           value={post.commentsCount}
                         />
                       )}
-                      <Typography sx={{ fontSize: "10.5px", color: "#D1D5DB" }}>
-                        ·
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontSize: "11px",
-                          color: "#9CA3AF",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
+                      <Typography className="admin-cm-dot">·</Typography>
+                      <Typography className="admin-cm-date">
                         {post.date}
                       </Typography>
                     </Stack>
@@ -495,13 +394,12 @@ const CommunityModerator = () => {
                   direction="row"
                   alignItems="center"
                   gap={0.6}
-                  sx={{ px: 1.5, flexShrink: 0 }}
+                  className="admin-cm-actions"
                 >
                   <Button
                     size="small"
                     onClick={() => openDetail(post)}
-                    className="admin-btn-sm admin-btn-sm-indigo-bold"
-                    sx={{ whiteSpace: "nowrap" }}
+                    className="admin-btn-sm admin-btn-sm-indigo-bold admin-cm-details-btn"
                   >
                     Details
                   </Button>
@@ -524,7 +422,7 @@ const CommunityModerator = () => {
                   )}
                   <Button
                     size="small"
-                    onClick={() => setStatus(post.id, "deleted")}
+                    onClick={() => setDeleteConfirmId(post.id)}
                     className="admin-btn-sm admin-btn-sm-red"
                   >
                     Delete
@@ -535,14 +433,14 @@ const CommunityModerator = () => {
           })}
 
           {filtered.length === 0 && (
-            <Stack alignItems="center" sx={{ py: 8 }}>
-              <Typography sx={{ fontSize: "32px", mb: 1 }}>📭</Typography>
-              <Typography
-                sx={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}
-              >
+            <Stack className="admin-cm-empty">
+              <Typography style={{ fontSize: "32px", marginBottom: 8 }}>
+                📭
+              </Typography>
+              <Typography className="admin-cm-empty-title">
                 No posts found
               </Typography>
-              <Typography sx={{ fontSize: "12px", color: "#9CA3AF", mt: 0.5 }}>
+              <Typography className="admin-cm-empty-sub">
                 Try changing the board tab or search filter
               </Typography>
             </Stack>
@@ -555,40 +453,24 @@ const CommunityModerator = () => {
         anchor="right"
         open={writeOpen}
         onClose={() => setWriteOpen(false)}
-        PaperProps={{
-          sx: {
-            width: 520,
-            boxShadow: "-8px 0 32px rgba(0,0,0,0.10)",
-            background: "#F4F5FA",
-            overflowY: "auto",
-          },
-        }}
+        PaperProps={{ className: "admin-cm-write-paper" }}
+        disablePortal
       >
         {/* Sticky Header */}
         <Stack
           direction="row"
           alignItems="center"
           justifyContent="space-between"
-          sx={{
-            px: 3,
-            py: 2.5,
-            background: "#fff",
-            borderBottom: "1px solid #E8ECF0",
-            position: "sticky",
-            top: 0,
-            zIndex: 10,
-          }}
+          className="admin-cm-write-header"
         >
           <Stack direction="row" alignItems="center" gap={1.5}>
+            {/* bg is dynamic (canWrite ? BOARD_COLORS[writeBoard].bg : "#F3F4F6") */}
             <Stack
               alignItems="center"
               justifyContent="center"
+              className="admin-cm-write-icon-box"
               sx={{
-                width: 40,
-                height: 40,
-                borderRadius: "12px",
                 background: canWrite ? BOARD_COLORS[writeBoard].bg : "#F3F4F6",
-                flexShrink: 0,
               }}
             >
               <EditIcon
@@ -599,17 +481,10 @@ const CommunityModerator = () => {
               />
             </Stack>
             <Stack>
-              <Typography
-                sx={{
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  color: "#ffffff",
-                  lineHeight: 1.2,
-                }}
-              >
+              <Typography className="admin-cm-write-title">
                 Write {canWrite && writeBoard === "NEWS" ? "News" : "Post"}
               </Typography>
-              <Typography sx={{ fontSize: "12px", color: "#9CA3AF", mt: 0.2 }}>
+              <Typography className="admin-cm-write-subtitle">
                 {canWrite && writeBoard === "NEWS"
                   ? "News Board"
                   : "Free Board"}{" "}
@@ -620,47 +495,24 @@ const CommunityModerator = () => {
           <IconButton
             onClick={() => setWriteOpen(false)}
             size="small"
-            sx={{ color: "#6B7280", "&:hover": { background: "#F3F4F6" } }}
+            className="admin-cm-write-close-btn"
           >
             <CloseIcon fontSize="small" />
           </IconButton>
         </Stack>
 
         {/* Body */}
-        <Stack sx={{ p: 2.5, gap: 2, pb: 14 }}>
+        <Stack className="admin-cm-write-body">
           {/* Title + Content */}
-          <Stack
-            sx={{
-              background: "#fff",
-              borderRadius: "14px",
-              border: "1px solid #F0F1F5",
-              overflow: "hidden",
-            }}
-          >
-            <Stack sx={{ px: 2.5, py: 1.5, borderBottom: "1px solid #F3F4F6" }}>
-              <Typography
-                sx={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  color: "#9CA3AF",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                }}
-              >
+          <Stack className="admin-cm-write-section">
+            <Stack className="admin-cm-write-section-header">
+              <Typography className="admin-cm-write-section-title">
                 Content
               </Typography>
             </Stack>
-            <Stack sx={{ p: 2.5, gap: 2 }}>
+            <Stack className="admin-cm-write-section-body">
               <Stack gap={0.8}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "#9CA3AF",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                  }}
-                >
+                <Typography className="admin-cm-write-field-label">
                   Title
                 </Typography>
                 <TextField
@@ -670,31 +522,11 @@ const CommunityModerator = () => {
                   size="small"
                   fullWidth
                   inputProps={{ style: { color: "#111827", fontWeight: 600 } }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "10px",
-                      fontSize: "15px",
-                      background: "#FAFAFA",
-                      "& fieldset": { borderColor: "#E5E7EB" },
-                      "&:hover fieldset": { borderColor: "#C7D2FE" },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#6366F1",
-                        borderWidth: "1.5px",
-                      },
-                    },
-                  }}
+                  className="admin-cm-title-input"
                 />
               </Stack>
               <Stack gap={0.8}>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "#9CA3AF",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                  }}
-                >
+                <Typography className="admin-cm-write-field-label">
                   Content
                 </Typography>
                 <TextField
@@ -712,57 +544,22 @@ const CommunityModerator = () => {
                       alignItems: "flex-start",
                     },
                   }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "10px",
-                      fontSize: "14px",
-                      background: "#FAFAFA",
-                      height: "auto !important",
-                      "& fieldset": { borderColor: "#E5E7EB" },
-                      "&:hover fieldset": { borderColor: "#C7D2FE" },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#6366F1",
-                        borderWidth: "1.5px",
-                      },
-                    },
-                  }}
+                  className="admin-cm-content-input"
                 />
               </Stack>
             </Stack>
           </Stack>
 
           {/* Image Upload */}
-          <Stack
-            sx={{
-              background: "#fff",
-              borderRadius: "14px",
-              border: "1px solid #F0F1F5",
-              overflow: "hidden",
-            }}
-          >
-            <Stack sx={{ px: 2.5, py: 1.5, borderBottom: "1px solid #F3F4F6" }}>
-              <Typography
-                sx={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  color: "#9CA3AF",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                }}
-              >
+          <Stack className="admin-cm-write-section">
+            <Stack className="admin-cm-write-section-header">
+              <Typography className="admin-cm-write-section-title">
                 Image (Optional)
               </Typography>
             </Stack>
-            <Stack sx={{ p: 2.5 }}>
+            <Stack style={{ padding: "20px" }}>
               {writeImagePreview ? (
-                <Stack
-                  sx={{
-                    position: "relative",
-                    borderRadius: "12px",
-                    overflow: "hidden",
-                    border: "1px solid #E5E7EB",
-                  }}
-                >
+                <Stack className="admin-cm-img-preview-wrap">
                   <img
                     src={writeImagePreview}
                     alt=""
@@ -777,41 +574,19 @@ const CommunityModerator = () => {
                     direction="row"
                     justifyContent="flex-end"
                     gap={1}
-                    sx={{ position: "absolute", bottom: 10, right: 10 }}
+                    className="admin-cm-img-overlay-btns"
                   >
                     <Button
                       size="small"
                       onClick={() => imageInputRef.current?.click()}
-                      sx={{
-                        fontSize: "11px",
-                        textTransform: "none",
-                        color: "#fff",
-                        background: "rgba(0,0,0,0.5)",
-                        borderRadius: "8px",
-                        height: "30px",
-                        px: 1.5,
-                        fontWeight: 600,
-                        backdropFilter: "blur(4px)",
-                        "&:hover": { background: "rgba(0,0,0,0.7)" },
-                      }}
+                      className="admin-cm-img-change-btn"
                     >
                       Change
                     </Button>
                     <Button
                       size="small"
                       onClick={removeWriteImage}
-                      sx={{
-                        fontSize: "11px",
-                        textTransform: "none",
-                        color: "#fff",
-                        background: "rgba(239,68,68,0.75)",
-                        borderRadius: "8px",
-                        height: "30px",
-                        px: 1.5,
-                        fontWeight: 600,
-                        backdropFilter: "blur(4px)",
-                        "&:hover": { background: "rgba(220,38,38,0.9)" },
-                      }}
+                      className="admin-cm-img-remove-btn"
                     >
                       Remove
                     </Button>
@@ -820,44 +595,15 @@ const CommunityModerator = () => {
               ) : (
                 <Stack
                   onClick={() => imageInputRef.current?.click()}
-                  sx={{
-                    border: "2px dashed #E5E7EB",
-                    borderRadius: "12px",
-                    py: 4,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    background: "#FAFAFA",
-                    transition: "all 0.2s",
-                    "&:hover": {
-                      borderColor: "#6366F1",
-                      background: "#EEF2FF",
-                    },
-                  }}
+                  className="admin-cm-img-upload-zone"
                 >
-                  <Stack
-                    sx={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: "12px",
-                      background: "#E5E7EB",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      mb: 1.5,
-                    }}
-                  >
-                    <AddPhotoAlternateIcon
-                      sx={{ fontSize: 22, color: "#9CA3AF" }}
-                    />
+                  <Stack className="admin-cm-img-upload-icon-box">
+                    <AddPhotoAlternateIcon className="admin-icon-22-gray" />
                   </Stack>
-                  <Typography
-                    sx={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}
-                  >
+                  <Typography className="admin-cm-img-upload-label">
                     Click to add a cover image
                   </Typography>
-                  <Typography
-                    sx={{ fontSize: "12px", color: "#9CA3AF", mt: 0.5 }}
-                  >
+                  <Typography className="admin-cm-img-upload-hint">
                     PNG, JPG, WEBP — optional
                   </Typography>
                 </Stack>
@@ -878,29 +624,11 @@ const CommunityModerator = () => {
           direction="row"
           justifyContent="flex-end"
           gap={1.5}
-          sx={{
-            px: 3,
-            py: 2,
-            background: "#fff",
-            borderTop: "1px solid #E8ECF0",
-            position: "sticky",
-            bottom: 0,
-            zIndex: 10,
-          }}
+          className="admin-cm-write-footer"
         >
           <Button
             onClick={() => setWriteOpen(false)}
-            sx={{
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 600,
-              color: "#6B7280",
-              border: "1px solid #E8ECF0",
-              borderRadius: "10px",
-              height: "40px",
-              px: 2.5,
-              "&:hover": { background: "#F9FAFB" },
-            }}
+            className="admin-cm-write-cancel-btn"
           >
             Cancel
           </Button>
@@ -908,23 +636,7 @@ const CommunityModerator = () => {
             variant="contained"
             onClick={submitPost}
             disabled={!writeTitle.trim() || !writeContent.trim()}
-            sx={{
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 700,
-              color: "#ffffff",
-              backgroundColor: "#6366F1",
-              boxShadow: "0 2px 8px rgba(99,102,241,0.3)",
-              borderRadius: "10px",
-              height: "40px",
-              px: 3,
-              "&:hover": { backgroundColor: "#5254CC" },
-              "&:disabled": {
-                backgroundColor: "#E5E7EB",
-                color: "#9CA3AF",
-                boxShadow: "none",
-              },
-            }}
+            className="admin-cm-write-publish-btn"
           >
             Publish Post
           </Button>
@@ -936,14 +648,8 @@ const CommunityModerator = () => {
         anchor="right"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        PaperProps={{
-          sx: {
-            width: 500,
-            boxShadow: "-8px 0 32px rgba(0,0,0,0.10)",
-            background: "#F4F5FA",
-            overflowY: "auto",
-          },
-        }}
+        PaperProps={{ className: "admin-cm-detail-paper" }}
+        disablePortal
       >
         {selectedPost &&
           (() => {
@@ -957,17 +663,10 @@ const CommunityModerator = () => {
                   direction="row"
                   alignItems="center"
                   justifyContent="space-between"
-                  sx={{
-                    px: 3,
-                    py: 2,
-                    background: "#fff",
-                    borderBottom: "1px solid #E8ECF0",
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 10,
-                  }}
+                  className="admin-cm-detail-header"
                 >
                   <Stack direction="row" alignItems="center" gap={1}>
+                    {/* bg/color are dynamic (bc.bg, bc.color) */}
                     <span
                       style={{
                         fontSize: "10px",
@@ -991,27 +690,16 @@ const CommunityModerator = () => {
                   <IconButton
                     onClick={() => setDrawerOpen(false)}
                     size="small"
-                    sx={{
-                      color: "#6B7280",
-                      "&:hover": { background: "#F3F4F6" },
-                    }}
+                    className="admin-cm-detail-close-btn"
                   >
                     <CloseIcon fontSize="small" />
                   </IconButton>
                 </Stack>
 
-                <Stack sx={{ p: 2, gap: 1.5, pb: 14 }}>
+                <Stack className="admin-cm-detail-body">
                   {/* Hero image */}
                   {selectedPost.image && (
-                    <Stack
-                      sx={{
-                        borderRadius: "14px",
-                        overflow: "hidden",
-                        height: 200,
-                        border: "1px solid #F0F1F5",
-                        flexShrink: 0,
-                      }}
-                    >
+                    <Stack className="admin-cm-hero-img">
                       <img
                         src={selectedPost.image}
                         alt=""
@@ -1031,25 +719,14 @@ const CommunityModerator = () => {
                   )}
 
                   {/* Title + Author + Full Description */}
-                  <Stack
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "14px",
-                      border: "1px solid #F0F1F5",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {/* Color strip */}
-                    <Stack sx={{ height: 4, background: bc.color }} />
-                    <Stack sx={{ p: 2.5, gap: 2 }}>
-                      <Typography
-                        sx={{
-                          fontSize: "19px",
-                          fontWeight: 800,
-                          color: "#111827",
-                          lineHeight: 1.4,
-                        }}
-                      >
+                  <Stack className="admin-cm-post-content-card">
+                    {/* Color strip — dynamic (bc.color) */}
+                    <Stack
+                      className="admin-cm-color-top-strip"
+                      sx={{ background: bc.color }}
+                    />
+                    <Stack className="admin-cm-post-content-body">
+                      <Typography className="admin-cm-post-full-title">
                         {selectedPost.title}
                       </Typography>
 
@@ -1064,6 +741,7 @@ const CommunityModerator = () => {
                               height: 36,
                               borderRadius: "50%",
                               objectFit: "cover",
+                              // border is dynamic: `2px solid ${bc.bg}`
                               border: `2px solid ${bc.bg}`,
                             }}
                             onError={(e) => {
@@ -1072,63 +750,35 @@ const CommunityModerator = () => {
                             }}
                           />
                         ) : (
+                          // bg and border are dynamic (bc.bg, bc.color)
                           <Stack
+                            className="admin-cm-author-avatar-fallback"
                             sx={{
-                              width: 36,
-                              height: 36,
-                              borderRadius: "50%",
                               background: bc.bg,
-                              alignItems: "center",
-                              justifyContent: "center",
                               border: `2px solid ${bc.color}22`,
                             }}
                           >
                             <Typography
-                              sx={{
-                                fontSize: "14px",
-                                fontWeight: 800,
-                                color: bc.color,
-                              }}
+                              className="admin-cm-author-initial"
+                              sx={{ color: bc.color }}
                             >
                               {selectedPost.author.charAt(0).toUpperCase()}
                             </Typography>
                           </Stack>
                         )}
                         <Stack>
-                          <Typography
-                            sx={{
-                              fontSize: "13px",
-                              fontWeight: 700,
-                              color: "#111827",
-                            }}
-                          >
+                          <Typography className="admin-cm-author-name">
                             @{selectedPost.author}
                           </Typography>
-                          <Typography
-                            sx={{ fontSize: "11px", color: "#9CA3AF" }}
-                          >
+                          <Typography className="admin-cm-author-date">
                             Posted · {selectedPost.date}
                           </Typography>
                         </Stack>
                       </Stack>
 
                       {/* Full description */}
-                      <Stack
-                        sx={{
-                          background: "#FAFAFA",
-                          borderRadius: "10px",
-                          p: 2,
-                          border: "1px solid #F0F1F5",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontSize: "13.5px",
-                            color: "#374151",
-                            lineHeight: 1.8,
-                            whiteSpace: "pre-wrap",
-                          }}
-                        >
+                      <Stack className="admin-cm-desc-box">
+                        <Typography className="admin-cm-desc-text">
                           {selectedPost.description}
                         </Typography>
                       </Stack>
@@ -1136,24 +786,8 @@ const CommunityModerator = () => {
                   </Stack>
 
                   {/* Info grid */}
-                  <Stack
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "14px",
-                      border: "1px solid #F0F1F5",
-                      p: 2,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        fontWeight: 700,
-                        color: "#9CA3AF",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.08em",
-                        mb: 1.5,
-                      }}
-                    >
+                  <Stack className="admin-cm-info-card">
+                    <Typography className="admin-cm-info-heading">
                       Post Info
                     </Typography>
                     <Stack gap={1}>
@@ -1180,24 +814,12 @@ const CommunityModerator = () => {
                           direction="row"
                           alignItems="center"
                           justifyContent="space-between"
-                          sx={{ py: 0.5, borderBottom: "1px solid #F9FAFB" }}
+                          className="admin-cm-info-row"
                         >
-                          <Typography
-                            sx={{
-                              fontSize: "12px",
-                              color: "#9CA3AF",
-                              fontWeight: 600,
-                            }}
-                          >
+                          <Typography className="admin-cm-info-label">
                             {label}
                           </Typography>
-                          <Typography
-                            sx={{
-                              fontSize: "12px",
-                              color: "#374151",
-                              fontWeight: 700,
-                            }}
-                          >
+                          <Typography className="admin-cm-info-value">
                             {value}
                           </Typography>
                         </Stack>
@@ -1206,48 +828,31 @@ const CommunityModerator = () => {
                   </Stack>
 
                   {/* Stats */}
-                  <Stack
-                    direction="row"
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "14px",
-                      border: "1px solid #F0F1F5",
-                    }}
-                  >
+                  <Stack direction="row" className="admin-cm-stats-row">
                     {[
                       {
                         icon: (
-                          <VisibilityIcon
-                            sx={{ fontSize: 18, color: "#6366F1" }}
-                          />
+                          <VisibilityIcon className="admin-icon-18-indigo" />
                         ),
                         label: "Views",
                         value: selectedPost.views.toLocaleString(),
                       },
                       {
-                        icon: (
-                          <FavoriteIcon
-                            sx={{ fontSize: 17, color: "#EF4444" }}
-                          />
-                        ),
+                        icon: <FavoriteIcon className="admin-icon-17-red" />,
                         label: "Likes",
                         value: selectedPost.likes,
                       },
                       isQna
                         ? {
                             icon: (
-                              <QuestionAnswerIcon
-                                sx={{ fontSize: 18, color: "#059669" }}
-                              />
+                              <QuestionAnswerIcon className="admin-icon-18-green" />
                             ),
                             label: "Answers",
                             value: selectedPost.answersCount ?? 0,
                           }
                         : {
                             icon: (
-                              <ChatBubbleOutlineIcon
-                                sx={{ fontSize: 17, color: "#F59E0B" }}
-                              />
+                              <ChatBubbleOutlineIcon className="admin-icon-17-amber" />
                             ),
                             label: "Comments",
                             value: selectedPost.commentsCount,
@@ -1255,35 +860,13 @@ const CommunityModerator = () => {
                     ].map(({ icon, label, value }, i, arr) => (
                       <Stack
                         key={label}
-                        flex={1}
-                        alignItems="center"
-                        gap={0.4}
-                        sx={{
-                          py: 2,
-                          borderRight:
-                            i < arr.length - 1 ? "1px solid #F0F1F5" : "none",
-                        }}
+                        className={`admin-cm-stat-cell${i < arr.length - 1 ? " bordered" : ""}`}
                       >
                         {icon}
-                        <Typography
-                          sx={{
-                            fontSize: "22px",
-                            fontWeight: 800,
-                            color: "#111827",
-                            letterSpacing: "-0.02em",
-                          }}
-                        >
+                        <Typography className="admin-cm-stat-value">
                           {value}
                         </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "10px",
-                            fontWeight: 700,
-                            color: "#9CA3AF",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.06em",
-                          }}
-                        >
+                        <Typography className="admin-cm-stat-label">
                           {label}
                         </Typography>
                       </Stack>
@@ -1291,24 +874,8 @@ const CommunityModerator = () => {
                   </Stack>
 
                   {/* Moderation */}
-                  <Stack
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "14px",
-                      border: "1px solid #F0F1F5",
-                      p: 2,
-                      gap: 1.5,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        fontWeight: 700,
-                        color: "#9CA3AF",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.08em",
-                      }}
-                    >
+                  <Stack className="admin-cm-mod-card">
+                    <Typography className="admin-cm-mod-heading">
                       Moderation
                     </Typography>
                     <Stack direction="row" gap={1}>
@@ -1317,16 +884,7 @@ const CommunityModerator = () => {
                           fullWidth
                           variant="outlined"
                           onClick={() => setStatus(selectedPost.id, "hidden")}
-                          sx={{
-                            textTransform: "none",
-                            fontWeight: 700,
-                            fontSize: "13px",
-                            borderColor: "#FEF3C7",
-                            color: "#D97706",
-                            borderRadius: "10px",
-                            height: "42px",
-                            "&:hover": { background: "#FFFBEB" },
-                          }}
+                          className="admin-cm-hide-btn"
                         >
                           Hide Post
                         </Button>
@@ -1335,16 +893,7 @@ const CommunityModerator = () => {
                           fullWidth
                           variant="outlined"
                           onClick={() => setStatus(selectedPost.id, "visible")}
-                          sx={{
-                            textTransform: "none",
-                            fontWeight: 700,
-                            fontSize: "13px",
-                            borderColor: "#D1FAE5",
-                            color: "#059669",
-                            borderRadius: "10px",
-                            height: "42px",
-                            "&:hover": { background: "#ECFDF5" },
-                          }}
+                          className="admin-cm-show-btn"
                         >
                           Make Visible
                         </Button>
@@ -1352,20 +901,8 @@ const CommunityModerator = () => {
                       <Button
                         fullWidth
                         variant="outlined"
-                        onClick={() => {
-                          setStatus(selectedPost.id, "deleted");
-                          setDrawerOpen(false);
-                        }}
-                        sx={{
-                          textTransform: "none",
-                          fontWeight: 700,
-                          fontSize: "13px",
-                          borderColor: "#FEE2E2",
-                          color: "#EF4444",
-                          borderRadius: "10px",
-                          height: "42px",
-                          "&:hover": { background: "#FEF2F2" },
-                        }}
+                        onClick={() => setDeleteConfirmId(selectedPost.id)}
+                        className="admin-cm-delete-post-btn"
                       >
                         Delete Post
                       </Button>
@@ -1377,29 +914,11 @@ const CommunityModerator = () => {
                 <Stack
                   direction="row"
                   justifyContent="flex-end"
-                  sx={{
-                    px: 3,
-                    py: 2,
-                    background: "#fff",
-                    borderTop: "1px solid #E8ECF0",
-                    position: "sticky",
-                    bottom: 0,
-                    zIndex: 10,
-                  }}
+                  className="admin-cm-detail-footer"
                 >
                   <Button
                     onClick={() => setDrawerOpen(false)}
-                    sx={{
-                      textTransform: "none",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                      color: "#6B7280",
-                      border: "1px solid #E8ECF0",
-                      borderRadius: "10px",
-                      height: "40px",
-                      px: 3,
-                      "&:hover": { background: "#F9FAFB" },
-                    }}
+                    className="admin-cm-detail-close-footer-btn"
                   >
                     Close
                   </Button>
@@ -1408,6 +927,59 @@ const CommunityModerator = () => {
             );
           })()}
       </Drawer>
+
+      {/* Delete Confirmation */}
+      <Dialog
+        open={!!deleteConfirmId}
+        onClose={() => setDeleteConfirmId(null)}
+        maxWidth="xs"
+        disablePortal
+      >
+        <DialogTitle
+          sx={{ fontWeight: 700, fontSize: "16px", color: "#111827" }}
+        >
+          Delete Post?
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ fontSize: "14px", color: "#6B7280" }}>
+            This post will be permanently removed and cannot be restored.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+          <Button
+            onClick={() => setDeleteConfirmId(null)}
+            sx={{
+              textTransform: "none",
+              color: "#6B7280",
+              border: "1px solid #E8ECF0",
+              borderRadius: "8px",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (deleteConfirmId) {
+                setStatus(deleteConfirmId, "deleted");
+                if (selectedPost?.id === deleteConfirmId) setDrawerOpen(false);
+                setDeleteConfirmId(null);
+              }
+            }}
+            sx={{
+              textTransform: "none",
+              fontWeight: 700,
+              color: "#ffffff",
+              backgroundColor: "#EF4444",
+              boxShadow: "none",
+              borderRadius: "8px",
+              "&:hover": { backgroundColor: "#DC2626", boxShadow: "none" },
+            }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 };

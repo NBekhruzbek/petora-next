@@ -47,29 +47,6 @@ const BADGE_STYLE: Record<NoticeBadge, { bg: string; color: string }> = {
   Update: { bg: "#EFF6FF", color: "#3B82F6" },
 };
 
-const INPUT_SX = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "10px",
-    fontSize: "14px",
-    color: "#111827",
-    background: "#FAFAFA",
-    "& fieldset": { borderColor: "#E5E7EB" },
-    "&:hover fieldset": { borderColor: "#C7D2FE" },
-    "&.Mui-focused fieldset": { borderColor: "#6366F1", borderWidth: "1.5px" },
-  },
-  "& .MuiInputLabel-root": { fontSize: "13px", color: "#9CA3AF" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "#6366F1" },
-  "& .MuiInputBase-input": { color: "#111827" },
-};
-
-const MULTILINE_SX = {
-  ...INPUT_SX,
-  "& .MuiOutlinedInput-root": {
-    ...INPUT_SX["& .MuiOutlinedInput-root"],
-    height: "auto !important",
-  },
-};
-
 // ─── Drawer shell ─────────────────────────────────────────────────────────────
 
 const DrawerShell = ({
@@ -95,106 +72,49 @@ const DrawerShell = ({
     anchor="right"
     open={open}
     onClose={onClose}
-    PaperProps={{
-      sx: {
-        width: 520,
-        boxShadow: "-8px 0 32px rgba(0,0,0,0.10)",
-        background: "#F4F5FA",
-        overflowY: "auto",
-      },
-    }}
+    PaperProps={{ className: "admin-cs-drawer-paper" }}
+    disablePortal
   >
     {/* Sticky Header */}
     <Stack
       direction="row"
       alignItems="center"
       gap={2}
-      sx={{
-        px: 3,
-        py: 2.5,
-        background: "#fff",
-        borderBottom: "1px solid #E8ECF0",
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-      }}
+      className="admin-cs-drawer-header"
     >
       <Stack flex={1} minWidth={0}>
-        <Typography
-          sx={{ fontSize: "16px", fontWeight: 700, color: "#111827" }}
-        >
-          {title}
-        </Typography>
+        <Typography className="admin-cs-drawer-title">{title}</Typography>
         {subtitle && (
-          <Typography sx={{ fontSize: "12px", color: "#9CA3AF", mt: 0.2 }}>
-            {subtitle}
-          </Typography>
+          <Typography className="admin-cs-drawer-subtitle">{subtitle}</Typography>
         )}
       </Stack>
       <IconButton
         onClick={onClose}
         size="small"
-        sx={{ color: "#6B7280", "&:hover": { background: "#F3F4F6" } }}
+        className="admin-cs-drawer-close-btn"
       >
         <CloseIcon fontSize="small" />
       </IconButton>
     </Stack>
 
     {/* Body */}
-    <Stack sx={{ p: 2.5, gap: 2, pb: 14 }}>{children}</Stack>
+    <Stack className="admin-cs-drawer-body">{children}</Stack>
 
     {/* Sticky Footer */}
     <Stack
       direction="row"
       justifyContent="flex-end"
       gap={1.5}
-      sx={{
-        px: 3,
-        py: 2,
-        background: "#fff",
-        borderTop: "1px solid #E8ECF0",
-        position: "sticky",
-        bottom: 0,
-        zIndex: 10,
-      }}
+      className="admin-cs-drawer-footer"
     >
-      <Button
-        onClick={onClose}
-        sx={{
-          textTransform: "none",
-          fontSize: "13px",
-          fontWeight: 600,
-          color: "#6B7280",
-          border: "1px solid #E8ECF0",
-          borderRadius: "10px",
-          height: "40px",
-          px: 2.5,
-          "&:hover": { background: "#F9FAFB" },
-        }}
-      >
+      <Button onClick={onClose} className="admin-cs-cancel-btn">
         Cancel
       </Button>
       <Button
         variant="contained"
         onClick={onSave}
         disabled={saveDisabled}
-        sx={{
-          textTransform: "none",
-          fontSize: "13px",
-          fontWeight: 700,
-          color: "#ffffff",
-          backgroundColor: "#6366F1",
-          boxShadow: "0 2px 8px rgba(99,102,241,0.3)",
-          borderRadius: "10px",
-          height: "40px",
-          px: 3,
-          "&:hover": { backgroundColor: "#5254CC" },
-          "&:disabled": {
-            backgroundColor: "#E5E7EB",
-            color: "#9CA3AF",
-            boxShadow: "none",
-          },
-        }}
+        className="admin-cs-save-btn"
       >
         {saveLabel}
       </Button>
@@ -298,8 +218,7 @@ const FaqTab = () => {
           size="small"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value as any)}
-          className="admin-toolbar-select"
-          sx={{ width: 200 }}
+          className="admin-toolbar-select admin-cs-faq-filter"
         >
           <MenuItem value="ALL">All Categories</MenuItem>
           {FAQ_CATEGORIES.map((c) => (
@@ -314,17 +233,7 @@ const FaqTab = () => {
         <Button
           variant="contained"
           onClick={openAdd}
-          sx={{
-            backgroundColor: "#6366F1",
-            color: "#ffffff",
-            textTransform: "none",
-            fontWeight: 700,
-            fontSize: "12px",
-            borderRadius: "8px",
-            height: "34px",
-            boxShadow: "none",
-            "&:hover": { backgroundColor: "#5254CC", boxShadow: "none" },
-          }}
+          className="admin-cs-add-faq-btn"
         >
           Add FAQ
         </Button>
@@ -339,23 +248,8 @@ const FaqTab = () => {
           return (
             <Stack key={cat.value}>
               {/* Category header */}
-              <Stack
-                sx={{
-                  px: 3,
-                  py: 1.2,
-                  background: "#FAFBFC",
-                  borderBottom: "1px solid #F0F1F5",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "#6366F1",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                  }}
-                >
+              <Stack className="admin-cs-category-header">
+                <Typography className="admin-cs-category-label">
                   {cat.label} · {items.length}
                 </Typography>
               </Stack>
@@ -363,49 +257,23 @@ const FaqTab = () => {
               {items.map((faq, idx) => {
                 const isExpanded = expandedId === faq.id;
                 return (
-                  <Stack
-                    key={faq.id}
-                    sx={{ borderBottom: "1px solid #F0F1F5" }}
-                  >
+                  <Stack key={faq.id} className="admin-cs-faq-item">
                     {/* Row */}
                     <Stack
                       direction="row"
                       alignItems="center"
                       gap={1.5}
-                      sx={{
-                        px: 3,
-                        py: 1.8,
-                        cursor: "pointer",
-                        "&:hover": { background: "#FAFBFF" },
-                      }}
+                      className="admin-cs-faq-row"
                       onClick={() => setExpandedId(isExpanded ? null : faq.id)}
                     >
                       <Stack flex={1} minWidth={0}>
                         <Stack direction="row" alignItems="center" gap={1}>
-                          <Typography
-                            sx={{
-                              fontSize: "13px",
-                              fontWeight: 700,
-                              color: "#111827",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
+                          <Typography className="admin-cs-faq-title">
                             Q{String(idx + 1).padStart(2, "0")}. {faq.title}
                           </Typography>
                         </Stack>
                         {!isExpanded && (
-                          <Typography
-                            sx={{
-                              fontSize: "12px",
-                              color: "#9CA3AF",
-                              mt: 0.2,
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
+                          <Typography className="admin-cs-faq-desc">
                             {faq.description}
                           </Typography>
                         )}
@@ -436,7 +304,7 @@ const FaqTab = () => {
                       </Stack>
                       <IconButton
                         size="small"
-                        sx={{ color: "#9CA3AF" }}
+                        className="admin-cs-expand-btn"
                         onClick={(e) => {
                           e.stopPropagation();
                           setExpandedId(isExpanded ? null : faq.id);
@@ -452,25 +320,9 @@ const FaqTab = () => {
 
                     {/* Expanded content */}
                     {isExpanded && (
-                      <Stack
-                        sx={{ px: 3, pb: 2, pt: 0.5, background: "#FAFBFF" }}
-                      >
-                        <Stack
-                          sx={{
-                            background: "#fff",
-                            borderRadius: "10px",
-                            border: "1px solid #E8ECF0",
-                            p: 2,
-                            gap: 1.5,
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontSize: "13px",
-                              color: "#374151",
-                              lineHeight: 1.7,
-                            }}
-                          >
+                      <Stack className="admin-cs-faq-expanded">
+                        <Stack className="admin-cs-faq-answer-card">
+                          <Typography className="admin-cs-faq-answer-text">
                             {faq.answer}
                           </Typography>
                           {faq.bullets.length > 0 && (
@@ -482,23 +334,8 @@ const FaqTab = () => {
                                   alignItems="flex-start"
                                   gap={1}
                                 >
-                                  <Stack
-                                    sx={{
-                                      width: 6,
-                                      height: 6,
-                                      borderRadius: "50%",
-                                      background: "#6366F1",
-                                      mt: "7px",
-                                      flexShrink: 0,
-                                    }}
-                                  />
-                                  <Typography
-                                    sx={{
-                                      fontSize: "12.5px",
-                                      color: "#6B7280",
-                                      lineHeight: 1.6,
-                                    }}
-                                  >
+                                  <Stack className="admin-cs-bullet-dot" />
+                                  <Typography className="admin-cs-bullet-text">
                                     {b}
                                   </Typography>
                                 </Stack>
@@ -516,8 +353,8 @@ const FaqTab = () => {
         })}
 
         {filtered.length === 0 && (
-          <Stack alignItems="center" sx={{ py: 8 }}>
-            <Typography sx={{ fontSize: "14px", color: "#9CA3AF" }}>
+          <Stack className="admin-cs-empty">
+            <Typography className="admin-cs-empty-text">
               No FAQs found
             </Typography>
           </Stack>
@@ -525,27 +362,18 @@ const FaqTab = () => {
       </Stack>
 
       {/* FAQ Delete Confirmation */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs">
-        <DialogTitle
-          sx={{ fontWeight: 700, fontSize: "16px", color: "#111827" }}
-        >
-          Delete FAQ?
-        </DialogTitle>
+      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs" disablePortal>
+        <DialogTitle className="admin-cs-dialog-title">Delete FAQ?</DialogTitle>
         <DialogContent>
-          <Typography sx={{ fontSize: "14px", color: "#6B7280" }}>
+          <Typography className="admin-cs-dialog-body">
             This FAQ will be permanently removed from the CS page. This action
             cannot be undone.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+        <DialogActions className="admin-cs-dialog-actions">
           <Button
             onClick={() => setDeleteId(null)}
-            sx={{
-              textTransform: "none",
-              color: "#6B7280",
-              border: "1px solid #E8ECF0",
-              borderRadius: "8px",
-            }}
+            className="admin-cs-dialog-cancel-btn"
           >
             Cancel
           </Button>
@@ -555,15 +383,7 @@ const FaqTab = () => {
               setFaqs((prev) => prev.filter((f) => f.id !== deleteId));
               setDeleteId(null);
             }}
-            sx={{
-              textTransform: "none",
-              fontWeight: 700,
-              color: "#ffffff",
-              backgroundColor: "#EF4444",
-              boxShadow: "none",
-              borderRadius: "8px",
-              "&:hover": { backgroundColor: "#DC2626", boxShadow: "none" },
-            }}
+            className="admin-cs-dialog-delete-btn"
           >
             Delete
           </Button>
@@ -580,36 +400,12 @@ const FaqTab = () => {
         saveLabel={editingFaq ? "Save Changes" : "Add FAQ"}
         saveDisabled={!isSaveEnabled}
       >
-        <Stack
-          sx={{
-            background: "#fff",
-            borderRadius: "14px",
-            border: "1px solid #F0F1F5",
-            p: 2.5,
-            gap: 2,
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: "11px",
-              fontWeight: 700,
-              color: "#9CA3AF",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-            }}
-          >
-            Category & Question
+        <Stack className="admin-cs-form-section-card">
+          <Typography className="admin-cs-form-section-title">
+            Category &amp; Question
           </Typography>
           <Stack gap={0.8}>
-            <Typography
-              sx={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#9CA3AF",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-              }}
-            >
+            <Typography className="admin-cs-form-field-label">
               Category
             </Typography>
             <Select
@@ -621,20 +417,7 @@ const FaqTab = () => {
                   category: e.target.value as FaqCategory,
                 }))
               }
-              sx={{
-                height: 42,
-                borderRadius: "10px",
-                fontSize: "14px",
-                color: "#111827",
-                background: "#FAFAFA",
-                "& fieldset": { borderColor: "#E5E7EB" },
-                "&:hover fieldset": { borderColor: "#C7D2FE" },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#6366F1",
-                  borderWidth: "1.5px",
-                },
-                "& .MuiSelect-icon": { color: "#9CA3AF" },
-              }}
+              className="admin-cs-cat-select"
             >
               {FAQ_CATEGORIES.map((c) => (
                 <MenuItem key={c.value} value={c.value}>
@@ -649,7 +432,7 @@ const FaqTab = () => {
             onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
             size="small"
             fullWidth
-            sx={INPUT_SX}
+            className="admin-cs-input"
           />
           <TextField
             label="Short Description (preview)"
@@ -659,28 +442,12 @@ const FaqTab = () => {
             }
             size="small"
             fullWidth
-            sx={INPUT_SX}
+            className="admin-cs-input"
           />
         </Stack>
 
-        <Stack
-          sx={{
-            background: "#fff",
-            borderRadius: "14px",
-            border: "1px solid #F0F1F5",
-            p: 2.5,
-            gap: 2,
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: "11px",
-              fontWeight: 700,
-              color: "#9CA3AF",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-            }}
-          >
+        <Stack className="admin-cs-form-section-card">
+          <Typography className="admin-cs-form-section-title">
             Answer
           </Typography>
           <TextField
@@ -698,7 +465,7 @@ const FaqTab = () => {
                 alignItems: "flex-start",
               },
             }}
-            sx={MULTILINE_SX}
+            className="admin-cs-multiline-input"
           />
 
           <Stack gap={1.2}>
@@ -708,52 +475,25 @@ const FaqTab = () => {
               justifyContent="space-between"
             >
               <Stack>
-                <Typography
-                  sx={{
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "#9CA3AF",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
-                  }}
-                >
+                <Typography className="admin-cs-step-instructions-text">
                   Step-by-Step Instructions
                 </Typography>
-                <Typography
-                  sx={{ fontSize: "11px", color: "#9CA3AF", mt: 0.3 }}
-                >
+                <Typography className="admin-cs-step-instructions-sub">
                   Action steps shown as a bullet list below the answer
                 </Typography>
               </Stack>
               <Button
                 size="small"
                 onClick={addBullet}
-                sx={{
-                  fontSize: "11px",
-                  textTransform: "none",
-                  color: "#6366F1",
-                  fontWeight: 600,
-                }}
+                className="admin-cs-add-step-btn"
               >
                 Add Step
               </Button>
             </Stack>
             {form.bullets.map((b, i) => (
               <Stack key={i} direction="row" alignItems="center" gap={1}>
-                <Stack
-                  sx={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: "6px",
-                    background: "#EEF2FF",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                  }}
-                >
-                  <Typography
-                    sx={{ fontSize: "9px", fontWeight: 800, color: "#6366F1" }}
-                  >
+                <Stack className="admin-cs-step-num-box">
+                  <Typography className="admin-cs-step-num-text">
                     {i + 1}
                   </Typography>
                 </Stack>
@@ -764,19 +504,13 @@ const FaqTab = () => {
                   fullWidth
                   placeholder={`Bullet point ${i + 1}`}
                   inputProps={{ style: { color: "#111827" } }}
-                  sx={{
-                    ...INPUT_SX,
-                    "& .MuiOutlinedInput-root": {
-                      ...INPUT_SX["& .MuiOutlinedInput-root"],
-                      height: 38,
-                    },
-                  }}
+                  className="admin-cs-bullet-input-h38"
                 />
                 {form.bullets.length > 1 && (
                   <IconButton
                     size="small"
                     onClick={() => removeBullet(i)}
-                    sx={{ color: "#EF4444", flexShrink: 0 }}
+                    className="admin-cs-remove-bullet-btn"
                   >
                     <CloseIcon fontSize="small" />
                   </IconButton>
@@ -877,8 +611,7 @@ const NoticesTab = () => {
           size="small"
           value={badgeFilter}
           onChange={(e) => setBadgeFilter(e.target.value as any)}
-          className="admin-toolbar-select"
-          sx={{ width: 160 }}
+          className="admin-toolbar-select admin-cs-cs-filter"
         >
           <MenuItem value="ALL">All Types</MenuItem>
           <MenuItem value="Important">Important</MenuItem>
@@ -890,17 +623,7 @@ const NoticesTab = () => {
         <Button
           variant="contained"
           onClick={openAdd}
-          sx={{
-            color: "#ffffff",
-            backgroundColor: "#6366F1",
-            textTransform: "none",
-            fontWeight: 700,
-            fontSize: "12px",
-            borderRadius: "8px",
-            height: "34px",
-            boxShadow: "none",
-            "&:hover": { backgroundColor: "#5254CC", boxShadow: "none" },
-          }}
+          className="admin-cs-add-notice-btn"
         >
           Add Notice
         </Button>
@@ -911,21 +634,17 @@ const NoticesTab = () => {
           const bs = BADGE_STYLE[notice.badge];
           const isExpanded = expandedId === notice.id;
           return (
-            <Stack key={notice.id} sx={{ borderBottom: "1px solid #F0F1F5" }}>
+            <Stack key={notice.id} className="admin-cs-notice-item">
               <Stack
                 direction="row"
                 alignItems="center"
                 gap={1.5}
-                sx={{
-                  px: 3,
-                  py: 1.8,
-                  cursor: "pointer",
-                  "&:hover": { background: "#FAFBFF" },
-                }}
+                className="admin-cs-notice-row"
                 onClick={() => setExpandedId(isExpanded ? null : notice.id)}
               >
                 <Stack flex={1} minWidth={0}>
                   <Stack direction="row" alignItems="center" gap={1} mb={0.3}>
+                    {/* bg/color are dynamic (bs.bg, bs.color) */}
                     <span
                       style={{
                         fontSize: "10px",
@@ -941,37 +660,18 @@ const NoticesTab = () => {
                     >
                       {notice.badge}
                     </span>
-                    <Typography
-                      sx={{
-                        fontSize: "13px",
-                        fontWeight: 700,
-                        color: "#111827",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
+                    <Typography className="admin-cs-notice-title">
                       {notice.title}
                     </Typography>
                   </Stack>
                   {!isExpanded && (
-                    <Typography
-                      sx={{
-                        fontSize: "12px",
-                        color: "#9CA3AF",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
+                    <Typography className="admin-cs-notice-summary">
                       {notice.summary}
                     </Typography>
                   )}
                 </Stack>
 
-                <Typography
-                  sx={{ fontSize: "11px", color: "#9CA3AF", flexShrink: 0 }}
-                >
+                <Typography className="admin-cs-notice-date">
                   {notice.date}
                 </Typography>
 
@@ -1001,7 +701,7 @@ const NoticesTab = () => {
                 </Stack>
                 <IconButton
                   size="small"
-                  sx={{ color: "#9CA3AF" }}
+                  className="admin-cs-expand-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     setExpandedId(isExpanded ? null : notice.id);
@@ -1017,36 +717,14 @@ const NoticesTab = () => {
 
               {/* Expanded */}
               {isExpanded && (
-                <Stack sx={{ px: 3, pb: 2, pt: 0.5, background: "#FAFBFF" }}>
-                  <Stack
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "10px",
-                      border: "1px solid #E8ECF0",
-                      p: 2,
-                      gap: 1.5,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: "12px",
-                        fontWeight: 600,
-                        color: "#6B7280",
-                        fontStyle: "italic",
-                      }}
-                    >
+                <Stack className="admin-cs-notice-expanded">
+                  <Stack className="admin-cs-notice-expanded-card">
+                    <Typography className="admin-cs-notice-summary-text">
                       {notice.summary}
                     </Typography>
-                    <Divider sx={{ borderColor: "#F0F1F5" }} />
+                    <Divider className="admin-cs-notice-divider" />
                     {notice.fullText.map((para, i) => (
-                      <Typography
-                        key={i}
-                        sx={{
-                          fontSize: "13px",
-                          color: "#374151",
-                          lineHeight: 1.75,
-                        }}
-                      >
+                      <Typography key={i} className="admin-cs-notice-para">
                         {para}
                       </Typography>
                     ))}
@@ -1058,8 +736,8 @@ const NoticesTab = () => {
         })}
 
         {filtered.length === 0 && (
-          <Stack alignItems="center" sx={{ py: 8 }}>
-            <Typography sx={{ fontSize: "14px", color: "#9CA3AF" }}>
+          <Stack className="admin-cs-empty">
+            <Typography className="admin-cs-empty-text">
               No notices found
             </Typography>
           </Stack>
@@ -1067,27 +745,20 @@ const NoticesTab = () => {
       </Stack>
 
       {/* Notice Delete Confirmation */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs">
-        <DialogTitle
-          sx={{ fontWeight: 700, fontSize: "16px", color: "#111827" }}
-        >
+      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs" disablePortal>
+        <DialogTitle className="admin-cs-dialog-title">
           Delete Notice?
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ fontSize: "14px", color: "#6B7280" }}>
+          <Typography className="admin-cs-dialog-body">
             This notice will be permanently removed from the CS page. This
             action cannot be undone.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+        <DialogActions className="admin-cs-dialog-actions">
           <Button
             onClick={() => setDeleteId(null)}
-            sx={{
-              textTransform: "none",
-              color: "#6B7280",
-              border: "1px solid #E8ECF0",
-              borderRadius: "8px",
-            }}
+            className="admin-cs-dialog-cancel-btn"
           >
             Cancel
           </Button>
@@ -1097,15 +768,7 @@ const NoticesTab = () => {
               setNotices((prev) => prev.filter((n) => n.id !== deleteId));
               setDeleteId(null);
             }}
-            sx={{
-              color: "#ffffff",
-              textTransform: "none",
-              fontWeight: 700,
-              backgroundColor: "#EF4444",
-              boxShadow: "none",
-              borderRadius: "8px",
-              "&:hover": { backgroundColor: "#DC2626", boxShadow: "none" },
-            }}
+            className="admin-cs-dialog-delete-btn"
           >
             Delete
           </Button>
@@ -1122,38 +785,14 @@ const NoticesTab = () => {
         saveLabel={editingNotice ? "Save Changes" : "Publish Notice"}
         saveDisabled={!isSaveEnabled}
       >
-        <Stack
-          sx={{
-            background: "#fff",
-            borderRadius: "14px",
-            border: "1px solid #F0F1F5",
-            p: 2.5,
-            gap: 2,
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: "11px",
-              fontWeight: 700,
-              color: "#9CA3AF",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-            }}
-          >
+        <Stack className="admin-cs-form-section-card">
+          <Typography className="admin-cs-notice-badge-type-heading">
             Notice Details
           </Typography>
 
           {/* Type toggle */}
           <Stack gap={0.8}>
-            <Typography
-              sx={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#6B7280",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-              }}
-            >
+            <Typography className="admin-cs-form-field-label-dark">
               Type
             </Typography>
             <Stack direction="row" gap={1}>
@@ -1161,33 +800,25 @@ const NoticesTab = () => {
                 const bs = BADGE_STYLE[b];
                 const active = form.badge === b;
                 return (
+                  // border, background are dynamic (active state)
                   <Stack
                     key={b}
                     onClick={() => setForm((p) => ({ ...p, badge: b }))}
                     direction="row"
                     alignItems="center"
                     gap={1}
+                    className="admin-cs-badge-option"
                     sx={{
-                      flex: 1,
                       border: "1.5px solid",
                       borderColor: active ? bs.color : "#E5E7EB",
-                      borderRadius: "10px",
-                      px: 2,
-                      py: 1.2,
-                      cursor: "pointer",
                       background: active ? bs.bg : "#FAFAFA",
-                      transition: "all 0.15s",
                       "&:hover": { borderColor: bs.color, background: bs.bg },
                     }}
                   >
                     <Stack
+                      className="admin-cs-badge-dot"
                       sx={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: "50%",
                         background: active ? bs.color : "#D1D5DB",
-                        flexShrink: 0,
-                        transition: "background 0.15s",
                       }}
                     />
                     <Typography
@@ -1207,15 +838,7 @@ const NoticesTab = () => {
 
           {/* Title */}
           <Stack gap={0.8}>
-            <Typography
-              sx={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#6B7280",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-              }}
-            >
+            <Typography className="admin-cs-form-field-label-dark">
               Title
             </Typography>
             <TextField
@@ -1227,27 +850,13 @@ const NoticesTab = () => {
               fullWidth
               placeholder="e.g. Scheduled Maintenance — May 20, 2026"
               inputProps={{ style: { color: "#111827" } }}
-              sx={{
-                ...INPUT_SX,
-                "& .MuiOutlinedInput-root": {
-                  ...INPUT_SX["& .MuiOutlinedInput-root"],
-                  height: 42,
-                },
-              }}
+              className="admin-cs-input-h42"
             />
           </Stack>
 
           {/* Summary */}
           <Stack gap={0.8}>
-            <Typography
-              sx={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#6B7280",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-              }}
-            >
+            <Typography className="admin-cs-form-field-label-dark">
               Summary{" "}
               <span
                 style={{
@@ -1270,27 +879,13 @@ const NoticesTab = () => {
               fullWidth
               placeholder="Brief one-sentence description…"
               inputProps={{ style: { color: "#111827" } }}
-              sx={{
-                ...INPUT_SX,
-                "& .MuiOutlinedInput-root": {
-                  ...INPUT_SX["& .MuiOutlinedInput-root"],
-                  height: 42,
-                },
-              }}
+              className="admin-cs-input-h42"
             />
           </Stack>
 
           {/* Date */}
           <Stack gap={0.8}>
-            <Typography
-              sx={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#6B7280",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-              }}
-            >
+            <Typography className="admin-cs-form-field-label-dark">
               Date
             </Typography>
             <TextField
@@ -1300,40 +895,18 @@ const NoticesTab = () => {
               fullWidth
               placeholder="e.g. May 20, 2026"
               inputProps={{ style: { color: "#111827" } }}
-              sx={{
-                ...INPUT_SX,
-                "& .MuiOutlinedInput-root": {
-                  ...INPUT_SX["& .MuiOutlinedInput-root"],
-                  height: 42,
-                },
-              }}
+              className="admin-cs-input-h42"
             />
           </Stack>
         </Stack>
 
-        <Stack
-          sx={{
-            background: "#fff",
-            borderRadius: "14px",
-            border: "1px solid #F0F1F5",
-            p: 2.5,
-            gap: 1.5,
-          }}
-        >
+        <Stack className="admin-cs-form-section-card">
           <Stack
             direction="row"
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography
-              sx={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#9CA3AF",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-              }}
-            >
+            <Typography className="admin-cs-notice-full-content-heading">
               Full Content
             </Typography>
             <Button
@@ -1341,33 +914,15 @@ const NoticesTab = () => {
               onClick={() =>
                 setForm((p) => ({ ...p, paragraphs: [...p.paragraphs, ""] }))
               }
-              sx={{
-                fontSize: "11px",
-                textTransform: "none",
-                color: "#6366F1",
-                fontWeight: 600,
-              }}
+              className="admin-cs-add-para-btn"
             >
               Add Paragraph
             </Button>
           </Stack>
           {form.paragraphs.map((para, i) => (
             <Stack key={i} direction="row" alignItems="flex-start" gap={1}>
-              <Stack
-                sx={{
-                  width: 22,
-                  height: 22,
-                  borderRadius: "6px",
-                  background: "#EEF2FF",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  mt: "10px",
-                  flexShrink: 0,
-                }}
-              >
-                <Typography
-                  sx={{ fontSize: "10px", fontWeight: 700, color: "#6366F1" }}
-                >
+              <Stack className="admin-cs-para-num-box">
+                <Typography className="admin-cs-para-num-text">
                   {i + 1}
                 </Typography>
               </Stack>
@@ -1386,7 +941,7 @@ const NoticesTab = () => {
                     alignItems: "flex-start",
                   },
                 }}
-                sx={MULTILINE_SX}
+                className="admin-cs-multiline-input"
               />
               {form.paragraphs.length > 1 && (
                 <IconButton
@@ -1397,7 +952,7 @@ const NoticesTab = () => {
                       paragraphs: p.paragraphs.filter((_, idx) => idx !== i),
                     }))
                   }
-                  sx={{ color: "#EF4444", mt: "6px", flexShrink: 0 }}
+                  className="admin-cs-remove-para-btn"
                 >
                   <CloseIcon fontSize="small" />
                 </IconButton>
@@ -1427,38 +982,19 @@ const CSManager = () => {
         <Tabs
           value={tab}
           onChange={(_, v) => setTab(v)}
-          sx={{
-            px: 2,
-            borderBottom: "1px solid #E8ECF0",
-            minHeight: 46,
-            "& .MuiTab-root": {
-              fontSize: "13px",
-              fontWeight: 600,
-              color: "#6B7280",
-              textTransform: "none",
-              minHeight: 46,
-              py: 0,
-              px: 2,
-            },
-            "& .Mui-selected": { color: "#6366F1" },
-            "& .MuiTabs-indicator": {
-              background: "#6366F1",
-              height: "2.5px",
-              borderRadius: "3px 3px 0 0",
-            },
-          }}
+          className="admin-cs-tabs"
         >
           <Tab
             label={
               <Stack direction="row" alignItems="center" gap={0.8}>
-                <HelpOutlineIcon sx={{ fontSize: 15 }} /> FAQ
+                <HelpOutlineIcon className="admin-icon-15" /> FAQ
               </Stack>
             }
           />
           <Tab
             label={
               <Stack direction="row" alignItems="center" gap={0.8}>
-                <CampaignIcon sx={{ fontSize: 15 }} /> Notices
+                <CampaignIcon className="admin-icon-15" /> Notices
               </Stack>
             }
           />
