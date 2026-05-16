@@ -30,6 +30,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 128,
     likes: 121,
     liked: false,
+    bookingCount: 843,
   },
   {
     _id: "svc-2",
@@ -43,6 +44,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 84,
     likes: 98,
     liked: false,
+    bookingCount: 412,
   },
   {
     _id: "svc-3",
@@ -56,6 +58,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 256,
     likes: 201,
     liked: true,
+    bookingCount: 2140,
   },
   {
     _id: "svc-4",
@@ -69,6 +72,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 97,
     likes: 76,
     liked: false,
+    bookingCount: 638,
   },
   {
     _id: "svc-5",
@@ -82,6 +86,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 89,
     likes: 312,
     liked: true,
+    bookingCount: 527,
   },
   {
     _id: "svc-6",
@@ -95,6 +100,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 143,
     likes: 187,
     liked: false,
+    bookingCount: 1380,
   },
   {
     _id: "svc-7",
@@ -108,6 +114,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 211,
     likes: 321,
     liked: true,
+    bookingCount: 1920,
   },
   {
     _id: "svc-8",
@@ -121,6 +128,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 61,
     likes: 89,
     liked: false,
+    bookingCount: 294,
   },
   {
     _id: "svc-9",
@@ -134,6 +142,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 172,
     likes: 143,
     liked: false,
+    bookingCount: 765,
   },
   {
     _id: "svc-10",
@@ -147,6 +156,7 @@ const initialServices: ServiceItem[] = [
     reviewCount: 304,
     likes: 267,
     liked: false,
+    bookingCount: 3210,
   },
 ];
 

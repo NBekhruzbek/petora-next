@@ -927,6 +927,13 @@
                   font-weight: 400;
                   color: #9ca3af;
                 }
+
+                .service-booking-count {
+                  font-family: $font;
+                  font-size: 12px;
+                  font-weight: 600;
+                  color: #7c3aed;
+                }
               }
 
               .service-book-btn {
@@ -1110,6 +1117,13 @@
                 font-family: $font;
                 font-size: 13px;
                 color: #6b7280;
+              }
+
+              .booking-booking-count {
+                font-family: $font;
+                font-size: 13px;
+                font-weight: 600;
+                color: #7c3aed;
               }
             }
 

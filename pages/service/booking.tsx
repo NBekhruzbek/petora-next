@@ -52,6 +52,7 @@ const Booking = () => {
     experience: "5+ years experience",
     rating: 4.9,
     reviewCount: 124,
+    bookingCount: 312,
     responseTime: "Usually replies within 15 minutes",
     serviceArea: "Seoul area",
     distance: "3.2 km away",
@@ -301,6 +302,8 @@ const Booking = () => {
                 <Typography className="booking-rating-score">{agentProfile.rating.toFixed(1)}</Typography>
                 <Typography className="booking-rating-sep">·</Typography>
                 <Typography className="booking-rating-count">{agentProfile.reviewCount} reviews</Typography>
+                <Typography className="booking-rating-sep">·</Typography>
+                <Typography className="booking-booking-count">{agentProfile.bookingCount.toLocaleString()} booked</Typography>
               </Stack>
 
               {/* Service chips */}

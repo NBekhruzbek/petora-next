@@ -17,6 +17,7 @@ export type ServiceItem = {
   reviewCount: number;
   likes: number;
   liked?: boolean;
+  bookingCount?: number;
 };
 
 type ServiceCardProps = {
@@ -70,6 +71,16 @@ const ServiceCard = ({ item, onToggleLike }: ServiceCardProps) => {
           />
           <Typography className="rating-value">{item.rating.toFixed(1)}</Typography>
           <Typography className="review-count">({item.reviewCount.toLocaleString()})</Typography>
+          {item.bookingCount !== undefined && (
+            <>
+              <Typography className="service-price-sep">·</Typography>
+              <Typography className="service-booking-count">
+                {item.bookingCount >= 1000
+                  ? `${(item.bookingCount / 1000).toFixed(1)}k`
+                  : item.bookingCount} booked
+              </Typography>
+            </>
+          )}
         </Stack>
 
         <Button
