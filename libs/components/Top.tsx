@@ -30,6 +30,9 @@ const Top = () => {
   const logoutOpen = Boolean(logoutAnchor);
 
   const [loginOpen, setLoginOpen] = useState(false);
+  const [lang, setLang] = useState<"en" | "ko">("en");
+  const [langAnchor, setLangAnchor] = useState<null | HTMLElement>(null);
+  const langOpen = Boolean(langAnchor);
 
   const handleLoginOpen = () => setLoginOpen(true);
   const handleLoginClose = () => setLoginOpen(false);
@@ -138,6 +141,56 @@ const Top = () => {
           </Box>
 
           <Box component={"div"} className="user-box">
+            {/* Language Switcher */}
+            <Box
+              className="lang-switcher"
+              onClick={(e) => setLangAnchor(e.currentTarget)}
+            >
+              <img
+                src={`https://flagcdn.com/w20/${lang === "en" ? "us" : "kr"}.png`}
+                width={18}
+                height={13}
+                alt={lang}
+              />
+              <Typography className="lang-switcher-label">
+                {lang === "en" ? "EN" : "KO"}
+              </Typography>
+            </Box>
+
+            <Menu
+              anchorEl={langAnchor}
+              open={langOpen}
+              onClose={() => setLangAnchor(null)}
+              disableScrollLock
+              sx={{ mt: "8px", zIndex: 10000 }}
+              slotProps={{
+                paper: { elevation: 0, className: "lang-menu-paper" },
+              }}
+              transformOrigin={{ horizontal: "center", vertical: "top" }}
+              anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+              MenuListProps={{ sx: { p: 0 } }}
+            >
+              {(["en", "ko"] as const).map((l) => (
+                <MenuItem
+                  key={l}
+                  selected={lang === l}
+                  onClick={() => {
+                    setLang(l);
+                    setLangAnchor(null);
+                  }}
+                  className="lang-menu-item"
+                >
+                  <img
+                    src={`https://flagcdn.com/w20/${l === "en" ? "us" : "kr"}.png`}
+                    width={18}
+                    height={13}
+                    alt={l}
+                  />
+                  {l === "en" ? "English" : "한국어"}
+                </MenuItem>
+              ))}
+            </Menu>
+
             {authMember ? (
               <>
                 <div
