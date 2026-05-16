@@ -73,24 +73,40 @@ const OurCompany = () => {
             </Stack>
           </Stack>
         </Stack>
+
         <Stack className="right-side">
-          <Box className={"dog-image-wrapper"}>
+          {/* Tilted accent cards behind */}
+          <div className="oc-layer oc-layer-back" />
+          <div className="oc-layer oc-layer-mid" />
+
+          {/* Main card */}
+          <Stack className="oc-card">
             <img
-              className="background-dog"
-              src="./img/our-company-background-dog.png"
-              alt=""
+              className="oc-dog-img"
+              src="./img/pets/petlogin.png"
+              alt="Our company dog"
             />
-          </Box>
-          <Box className={"dog-background"}></Box>
-          <Box className={"rectangle1"}>
-            <img src="./img/icons/Rectangle.png" alt="" />
-          </Box>
-          <Box className={"rectangle2"}>
-            <img src="./img/icons/Rectangle.png" alt="" />
-          </Box>
-          <Box className={"rectangle3"}>
-            <img src="./img/icons/Rectangle.png" alt="" />
-          </Box>
+            {/* Gradient footer inside card */}
+            <div className="oc-card-footer" />
+          </Stack>
+
+          {/* Floating stat badges */}
+          <Stack className="oc-badge oc-badge-1">
+            <span className="oc-badge-num">10+</span>
+            <span className="oc-badge-label">Years Experience</span>
+          </Stack>
+          <Stack className="oc-badge oc-badge-2">
+            <span className="oc-badge-num">500+</span>
+            <span className="oc-badge-label">Happy Pets</span>
+          </Stack>
+          <Stack className="oc-badge oc-badge-3">
+            <span className="oc-badge-num">50+</span>
+            <span className="oc-badge-label">Expert Vets</span>
+          </Stack>
+
+          {/* Decorative dots */}
+          <div className="oc-dot oc-dot-1" />
+          <div className="oc-dot oc-dot-2" />
         </Stack>
       </Stack>
     </Stack>
