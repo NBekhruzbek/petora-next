@@ -17,6 +17,7 @@ import BuildIcon from "@mui/icons-material/Build";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import LogoutIcon from "@mui/icons-material/Logout";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import MyProfile from "@/libs/components/mypage/MyProfile";
 import ServiceManagement from "@/libs/components/mypage/ServiceManagement";
 import BookingsOrders from "@/libs/components/mypage/BookingsOrders";
@@ -180,6 +181,26 @@ const MyPage: NextPage = () => {
           </Stack>
 
           <Stack className="my-page-sidebar-footer">
+            <Button
+              startIcon={<AdminPanelSettingsIcon />}
+              onClick={() => void router.push("/admin")}
+              sx={{
+                width: "100%",
+                justifyContent: "flex-start",
+                textTransform: "none",
+                fontWeight: 700,
+                fontSize: "14px",
+                color: "#6366F1",
+                background: "#EEF2FF",
+                borderRadius: "10px",
+                px: 2,
+                py: 1,
+                mb: 1,
+                "&:hover": { background: "#E0E7FF" },
+              }}
+            >
+              Admin Panel
+            </Button>
             <Button
               className="btn-logout"
               startIcon={<LogoutIcon />}

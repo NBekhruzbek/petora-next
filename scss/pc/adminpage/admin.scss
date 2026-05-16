@@ -1,0 +1,1351 @@
+@use "../../variables.scss" as *;
+
+// ─── Global: MUI Select dropdown menu items ─────────────────────────────────
+// MUI Menu renders in a Portal outside #admin-wrap, so must be global.
+.MuiMenu-root {
+  .MuiMenuItem-root {
+    color: #111827;
+    font-family: $font;
+    font-size: 13px;
+  }
+}
+
+// ─── Design Tokens ──────────────────────────────────────────────────────────
+
+$sidebar-bg: #0f0e17;
+$sidebar-text: rgba(255, 255, 255, 0.5);
+$accent: #6366f1;
+$accent-hover: #5254cc;
+$accent-bg: rgba(99, 102, 241, 0.1);
+$page-bg: #f4f5fa;
+$card-bg: #ffffff;
+$card-border: #e8ecf0;
+$text-1: #111827;
+$text-2: #6b7280;
+$text-3: #9ca3af;
+$radius-card: 16px;
+$radius-btn: 10px;
+$sidebar-width: 260px;
+
+// ─── Root Layout ────────────────────────────────────────────────────────────
+
+#admin-wrap {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  background: $page-bg;
+  font-family: $font;
+
+  // ─── Sidebar ────────────────────────────────────────────────────────
+
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: $sidebar-width;
+    height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid $card-border;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow: hidden;
+
+    .admin-sidebar-brand {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid $card-border;
+
+      .brand-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: $accent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        svg {
+          font-size: 18px;
+          color: #fff;
+        }
+      }
+
+      .brand-text-wrap {
+        .brand-name {
+          font-family: $font;
+          font-size: 17px;
+          font-weight: 800;
+          color: $text-1;
+          letter-spacing: -0.01em;
+          line-height: 1.2;
+        }
+        .brand-badge {
+          font-family: $font;
+          font-size: 9px;
+          font-weight: 700;
+          color: $text-3;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          margin-top: 1px;
+          display: block;
+        }
+      }
+    }
+
+    .admin-sidebar-nav {
+      flex: 1;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 3px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: $card-border;
+        border-radius: 3px;
+      }
+
+      .admin-nav-section-label {
+        font-family: $font;
+        font-size: 9px;
+        font-weight: 700;
+        color: $text-3;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        padding: 14px 14px 6px;
+      }
+
+      .admin-nav-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border-radius: 9px;
+        color: $text-2;
+        font-family: $font;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        transition:
+          background 0.15s,
+          color 0.15s,
+          border-color 0.15s;
+        margin: 0 2px;
+
+        svg {
+          font-size: 18px;
+          flex-shrink: 0;
+          color: $text-3;
+          transition: color 0.15s;
+        }
+
+        &:hover {
+          background: #f9fafb;
+          color: $text-1;
+          svg {
+            color: $accent;
+          }
+        }
+
+        &.active {
+          background: #eef2ff;
+          color: $accent;
+          border-left-color: $accent;
+          font-weight: 700;
+          svg {
+            color: $accent;
+          }
+        }
+      }
+    }
+
+    .admin-sidebar-footer {
+      padding: 8px 8px 16px;
+      border-top: 1px solid $card-border;
+
+      .admin-nav-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border-radius: 9px;
+        color: $text-3;
+        font-family: $font;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          color 0.15s;
+        margin: 0 2px;
+
+        svg {
+          font-size: 18px;
+          flex-shrink: 0;
+          color: $text-3;
+        }
+
+        &:hover {
+          background: #fef2f2;
+          color: #ef4444;
+          svg {
+            color: #ef4444;
+          }
+        }
+      }
+    }
+  }
+
+  // ─── Main Area ──────────────────────────────────────────────────────
+
+  #admin-main {
+    margin-left: $sidebar-width;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: 0;
+    overflow-x: hidden;
+
+    .admin-header {
+      height: 60px;
+      background: $card-bg;
+      border-bottom: 1px solid $card-border;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0 28px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      .admin-header-left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+
+        .admin-header-breadcrumb {
+          font-family: $font;
+          font-size: 13px;
+          font-weight: 500;
+          color: $text-3;
+        }
+        .admin-header-sep {
+          font-size: 14px;
+          color: $card-border;
+        }
+        .admin-header-title {
+          font-family: $font;
+          font-size: 15px;
+          font-weight: 700;
+          color: $text-1;
+        }
+      }
+
+      .admin-header-right {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+
+        .admin-header-avatar {
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: $accent;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          font-family: $font;
+          font-size: 13px;
+          font-weight: 700;
+        }
+
+        .admin-header-name {
+          font-family: $font;
+          font-size: 13px;
+          font-weight: 600;
+          color: $text-1;
+        }
+
+        .admin-header-logout {
+          height: 32px;
+          padding: 0 12px;
+          border-radius: 8px;
+          border: 1px solid $card-border;
+          background: $card-bg;
+          color: $text-2;
+          font-family: $font;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: none;
+          box-shadow: none;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          cursor: pointer;
+          transition:
+            border-color 0.15s,
+            background 0.15s;
+
+          &:hover {
+            border-color: #cbd5e1;
+            background: #f9fafb;
+          }
+
+          svg {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+    #admin-content {
+      padding: 26px 28px;
+      flex: 1;
+      overflow-x: hidden;
+      min-width: 0;
+    }
+  }
+
+  // ─── Page header row ────────────────────────────────────────────────
+
+  .admin-page-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+
+    .admin-page-title {
+      font-family: $font;
+      font-size: 20px;
+      font-weight: 800;
+      color: $text-1;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  // ─── Stat cards ─────────────────────────────────────────────────────
+
+  .admin-stat-card {
+    background: $card-bg;
+    border-radius: $radius-card;
+    border: 1px solid $card-border;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+    transition:
+      box-shadow 0.18s,
+      border-color 0.18s;
+
+    &:hover {
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.09);
+      border-color: #d0d5ff;
+    }
+
+    .stat-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg {
+        font-size: 24px;
+        color: #fff;
+      }
+    }
+
+    .stat-info {
+      min-width: 0;
+      flex: 1;
+
+      .stat-value {
+        font-family: $font;
+        font-size: 24px;
+        font-weight: 800;
+        color: $text-1;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+      }
+
+      .stat-label {
+        font-family: $font;
+        font-size: 10.5px;
+        font-weight: 700;
+        color: $text-3;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-top: 3px;
+      }
+
+      .stat-trend {
+        font-family: $font;
+        font-size: 11px;
+        font-weight: 600;
+        color: #059669;
+        margin-top: 5px;
+      }
+
+      .stat-trend-neutral {
+        font-family: $font;
+        font-size: 11px;
+        font-weight: 600;
+        color: $text-3;
+        margin-top: 5px;
+      }
+    }
+  }
+
+  // ─── Dashboard ──────────────────────────────────────────────────────
+
+  .admin-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .stat-cards-row {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-tables-row {
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+
+      .admin-card {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+
+    .quick-actions-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+  }
+
+  // ─── Card ────────────────────────────────────────────────────────────
+
+  .admin-card {
+    background: $card-bg;
+    border-radius: $radius-card;
+    border: 1px solid $card-border;
+    overflow: hidden;
+
+    .admin-card-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 14px;
+      border-bottom: 1px solid $card-border;
+
+      .admin-card-title {
+        font-family: $font;
+        font-size: 14px;
+        font-weight: 700;
+        color: $text-1;
+      }
+    }
+  }
+
+  // ─── Toolbar ─────────────────────────────────────────────────────────
+
+  .admin-toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid $card-border;
+    flex-wrap: wrap;
+    background: #fafbfc;
+
+    .admin-toolbar-search {
+      .MuiOutlinedInput-root {
+        height: 36px;
+        font-family: $font;
+        font-size: 13px;
+        background: $card-bg;
+        border-radius: 8px;
+        color: $text-1;
+
+        .MuiOutlinedInput-notchedOutline {
+          border-width: 1px;
+        }
+        &:hover .MuiOutlinedInput-notchedOutline {
+          border-width: 1px;
+        }
+        &.Mui-focused .MuiOutlinedInput-notchedOutline {
+          border-width: 1.4px;
+        }
+      }
+      .MuiInputBase-input {
+        color: $text-1;
+        &::placeholder {
+          color: $text-3;
+          opacity: 1;
+        }
+      }
+    }
+
+    .admin-toolbar-select {
+      height: 36px;
+      font-family: $font;
+      font-size: 13px;
+      background: $card-bg;
+      border-radius: 8px;
+      color: $text-1;
+
+      .MuiOutlinedInput-notchedOutline {
+        border-width: 1px;
+      }
+      &:hover .MuiOutlinedInput-notchedOutline {
+        border-width: 1px;
+      }
+      &.Mui-focused .MuiOutlinedInput-notchedOutline {
+        border-width: 1.4px;
+      }
+
+      .MuiSelect-select {
+        color: $text-1;
+      }
+    }
+  }
+
+  // ─── Table ───────────────────────────────────────────────────────────
+
+  .admin-table {
+    width: 100%;
+
+    thead tr th {
+      background: #fafbfc;
+      font-family: $font;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: $text-3;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 9px 16px;
+      border-bottom: 1px solid $card-border;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      transition: background 0.12s;
+
+      &:hover {
+        background: #f8f9fe;
+      }
+
+      td {
+        font-family: $font;
+        font-size: 13.5px;
+        font-weight: 500;
+        color: $text-1;
+        padding: 10px 16px;
+        border-bottom: 1px solid $card-border;
+        vertical-align: middle;
+      }
+
+      &:last-child td {
+        border-bottom: none;
+      }
+    }
+
+    .admin-table-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid $card-border;
+    }
+
+    .admin-table-thumb {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid $card-border;
+      background: #f3f4f6;
+    }
+
+    .admin-name-cell {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+
+    tbody td {
+      .MuiOutlinedInput-notchedOutline {
+        border-width: 1px;
+      }
+      .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+        border-width: 1px;
+      }
+      .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+        border-width: 1.4px;
+      }
+    }
+  }
+
+  // ─── Status chips ────────────────────────────────────────────────────
+
+  .status-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-family: $font;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+
+    // User/Agent statuses
+    &.status-active {
+      background: #ecfdf5;
+      color: #059669;
+    }
+    &.status-paused {
+      background: #fffbeb;
+      color: #d97706;
+    }
+    &.status-blocked {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+    &.status-deleted {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    // Order statuses
+    &.status-pending {
+      background: #fffbeb;
+      color: #d97706;
+    }
+    &.status-processing {
+      background: #eff6ff;
+      color: #3b82f6;
+    }
+    &.status-shipped {
+      background: #eff6ff;
+      color: #3b82f6;
+    }
+    &.status-delivered {
+      background: #ecfdf5;
+      color: #059669;
+    }
+    &.status-cancelled {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    // Post statuses
+    &.status-visible {
+      background: #ecfdf5;
+      color: #059669;
+    }
+    &.status-hidden {
+      background: #fffbeb;
+      color: #d97706;
+    }
+
+    // Report statuses
+    &.status-resolved {
+      background: #ecfdf5;
+      color: #059669;
+    }
+    &.status-dismissed {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+  }
+
+  // ─── Board chips ─────────────────────────────────────────────────────
+
+  .board-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-family: $font;
+    font-size: 10.5px;
+    font-weight: 700;
+
+    &.board-FREE {
+      background: #f0f0ff;
+      color: #6366f1;
+    }
+    &.board-NEWS {
+      background: #eff6ff;
+      color: #3b82f6;
+    }
+    &.board-QNA {
+      background: #ecfdf5;
+      color: #059669;
+    }
+  }
+
+  // ─── Report type chips ───────────────────────────────────────────────
+
+  .report-type-chip {
+    display: inline-flex;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-family: $font;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    &.type-post {
+      background: #f0f0ff;
+      color: #6366f1;
+    }
+    &.type-comment {
+      background: #fffbeb;
+      color: #d97706;
+    }
+    &.type-user {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+  }
+
+  // ─── Drawer form input text color ────────────────────────────────────
+
+  .admin-drawer-body {
+    .MuiInputBase-input {
+      color: $text-1;
+      &::placeholder {
+        color: $text-3;
+        opacity: 1;
+      }
+    }
+    .MuiSelect-select {
+      color: $text-1;
+    }
+    .MuiInputLabel-root {
+      color: $text-2;
+    }
+    .MuiOutlinedInput-notchedOutline {
+      border-width: 1px;
+    }
+    .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+      border-width: 1px;
+    }
+    .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-width: 1.4px;
+    }
+  }
+
+  // ─── Action rows ─────────────────────────────────────────────────────
+
+  .admin-action-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  // ─── Drawer ──────────────────────────────────────────────────────────
+
+  .admin-drawer-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .admin-drawer-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid $card-border;
+      flex-shrink: 0;
+
+      .admin-drawer-title {
+        font-family: $font;
+        font-size: 17px;
+        font-weight: 700;
+        color: $text-1;
+        letter-spacing: -0.01em;
+      }
+    }
+
+    .admin-drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 22px;
+
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: $card-border;
+        border-radius: 2px;
+      }
+
+      // Override global MUI input height for drawer
+      .MuiOutlinedInput-root {
+        height: 40px;
+        font-family: $font;
+        font-size: 14px;
+        border-radius: 9px;
+      }
+      .MuiOutlinedInput-root.MuiInputBase-multiline {
+        height: auto;
+      }
+      .MuiInputLabel-root {
+        font-family: $font;
+        font-size: 13px;
+      }
+    }
+
+    .admin-drawer-footer {
+      padding: 14px 22px;
+      border-top: 1px solid $card-border;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+  }
+
+  // ─── Form grid (inside drawer) ───────────────────────────────────────
+
+  .admin-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+
+    .admin-form-full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  // ─── Image upload (ProductsManager) ──────────────────────────────────
+
+  .admin-upload-zone {
+    border: 2px dashed $card-border;
+    border-radius: 12px;
+    padding: 22px 16px;
+    text-align: center;
+    cursor: pointer;
+    background: #fafbfc;
+    transition:
+      border-color 0.18s,
+      background 0.18s;
+
+    &:hover,
+    &.drag-over {
+      border-color: $accent;
+      background: #f0f0ff;
+    }
+
+    .upload-zone-icon {
+      font-size: 30px;
+      color: $text-3;
+      margin-bottom: 8px;
+    }
+
+    .upload-zone-label {
+      font-family: $font;
+      font-size: 13px;
+      font-weight: 700;
+      color: $text-1;
+    }
+
+    .upload-zone-hint {
+      font-family: $font;
+      font-size: 11.5px;
+      color: $text-3;
+      margin-top: 4px;
+    }
+  }
+
+  .admin-image-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .admin-image-thumb-wrap {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid $card-border;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .admin-image-remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 11px;
+      opacity: 0;
+      transition: opacity 0.15s;
+      border: none;
+    }
+
+    &:hover .admin-image-remove {
+      opacity: 1;
+    }
+  }
+
+  // ─── Community tabs ──────────────────────────────────────────────────
+
+  .admin-tabs {
+    min-height: 46px;
+    border-bottom: 1px solid $card-border;
+    padding: 0 16px;
+
+    .MuiTab-root {
+      font-family: $font;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: $text-2;
+      text-transform: none;
+      min-height: 46px;
+      padding: 0 14px;
+    }
+
+    .Mui-selected {
+      color: $accent;
+    }
+
+    .MuiTabs-indicator {
+      background: $accent;
+      height: 2.5px;
+      border-radius: 3px 3px 0 0;
+    }
+  }
+
+  // ─── Settings ────────────────────────────────────────────────────────
+
+  .admin-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    .settings-section {
+      background: $card-bg;
+      border-radius: $radius-card;
+      border: 1px solid $card-border;
+      padding: 22px 24px;
+
+      .settings-section-title {
+        font-family: $font;
+        font-size: 14px;
+        font-weight: 700;
+        color: $text-1;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid $card-border;
+      }
+    }
+
+    .category-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+  }
+
+  // ─── Button helpers ──────────────────────────────────────────────────
+
+  .admin-primary-btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: $radius-btn;
+    background-color: $accent;
+    color: #fff;
+    font-family: $font;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: none;
+    box-shadow: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    border: none;
+    transition: background 0.15s;
+
+    &:hover {
+      background-color: $accent-hover;
+    }
+    &:disabled {
+      background-color: $card-border;
+      color: $text-3;
+      cursor: not-allowed;
+    }
+  }
+
+  // ─── Common button variants ───────────────────────────────────────────
+
+  // Small action buttons (26px — used inside card rows)
+  .admin-btn-sm {
+    font-size: 11px !important;
+    text-transform: none !important;
+    border-radius: 7px !important;
+    height: 26px !important;
+    padding: 0 9.6px !important;
+    font-weight: 600 !important;
+    font-family: $font !important;
+    box-shadow: none !important;
+    min-width: unset !important;
+    line-height: 1 !important;
+    border: 1px solid !important;
+
+    &.admin-btn-sm-indigo {
+      color: $accent !important;
+      border-color: #e0e7ff !important;
+      &:hover {
+        background: #eef2ff !important;
+      }
+    }
+    &.admin-btn-sm-indigo-bold {
+      color: $accent !important;
+      border-color: #e0e7ff !important;
+      font-weight: 700 !important;
+      &:hover {
+        background: #eef2ff !important;
+      }
+    }
+    &.admin-btn-sm-red {
+      color: #ef4444 !important;
+      border-color: #fee2e2 !important;
+      &:hover {
+        background: #fef2f2 !important;
+      }
+    }
+    &.admin-btn-sm-green {
+      color: #059669 !important;
+      border-color: #d1fae5 !important;
+      &:hover {
+        background: #ecfdf5 !important;
+      }
+    }
+    &.admin-btn-sm-orange {
+      color: #d97706 !important;
+      border-color: #fef3c7 !important;
+      &:hover {
+        background: #fffbeb !important;
+      }
+    }
+    &.admin-btn-sm-gray {
+      color: $text-2 !important;
+      border-color: $card-border !important;
+      &:hover {
+        background: #f9fafb !important;
+      }
+    }
+  }
+
+  // Small 28px edit-style buttons (tables)
+  .admin-btn-edit {
+    font-size: 11px !important;
+    text-transform: none !important;
+    border-radius: 7px !important;
+    height: 28px !important;
+    padding: 0 12px !important;
+    font-weight: 600 !important;
+    font-family: $font !important;
+    box-shadow: none !important;
+    min-width: unset !important;
+    border: 1px solid !important;
+    color: $accent !important;
+    border-color: #e0e7ff !important;
+    &:hover {
+      background: #eef2ff !important;
+    }
+  }
+
+  .admin-btn-delete {
+    font-size: 11px !important;
+    text-transform: none !important;
+    border-radius: 7px !important;
+    height: 28px !important;
+    padding: 0 12px !important;
+    font-weight: 600 !important;
+    font-family: $font !important;
+    box-shadow: none !important;
+    min-width: unset !important;
+    border: 1px solid !important;
+    color: #ef4444 !important;
+    border-color: #fee2e2 !important;
+    &:hover {
+      background: #fef2f2 !important;
+    }
+  }
+
+  // Page-level "Add X" button (36px indigo filled)
+  .admin-btn-page-primary {
+    background-color: $accent !important;
+    color: #fff !important;
+    text-transform: none !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    border-radius: 9px !important;
+    height: 36px !important;
+    box-shadow: none !important;
+    font-family: $font !important;
+    &:hover {
+      background-color: $accent-hover !important;
+      box-shadow: none !important;
+    }
+  }
+
+  // Drawer save button (40px indigo filled)
+  .admin-btn-save {
+    background-color: $accent !important;
+    color: #fff !important;
+    text-transform: none !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+    height: 40px !important;
+    padding: 0 24px !important;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
+    font-family: $font !important;
+    &:hover {
+      background-color: $accent-hover !important;
+    }
+    &.Mui-disabled {
+      background-color: #e5e7eb !important;
+      color: $text-3 !important;
+      box-shadow: none !important;
+    }
+  }
+
+  // Drawer cancel button (40px gray outlined)
+  .admin-btn-cancel-lg {
+    color: $text-2 !important;
+    border: 1px solid $card-border !important;
+    border-radius: 10px !important;
+    height: 40px !important;
+    padding: 0 20px !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    font-family: $font !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    &:hover {
+      background: #f9fafb !important;
+    }
+  }
+
+  // ─── Drawer sticky header & footer ───────────────────────────────────
+
+  .admin-drawer-sticky-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 18px 24px;
+    background: $card-bg;
+    border-bottom: 1px solid $card-border;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-shrink: 0;
+    gap: 16px;
+  }
+
+  .admin-drawer-sticky-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 24px;
+    background: $card-bg;
+    border-top: 1px solid $card-border;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+
+  // ─── Section cards (used in detail drawers) ───────────────────────────
+
+  .admin-detail-card {
+    background: $card-bg;
+    border-radius: 14px;
+    border: 1px solid #f0f1f5;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  // ─── Section label (uppercase gray) ──────────────────────────────────
+
+  .admin-section-label {
+    font-family: $font;
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-3;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  // ─── External field label (above inputs) ─────────────────────────────
+
+  .admin-field-label {
+    font-family: $font;
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-2;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  // ─── Status select (in table rows) ───────────────────────────────────
+
+  .admin-status-select {
+    font-size: 12px !important;
+    min-width: 130px;
+    height: 32px !important;
+    border-radius: 8px !important;
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: $card-border !important;
+    }
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: #c7d2fe !important;
+    }
+    .MuiSelect-icon {
+      color: $text-3;
+    }
+    .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-width: 1.4px !important;
+    }
+  }
+
+  // ─── Icon button close ────────────────────────────────────────────────
+
+  .admin-icon-btn-close {
+    color: $text-2 !important;
+    &:hover {
+      background: #f3f4f6 !important;
+      color: $text-1 !important;
+    }
+  }
+
+  // ─── Count/meta typography ────────────────────────────────────────────
+
+  .admin-meta-count {
+    font-family: $font;
+    font-size: 12px;
+    color: $text-3;
+    margin-left: auto;
+  }
+
+  // ─── Table cell text helpers ─────────────────────────────────────────
+
+  .admin-cell-name {
+    font-family: $font;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-1;
+  }
+
+  .admin-cell-meta {
+    font-family: $font;
+    font-size: 12px;
+    color: $text-2;
+  }
+
+  .admin-cell-date {
+    font-family: $font;
+    font-size: 12px;
+    color: $text-3;
+  }
+
+  .admin-cell-secondary {
+    font-family: $font;
+    font-size: 12px;
+    color: $text-2;
+    font-weight: 500;
+  }
+
+  // ─── Table empty state ────────────────────────────────────────────────
+
+  .admin-table-empty {
+    font-family: $font;
+    font-size: 14px;
+    color: $text-3;
+    text-align: center;
+  }
+
+  // ─── Drawer title typography ──────────────────────────────────────────
+
+  .admin-drawer-title-text {
+    font-family: $font;
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-1;
+    line-height: 1.2;
+  }
+
+  .admin-drawer-subtitle-text {
+    font-family: $font;
+    font-size: 12px;
+    color: $text-3;
+    margin-top: 2px;
+  }
+}
