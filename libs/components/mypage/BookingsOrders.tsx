@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { Box, Rating, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Button, Rating, Stack, Tab, Tabs, Typography } from "@mui/material";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
 import CheckIcon from "@mui/icons-material/Check";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -43,6 +44,18 @@ const BOOKINGS = [
     reservations: 89,
     request: "Special diet required, medication at 8pm.",
     status: "accepted",
+  },
+  {
+    id: 4,
+    service: "Premium Grooming",
+    category: "Grooming",
+    image: "/img/services/grooming.jpg",
+    date: "Apr 28, 2026 · 11:00 AM",
+    price: "₩45,000",
+    rating: 4.8,
+    reservations: 214,
+    request: "Full groom including nail trim.",
+    status: "completed",
   },
 ];
 
@@ -245,6 +258,10 @@ const BookingsOrders = () => {
   const getBookingStatus = (item: (typeof BOOKINGS)[number]) =>
     bookingStatuses[item.id] || item.status;
 
+  const goToWriteReview = () => {
+    router.push("/service/booking?writeReview=true");
+  };
+
   const formatWon = (value: number) => `₩${value.toLocaleString()}`;
 
   return (
@@ -348,6 +365,15 @@ const BookingsOrders = () => {
                     <Box className={`booking-status-badge ${status}`}>
                       {status}
                     </Box>
+                    {status === "completed" && (
+                      <Button
+                        className="write-review-btn"
+                        startIcon={<RateReviewOutlinedIcon />}
+                        onClick={goToWriteReview}
+                      >
+                        Write Review
+                      </Button>
+                    )}
                   </Stack>
                 </Stack>
               );
@@ -508,6 +534,7 @@ const BookingsOrders = () => {
           </Stack>
         )}
       </Box>
+
     </Stack>
   );
 };

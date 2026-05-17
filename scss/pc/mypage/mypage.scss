@@ -1163,6 +1163,56 @@
                   background: #fffbeb;
                   border: 1px solid rgba(146, 64, 14, 0.22);
                 }
+
+                &.completed {
+                  color: #166534;
+                  background: #ecfdf3;
+                  border: 1px solid rgba(22, 101, 52, 0.22);
+                }
+              }
+
+              .write-review-btn {
+                text-transform: none !important;
+                font-family: $font;
+                font-size: 12px !important;
+                font-weight: 700 !important;
+                color: #fff !important;
+                border-radius: 8px !important;
+                padding: 5px 14px !important;
+                white-space: nowrap;
+                border: 2px solid transparent !important;
+                background:
+                  linear-gradient(#c390ed, #410075) padding-box,
+                  linear-gradient(
+                      120deg,
+                      #e83333 0%,
+                      #d3b7ff 35%,
+                      #ffffff 55%,
+                      #b56cff 75%,
+                      #5f18b7 100%
+                    )
+                    border-box !important;
+                background-size: 100% 100%, 250% 250% !important;
+                background-position: 0 0, 0% 50% !important;
+                animation: ctaBorderFlow 3.6s linear infinite;
+                box-shadow: none;
+
+                &:hover {
+                  box-shadow: 0 6px 16px rgba(65, 0, 117, 0.25);
+                  transform: translateY(-1px);
+                }
+
+                .MuiSvgIcon-root {
+                  font-size: 15px !important;
+                }
+              }
+
+              .review-submitted-text {
+                font-family: $font;
+                font-size: 12px !important;
+                font-weight: 600;
+                color: #166534;
+                white-space: nowrap;
               }
             }
           }
@@ -3936,6 +3986,88 @@
             0 0,
             250% 50%;
         }
+      }
+    }
+  }
+}
+
+// ── Review dialog (portal-rendered, must be global) ──
+.review-dialog-paper {
+  border-radius: 20px !important;
+  padding: 8px !important;
+  min-width: 420px !important;
+  box-shadow: 0 24px 60px rgba(65, 0, 117, 0.15) !important;
+
+  .review-dialog-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: $font;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    color: #111;
+    padding-bottom: 4px !important;
+
+    .review-dialog-close {
+      color: #9ca3af;
+      &:hover { color: #111; }
+    }
+  }
+
+  .review-dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 8px !important;
+
+    .review-dialog-service {
+      font-family: $font;
+      font-size: 14px !important;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .review-dialog-rating-row {
+      gap: 10px;
+
+      .review-dialog-rating-label {
+        font-family: $font;
+        font-size: 14px !important;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .review-dialog-stars {
+        .MuiRating-iconFilled { color: #f59e0b; }
+        .MuiRating-iconEmpty { color: #d1d5db; }
+      }
+    }
+
+    .review-dialog-textfield {
+      .MuiOutlinedInput-root {
+        border-radius: 12px !important;
+        font-family: $font;
+        font-size: 14px;
+
+        &:hover fieldset { border-color: #410075 !important; }
+        &.Mui-focused fieldset { border-color: #410075 !important; }
+      }
+    }
+
+    .review-dialog-submit {
+      height: 44px !important;
+      border-radius: 12px !important;
+      background-color: #410075 !important;
+      color: #fff !important;
+      font-family: $font;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      text-transform: none !important;
+
+      &:hover { background-color: #2d0052 !important; }
+      &.Mui-disabled {
+        background-color: #e5e7eb !important;
+        color: #9ca3af !important;
       }
     }
   }

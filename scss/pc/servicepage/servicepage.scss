@@ -1754,6 +1754,236 @@
           flex-direction: row;
           align-items: flex-start;
           gap: 34px;
+          flex-wrap: wrap;
+
+          .write-review-panel {
+            width: 100%;
+            border-radius: 20px;
+            border: 1.5px solid #e9d5ff;
+            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
+            padding: 32px 36px;
+            gap: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+
+            // Left column — title + rating
+            .write-review-left {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              gap: 20px;
+              min-width: 240px;
+              padding-right: 36px;
+              border-right: 1.5px solid #f3e8ff;
+
+              .write-review-panel-title {
+                font-family: $font;
+                font-size: 20px;
+                font-weight: 800;
+                color: #111;
+              }
+
+              .write-review-rating-row {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                .write-review-label {
+                  font-family: $font;
+                  font-size: 13px;
+                  font-weight: 600;
+                  color: #6b7280;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                }
+
+                .write-review-stars {
+                  font-size: 36px !important;
+                  .MuiRating-iconFilled { color: #f59e0b; }
+                  .MuiRating-iconEmpty { color: #e5e7eb; }
+                }
+              }
+            }
+
+            // Right column — textarea + submit
+            .write-review-right {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              gap: 16px;
+              padding-left: 36px;
+
+              .write-review-textfield {
+                flex: 1;
+
+                .MuiOutlinedInput-root {
+                  height: 100%;
+                  border-radius: 12px !important;
+                  font-family: $font;
+                  font-size: 14px;
+                  color: #111;
+                  align-items: flex-start;
+
+                  fieldset { border-color: #e9d5ff !important; }
+                  &:hover fieldset { border-color: #410075 !important; }
+                  &.Mui-focused fieldset { border-color: #410075 !important; }
+                }
+              }
+
+              .write-review-images-row {
+                gap: 10px;
+
+                .write-review-img-preview {
+                  position: relative;
+                  width: 72px;
+                  height: 72px;
+                  border-radius: 10px;
+                  overflow: hidden;
+                  flex-shrink: 0;
+
+                  img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                  }
+
+                  .write-review-img-remove {
+                    position: absolute;
+                    top: 3px;
+                    right: 3px;
+                    width: 18px;
+                    height: 18px;
+                    border-radius: 50%;
+                    background: rgba(0, 0, 0, 0.55);
+                    color: #fff;
+                    font-size: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    line-height: 1;
+
+                    &:hover { background: rgba(239, 68, 68, 0.85); }
+                  }
+                }
+
+                .write-review-img-upload {
+                  width: 72px;
+                  height: 72px;
+                  border-radius: 10px;
+                  border: 1.5px dashed #c4b5fd;
+                  background: #faf5ff;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 2px;
+                  cursor: pointer;
+                  transition: border-color 0.2s, background 0.2s;
+                  flex-shrink: 0;
+
+                  &:hover {
+                    border-color: #410075;
+                    background: #f3e8ff;
+                  }
+
+                  .write-review-img-upload-icon {
+                    font-size: 22px;
+                    color: #7c3aed;
+                    line-height: 1;
+                  }
+
+                  .write-review-img-upload-text {
+                    font-family: $font;
+                    font-size: 10px;
+                    font-weight: 600;
+                    color: #7c3aed;
+                  }
+                }
+              }
+
+              .write-review-submit-btn {
+                align-self: flex-end;
+                min-width: 160px;
+                height: 38px;
+                border-radius: 10px;
+                border: 2px solid transparent;
+                background:
+                  linear-gradient(#c390ed, #410075) padding-box,
+                  linear-gradient(
+                      120deg,
+                      #e83333 0%,
+                      #d3b7ff 35%,
+                      #ffffff 55%,
+                      #b56cff 75%,
+                      #5f18b7 100%
+                    )
+                    border-box;
+                background-size: 100% 100%, 250% 250%;
+                background-position: 0 0, 0% 50%;
+                animation: ctaBorderFlow 3.6s linear infinite;
+                color: #fff !important;
+                font-family: $font;
+                font-size: 15px;
+                font-weight: 700;
+                text-transform: none;
+                box-shadow: none;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+                &:hover {
+                  background:
+                    linear-gradient(#d3acf2, #8527d3) padding-box,
+                    linear-gradient(
+                        120deg,
+                        #c27bff 0%,
+                        #f3e4ff 45%,
+                        #ffffff 60%,
+                        #d190ff 78%,
+                        #7f2ed8 100%
+                      )
+                      border-box;
+                  box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+                  transform: translateY(-1px);
+                }
+
+                &.Mui-disabled {
+                  background: #e5e7eb !important;
+                  border-color: transparent !important;
+                  color: #9ca3af !important;
+                  animation: none !important;
+                }
+              }
+
+              @keyframes ctaBorderFlow {
+                0% { background-position: 0 0, 0% 50%; }
+                50% { background-position: 0 0, 100% 50%; }
+                100% { background-position: 0 0, 0% 50%; }
+              }
+            }
+
+            .write-review-success {
+              width: 100%;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+              padding: 20px 0;
+
+              .write-review-success-title {
+                font-family: $font;
+                font-size: 20px;
+                font-weight: 800;
+                color: #166534;
+              }
+
+              .write-review-success-sub {
+                font-family: $font;
+                font-size: 14px;
+                color: #4b5563;
+              }
+            }
+          }
 
           .review-summary-panel,
           .review-cards-panel {
