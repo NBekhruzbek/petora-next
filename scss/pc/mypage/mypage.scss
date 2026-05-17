@@ -467,6 +467,7 @@
             background-color: #ffffffff !important;
             border-radius: 6px !important;
             border: 1px solid #e0e7ff !important;
+            padding: 2px 8px;
             .MuiTypography-root {
               font-size: 12px !important;
               font-weight: 700 !important;
@@ -541,6 +542,269 @@
 
             textarea {
               padding: 0 !important;
+            }
+          }
+        }
+
+        .avatar-box {
+          position: relative;
+          display: inline-block;
+        }
+
+        .username-field-wrapper {
+          position: relative;
+        }
+
+        .field-label-wrapper {
+          .MuiSvgIcon-root {
+            font-size: 18px !important;
+            color: #9ca3af !important;
+          }
+        }
+
+        // Profile header text
+        .profile-header-card {
+          padding: 32px !important;
+
+          .avatar-upload-label {
+            cursor: pointer;
+            display: block;
+            position: relative;
+          }
+
+          .upload-btn {
+            .MuiSvgIcon-root {
+              font-size: 20px;
+              color: #4b5563;
+            }
+          }
+
+          .profile-name {
+            font-weight: 800;
+            color: #000;
+          }
+
+          .agent-chip {
+            background-color: #f3e8ff !important;
+            color: #6b21a8 !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+          }
+
+          .agent-role {
+            color: #410075;
+            font-weight: 600;
+            font-size: 15px;
+          }
+
+          .member-since {
+            color: #4b5563;
+            font-weight: 500;
+          }
+
+          .profile-bio {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 400;
+            max-width: 500px;
+          }
+        }
+
+        // Section cards padding
+        .info-form-card {
+          padding: 32px;
+
+          .section-title {
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 8px;
+
+            &.cert-section-title {
+              margin-bottom: 0;
+            }
+          }
+
+          .field-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4b5563;
+          }
+        }
+
+        // Certifications
+        .cert-section-icon {
+          font-size: 22px !important;
+          color: #410075 !important;
+        }
+
+        .add-cert-btn {
+          border-color: #410075 !important;
+          color: #410075 !important;
+          text-transform: none !important;
+          font-weight: 600 !important;
+          border-radius: 8px !important;
+
+          &:hover {
+            border-color: #6b21a8 !important;
+            color: #6b21a8 !important;
+          }
+        }
+
+        // Multi-select
+        .chips-display {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          padding: 6px 0;
+
+          &.view-mode {
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            padding: 10px 14px;
+            min-height: 56px;
+            align-items: center;
+            background-color: #ffffff;
+          }
+        }
+
+        .multi-select-value {
+          color: #000000 !important;
+          font-weight: 500 !important;
+          -webkit-text-fill-color: #000000 !important;
+        }
+
+        .select-chip {
+          background-color: #f3e8ff !important;
+          color: #6b21a8 !important;
+          font-weight: 600 !important;
+          font-size: 12px !important;
+        }
+
+        .info-chip {
+          background-color: #f3e8ff !important;
+          color: #6b21a8 !important;
+          font-weight: 600 !important;
+          font-size: 12px !important;
+        }
+
+        .multi-select-placeholder {
+          color: #9ca3af;
+          font-size: 14px;
+        }
+
+        .no-selection-text {
+          color: #9ca3af;
+          font-size: 14px;
+        }
+
+        .multi-select-menu {
+          border-radius: 10px !important;
+          box-shadow: 0 8px 24px rgba(65, 0, 117, 0.1) !important;
+
+          .multi-select-item {
+            padding: 6px 12px;
+            gap: 4px;
+
+            &.Mui-selected {
+              background-color: #faf5ff !important;
+            }
+
+            &:hover {
+              background-color: #f3e8ff !important;
+            }
+          }
+
+          .multi-select-checkbox {
+            padding: 4px;
+            color: #9ca3af;
+
+            &.Mui-checked {
+              color: #410075 !important;
+            }
+          }
+        }
+
+        .no-certs-text {
+          color: #9ca3af;
+          font-size: 14px;
+        }
+
+        .cert-card {
+          border: 1.5px solid rgba(0, 0, 0, 0.07);
+          border-radius: 12px;
+          overflow: hidden;
+          position: relative;
+          background-color: #faf5ff;
+
+          &.editable {
+            border-color: #e9d5ff;
+          }
+
+          .cert-upload-label {
+            cursor: pointer;
+            display: block;
+            position: relative;
+          }
+
+          .cert-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+          }
+
+          .cert-placeholder {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f3e8ff;
+
+            .MuiSvgIcon-root {
+              font-size: 48px;
+              color: #c084fc;
+            }
+          }
+
+          .cert-upload-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.28);
+            transition: background-color 0.2s;
+
+            &:hover {
+              background-color: rgba(0, 0, 0, 0.48);
+            }
+
+            .MuiSvgIcon-root {
+              font-size: 28px;
+              color: #fff;
+            }
+
+            .cert-upload-text {
+              font-size: 12px;
+              color: #fff;
+              font-weight: 600;
+            }
+          }
+
+          .cert-delete-btn {
+            position: absolute !important;
+            top: 6px !important;
+            right: 6px !important;
+            background-color: rgba(255, 255, 255, 0.9) !important;
+
+            &:hover {
+              background-color: #fee2e2 !important;
+            }
+
+            .MuiSvgIcon-root {
+              font-size: 16px;
+              color: #ef4444;
             }
           }
         }
