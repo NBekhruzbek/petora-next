@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { Box, Button, Rating, Stack, Tab, Tabs, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Rating,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
 import CheckIcon from "@mui/icons-material/Check";
@@ -154,8 +162,22 @@ const TruckIcon = ({ className }: { className?: string }) => (
   >
     {/* Cargo box — purple, LEFT (back of truck) */}
     <rect x="1" y="3" width="33" height="17" rx="2" fill="#6f2cff" />
-    <rect x="1" y="3" width="33" height="4" rx="2" fill="rgba(255,255,255,0.12)" />
-    <rect x="2" y="4" width="1" height="15" rx="0.5" fill="rgba(255,255,255,0.22)" />
+    <rect
+      x="1"
+      y="3"
+      width="33"
+      height="4"
+      rx="2"
+      fill="rgba(255,255,255,0.12)"
+    />
+    <rect
+      x="2"
+      y="4"
+      width="1"
+      height="15"
+      rx="0.5"
+      fill="rgba(255,255,255,0.22)"
+    />
 
     {/* Cab — #F0F4F9, RIGHT (front of truck, facing right) */}
     <path
@@ -166,7 +188,15 @@ const TruckIcon = ({ className }: { className?: string }) => (
       strokeLinejoin="round"
     />
     {/* Driver window */}
-    <rect x="36" y="4.5" width="9" height="7" rx="1.2" fill="#bae6fd" opacity="0.85" />
+    <rect
+      x="36"
+      y="4.5"
+      width="9"
+      height="7"
+      rx="1.2"
+      fill="#bae6fd"
+      opacity="0.85"
+    />
 
     {/* Headlight */}
     <rect x="52.5" y="15.5" width="2" height="2.5" rx="0.8" fill="#fde68a" />
@@ -187,7 +217,11 @@ const TruckIcon = ({ className }: { className?: string }) => (
 );
 
 const STAGES = [
-  { label: ["Order", "Processed"], Icon: AssignmentTurnedInOutlinedIcon, pct: 0 },
+  {
+    label: ["Order", "Processed"],
+    Icon: AssignmentTurnedInOutlinedIcon,
+    pct: 0,
+  },
   { label: ["Order", "Shipped"], Icon: Inventory2OutlinedIcon, pct: 33 },
   { label: ["Order", "En Route"], Icon: LocalShippingOutlinedIcon, pct: 66 },
   { label: ["Order", "Arrived"], Icon: HomeOutlinedIcon, pct: 100 },
@@ -201,7 +235,10 @@ const DeliveryTracker = ({
   estimatedDeliveryHours: number;
 }) => {
   const totalMs = estimatedDeliveryHours * 3_600_000;
-  const pct = Math.min(Math.max(((Date.now() - orderTimestamp) / totalMs) * 100, 0), 100);
+  const pct = Math.min(
+    Math.max(((Date.now() - orderTimestamp) / totalMs) * 100, 0),
+    100,
+  );
 
   return (
     <Box className="delivery-tracker">
@@ -260,6 +297,10 @@ const BookingsOrders = () => {
 
   const goToWriteReview = () => {
     router.push("/service/booking?writeReview=true");
+  };
+
+  const goToWriteProductReview = () => {
+    router.push("/shop/detail?writeReview=true");
   };
 
   const formatWon = (value: number) => `₩${value.toLocaleString()}`;
@@ -421,9 +462,28 @@ const BookingsOrders = () => {
                             {item.orderDate}
                           </Typography>
                         </Stack>
-                        {item.status === "delivered" && (
-                          <Box className="order-status-badge delivered">
-                            Delivered
+                        {item.status === "delivered" ? (
+                          <Stack
+                            spacing={1}
+                            width={"220px"}
+                            flexDirection={"row"}
+                            justifyContent={"space-between"}
+                            alignItems="flex-end"
+                          >
+                            <Box className="order-status-badge delivered">
+                              Delivered
+                            </Box>
+                            <Button
+                              className="write-review-btn"
+                              startIcon={<RateReviewOutlinedIcon />}
+                              onClick={goToWriteProductReview}
+                            >
+                              Write Review
+                            </Button>
+                          </Stack>
+                        ) : (
+                          <Box className={`order-status-badge ${item.status}`}>
+                            {item.status}
                           </Box>
                         )}
                       </Stack>
@@ -534,7 +594,6 @@ const BookingsOrders = () => {
           </Stack>
         )}
       </Box>
-
     </Stack>
   );
 };

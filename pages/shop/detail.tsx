@@ -13,7 +13,9 @@ import {
   Typography,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import TextField from "@mui/material/TextField";
 import RelatedServices from "@/libs/components/servicepage/RelatedServices";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
@@ -149,11 +151,47 @@ const Detail = () => {
     "/img/services/walking.jpg",
     "/img/services/boarding.png",
   ];
+  const router = useRouter();
+  const writeReviewRef = useRef<HTMLDivElement | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(312);
   const [quantity, setQuantity] = useState(1);
   const [value, setValue] = useState(0);
+  const [writeReviewRating, setWriteReviewRating] = useState<number | null>(null);
+  const [writeReviewText, setWriteReviewText] = useState("");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewImages, setReviewImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (router.query.writeReview === "true") {
+      setValue(1);
+      setTimeout(() => {
+        writeReviewRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 300);
+    }
+  }, [router.query.writeReview]);
+
+  const handleReviewImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setReviewImages((prev) => [...prev, ev.target?.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = "";
+  };
+
+  const removeReviewImage = (index: number) => {
+    setReviewImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleWriteReviewSubmit = () => {
+    if (!writeReviewRating) return;
+    setReviewSubmitted(true);
+  };
   const [reviewPage, setReviewPage] = useState(1);
   const [expandedReviews, setExpandedReviews] = useState<
     Record<string, boolean>
@@ -398,6 +436,65 @@ const Detail = () => {
 
           {value === 1 && (
             <Stack className="detail-tab-panel review-tab-panel">
+
+              {router.query.writeReview === "true" && (
+                <Stack className="write-review-panel" ref={writeReviewRef}>
+                  {reviewSubmitted ? (
+                    <Stack className="write-review-success">
+                      <Typography className="write-review-success-title">✓ Thank you for your review!</Typography>
+                      <Typography className="write-review-success-sub">Your feedback helps other pet owners find the best products.</Typography>
+                    </Stack>
+                  ) : (
+                    <>
+                      <Stack className="write-review-left">
+                        <Typography className="write-review-panel-title">Write a Review</Typography>
+                        <Stack className="write-review-rating-row">
+                          <Typography className="write-review-label">Your Rating</Typography>
+                          <Rating
+                            value={writeReviewRating}
+                            onChange={(_e, val) => setWriteReviewRating(val)}
+                            className="write-review-stars"
+                          />
+                        </Stack>
+                      </Stack>
+                      <Stack className="write-review-right">
+                        <TextField
+                          fullWidth
+                          multiline
+                          rows={5}
+                          placeholder="Share your experience with this product..."
+                          value={writeReviewText}
+                          onChange={(e) => setWriteReviewText(e.target.value)}
+                          className="write-review-textfield"
+                        />
+                        <Stack className="write-review-images-row" direction="row" flexWrap="wrap">
+                          {reviewImages.map((src, i) => (
+                            <Box key={i} className="write-review-img-preview">
+                              <img src={src} alt={`upload-${i}`} />
+                              <Box className="write-review-img-remove" onClick={() => removeReviewImage(i)}>✕</Box>
+                            </Box>
+                          ))}
+                          {reviewImages.length < 4 && (
+                            <label className="write-review-img-upload">
+                              <input hidden type="file" accept="image/*" multiple onChange={handleReviewImageUpload} />
+                              <Box className="write-review-img-upload-icon">+</Box>
+                              <Typography className="write-review-img-upload-text">Add Photo</Typography>
+                            </label>
+                          )}
+                        </Stack>
+                        <Button
+                          className="write-review-submit-btn"
+                          disabled={!writeReviewRating}
+                          onClick={handleWriteReviewSubmit}
+                        >
+                          Submit Review
+                        </Button>
+                      </Stack>
+                    </>
+                  )}
+                </Stack>
+              )}
+
               <Stack className="review-summary-panel">
                 <Typography className="review-summary-title">
                   {reviewSummary.title}

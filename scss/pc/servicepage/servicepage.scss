@@ -1815,10 +1815,8 @@
               padding-left: 36px;
 
               .write-review-textfield {
-                flex: 1;
-
                 .MuiOutlinedInput-root {
-                  height: 100%;
+                  min-height: 140px !important;
                   border-radius: 12px !important;
                   font-family: $font;
                   font-size: 14px;

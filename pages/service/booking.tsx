@@ -721,7 +721,7 @@ const Booking = () => {
                       <TextField
                         fullWidth
                         multiline
-                        rows={4}
+                        rows={5}
                         placeholder="Share your experience with this service..."
                         value={writeReviewText}
                         onChange={(e) => setWriteReviewText(e.target.value)}
