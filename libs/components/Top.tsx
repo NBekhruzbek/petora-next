@@ -98,11 +98,11 @@ const Top = () => {
                 Service
               </div>
             </Link>
-            <Link href={"/discovery"}>
+            <Link href={"/agents"}>
               <div
-                className={`nav-item ${router.pathname === "/discovery" ? "active" : ""}`}
+                className={`nav-item ${router.pathname.startsWith("/agents") ? "active" : ""}`}
               >
-                Discovery
+                Agents
               </div>
             </Link>
             <Link href={"/shop"}>

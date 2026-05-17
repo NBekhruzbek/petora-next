@@ -156,10 +156,10 @@ const Footer = () => {
                   Service
                 </div>
               </Link>
-              <Link href={"/discovery"}>
+              <Link href={"/agents"}>
                 <div className="navLink-text">
                   <FiberManualRecordOutlinedIcon style={{ fontSize: "12px" }} />{" "}
-                  Discovery
+                  Agents
                 </div>
               </Link>
             </Box>

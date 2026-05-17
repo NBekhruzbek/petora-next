@@ -2,7 +2,7 @@ import { Stack } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import ServiceHeader from "../headers/ServiceHeader";
-import DiscoveryHeader from "../headers/DiscoveryHeader";
+import AgentsHeader from "../headers/AgentsHeader";
 import ShopHeader from "../headers/ShopHeader";
 import CommunityHeader from "../headers/CommunityHeader";
 import MyPageHeader from "../headers/MyPageHeader";
@@ -21,10 +21,10 @@ const withLayoutBasic = (Component: any) => {
             <ServiceHeader />
           </Stack>
         );
-      case "/discovery":
+      case "/agents":
         return (
-          <Stack id={"discovery-top"}>
-            <DiscoveryHeader />
+          <Stack id={"agents-top"}>
+            <AgentsHeader />
           </Stack>
         );
       case "/shop":

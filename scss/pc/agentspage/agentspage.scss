@@ -1,0 +1,1043 @@
+@use "../../variables.scss" as *;
+
+#pc-wrap {
+  #agents-top {
+    background-color: #f2e2ff;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 270px;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C360,120 1080,0 1440,60 L1440,120 L0,120 Z' fill='%23ffffff'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
+
+    .agents-top {
+      padding-top: 40px;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .text-area {
+        position: relative;
+        margin-top: 260px;
+        width: 100%;
+        gap: 15px;
+        .text1 {
+          /* Web/36px-Display/Bold */
+          font-family: Assistant;
+          font-size: 36px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 48px; /* 133.333% */
+          text-transform: uppercase;
+          color: var(--Primary-Purple3, #410075);
+        }
+        .text2 {
+          font-family: Assistant;
+          font-size: 36px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 48px;
+          text-transform: uppercase;
+          color: var(--Secondary-Green5, #a1be97);
+          white-space: nowrap;
+        }
+        .text3 {
+          width: 387px;
+          height: 90px;
+          /* Web/24px-Display/Regular */
+          font-family: Assistant;
+          font-size: 24px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 30px; /* 125% */
+          color: var(--Neutral-700, #595959);
+        }
+        .hand-icon {
+          margin-left: 15px;
+          animation: scrollWiggle linear both;
+          animation-timeline: scroll();
+          animation-range: 0% 100%;
+        }
+      }
+      .circle-background {
+        position: initial;
+        width: 826px;
+        z-index: 0;
+        margin-top: 10px;
+
+        .ellipse {
+          position: absolute;
+          top: 96px;
+          left: 90px;
+          width: 82%;
+          z-index: -10;
+        }
+        .dog-icon {
+          position: absolute;
+          border-radius: 167.764px;
+          top: 280px;
+          left: 880px;
+          z-index: 9999;
+          background: var(--Secondary-Green4, #6ab052);
+          animation: floatSide 4s ease-in-out infinite;
+        }
+        .cat-icon {
+          position: absolute;
+          border-radius: 213.931px;
+          top: 430px;
+          left: 80px;
+          background: var(--Secondary-Red2, #c80006);
+          animation: floatSide 4s ease-in-out infinite;
+        }
+      }
+      .dogs-image {
+        position: relative;
+        width: 1020px;
+        height: 750px;
+        margin-top: 35px;
+        z-index: 10;
+        animation: productReveal 1s ease-out forwards;
+      }
+    }
+  }
+  // ─── Agent Listing Page ───────────────────────────────────────────────────────
+
+  .agents-page {
+    width: 100%;
+  }
+
+  .agents-listing-page {
+    width: 100%;
+    padding-bottom: 80px;
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 0;
+    }
+
+    .agents-page-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 32px;
+      font-family: $font;
+    }
+
+    .agents-main {
+      display: flex;
+      flex-direction: row;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    // ── Sidebar (same styles as servicepage .category) ──
+    .category {
+      width: 250px;
+      flex: 0 0 300px;
+
+      .search-box {
+        width: 280px;
+        height: 46px;
+        padding: 4px;
+        border-radius: 12px;
+        border: 1px solid #d6d6d6;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 6px 14px rgba(20, 20, 20, 0.08);
+
+        .text-field {
+          flex: 1;
+          height: 100%;
+          padding: 0 10px;
+          font-family: $font;
+          font-size: 14px;
+          font-weight: 500;
+          color: #1f1f1f;
+
+          input {
+            height: 100%;
+            padding: 0;
+          }
+          input::placeholder {
+            color: #8a8a8a;
+            opacity: 1;
+          }
+        }
+
+        .search-button {
+          min-width: 38px;
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          background: transparent;
+          color: #eab308;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      .divider {
+        width: 282px;
+        height: 2px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        background-color: #9b9a9a;
+      }
+
+      .category-section {
+        width: 280px;
+        gap: 14px;
+        background: #fff;
+
+        .category-header {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+
+          .category-title {
+            font-family: $font;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 36px;
+            color: #000;
+          }
+
+          .category-toggle {
+            width: 12px;
+            height: 12px;
+            border-right: 2px solid #111;
+            border-top: 2px solid #111;
+            transform: rotate(135deg);
+            margin-right: 2px;
+            transition: transform 0.3s ease;
+            &.is-open {
+              transform: rotate(-45deg);
+            }
+          }
+        }
+
+        .category-list {
+          gap: 14px;
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition:
+            max-height 0.25s ease,
+            opacity 0.2s ease;
+          &.is-open {
+            max-height: 400px;
+            opacity: 1;
+          }
+
+          .category-option {
+            flex-direction: row;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+
+            .category-checkbox {
+              position: relative;
+              width: 24px;
+              height: 24px;
+              border-radius: 8px;
+              background: #fff;
+              border: 2px solid #111;
+            }
+
+            .category-checkbox::after {
+              content: "";
+              position: absolute;
+              width: 8px;
+              height: 12px;
+              border: solid transparent;
+              border-width: 0 2.5px 2.5px 0;
+              left: 6.5px;
+              top: 3px;
+              transform: rotate(45deg);
+            }
+
+            .category-label {
+              font-family: $font;
+              font-size: 18px;
+              font-weight: 600;
+              line-height: 1.2;
+              color: #3a3a3a;
+            }
+          }
+
+          .category-option.is-selected .category-checkbox {
+            background: #111;
+          }
+          .category-option.is-selected .category-checkbox::after {
+            border-color: #f6c200;
+          }
+        }
+      }
+    }
+
+    // ── Grid area ──
+    .sorting-agents {
+      flex: 1;
+      min-width: 0;
+      gap: 20px;
+
+      .filter-section-wrap {
+        display: flex;
+        justify-content: flex-end;
+
+        .filter-section {
+          min-width: 180px;
+          border-radius: 10px !important;
+          font-size: 14px !important;
+          font-family: $font;
+          background: #fff;
+
+          .MuiOutlinedInput-notchedOutline {
+            border-color: rgba(0, 0, 0, 0.12) !important;
+          }
+
+          .MuiSelect-select {
+            padding: 10px 14px !important;
+            font-size: 14px;
+            font-family: $font;
+            font-weight: 600;
+            color: #111 !important;
+          }
+        }
+      }
+
+      .filter-menu {
+        border-radius: 12px !important;
+        box-shadow: 0 8px 24px rgba(65, 0, 117, 0.1) !important;
+      }
+
+      .filter-menu-list {
+        padding: 6px !important;
+
+        .MuiMenuItem-root {
+          border-radius: 8px;
+          font-size: 14px;
+          font-family: $font;
+          &:hover {
+            background: #faf5ff !important;
+          }
+          &.Mui-selected {
+            background: #f3e8ff !important;
+            color: #111 !important;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .agents-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+
+        .no-data-wrap {
+          grid-column: 1 / -1;
+          display: flex;
+          justify-content: center;
+          padding: 80px 0;
+
+          .no-data-img {
+            width: 320px;
+            height: 320px;
+            object-fit: contain;
+            opacity: 0.6;
+          }
+        }
+      }
+
+      .pagination-section {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 0 0;
+
+        .MuiPaginationItem-root {
+          font-family: $font;
+          &.Mui-selected {
+            background-color: #410075 !important;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+
+  // ─── Agent Card ───────────────────────────────────────────────────────────────
+
+  .agent-card {
+    background: #ffffff;
+    border: 1px solid rgba(143, 143, 143, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    transition:
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 8px 28px rgba(65, 0, 117, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .agent-card-img-wrap {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+
+      .agent-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .agent-type-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(65, 0, 117, 0.85);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: $font;
+        padding: 3px 10px;
+        border-radius: 20px;
+        backdrop-filter: blur(4px);
+      }
+
+      .agent-verified-badge {
+        position: absolute;
+        bottom: 10px;
+        left: 12px;
+        background: rgba(255, 255, 255, 0.92);
+        color: #410075;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: $font;
+        padding: 3px 8px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .service-like-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 2;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.42);
+        backdrop-filter: blur(8px);
+        border-radius: 999px;
+        padding: 5px 9px 5px 7px;
+        transition: background 0.2s ease;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.58);
+        }
+
+        svg {
+          font-size: 17px;
+          color: #fff;
+          transition:
+            color 0.2s ease,
+            transform 0.2s ease;
+          flex-shrink: 0;
+        }
+
+        &.is-liked svg {
+          color: #f43f5e;
+          transform: scale(1.15);
+        }
+
+        .like-count {
+          color: #fff;
+          font-family: $font;
+          font-size: 12px;
+          font-weight: 700;
+          line-height: 1;
+        }
+      }
+    }
+
+    .agent-card-content {
+      padding: 16px;
+      gap: 8px;
+
+      .agent-card-name {
+        font-size: 16px;
+        font-weight: 800;
+        color: #111;
+        font-family: $font;
+      }
+
+      .agent-card-role {
+        font-size: 12px;
+        color: #6b7280;
+        font-family: $font;
+        font-weight: 500;
+      }
+
+      .agent-card-rating-row {
+        gap: 5px;
+
+        .agent-rating-stars {
+          color: #f59e0b !important;
+        }
+
+        .agent-rating-value {
+          font-size: 13px;
+          font-weight: 700;
+          color: #111;
+          font-family: $font;
+        }
+
+        .agent-rating-sep {
+          color: #d1d5db;
+          font-size: 13px;
+        }
+
+        .agent-booking-count {
+          font-size: 12px;
+          color: #6b7280;
+          font-family: $font;
+        }
+      }
+
+      .agent-card-meta {
+        gap: 6px;
+
+        .agent-meta-icon {
+          font-size: 15px !important;
+          color: #9ca3af;
+          flex-shrink: 0;
+        }
+
+        .agent-meta-text {
+          font-size: 12px;
+          color: #4b5563;
+          font-family: $font;
+        }
+      }
+
+      .service-book-btn {
+        width: 100%;
+        height: 38px;
+        margin-top: 6px;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background:
+          linear-gradient(#c390ed, #410075) padding-box,
+          linear-gradient(
+              120deg,
+              #e83333 0%,
+              #d3b7ff 35%,
+              #ffffff 55%,
+              #b56cff 75%,
+              #5f18b7 100%
+            )
+            border-box;
+        background-size:
+          100% 100%,
+          250% 250%;
+        background-position:
+          0 0,
+          0% 50%;
+        animation: ctaBorderFlow 3.6s linear infinite;
+        color: #fff !important;
+        font-family: $font;
+        font-size: 15px;
+        font-weight: 700;
+        text-transform: none;
+        box-shadow: none;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+
+        &:hover {
+          background:
+            linear-gradient(#d3acf2, #8527d3) padding-box,
+            linear-gradient(
+                120deg,
+                #c27bff 0%,
+                #f3e4ff 45%,
+                #ffffff 60%,
+                #d190ff 78%,
+                #7f2ed8 100%
+              )
+              border-box;
+          box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+
+  // ─── Agent Detail Page ────────────────────────────────────────────────────────
+
+  .agent-detail-page {
+    width: 100%;
+    padding-bottom: 80px;
+
+    .agent-detail-top {
+      height: 85px;
+      background-color: #f3e2ff;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 0;
+    }
+
+    .agent-detail-breadcrumb {
+      font-size: 13px;
+      color: #9ca3af;
+      font-family: $font;
+      margin-bottom: 28px;
+    }
+
+    .agent-detail-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    // ── Profile column ──
+    .agent-detail-profile {
+      background: #fff;
+      border: 1px solid rgba(143, 143, 143, 0.25);
+      border-radius: 20px;
+      padding: 28px 24px;
+      gap: 14px;
+      position: sticky;
+      top: 100px;
+
+      .agent-detail-avatar-wrap {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        align-self: center;
+
+        .agent-detail-avatar {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          object-fit: cover;
+          display: block;
+          border: 3px solid #f3e8ff;
+        }
+
+        .agent-detail-verified {
+          position: absolute;
+          bottom: 2px;
+          right: -4px;
+          background: #fff;
+          border: 1px solid #e9d5ff;
+          color: #410075;
+          font-size: 11px;
+          font-weight: 700;
+          font-family: $font;
+          padding: 2px 7px;
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          gap: 3px;
+        }
+      }
+
+      .agent-detail-name {
+        font-size: 20px;
+        font-weight: 800;
+        color: #111;
+        font-family: $font;
+        text-align: center;
+      }
+
+      .agent-detail-role {
+        font-size: 13px;
+        color: #6b7280;
+        font-family: $font;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      .agent-detail-rating-row {
+        gap: 6px;
+        justify-content: center;
+
+        .agent-detail-rating-score {
+          font-size: 14px;
+          font-weight: 700;
+          color: #111;
+          font-family: $font;
+        }
+
+        .agent-detail-rating-sep {
+          color: #d1d5db;
+        }
+
+        .agent-detail-rating-count {
+          font-size: 13px;
+          color: #6b7280;
+          font-family: $font;
+        }
+      }
+
+      .agent-detail-bio {
+        font-size: 13px;
+        color: #4b5563;
+        font-family: $font;
+        line-height: 1.6;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding-top: 14px;
+      }
+
+      .agent-detail-info-list {
+        gap: 10px;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding-top: 14px;
+
+        .agent-detail-info-row {
+          gap: 10px;
+
+          .agent-detail-info-icon {
+            font-size: 17px !important;
+            color: #777777;
+            flex-shrink: 0;
+          }
+
+          .agent-detail-info-text {
+            font-size: 13px;
+            color: #374151;
+            font-family: $font;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .agent-detail-certs {
+        gap: 12px;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding-top: 14px;
+
+        .agent-detail-certs-title-row {
+          gap: 6px;
+
+          .agent-detail-certs-icon {
+            font-size: 18px !important;
+            color: #410075;
+          }
+
+          .agent-detail-certs-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111;
+            font-family: $font;
+          }
+        }
+
+        .agent-detail-certs-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+
+          .agent-detail-cert-card {
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #faf5ff;
+
+            .agent-detail-cert-img {
+              width: 100%;
+              height: 90px;
+              object-fit: cover;
+              display: block;
+            }
+
+            .agent-detail-cert-title {
+              font-size: 11px;
+              color: #374151;
+              font-family: $font;
+              font-weight: 600;
+              padding: 8px;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+
+    // ── Reviews column ──
+    .agent-detail-reviews {
+      gap: 24px;
+
+      .review-summary-panel {
+        background: #fff;
+        border: 1px solid rgba(143, 143, 143, 0.25);
+        border-radius: 16px;
+        padding: 24px;
+        gap: 14px;
+
+        .review-summary-title {
+          font-size: 18px;
+          font-weight: 800;
+          color: #111;
+          font-family: $font;
+        }
+
+        .review-score-row {
+          gap: 10px;
+
+          .review-rating-stars {
+            color: #f59e0b !important;
+            font-size: 26px !important;
+          }
+
+          .review-score-count {
+            font-size: 28px;
+            font-weight: 800;
+            color: #111;
+            font-family: $font;
+          }
+        }
+
+        .review-satisfied-box {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: #f0fdf4;
+          border-radius: 10px;
+          padding: 10px 14px;
+
+          .review-satisfied-icon {
+            color: #16a34a;
+            font-size: 20px !important;
+          }
+
+          .review-satisfied-text {
+            font-size: 13px;
+            color: #15803d;
+            font-family: $font;
+            font-weight: 600;
+          }
+        }
+
+        .review-distribution-list {
+          gap: 8px;
+
+          .review-distribution-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .review-distribution-label,
+            .review-distribution-value {
+              font-size: 13px;
+              font-family: $font;
+              color: #4b5563;
+              min-width: 56px;
+            }
+
+            .review-distribution-value {
+              text-align: right;
+              min-width: 36px;
+            }
+
+            .review-distribution-track {
+              flex: 1;
+              height: 8px;
+              background: #f3f4f6;
+              border-radius: 99px;
+              overflow: hidden;
+
+              .review-distribution-fill {
+                height: 100%;
+                border-radius: 99px;
+                &.warm {
+                  background: #f59e0a;
+                }
+                &.cool {
+                  background: #d1d5db;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .review-cards-panel {
+        gap: 16px;
+
+        .review-cards-header {
+          .review-cards-count {
+            width: 150px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #111;
+            font-family: $font;
+          }
+
+          .review-sort-field {
+            min-width: 200px;
+
+            .MuiOutlinedInput-root {
+              border-radius: 10px !important;
+              font-size: 13px;
+              font-family: $font;
+            }
+          }
+
+          .review-sort-menu {
+            border-radius: 12px !important;
+            box-shadow: 0 8px 24px rgba(65, 0, 117, 0.1) !important;
+
+            .MuiMenuItem-root {
+              font-size: 13px;
+              font-family: $font;
+              &:hover {
+                background: #faf5ff !important;
+              }
+              &.Mui-selected {
+                background: #f3e8ff !important;
+                color: #410075;
+              }
+            }
+          }
+        }
+
+        .review-card {
+          background: #fff;
+          border: 1px solid rgba(143, 143, 143, 0.2);
+          border-radius: 14px;
+          padding: 20px;
+          gap: 10px;
+
+          .review-card-header {
+            gap: 12px;
+
+            .review-card-avatar {
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: linear-gradient(135deg, #410075, #9333ea);
+              color: #fff;
+              font-size: 16px;
+              font-weight: 700;
+              font-family: $font;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+            }
+
+            .review-card-user-info {
+              gap: 2px;
+
+              .review-card-username {
+                font-size: 14px;
+                font-weight: 700;
+                color: #111;
+                font-family: $font;
+              }
+
+              .review-card-location {
+                font-size: 12px;
+                color: #9ca3af;
+                font-family: $font;
+              }
+            }
+          }
+
+          .review-card-booking-info {
+            font-size: 12px;
+            color: #6b7280;
+            font-family: $font;
+            font-weight: 500;
+          }
+
+          .review-card-rating-row {
+            gap: 10px;
+
+            .MuiRating-root {
+              color: #f59e0b !important;
+            }
+
+            .review-card-date {
+              font-size: 12px;
+              color: #9ca3af;
+              font-family: $font;
+            }
+          }
+
+          .review-card-content {
+            font-size: 14px;
+            color: #374151;
+            font-family: $font;
+            line-height: 1.65;
+          }
+
+          .review-toggle-btn {
+            font-size: 13px;
+            color: #410075;
+            font-weight: 600;
+            font-family: $font;
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+
+          .review-card-photos {
+            gap: 8px;
+            flex-wrap: wrap;
+
+            .review-card-photo {
+              width: 80px;
+              height: 80px;
+              object-fit: cover;
+              border-radius: 8px;
+              border: 1px solid rgba(0, 0, 0, 0.07);
+            }
+          }
+        }
+
+        .review-pagination {
+          align-items: center;
+          padding-top: 8px;
+
+          .MuiPaginationItem-root {
+            font-family: $font;
+            &.Mui-selected {
+              background-color: #410075 !important;
+              color: #fff;
+            }
+          }
+        }
+      }
+    }
+  }
+}

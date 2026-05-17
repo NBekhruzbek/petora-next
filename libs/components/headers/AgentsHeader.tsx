@@ -1,20 +1,20 @@
 import { Box, Stack } from "@mui/material";
 
-const DiscoveryHeader = () => {
+const AgentsHeader = () => {
   return (
     <Stack className="container">
-      <Stack className="discovery-top">
+      <Stack className="agents-top">
         <Stack className="text-area">
-          <Box className={"text1"}>Pet-Friendly </Box>
+          <Box className={"text1"}>Find Trusted</Box>
           <Box className={"text2"}>
-            Homes
+            Pet Care Agents
             <span>
               <img className="hand-icon" src="./img/logo/Union.svg" alt="" />
             </span>
           </Box>
           <Box className={"text3"}>
-            Discover pets on our site! Learn about their care and find your
-            perfect companion.
+            Find verified pet care professionals near you. Browse agents by
+            service, location, and ratings.
           </Box>
         </Stack>
         <Stack sx={{ position: "relative" }}>
@@ -44,4 +44,4 @@ const DiscoveryHeader = () => {
   );
 };
 
-export default DiscoveryHeader;
+export default AgentsHeader;
