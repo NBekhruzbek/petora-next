@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
 import CheckIcon from "@mui/icons-material/Check";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -299,6 +300,10 @@ const BookingsOrders = () => {
     router.push("/service/booking?writeReview=true");
   };
 
+  const goToWriteAgentReview = () => {
+    router.push("/agents/detail?writeReview=true");
+  };
+
   const goToWriteProductReview = () => {
     router.push("/shop/detail?writeReview=true");
   };
@@ -407,13 +412,22 @@ const BookingsOrders = () => {
                       {status}
                     </Box>
                     {status === "completed" && (
-                      <Button
-                        className="write-review-btn"
-                        startIcon={<RateReviewOutlinedIcon />}
-                        onClick={goToWriteReview}
-                      >
-                        Write Review
-                      </Button>
+                      <Stack spacing={1}>
+                        <Button
+                          className="write-review-btn"
+                          startIcon={<RateReviewOutlinedIcon />}
+                          onClick={goToWriteReview}
+                        >
+                          Review Service
+                        </Button>
+                        <Button
+                          className="write-review-btn agent-review-btn"
+                          startIcon={<PersonOutlineIcon />}
+                          onClick={goToWriteAgentReview}
+                        >
+                          Review Agent
+                        </Button>
+                      </Stack>
                     )}
                   </Stack>
                 </Stack>

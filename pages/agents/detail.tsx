@@ -1,6 +1,7 @@
 import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
 import {
   Box,
+  Button,
   MenuItem,
   Pagination,
   Rating,
@@ -9,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import VerifiedIcon from "@mui/icons-material/Verified";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WorkHistoryOutlinedIcon from "@mui/icons-material/WorkHistoryOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import TranslateOutlinedIcon from "@mui/icons-material/TranslateOutlined";
@@ -17,7 +19,8 @@ import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import WorkOutlinedIcon from "@mui/icons-material/WorkOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 import moment from "moment";
 import { NextPage } from "next";
 
@@ -127,11 +130,47 @@ const reviewCards = [
 ];
 
 const AgentDetail: NextPage = () => {
+  const router = useRouter();
+  const writeReviewRef = useRef<HTMLDivElement | null>(null);
+  const [writeReviewRating, setWriteReviewRating] = useState<number | null>(null);
+  const [writeReviewText, setWriteReviewText] = useState("");
+  const [reviewImages, setReviewImages] = useState<string[]>([]);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+
   const [reviewSort, setReviewSort] = useState("newest");
   const [reviewPage, setReviewPage] = useState(1);
   const [expandedReviews, setExpandedReviews] = useState<Record<string, boolean>>({});
   const reviewPreviewLimit = 260;
   const reviewsPerPage = 3;
+
+  useEffect(() => {
+    if (router.query.writeReview === "true") {
+      setTimeout(() => {
+        writeReviewRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+  }, [router.query.writeReview]);
+
+  const handleWriteReviewSubmit = () => {
+    if (!writeReviewRating) return;
+    setReviewSubmitted(true);
+  };
+
+  const handleReviewImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setReviewImages((prev) => [...prev, ev.target?.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = "";
+  };
+
+  const removeReviewImage = (index: number) => {
+    setReviewImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const sortedReviewCards = [...reviewCards].sort((a, b) => {
     const dateDiff =
@@ -252,6 +291,75 @@ const AgentDetail: NextPage = () => {
 
           {/* ── Right: Reviews ── */}
           <Stack className="agent-detail-reviews">
+
+            {/* ── Write Review (visible when navigated from completed booking) ── */}
+            {router.query.writeReview === "true" && (
+              <Stack className="write-review-panel" ref={writeReviewRef}>
+                {reviewSubmitted ? (
+                  <Stack className="write-review-success">
+                    <Typography className="write-review-success-title">✓ Thank you for your review!</Typography>
+                    <Typography className="write-review-success-sub">Your feedback helps other pet owners find the best agent.</Typography>
+                  </Stack>
+                ) : (
+                  <>
+                    <Stack className="write-review-left">
+                      <Typography className="write-review-panel-title">Write a Review</Typography>
+                      <Stack className="write-review-rating-row">
+                        <Typography className="write-review-label">Your Rating</Typography>
+                        <Rating
+                          value={writeReviewRating}
+                          onChange={(_e, val) => setWriteReviewRating(val)}
+                          className="write-review-stars"
+                        />
+                      </Stack>
+                    </Stack>
+                    <Stack className="write-review-right">
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={5}
+                        placeholder="Share your experience with this agent..."
+                        value={writeReviewText}
+                        onChange={(e) => setWriteReviewText(e.target.value)}
+                        className="write-review-textfield"
+                      />
+                      <Stack className="write-review-images-row" direction="row" flexWrap="wrap">
+                        {reviewImages.map((src, i) => (
+                          <Box key={i} className="write-review-img-preview">
+                            <img src={src} alt={`upload-${i}`} />
+                            <Box className="write-review-img-remove" onClick={() => removeReviewImage(i)}>
+                              ✕
+                            </Box>
+                          </Box>
+                        ))}
+                        {reviewImages.length < 4 && (
+                          <label className="write-review-img-upload">
+                            <input
+                              hidden
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              onChange={handleReviewImageUpload}
+                            />
+                            <Box className="write-review-img-upload-icon">+</Box>
+                            <Typography className="write-review-img-upload-text">Add Photo</Typography>
+                          </label>
+                        )}
+                      </Stack>
+                      <Button
+                        className="write-review-submit-btn"
+                        disabled={!writeReviewRating}
+                        onClick={handleWriteReviewSubmit}
+                        startIcon={<RateReviewOutlinedIcon />}
+                      >
+                        Submit Review
+                      </Button>
+                    </Stack>
+                  </>
+                )}
+              </Stack>
+            )}
+
             <Stack className="review-summary-panel">
               <Typography className="review-summary-title">
                 {reviewSummary.title}
