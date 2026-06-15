@@ -30,9 +30,11 @@ import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import moment from "moment";
+import moment, { Moment } from "moment";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import RelatedServices from "@/libs/components/servicepage/RelatedServices";
 import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
@@ -179,10 +181,77 @@ const Booking = () => {
     { icon: <EventAvailableOutlinedIcon />, label: "Mon – Sat" },
   ];
 
+  // Training session length — drives how many time slots fit in a day
+  const SERVICE_DURATION_MINUTES = 60;
+  const WORKING_HOURS = { start: "09:00", end: "18:00" };
+  // Slots start at intervals equal to the session duration (1h session -> hourly slots, etc.)
+  const SLOT_STEP_MINUTES = SERVICE_DURATION_MINUTES;
+
+  // Mock: intervals already reserved by other clients, keyed by date (YYYY-MM-DD)
+  const bookedSlots: Record<string, { start: string; end: string }[]> = {
+    [moment().format("YYYY-MM-DD")]: [
+      { start: "10:00", end: "11:00" },
+      { start: "14:00", end: "15:00" },
+    ],
+    [moment().add(1, "day").format("YYYY-MM-DD")]: [
+      { start: "09:00", end: "18:00" },
+    ],
+    [moment().add(3, "day").format("YYYY-MM-DD")]: [
+      { start: "09:00", end: "12:00" },
+      { start: "13:00", end: "17:30" },
+    ],
+  };
+
+  const toMinutes = (value: string) => {
+    const [h, m] = value.split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  const getAvailableTimeSlots = (selectedDate: string) => {
+    const dayStart = toMinutes(WORKING_HOURS.start);
+    const dayEnd = toMinutes(WORKING_HOURS.end);
+    const booked = bookedSlots[selectedDate] ?? [];
+    const slots: string[] = [];
+
+    for (
+      let start = dayStart;
+      start + SERVICE_DURATION_MINUTES <= dayEnd;
+      start += SLOT_STEP_MINUTES
+    ) {
+      const end = start + SERVICE_DURATION_MINUTES;
+      const overlaps = booked.some(
+        (b) => start < toMinutes(b.end) && end > toMinutes(b.start),
+      );
+      if (!overlaps) {
+        const h = Math.floor(start / 60)
+          .toString()
+          .padStart(2, "0");
+        const m = (start % 60).toString().padStart(2, "0");
+        slots.push(`${h}:${m}`);
+      }
+    }
+    return slots;
+  };
+
   const [selectedImage, setSelectedImage] = useState(0);
   const [openItems, setOpenItems] = useState([false, false, false, false]);
   const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
-  const [time, setTime] = useState("10:00");
+  const [time, setTime] = useState("");
+
+  const availableTimeSlots = useMemo(
+    () => getAvailableTimeSlots(date),
+    [date],
+  );
+
+  const isDateFullyBooked = (day: Moment) =>
+    getAvailableTimeSlots(day.format("YYYY-MM-DD")).length === 0;
+
+  useEffect(() => {
+    if (!availableTimeSlots.includes(time)) {
+      setTime(availableTimeSlots[0] ?? "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [date]);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(312);
 
@@ -210,8 +279,6 @@ const Booking = () => {
 
   const handleConfirmBooking = () => setBookingStep(3);
   const router = useRouter();
-  const dateInputRef = useRef<HTMLInputElement | null>(null);
-  const timeInputRef = useRef<HTMLInputElement | null>(null);
   const writeReviewRef = useRef<HTMLDivElement | null>(null);
   const [value, setValue] = useState(0);
   const [writeReviewRating, setWriteReviewRating] = useState<number | null>(null);
@@ -356,37 +423,57 @@ const Booking = () => {
               {/* Price */}
               <Typography className="price-display">$195 <span className="price-unit">/ session</span></Typography>
 
-              {/* Date + Time */}
+              {/* Date */}
               <Stack className="date-time-row" direction="row" gap={2}>
                 <Stack className="field" flex={1}>
                   <Typography className="field-label">Date</Typography>
-                  <TextField
-                    className="input"
-                    type="date"
-                    size="small"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    inputRef={dateInputRef}
-                    onClick={() => dateInputRef.current?.showPicker?.()}
-                  />
+                  <LocalizationProvider dateAdapter={AdapterMoment}>
+                    <DatePicker
+                      className="input"
+                      value={moment(date)}
+                      onChange={(newValue) => {
+                        if (newValue) setDate(newValue.format("YYYY-MM-DD"));
+                      }}
+                      minDate={moment()}
+                      shouldDisableDate={isDateFullyBooked}
+                      slotProps={{ textField: { size: "small" } }}
+                    />
+                  </LocalizationProvider>
                 </Stack>
-                <Stack className="field" flex={1}>
-                  <Typography className="field-label">Time</Typography>
-                  <TextField
-                    className="input"
-                    type="time"
-                    size="small"
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                    inputRef={timeInputRef}
-                    onClick={() => timeInputRef.current?.showPicker?.()}
-                  />
-                </Stack>
+              </Stack>
+
+              {/* Time slots */}
+              <Stack className="field">
+                <Typography className="field-label">
+                  Time ({SERVICE_DURATION_MINUTES} min session)
+                </Typography>
+                {availableTimeSlots.length > 0 ? (
+                  <Stack
+                    className="time-slot-list"
+                    direction="row"
+                    flexWrap="wrap"
+                    gap="8px"
+                  >
+                    {availableTimeSlots.map((slot) => (
+                      <Box
+                        key={slot}
+                        className={`time-slot-chip ${time === slot ? "selected" : ""}`}
+                        onClick={() => setTime(slot)}
+                      >
+                        <span>{slot}</span>
+                      </Box>
+                    ))}
+                  </Stack>
+                ) : (
+                  <Typography className="no-slots-text">
+                    No available times for this date
+                  </Typography>
+                )}
               </Stack>
 
               {/* CTAs */}
               <Stack className="cta-row">
-                <Button className="book-now-btn" variant="contained" fullWidth onClick={openBookingDialog}>
+                <Button className="book-now-btn" variant="contained" fullWidth onClick={openBookingDialog} disabled={!time}>
                   Book Now
                 </Button>
                 <Button
