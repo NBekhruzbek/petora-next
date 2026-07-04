@@ -1473,6 +1473,8 @@
 
             &:hover .product-image {
               transform: scale(1.15);
+              filter: drop-shadow(0 16px 14px rgba(20, 10, 40, 0.34))
+                drop-shadow(0 4px 6px rgba(20, 10, 40, 0.2));
             }
 
             .card-image-wrap {
@@ -1483,6 +1485,26 @@
               display: flex;
               align-items: center;
               justify-content: center;
+              overflow: hidden;
+
+              &::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: 20px;
+                width: 55%;
+                height: 22px;
+                background: radial-gradient(
+                  ellipse at center,
+                  rgba(20, 10, 40, 0.28) 0%,
+                  rgba(20, 10, 40, 0.14) 45%,
+                  rgba(20, 10, 40, 0) 75%
+                );
+                transform: translateX(-50%) scaleX(1);
+                transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+                z-index: 0;
+                pointer-events: none;
+              }
 
               .like-meta {
                 position: absolute;
@@ -1545,12 +1567,18 @@
               }
 
               .product-image {
+                position: relative;
+                z-index: 1;
                 max-width: 88%;
                 max-height: 205px;
                 width: auto;
                 height: auto;
                 object-fit: contain;
-                transition: transform 0.3s ease-out;
+                transition:
+                  transform 0.3s ease-out,
+                  filter 0.3s ease-out;
+                filter: drop-shadow(0 12px 10px rgba(20, 10, 40, 0.28))
+                  drop-shadow(0 3px 5px rgba(20, 10, 40, 0.18));
               }
             }
 
@@ -1719,6 +1747,8 @@
 
             &:hover .product-image {
               transform: scale(1.15);
+              filter: drop-shadow(0 16px 14px rgba(20, 10, 40, 0.34))
+                drop-shadow(0 4px 6px rgba(20, 10, 40, 0.2));
             }
 
             .card-image-wrap {
@@ -1729,6 +1759,26 @@
               display: flex;
               align-items: center;
               justify-content: center;
+              overflow: hidden;
+
+              &::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: 20px;
+                width: 55%;
+                height: 22px;
+                background: radial-gradient(
+                  ellipse at center,
+                  rgba(20, 10, 40, 0.28) 0%,
+                  rgba(20, 10, 40, 0.14) 45%,
+                  rgba(20, 10, 40, 0) 75%
+                );
+                transform: translateX(-50%) scaleX(1);
+                transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+                z-index: 0;
+                pointer-events: none;
+              }
 
               .like-meta {
                 position: absolute;
@@ -1791,12 +1841,18 @@
               }
 
               .product-image {
+                position: relative;
+                z-index: 1;
                 max-width: 88%;
                 max-height: 205px;
                 width: auto;
                 height: auto;
                 object-fit: contain;
-                transition: transform 0.3s ease-out;
+                transition:
+                  transform 0.3s ease-out,
+                  filter 0.3s ease-out;
+                filter: drop-shadow(0 12px 10px rgba(20, 10, 40, 0.28))
+                  drop-shadow(0 3px 5px rgba(20, 10, 40, 0.18));
               }
             }
 
