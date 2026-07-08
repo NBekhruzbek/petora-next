@@ -1,0 +1,54 @@
+@use "../../variables.scss" as *;
+
+// Shared "Filters" trigger button used by every sidebar-filter listing page
+// (Agents / Services / Products) to open the MobileDrawer.
+#mobile-wrap {
+  .mobile-filter-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    min-height: $touch-target-min;
+    padding: 0 $space-4;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    background: #fff;
+    font-family: $font;
+    font-size: 14px;
+    font-weight: 600;
+    color: #410075;
+    align-self: flex-start;
+    box-shadow: 0 4px 12px rgba(20, 20, 20, 0.06);
+
+    &-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      border-radius: 999px;
+      background: #410075;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+  }
+}
+
+// Filter content re-rendered inside the MobileDrawer's bottom sheet — only
+// ever mounted on mobile, so no #mobile-wrap scoping needed (it lives in a
+// portal outside it), but the fixed pixel widths from the pc sidebars need
+// to give way to the sheet's full-bleed width. Shared across all three
+// sidebar-filter pages since they reuse the same .category/.category-section
+// markup and class names.
+.mobile-filter-panel {
+  .search-box,
+  .divider,
+  .category-section,
+  .category-list,
+  .price-range,
+  .liked-agents-section,
+  .liked-products-section {
+    width: 100% !important;
+  }
+}

@@ -1,0 +1,148 @@
+@use "../../variables.scss" as *;
+
+#mobile-wrap {
+  .services-agents-page {
+    padding-top: $space-5;
+
+    .container {
+      padding: 0 $space-4;
+    }
+
+    .title {
+      font-size: 22px;
+      margin-bottom: $space-4;
+    }
+
+    .services-main {
+      flex-direction: column;
+      gap: $space-4;
+    }
+
+    .sorting-agents {
+      gap: $space-4;
+
+      .filter-section-wrap {
+        justify-content: space-between;
+      }
+
+      .agents-cards {
+        grid-template-columns: 1fr;
+        gap: $space-4;
+      }
+    }
+  }
+
+  // ─── About Services (marquee section on /service) ─────────────────────
+  .about-services {
+    height: auto;
+
+    .container {
+      padding: 0 $space-4;
+    }
+
+    .about-services__header {
+      .about-services__eyebrow-text {
+        font-size: 14px;
+      }
+
+      .about-services__title {
+        font-size: 24px;
+        line-height: 1.3;
+
+        .text-color {
+          font-size: 24px;
+          line-height: 1.3;
+        }
+      }
+    }
+
+    // The marquee card is meant to stay a fixed showcase size regardless
+    // of viewport (same reasoning as the homepage top-agents marquee) —
+    // fully restate it since #pc-wrap doesn't reach mobile and the shared
+    // .service-card (grid) sizing doesn't apply here. The title/copy
+    // overlay is normally hover-revealed, which touch can't do, so show
+    // it statically instead.
+    .services-marquee {
+      .service-card {
+        position: relative;
+        width: 220px !important;
+        height: 220px !important;
+        border-radius: 20px;
+        border: 1px solid #d8dde8;
+        overflow: hidden;
+
+        .service-image-wrap {
+          position: relative;
+          height: 100%;
+
+          .service-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+          }
+        }
+
+        .content {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          align-items: center;
+          justify-content: flex-end;
+          gap: $space-1;
+          padding: $space-3;
+          text-align: center;
+          color: #fff;
+
+          .title {
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 4px 10px;
+            border-radius: 999px;
+          }
+
+          .copy {
+            font-size: 12px;
+            font-style: italic;
+            opacity: 1;
+            transform: none;
+            max-height: none;
+          }
+        }
+      }
+    }
+  }
+
+  // ─── Related Services (horizontal scroll, shown on booking page) ──────
+  .related-services {
+    padding: $space-5 0 $space-6;
+
+    .container {
+      padding: 0 $space-4;
+
+      .related-services-title {
+        font-size: 22px;
+      }
+
+      .agents-cards {
+        display: flex;
+        grid-template-columns: none;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: $space-3;
+        padding-bottom: $space-2;
+
+        .service-card {
+          width: 220px;
+          flex: 0 0 auto;
+        }
+      }
+    }
+  }
+}

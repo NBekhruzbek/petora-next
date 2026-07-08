@@ -1,0 +1,137 @@
+@use "../../variables.scss" as *;
+
+#mobile-wrap {
+  .my-profile-container {
+    // .profile-tabs-wrapper uses the MUI Stack `direction="row"` prop
+    // (not a responsive breakpoint object), so it stays row unless
+    // overridden — tabs + the edit button don't fit side by side at
+    // mobile widths.
+    .profile-tabs-wrapper {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: $space-3;
+
+      .action-buttons {
+        width: 100%;
+      }
+
+      .btn-edit,
+      .btn-save,
+      .btn-cancel {
+        flex: 1;
+      }
+    }
+
+    .profile-header-card {
+      padding: $space-4 !important;
+    }
+
+    .info-form-card {
+      padding: $space-4 !important;
+    }
+
+    .invoice-history-section {
+      padding: $space-4 !important;
+    }
+
+    // .invoice-item is a fixed direction="row" Stack with two row-based
+    // groups (icon+id/date, amount+status+download) — together too wide
+    // for mobile, pushing the download button off-screen.
+    .invoice-item {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: $space-2;
+    }
+  }
+
+  // ─── Service Management (summary cards + service/request rows) ────────
+  .service-mgmt-container {
+    .summary-cards-row {
+      flex-wrap: wrap;
+
+      .summary-card {
+        flex: 1 1 45%;
+      }
+    }
+  }
+
+  // .fav-products-grid reuses shoppage's .product-card at a fixed 4-column
+  // flex-basis — my earlier mobile override for that class was scoped to
+  // .products-section specifically, so it doesn't reach this context.
+  .fav-products-grid .product-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  // .service-row (My Services tab) and .request-row (Booking Requests /
+  // Upcoming / Completed tabs) are all fixed direction="row" Stacks whose
+  // flex-basis values sum to 800px+ (media + main + metrics + actions) —
+  // stack them for mobile instead of squeezing four columns into ~360px.
+  .service-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+
+    .service-row-media {
+      align-self: flex-start;
+    }
+
+    .service-row-metrics {
+      flex-wrap: wrap;
+      padding: 0;
+    }
+
+    .service-row-actions {
+      align-items: stretch !important;
+      width: 100%;
+
+      .service-status-tabs {
+        flex-wrap: wrap;
+      }
+    }
+  }
+
+  .request-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+
+    .request-main,
+    .request-date-block,
+    .request-note-block,
+    .request-status-actions {
+      flex: 1 1 100% !important;
+    }
+
+    .request-status-actions {
+      justify-content: flex-start !important;
+    }
+  }
+
+  // ─── My Favorites / My Articles toolbars ───────────────────────────────
+  .my-favorites-tabs-wrapper .MuiTabs-root .MuiTab-root,
+  .service-mgmt-tabs-wrapper .MuiTabs-root .MuiTab-root {
+    min-width: 90px;
+  }
+
+  .my-articles-toolbar {
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  // ─── Notifications ──────────────────────────────────────────────────────
+  .notifications-toolbar {
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+}
+
+// .notif-dialog is declared via `@at-root` in the pc stylesheet, so it's
+// already global/unscoped — but portal-rendered MUI Dialogs are never a
+// DOM descendant of #mobile-wrap, so any mobile-only adjustment has to go
+// through a real media query, same as the community Q&A dialog.
+@media (max-width: #{$breakpoint-mobile}) {
+  .notif-dialog {
+    .MuiDialog-paper {
+      margin: $space-4 !important;
+    }
+  }
+}

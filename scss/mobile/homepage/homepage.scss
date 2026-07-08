@@ -1,0 +1,382 @@
+@use "../../variables.scss" as *;
+
+#mobile-wrap {
+  .home-page {
+    // ─── Our Company ──────────────────────────────────────────────────────
+    .our-company {
+      height: auto;
+      margin-top: $space-5;
+      flex-direction: column;
+
+      .container {
+        width: 100%;
+        flex-direction: column;
+        padding: 0 $space-4;
+
+        .left-side {
+          width: 100%;
+          height: auto;
+          margin-top: 0;
+
+          .title {
+            font-size: 22px;
+          }
+
+          .our-service .service-cards {
+            flex-direction: column;
+
+            .left-card,
+            .right-card {
+              width: 100% !important;
+              height: auto;
+              min-height: 140px;
+              padding-bottom: $space-4;
+              // Base card visual identity (background/radius) lives under
+              // #pc-wrap only — this component is getting a bespoke mobile
+              // layout anyway, so restate it here rather than extract.
+              border-radius: 10px;
+
+              .dog-image {
+                position: static;
+                width: 100%;
+                height: 130px;
+                object-fit: cover;
+                object-position: top center;
+                border-radius: 0 0 10px 10px;
+                margin-top: $space-2;
+              }
+            }
+          }
+        }
+
+        .right-side {
+          width: 100%;
+          height: auto;
+          margin-left: 0;
+          top: 0;
+          margin-top: $space-5;
+          flex-direction: column;
+          align-items: stretch;
+
+          // Tilted layered cards and decorative dots are purely
+          // ornamental filler behind the photo — at mobile widths they'd
+          // just peek out from behind the card edges, so they're dropped
+          // rather than repositioned.
+          .oc-layer,
+          .oc-dot {
+            display: none;
+          }
+
+          .oc-card {
+            position: static;
+            width: 100%;
+            height: 280px;
+            border-radius: 20px;
+            overflow: hidden;
+
+            .oc-dog-img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              display: block;
+            }
+          }
+
+          .oc-badge {
+            position: static;
+            width: 100%;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: $space-2;
+            margin-top: $space-3;
+            transform: none;
+            background: #fff;
+            border-radius: 14px;
+            padding: $space-2 $space-3;
+            box-shadow: 0 8px 24px rgba(109, 40, 217, 0.12);
+
+            .oc-badge-num {
+              font-family: $font;
+              font-size: 16px;
+              font-weight: 800;
+              color: #410075;
+            }
+
+            .oc-badge-label {
+              font-family: $font;
+              font-size: 12px;
+              font-weight: 600;
+              color: #9ca3af;
+            }
+          }
+        }
+      }
+    }
+
+    // ─── What We Offer ────────────────────────────────────────────────────
+    // Desktop composes this as an absolutely-positioned ring stage with two
+    // floating offer columns; that math only resolves at the 1300px
+    // container width it was built for. On mobile it becomes a plain
+    // stacked list: left offers, hero image, right offers, in DOM order.
+    .what-we-offer {
+      height: auto;
+      margin-top: $space-4;
+      padding: $space-5 0;
+
+      .container {
+        width: 100%;
+        height: auto;
+        padding: 0 $space-4;
+
+        .title-block {
+          position: static;
+          transform: none;
+          margin-bottom: $space-4;
+        }
+
+        .title {
+          font-size: 24px;
+        }
+
+        .offer-content {
+          position: static;
+          height: auto;
+          flex-direction: column !important;
+          gap: $space-5;
+        }
+
+        .dogs-stage {
+          position: static !important;
+          width: 100%;
+          height: auto;
+          transform: none !important;
+          display: flex;
+          justify-content: center;
+          padding: $space-4 0;
+
+          .ring {
+            display: none;
+          }
+
+          .dogs-image {
+            position: static;
+            width: 85%;
+            transform: none;
+          }
+        }
+
+        .offers-column {
+          position: static;
+          width: 100%;
+          top: auto;
+
+          .offer-item {
+            position: static !important;
+            top: auto !important;
+            width: 100%;
+          }
+
+          .offer-copy {
+            width: auto;
+            flex: 1;
+          }
+
+          // The number badge's circular color-coded look is desktop-scoped
+          // only; this component is already a bespoke mobile rebuild, so
+          // restate it here rather than extract from a deeply nested block.
+          .offer-number {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #fff;
+            font-family: $font;
+            font-size: 18px;
+            font-weight: 700;
+
+            &.purple {
+              background: #50059a;
+            }
+
+            &.red {
+              background: #ad0000;
+            }
+          }
+        }
+
+        .left-column {
+          align-items: stretch;
+
+          .offer-copy {
+            text-align: left;
+          }
+        }
+
+        .right-column {
+          align-items: stretch;
+        }
+      }
+    }
+
+    // ─── Species ──────────────────────────────────────────────────────────
+    .species {
+      height: auto;
+
+      .species-main {
+        flex-direction: column;
+        margin-top: $space-4;
+
+        .left-side {
+          width: 100%;
+          height: auto;
+          display: flex;
+          justify-content: center;
+
+          .dog-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+          }
+
+          // Floating background circles + toy props are staged for the
+          // desktop image's exact pixel footprint — hidden rather than
+          // rescaled at mobile widths.
+          .dog-background-1,
+          .dog-background-2,
+          .bone,
+          .bone-background,
+          .toy,
+          .toy-background,
+          .bowl,
+          .bowl-background {
+            display: none;
+          }
+        }
+
+        .right-side {
+          width: 100%;
+          margin-right: 0;
+          margin-top: $space-4;
+          align-items: stretch;
+          text-align: left;
+
+          .title {
+            font-size: 22px;
+            text-align: left;
+          }
+
+          .hand-icon1,
+          .hand-icon2 {
+            display: none;
+          }
+        }
+      }
+    }
+
+    // ─── Discount Advertisement ───────────────────────────────────────────
+    // The desktop version is a hand-placed collage (leaves, wood, grass,
+    // script text, two floating product shots) tuned to a 500px banner —
+    // simplified here to a clean promo card with one product image.
+    .discount-ads {
+      height: auto;
+
+      .container .discount-ads-main {
+        margin-top: $space-5;
+        height: auto;
+        flex-direction: column;
+        align-items: stretch;
+        padding: $space-5 $space-4;
+
+        .back-image,
+        .leaf-1,
+        .leaf-2,
+        .leaf-3,
+        .leaf-4,
+        .wood,
+        .grass,
+        .the,
+        .summer,
+        .dog {
+          display: none;
+        }
+
+        .main-area {
+          margin-left: 0;
+          padding-top: 0;
+          text-align: center;
+          align-items: center;
+
+          .saving-percent,
+          .title {
+            font-size: 22px;
+          }
+        }
+
+        .products {
+          position: static;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin-top: $space-4;
+
+          .product1 {
+            position: static;
+            width: 160px;
+          }
+
+          .product2 {
+            display: none;
+          }
+        }
+      }
+    }
+
+    // ─── Top pet foods / toys grids ───────────────────────────────────────
+    .top-pet-foods,
+    .top-pet-toys {
+      padding-bottom: $space-6;
+
+      .container {
+        padding: 0 $space-4;
+
+        .section-title {
+          font-size: 24px;
+          gap: $space-2;
+
+          .hand-icon {
+            width: 34px;
+          }
+        }
+      }
+
+      .top-pet-foods-grid,
+      .top-pet-toys-grid {
+        grid-template-columns: 1fr;
+        gap: $space-4;
+      }
+    }
+
+    // ─── Advertisement video ──────────────────────────────────────────────
+    .video-frame {
+      height: 220px;
+      background: #000;
+    }
+
+    // ─── Top agents marquee ───────────────────────────────────────────────
+    .top-agents {
+      padding: $space-5 0 $space-5;
+
+      .container {
+        padding: 0 $space-4;
+
+        .section-title {
+          font-size: 24px;
+        }
+      }
+    }
+  }
+}

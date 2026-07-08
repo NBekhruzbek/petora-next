@@ -14,20 +14,18 @@ import SocialMedia from "@/libs/components/homepage/SocialMedia";
 
 const Home: NextPage = () => {
   return (
-    <>
-      <Stack className="home-page">
-        <OurCompany />
-        <WhatWeOffer />
-        <Discovery />
-        <Species />
-        <DiscountAdvertisement />
-        <TopPetFoods />
-        <TopPetToys />
-        <Advertisement />
-        <TopAgents />
-        <SocialMedia />
-      </Stack>
-    </>
+    <Stack className="home-page">
+      <OurCompany />
+      <WhatWeOffer />
+      <Discovery />
+      <Species />
+      <DiscountAdvertisement />
+      <TopPetFoods />
+      <TopPetToys />
+      <Advertisement />
+      <TopAgents />
+      <SocialMedia />
+    </Stack>
   );
 };
 

@@ -10,56 +10,60 @@ import CsHeader from "../headers/CsHeader";
 import Top from "../Top";
 import Footer from "../Footer";
 import ContactUs from "../ContactUs";
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 
 const withLayoutBasic = (Component: any) => {
-  const header = () => {
-    const router = useRouter();
-    switch (router.pathname) {
-      case "/service":
-        return (
-          <Stack id={"main-top"}>
-            <ServiceHeader />
-          </Stack>
-        );
-      case "/agents":
-        return (
-          <Stack id={"agents-top"}>
-            <AgentsHeader />
-          </Stack>
-        );
-      case "/shop":
-        return (
-          <Stack id={"shop-top"}>
-            <ShopHeader />
-          </Stack>
-        );
-      case "/community":
-        return (
-          <Stack id={"community-top"}>
-            <CommunityHeader />
-          </Stack>
-        );
-      case "/mypage":
-        return (
-          <Stack id={"mypage-top"}>
-            <MyPageHeader />
-          </Stack>
-        );
-      case "/cs":
-        return (
-          <Stack id={"cs-top"}>
-            <CsHeader />
-          </Stack>
-        );
-    }
-  };
   return (props: any) => {
+    const device = useDeviceDetect();
+    const router = useRouter();
+
+    const header = () => {
+      switch (router.pathname) {
+        case "/service":
+          return (
+            <Stack id={"main-top"}>
+              <ServiceHeader />
+            </Stack>
+          );
+        case "/agents":
+          return (
+            <Stack id={"agents-top"}>
+              <AgentsHeader />
+            </Stack>
+          );
+        case "/shop":
+          return (
+            <Stack id={"shop-top"}>
+              <ShopHeader />
+            </Stack>
+          );
+        case "/community":
+          return (
+            <Stack id={"community-top"}>
+              <CommunityHeader />
+            </Stack>
+          );
+        case "/mypage":
+          return (
+            <Stack id={"mypage-top"}>
+              <MyPageHeader />
+            </Stack>
+          );
+        case "/cs":
+          return (
+            <Stack id={"cs-top"}>
+              <CsHeader />
+            </Stack>
+          );
+      }
+    };
+
     return (
       <>
         <Head>
           <title>Petora</title>
         </Head>
-        <Stack id="pc-wrap">
+        <Stack id={device === "mobile" ? "mobile-wrap" : "pc-wrap"}>
           <Stack id={"top"}>
             <Top />
           </Stack>

@@ -1,0 +1,36 @@
+@use "../../variables.scss" as *;
+
+// ContactUs appears on every page. Its .container/.contact-form-column
+// fixed widths only apply under #pc-wrap, so on mobile Stack's own column
+// default already stacks things reasonably — the one real gap is the
+// visual column's photo, which needs its absolute-position anchor and
+// sizing restated.
+#mobile-wrap {
+  .contact-us {
+    padding: $space-5 0 $space-6;
+
+    .container {
+      padding: 0 $space-4;
+      gap: $space-4;
+    }
+
+    .contact-title {
+      font-size: 24px;
+    }
+
+    .contact-visual-column {
+      position: relative;
+      width: 100%;
+      height: 220px;
+    }
+
+    .visual-circle {
+      width: 200px;
+      height: 200px;
+    }
+
+    .pets-image {
+      width: 340px;
+    }
+  }
+}

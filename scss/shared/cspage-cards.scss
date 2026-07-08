@@ -1,0 +1,251 @@
+@use "../variables.scss" as *;
+
+.faq-card {
+  position: relative;
+  border: 1px solid #cccccc80 !important;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(77, 60, 159, 0.07);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    opacity 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px rgba(86, 67, 176, 0.1);
+  }
+
+  &.faded {
+    opacity: 0.6;
+  }
+
+  &.expanded {
+    grid-column: span 2;
+    box-shadow: 0 20px 44px rgba(92, 76, 187, 0.12);
+
+    .faq-arrow {
+      transform: rotate(90deg);
+    }
+
+    .faq-expanded-content {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 18px;
+    }
+  }
+
+  .faq-card-inner {
+    padding: 24px;
+  }
+
+  .faq-card-top {
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .faq-title {
+    color: #20283a;
+    font-family: $font;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .faq-arrow {
+    color: #6d5df6;
+    font-size: 24px;
+    transition: transform 0.3s ease;
+  }
+
+  .faq-description {
+    margin-top: 10px;
+    color: #55637a;
+    font-family: $font;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .faq-expanded-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.24s ease,
+      margin-top 0.3s ease;
+  }
+
+  .faq-answer {
+    color: #40345f;
+    font-family: $font;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .faq-bullets {
+    margin: 14px 0 0;
+    padding-left: 18px;
+    color: #5e557d;
+    font-family: $font;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .faq-feedback-row {
+    margin-top: 18px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .feedback-label {
+    color: #584f7a;
+    font-family: $font;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .feedback-actions {
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .feedback-btn,
+  .close-expanded {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 999px;
+    background: #f4f1ff;
+    color: #6d5df6;
+    cursor: pointer;
+    transition:
+      transform 0.22s ease,
+      background 0.22s ease,
+      color 0.22s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  .feedback-btn.selected {
+    background: #6d5df6;
+    color: #fff;
+  }
+
+  .feedback-btn.selected.down {
+    background: #8f6fff;
+  }
+
+  .close-expanded {
+    background: #f7f5ff;
+    color: #6f62ad;
+  }
+}
+
+.notice-card {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  border: 1px solid #cccccc80 !important;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(82, 64, 166, 0.07);
+  cursor: pointer;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  text-align: left;
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgba(82, 64, 166, 0.1);
+  }
+
+  &.viewed {
+    opacity: 0.72;
+  }
+
+  .notice-line {
+    width: 5px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #6d5df6, #897aff);
+  }
+
+  &.important {
+    .notice-line {
+      background: rgb(246, 0, 0);
+    }
+  }
+
+  .notice-body {
+    flex: 1;
+    padding: 20px 22px;
+    gap: 8px;
+  }
+
+  .notice-meta {
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .notice-date {
+    color: #847aa6;
+    font-family: $font;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .notice-badge {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-family: $font;
+    font-size: 12px;
+    font-weight: 700;
+
+    &.important {
+      background: rgba(237, 91, 117, 0.12);
+      color: rgb(246, 0, 0);
+    }
+
+    &.update {
+      background: rgba(109, 93, 246, 0.11);
+      color: #5d4fe0;
+    }
+  }
+
+  .notice-title {
+    color: #20283a;
+    font-family: $font;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .notice-summary {
+    color: #55637a;
+    font-family: $font;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .notice-arrow {
+    align-self: center;
+    margin: 0 18px 0 0;
+    color: #6d5df6;
+    font-size: 24px;
+  }
+}
+

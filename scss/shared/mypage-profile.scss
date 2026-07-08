@@ -1,0 +1,623 @@
+@use "../variables.scss" as *;
+
+.my-profile-container {
+  display: flex;
+  flex-direction: column;
+
+  .profile-tabs-wrapper {
+    border-bottom: 1px solid #dedede;
+    padding-bottom: 8px;
+
+    .MuiTabs-root {
+      .MuiTab-root {
+        text-transform: none;
+        font-family: $font;
+        font-weight: 700;
+        font-size: 16px;
+        color: #9ca3af;
+        min-width: 120px;
+        transition: all 0.3s ease;
+        &.Mui-selected {
+          color: #410075;
+        }
+      }
+      .MuiTabs-indicator {
+        background-color: #410075;
+        height: 3px;
+        border-radius: 3px 3px 0 0;
+      }
+    }
+
+    .btn-cancel {
+      border-radius: 12px;
+      text-transform: none;
+      font-weight: 600;
+      padding: 8px 16px;
+    }
+
+    .btn-edit {
+      color: #fff;
+      cursor: pointer;
+      background:
+        linear-gradient(#c390ed, #410075) 0 0 / 100% 100% padding-box
+          padding-box,
+        linear-gradient(
+            120deg,
+            #e83333 0%,
+            #d3b7ff 35%,
+            #fff 55%,
+            #b56cff 75%,
+            #5f18b7 100%
+          )
+          0% / 250% 250% border-box;
+      border: 2px solid #0000;
+      border-radius: 10px;
+      width: 100%;
+      height: 42px;
+      margin-top: 4px;
+      padding: 0 22px;
+      font-family: $font;
+      font-size: 16px;
+      font-weight: 900;
+      transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+      animation: 3.6s linear infinite ctaBorderFlow;
+    }
+
+    .btn-save {
+      border-radius: 10px;
+      text-transform: none;
+      font-weight: 600;
+      padding: 8px 24px;
+      font-family: $font;
+      font-size: 16px;
+      background:
+        linear-gradient(#c390ed, #410075) 0 0 / 100% 100% padding-box
+          padding-box,
+        linear-gradient(
+            120deg,
+            #e83333 0%,
+            #d3b7ff 35%,
+            #fff 55%,
+            #b56cff 75%,
+            #5f18b7 100%
+          )
+          0% / 250% 250% border-box;
+      color: #ffffff;
+      &:hover {
+        background-color: #2d0052;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(65, 0, 117, 0.25);
+      }
+    }
+  }
+
+  .tab-content {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  // Common Cards
+  .profile-header-card,
+  .info-form-card,
+  .billing-card-section,
+  .billing-address-section,
+  .invoice-history-section {
+    border-radius: 12px !important;
+    border: 1px solid rgba(143, 143, 143, 0.5) !important;
+    background-color: #ffffff !important;
+    transition: all 0.4s ease;
+  }
+
+  .profile-header-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(143, 143, 143, 0.5) !important;
+    box-shadow: 0 10px 30px rgba(65, 0, 117, 0.03);
+
+    .MuiAvatar-root {
+      width: 110px !important;
+      height: 110px !important;
+      border-radius: 999px !important;
+      img {
+        object-fit: cover;
+      }
+    }
+
+    .upload-btn-wrapper {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background-color: #ffffff;
+      border-radius: 50%;
+      border: 1px solid #e5e7eb;
+      box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #f9fafb;
+        transform: scale(1.05);
+      }
+
+      .upload-btn {
+        padding: 6px;
+      }
+    }
+
+    .verified-badge {
+      background-color: #ffffffff !important;
+      border-radius: 6px !important;
+      border: 1px solid #e0e7ff !important;
+      padding: 2px 8px;
+      .MuiTypography-root {
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        color: #00c314ff !important;
+      }
+    }
+  }
+
+  .info-form-card.editable,
+  .billing-card-section.editable,
+  .billing-address-section.editable {
+    box-shadow: 0 10px 40px rgba(65, 0, 117, 0.06) !important;
+  }
+
+  .check-username-btn {
+    height: 30px !important;
+    min-width: 60px !important;
+    border-radius: 6px !important;
+    border: 1px solid #c1aed0 !important;
+    background-color: #ffffff !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+    padding: 0 16px !important;
+    color: #454545 !important;
+    box-shadow: none !important;
+    &:hover {
+      background-color: #dfbdfb !important;
+    }
+    &.Mui-disabled {
+      background-color: #e5e7eb !important;
+      color: #9ca3af !important;
+    }
+  }
+
+  .username-status-text {
+    font-size: 12px !important;
+    position: absolute;
+    bottom: -22px;
+    left: 8px;
+    font-weight: 600 !important;
+    &.checking {
+      color: #6b7280 !important;
+    }
+    &.available {
+      color: #10b981 !important;
+    }
+    &.taken {
+      color: #ef4444 !important;
+    }
+  }
+
+  // TextFields
+  .MuiTextField-root {
+    .MuiOutlinedInput-root {
+      border-radius: 8px !important;
+      transition: all 0.3s ease;
+      background-color: #ffffff !important;
+
+      &.MuiInputBase-multiline {
+        align-items: flex-start !important;
+        padding: 12px 14px !important;
+        height: 120px !important;
+      }
+
+      input,
+      textarea,
+      .MuiSelect-select {
+        color: #000000 !important;
+        font-weight: 500 !important;
+        -webkit-text-fill-color: #000000 !important;
+      }
+
+      textarea {
+        padding: 0 !important;
+      }
+    }
+  }
+
+  .avatar-box {
+    position: relative;
+    display: inline-block;
+  }
+
+  .username-field-wrapper {
+    position: relative;
+  }
+
+  .field-label-wrapper {
+    .MuiSvgIcon-root {
+      font-size: 18px !important;
+      color: #9ca3af !important;
+    }
+  }
+
+  // Profile header text
+  .profile-header-card {
+    padding: 32px !important;
+
+    .avatar-upload-label {
+      cursor: pointer;
+      display: block;
+      position: relative;
+    }
+
+    .upload-btn {
+      .MuiSvgIcon-root {
+        font-size: 20px;
+        color: #4b5563;
+      }
+    }
+
+    .profile-name {
+      font-weight: 800;
+      color: #000;
+    }
+
+    .agent-chip {
+      background-color: #f3e8ff !important;
+      color: #6b21a8 !important;
+      font-weight: 700 !important;
+      font-size: 12px !important;
+    }
+
+    .agent-role {
+      color: #410075;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .member-since {
+      color: #4b5563;
+      font-weight: 500;
+    }
+
+    .profile-bio {
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 400;
+      max-width: 500px;
+    }
+  }
+
+  // Section cards padding
+  .info-form-card {
+    padding: 32px;
+
+    .section-title {
+      font-weight: 800;
+      color: #000;
+      margin-bottom: 8px;
+
+      &.cert-section-title {
+        margin-bottom: 0;
+      }
+    }
+
+    .field-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #4b5563;
+    }
+  }
+
+  // Certifications
+  .cert-section-icon {
+    font-size: 22px !important;
+    color: #410075 !important;
+  }
+
+  .add-cert-btn {
+    border-color: #410075 !important;
+    color: #410075 !important;
+    text-transform: none !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+
+    &:hover {
+      border-color: #6b21a8 !important;
+      color: #6b21a8 !important;
+    }
+  }
+
+  // Multi-select
+  .chips-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px 0;
+
+    &.view-mode {
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      padding: 10px 14px;
+      min-height: 56px;
+      align-items: center;
+      background-color: #ffffff;
+    }
+  }
+
+  .multi-select-value {
+    color: #000000 !important;
+    font-weight: 500 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+
+  .select-chip {
+    background-color: #f3e8ff !important;
+    color: #6b21a8 !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+  }
+
+  .info-chip {
+    background-color: #f3e8ff !important;
+    color: #6b21a8 !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+  }
+
+  .multi-select-placeholder {
+    color: #9ca3af;
+    font-size: 14px;
+  }
+
+  .no-selection-text {
+    color: #9ca3af;
+    font-size: 14px;
+  }
+
+  .multi-select-menu {
+    border-radius: 10px !important;
+    box-shadow: 0 8px 24px rgba(65, 0, 117, 0.1) !important;
+
+    .multi-select-item {
+      padding: 6px 12px;
+      gap: 4px;
+
+      &.Mui-selected {
+        background-color: #faf5ff !important;
+      }
+
+      &:hover {
+        background-color: #f3e8ff !important;
+      }
+    }
+
+    .multi-select-checkbox {
+      padding: 4px;
+      color: #9ca3af;
+
+      &.Mui-checked {
+        color: #410075 !important;
+      }
+    }
+  }
+
+  .no-certs-text {
+    color: #9ca3af;
+    font-size: 14px;
+  }
+
+  .cert-card {
+    border: 1.5px solid rgba(0, 0, 0, 0.07);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    background-color: #faf5ff;
+
+    &.editable {
+      border-color: #e9d5ff;
+    }
+
+    .cert-upload-label {
+      cursor: pointer;
+      display: block;
+      position: relative;
+    }
+
+    .cert-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cert-placeholder {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f3e8ff;
+
+      .MuiSvgIcon-root {
+        font-size: 48px;
+        color: #c084fc;
+      }
+    }
+
+    .cert-upload-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0, 0, 0, 0.28);
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.48);
+      }
+
+      .MuiSvgIcon-root {
+        font-size: 28px;
+        color: #fff;
+      }
+
+      .cert-upload-text {
+        font-size: 12px;
+        color: #fff;
+        font-weight: 600;
+      }
+    }
+
+    .cert-delete-btn {
+      position: absolute !important;
+      top: 6px !important;
+      right: 6px !important;
+      background-color: rgba(255, 255, 255, 0.9) !important;
+
+      &:hover {
+        background-color: #fee2e2 !important;
+      }
+
+      .MuiSvgIcon-root {
+        font-size: 16px;
+        color: #ef4444;
+      }
+    }
+  }
+
+  // Premium Matte Credit Card UI
+  .credit-card-preview {
+    border-radius: 10px !important;
+    background: linear-gradient(
+      135deg,
+      #22272e 0%,
+      #15191e 100%
+    ) !important; // Premium Matte Charcoal / Navy
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+    overflow: hidden;
+    position: relative;
+    color: #ffffff;
+    min-height: 220px;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    // Subtle reflection
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.03) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: skewX(-20deg);
+      transition: 0.5s;
+    }
+
+    &:hover::after {
+      left: 150%;
+      transition: 1s ease-in-out;
+    }
+
+    .chip {
+      width: 38px;
+      height: 28px;
+      background: linear-gradient(135deg, #e0c371 0%, #b8933b 100%);
+      border-radius: 4px;
+      position: relative;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 22px;
+        height: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+      }
+    }
+
+    .type {
+      font-size: 20px;
+      font-weight: 800;
+      font-style: italic;
+      opacity: 0.9;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-number {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 22px;
+      letter-spacing: 2px;
+      margin-top: 54px;
+      margin-bottom: 14px;
+      text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.6);
+      font-weight: 600;
+      color: #f3f4f6;
+    }
+
+    .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      opacity: 0.6;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+    }
+
+    .value {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #f9fafb;
+    }
+
+    .logos {
+      position: relative;
+      width: 40px;
+      height: 24px;
+      .logo1,
+      .logo2 {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        position: absolute;
+        opacity: 0.8;
+      }
+      .logo1 {
+        background: #eb001b;
+        left: 0;
+      }
+      .logo2 {
+        background: #f79e1b;
+        left: 14px;
+      }
+    }
+  }
+}
+

@@ -1,6 +1,7 @@
 /** IMPORTS **/
 @use "./variables" as *;
 @use "./reset";
+@use "./shared/main.scss";
 
 /** VERSION: PC **/
 #pc-wrap {
@@ -12,4 +13,9 @@
     margin: 0 auto;
     display: flex;
   }
+}
+
+/** VERSION: MOBILE **/
+
+#mobile-wrap {
 }

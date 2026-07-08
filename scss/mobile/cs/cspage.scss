@@ -1,0 +1,54 @@
+@use "../../variables.scss" as *;
+
+#mobile-wrap {
+  .support-hub-section {
+    padding: $space-5 0 $space-6;
+    margin-top: 0;
+
+    .container {
+      padding: 0 $space-4;
+      gap: $space-4;
+    }
+
+    .support-notice-highlight {
+      flex-wrap: wrap;
+      padding: $space-4;
+      gap: $space-3;
+
+      .notice-copy {
+        min-width: 0;
+      }
+
+      .notice-cta {
+        margin-left: 0;
+      }
+    }
+
+    .support-hub-main {
+      flex-direction: column !important;
+      gap: $space-4;
+    }
+
+    .support-hub-sidebar {
+      width: 100%;
+
+      .sidebar-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: $space-2;
+      }
+
+      .sidebar-item {
+        width: auto;
+        flex: 1 1 auto;
+        justify-content: center;
+        padding: $space-3 $space-4;
+        min-height: $touch-target-min;
+      }
+    }
+
+    .support-modal {
+      padding: $space-4;
+    }
+  }
+}

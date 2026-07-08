@@ -1,0 +1,16 @@
+/* IMPORTS */
+/* Shared, viewport-independent component styles — apply under both
+   #pc-wrap and #mobile-wrap since they were extracted out of the
+   desktop-only tree. Only true desktop-specific layout (grid column
+   counts, wide absolute-position hero coordinates) stays in scss/pc. */
+@use "./agentspage-card.scss" as *;
+@use "./servicepage-card.scss" as *;
+@use "./shoppage-card.scss" as *;
+@use "./homepage-cards.scss" as *;
+@use "./cspage-cards.scss" as *;
+@use "./communitypage-cards.scss" as *;
+@use "./mypage-profile.scss" as *;
+@use "./mypage-favorites.scss" as *;
+@use "./mypage-articles.scss" as *;
+@use "./mypage-service-mgmt.scss" as *;
+@use "./mypage-notifications.scss" as *;

@@ -1,0 +1,30 @@
+@use "../../variables.scss" as *;
+
+// Reused verbatim (same class names) across agents/detail, shop/detail, and
+// the service booking wizard — one shared mobile treatment for all three.
+#mobile-wrap {
+  .write-review-panel {
+    flex-direction: column !important;
+    padding: $space-4;
+
+    .write-review-left {
+      min-width: 0;
+      width: 100%;
+      padding-right: 0;
+      padding-bottom: $space-4;
+      border-right: none;
+      border-bottom: 1.5px solid #f3e8ff;
+      align-items: center;
+      text-align: center;
+    }
+
+    .write-review-right {
+      padding-left: 0;
+      padding-top: $space-4;
+    }
+
+    .write-review-submit-btn {
+      align-self: stretch;
+    }
+  }
+}

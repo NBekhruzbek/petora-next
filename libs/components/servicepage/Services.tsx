@@ -16,6 +16,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import ServiceCard, { ServiceItem } from "./ServiceCard";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
+import MobileDrawer from "../common/MobileDrawer";
 
 const initialServices: ServiceItem[] = [
   {
@@ -184,9 +187,12 @@ const locations = [
   "Jeju",
 ];
 
+const DEFAULT_PRICE_RANGE = [0, 200];
+
 const Services = () => {
+  const device = useDeviceDetect();
   const [services, setServices] = useState(initialServices);
-  const [priceRange, setPriceRange] = useState<number[]>([0, 200]);
+  const [priceRange, setPriceRange] = useState<number[]>(DEFAULT_PRICE_RANGE);
   const [isPriceOpen, setIsPriceOpen] = useState(true);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
   const [isLocationOpen, setIsLocationOpen] = useState(true);
@@ -197,7 +203,13 @@ const Services = () => {
   const [searchText, setSearchText] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("new");
   const [serviceSearch, setServiceSearch] = useState({ page: 1, limit: 6 });
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const servicesTopRef = useRef<HTMLDivElement | null>(null);
+  const activeFilterCount =
+    selectedCategories.length +
+    selectedLocations.length +
+    (likedSelected ? 1 : 0) +
+    (priceRange[0] !== DEFAULT_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_PRICE_RANGE[1] ? 1 : 0);
 
   const toggleServiceLike = (id: string) => {
     setServices((prev) =>
@@ -274,145 +286,164 @@ const Services = () => {
   const startIndex = (serviceSearch.page - 1) * serviceSearch.limit;
   const pagedServices = sortedServices.slice(startIndex, startIndex + serviceSearch.limit);
 
+  const sidebarContent = (
+    <>
+      <Box className="search-box">
+        <Input
+          placeholder="Search here"
+          disableUnderline
+          className="text-field"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") setSearchText((prev) => prev.trim());
+          }}
+        />
+        <Button
+          className="search-button"
+          onClick={() => setSearchText((prev) => prev.trim())}
+        >
+          <SearchIcon />
+        </Button>
+      </Box>
+      <Divider className="divider" />
+
+      <Stack className="price-section category-section">
+        <Stack
+          className="category-header"
+          onClick={() => setIsPriceOpen((p) => !p)}
+        >
+          <Typography className="category-title">Price range</Typography>
+          <Box
+            className={`category-toggle ${isPriceOpen ? "is-open" : ""}`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack className={`category-list ${isPriceOpen ? "is-open" : ""}`}>
+          <Box className="price-range">
+            <Slider
+              value={priceRange}
+              onChange={(_e, v) => setPriceRange(v as number[])}
+              min={0}
+              max={200}
+              valueLabelDisplay="off"
+              className="price-line"
+            />
+            <Typography className="selected-price">
+              ${priceRange[0]} – ${priceRange[1]}
+            </Typography>
+          </Box>
+        </Stack>
+      </Stack>
+
+      <Divider className="divider" />
+
+      <Stack className="category-section">
+        <Stack
+          className="category-header"
+          onClick={() => setIsCategoryOpen((p) => !p)}
+        >
+          <Typography className="category-title">Category</Typography>
+          <Box
+            className={`category-toggle ${isCategoryOpen ? "is-open" : ""}`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack className={`category-list ${isCategoryOpen ? "is-open" : ""}`}>
+          {categories.map((cat) => (
+            <Stack
+              key={cat}
+              className={`category-option ${selectedCategories.includes(cat) ? "is-selected" : ""}`}
+              onClick={() =>
+                setSelectedCategories((prev) =>
+                  prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
+                )
+              }
+            >
+              <Box className="category-checkbox" aria-hidden="true" />
+              <Typography className="category-label">{cat}</Typography>
+            </Stack>
+          ))}
+        </Stack>
+      </Stack>
+
+      <Divider className="divider" />
+
+      <Stack className="category-section">
+        <Stack
+          className="category-header"
+          onClick={() => setIsLocationOpen((p) => !p)}
+        >
+          <Typography className="category-title">Location</Typography>
+          <Box
+            className={`category-toggle ${isLocationOpen ? "is-open" : ""}`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack className={`category-list ${isLocationOpen ? "is-open" : ""}`}>
+          {locations.map((loc) => (
+            <Stack
+              key={loc}
+              className={`category-option ${selectedLocations.includes(loc) ? "is-selected" : ""}`}
+              onClick={() =>
+                setSelectedLocations((prev) =>
+                  prev.includes(loc) ? prev.filter((l) => l !== loc) : [...prev, loc],
+                )
+              }
+            >
+              <Box className="category-checkbox" aria-hidden="true" />
+              <Typography className="category-label">{loc}</Typography>
+            </Stack>
+          ))}
+        </Stack>
+      </Stack>
+
+      <Divider className="divider" />
+
+      <Stack className="liked-agents-section">
+        <Stack className="likes-header" onClick={() => setIsLikedOpen((p) => !p)}>
+          <Typography className="likes-title">Likes</Typography>
+          <Box
+            className={`likes-toggle ${isLikedOpen ? "is-open" : ""}`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack className={`likes-list ${isLikedOpen ? "is-open" : ""}`}>
+          <Stack
+            className={`likes-option ${likedSelected ? "is-selected" : ""}`}
+            onClick={() => setLikedSelected((p) => !p)}
+          >
+            <Box className="likes-checkbox" aria-hidden="true" />
+            <Typography className="likes-label">My Favorites</Typography>
+          </Stack>
+          <Divider className="likes-divider" />
+        </Stack>
+      </Stack>
+    </>
+  );
+
   return (
     <Stack className="services-agents-page">
       <Stack className="container">
         <Box className="title">Find Pet Care</Box>
         <Stack className="services-main">
-          {/* ── Sidebar ── */}
-          <Stack className="category">
-            <Box className="search-box">
-              <Input
-                placeholder="Search here"
-                disableUnderline
-                className="text-field"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") setSearchText((prev) => prev.trim());
-                }}
-              />
-              <Button
-                className="search-button"
-                onClick={() => setSearchText((prev) => prev.trim())}
-              >
-                <SearchIcon />
-              </Button>
-            </Box>
-            <Divider className="divider" />
-
-            <Stack className="price-section category-section">
-              <Stack
-                className="category-header"
-                onClick={() => setIsPriceOpen((p) => !p)}
-              >
-                <Typography className="category-title">Price range</Typography>
-                <Box
-                  className={`category-toggle ${isPriceOpen ? "is-open" : ""}`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack className={`category-list ${isPriceOpen ? "is-open" : ""}`}>
-                <Box className="price-range">
-                  <Slider
-                    value={priceRange}
-                    onChange={(_e, v) => setPriceRange(v as number[])}
-                    min={0}
-                    max={200}
-                    valueLabelDisplay="off"
-                    className="price-line"
-                  />
-                  <Typography className="selected-price">
-                    ${priceRange[0]} – ${priceRange[1]}
-                  </Typography>
+          {/* ── Sidebar (desktop) / Filter trigger (mobile) ── */}
+          {device === "mobile" ? (
+            <Button
+              className="mobile-filter-trigger"
+              onClick={() => setIsFilterDrawerOpen(true)}
+            >
+              <FilterListIcon fontSize="small" />
+              Filters
+              {activeFilterCount > 0 && (
+                <Box className="mobile-filter-trigger-count">
+                  {activeFilterCount}
                 </Box>
-              </Stack>
-            </Stack>
-
-            <Divider className="divider" />
-
-            <Stack className="category-section">
-              <Stack
-                className="category-header"
-                onClick={() => setIsCategoryOpen((p) => !p)}
-              >
-                <Typography className="category-title">Category</Typography>
-                <Box
-                  className={`category-toggle ${isCategoryOpen ? "is-open" : ""}`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack className={`category-list ${isCategoryOpen ? "is-open" : ""}`}>
-                {categories.map((cat) => (
-                  <Stack
-                    key={cat}
-                    className={`category-option ${selectedCategories.includes(cat) ? "is-selected" : ""}`}
-                    onClick={() =>
-                      setSelectedCategories((prev) =>
-                        prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
-                      )
-                    }
-                  >
-                    <Box className="category-checkbox" aria-hidden="true" />
-                    <Typography className="category-label">{cat}</Typography>
-                  </Stack>
-                ))}
-              </Stack>
-            </Stack>
-
-            <Divider className="divider" />
-
-            <Stack className="category-section">
-              <Stack
-                className="category-header"
-                onClick={() => setIsLocationOpen((p) => !p)}
-              >
-                <Typography className="category-title">Location</Typography>
-                <Box
-                  className={`category-toggle ${isLocationOpen ? "is-open" : ""}`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack className={`category-list ${isLocationOpen ? "is-open" : ""}`}>
-                {locations.map((loc) => (
-                  <Stack
-                    key={loc}
-                    className={`category-option ${selectedLocations.includes(loc) ? "is-selected" : ""}`}
-                    onClick={() =>
-                      setSelectedLocations((prev) =>
-                        prev.includes(loc) ? prev.filter((l) => l !== loc) : [...prev, loc],
-                      )
-                    }
-                  >
-                    <Box className="category-checkbox" aria-hidden="true" />
-                    <Typography className="category-label">{loc}</Typography>
-                  </Stack>
-                ))}
-              </Stack>
-            </Stack>
-
-            <Divider className="divider" />
-
-            <Stack className="liked-agents-section">
-              <Stack className="likes-header" onClick={() => setIsLikedOpen((p) => !p)}>
-                <Typography className="likes-title">Likes</Typography>
-                <Box
-                  className={`likes-toggle ${isLikedOpen ? "is-open" : ""}`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack className={`likes-list ${isLikedOpen ? "is-open" : ""}`}>
-                <Stack
-                  className={`likes-option ${likedSelected ? "is-selected" : ""}`}
-                  onClick={() => setLikedSelected((p) => !p)}
-                >
-                  <Box className="likes-checkbox" aria-hidden="true" />
-                  <Typography className="likes-label">My Favorites</Typography>
-                </Stack>
-                <Divider className="likes-divider" />
-              </Stack>
-            </Stack>
-          </Stack>
+              )}
+            </Button>
+          ) : (
+            <Stack className="category">{sidebarContent}</Stack>
+          )}
 
           {/* ── Grid ── */}
           <Stack className="sorting-agents" ref={servicesTopRef}>
@@ -482,6 +513,20 @@ const Services = () => {
           </Stack>
         </Stack>
       </Stack>
+
+      {device === "mobile" && (
+        <MobileDrawer
+          open={isFilterDrawerOpen}
+          onClose={() => setIsFilterDrawerOpen(false)}
+          title="Filters"
+          primaryAction={{
+            label: `Show ${sortedServices.length} service${sortedServices.length === 1 ? "" : "s"}`,
+            onClick: () => setIsFilterDrawerOpen(false),
+          }}
+        >
+          <Stack className="category mobile-filter-panel">{sidebarContent}</Stack>
+        </MobileDrawer>
+      )}
     </Stack>
   );
 };

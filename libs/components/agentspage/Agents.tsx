@@ -14,8 +14,11 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import { mockAgents } from "@/libs/data/adminMockData";
 import AgentCard from "./AgentCard";
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
+import MobileDrawer from "../common/MobileDrawer";
 
 const serviceTypes = ["Grooming", "Training", "Walking", "Boarding", "Day-care"];
 const serviceAreas = ["Gangnam", "Mapo", "Yongsan", "Seongdong", "Songpa", "Jongno"];
@@ -23,6 +26,7 @@ const serviceAreas = ["Gangnam", "Mapo", "Yongsan", "Seongdong", "Songpa", "Jong
 type SortOption = "newest" | "rating" | "bookings";
 
 const Agents = () => {
+  const device = useDeviceDetect();
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
   const [isTypeOpen, setIsTypeOpen] = useState(true);
@@ -30,7 +34,9 @@ const Agents = () => {
   const [searchText, setSearchText] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [agentSearch, setAgentSearch] = useState({ page: 1, limit: 6 });
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const listTopRef = useRef<HTMLDivElement | null>(null);
+  const activeFilterCount = selectedTypes.length + selectedAreas.length;
 
   const paginationHandler = (_event: ChangeEvent<unknown>, page: number) => {
     setAgentSearch((prev) => ({ ...prev, page }));
@@ -101,86 +107,105 @@ const Agents = () => {
       prev.includes(area) ? prev.filter((a) => a !== area) : [...prev, area],
     );
 
+  const sidebarContent = (
+    <>
+      <Box className="search-box">
+        <Input
+          placeholder="Search agents..."
+          disableUnderline
+          className="text-field"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") setSearchText((prev) => prev.trim());
+          }}
+        />
+        <Button
+          className="search-button"
+          onClick={() => setSearchText((prev) => prev.trim())}
+        >
+          <SearchIcon />
+        </Button>
+      </Box>
+
+      <Divider className="divider" />
+
+      <Stack className="category-section">
+        <Stack
+          className="category-header"
+          onClick={() => setIsTypeOpen((p) => !p)}
+        >
+          <Typography className="category-title">Service Type</Typography>
+          <Box
+            className={`category-toggle ${isTypeOpen ? "is-open" : ""}`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack className={`category-list ${isTypeOpen ? "is-open" : ""}`}>
+          {serviceTypes.map((type) => (
+            <Stack
+              key={type}
+              className={`category-option ${selectedTypes.includes(type) ? "is-selected" : ""}`}
+              onClick={() => toggleType(type)}
+            >
+              <Box className="category-checkbox" aria-hidden="true" />
+              <Typography className="category-label">{type}</Typography>
+            </Stack>
+          ))}
+        </Stack>
+      </Stack>
+
+      <Divider className="divider" />
+
+      <Stack className="category-section">
+        <Stack
+          className="category-header"
+          onClick={() => setIsAreaOpen((p) => !p)}
+        >
+          <Typography className="category-title">Service Area</Typography>
+          <Box
+            className={`category-toggle ${isAreaOpen ? "is-open" : ""}`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack className={`category-list ${isAreaOpen ? "is-open" : ""}`}>
+          {serviceAreas.map((area) => (
+            <Stack
+              key={area}
+              className={`category-option ${selectedAreas.includes(area) ? "is-selected" : ""}`}
+              onClick={() => toggleArea(area)}
+            >
+              <Box className="category-checkbox" aria-hidden="true" />
+              <Typography className="category-label">{area}</Typography>
+            </Stack>
+          ))}
+        </Stack>
+      </Stack>
+    </>
+  );
+
   return (
     <Stack className="agents-listing-page">
       <Stack className="container">
         <Box className="agents-page-title">Find Your Agent</Box>
         <Stack className="agents-main">
-          {/* ── Sidebar ── */}
-          <Stack className="category">
-            <Box className="search-box">
-              <Input
-                placeholder="Search agents..."
-                disableUnderline
-                className="text-field"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") setSearchText((prev) => prev.trim());
-                }}
-              />
-              <Button
-                className="search-button"
-                onClick={() => setSearchText((prev) => prev.trim())}
-              >
-                <SearchIcon />
-              </Button>
-            </Box>
-
-            <Divider className="divider" />
-
-            <Stack className="category-section">
-              <Stack
-                className="category-header"
-                onClick={() => setIsTypeOpen((p) => !p)}
-              >
-                <Typography className="category-title">Service Type</Typography>
-                <Box
-                  className={`category-toggle ${isTypeOpen ? "is-open" : ""}`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack className={`category-list ${isTypeOpen ? "is-open" : ""}`}>
-                {serviceTypes.map((type) => (
-                  <Stack
-                    key={type}
-                    className={`category-option ${selectedTypes.includes(type) ? "is-selected" : ""}`}
-                    onClick={() => toggleType(type)}
-                  >
-                    <Box className="category-checkbox" aria-hidden="true" />
-                    <Typography className="category-label">{type}</Typography>
-                  </Stack>
-                ))}
-              </Stack>
-            </Stack>
-
-            <Divider className="divider" />
-
-            <Stack className="category-section">
-              <Stack
-                className="category-header"
-                onClick={() => setIsAreaOpen((p) => !p)}
-              >
-                <Typography className="category-title">Service Area</Typography>
-                <Box
-                  className={`category-toggle ${isAreaOpen ? "is-open" : ""}`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack className={`category-list ${isAreaOpen ? "is-open" : ""}`}>
-                {serviceAreas.map((area) => (
-                  <Stack
-                    key={area}
-                    className={`category-option ${selectedAreas.includes(area) ? "is-selected" : ""}`}
-                    onClick={() => toggleArea(area)}
-                  >
-                    <Box className="category-checkbox" aria-hidden="true" />
-                    <Typography className="category-label">{area}</Typography>
-                  </Stack>
-                ))}
-              </Stack>
-            </Stack>
-          </Stack>
+          {/* ── Sidebar (desktop) / Filter trigger (mobile) ── */}
+          {device === "mobile" ? (
+            <Button
+              className="mobile-filter-trigger"
+              onClick={() => setIsFilterDrawerOpen(true)}
+            >
+              <FilterListIcon fontSize="small" />
+              Filters
+              {activeFilterCount > 0 && (
+                <Box className="mobile-filter-trigger-count">
+                  {activeFilterCount}
+                </Box>
+              )}
+            </Button>
+          ) : (
+            <Stack className="category">{sidebarContent}</Stack>
+          )}
 
           {/* ── Grid ── */}
           <Stack className="sorting-agents" ref={listTopRef}>
@@ -236,6 +261,20 @@ const Agents = () => {
           </Stack>
         </Stack>
       </Stack>
+
+      {device === "mobile" && (
+        <MobileDrawer
+          open={isFilterDrawerOpen}
+          onClose={() => setIsFilterDrawerOpen(false)}
+          title="Filters"
+          primaryAction={{
+            label: `Show ${sortedAgents.length} agent${sortedAgents.length === 1 ? "" : "s"}`,
+            onClick: () => setIsFilterDrawerOpen(false),
+          }}
+        >
+          <Stack className="category mobile-filter-panel">{sidebarContent}</Stack>
+        </MobileDrawer>
+      )}
     </Stack>
   );
 };

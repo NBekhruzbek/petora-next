@@ -3,6 +3,7 @@ import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { useMemo, useState } from "react";
 import DiscoveryCard, { type DiscoveryCardItem } from "./DiscoveryCard";
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 
 type DiscoveryCategory = "Dogs" | "Cats" | "Hamsters" | "Birds";
 
@@ -11,7 +12,6 @@ type DiscoveryItem = DiscoveryCardItem & {
 };
 
 const categories: DiscoveryCategory[] = ["Dogs", "Cats", "Hamsters", "Birds"];
-const cardsPerPage = 4;
 
 const discoveryItems: DiscoveryItem[] = [
   {
@@ -149,6 +149,8 @@ const discoveryItems: DiscoveryItem[] = [
 ];
 
 const Discovery = () => {
+  const device = useDeviceDetect();
+  const cardsPerPage = device === "mobile" ? 1 : 4;
   const [activeCategory, setActiveCategory] =
     useState<DiscoveryCategory>("Dogs");
   const [activePage, setActivePage] = useState(0);
@@ -172,7 +174,7 @@ const Discovery = () => {
       ...item,
       liked: likedById[item.id] ?? false,
     }));
-  }, [filteredItems, safeActivePage, likedById]);
+  }, [filteredItems, safeActivePage, likedById, cardsPerPage]);
 
   const onCategoryChange = (category: DiscoveryCategory) => {
     setActiveCategory(category);

@@ -1,0 +1,30 @@
+/* IMPORTS */
+@use "../variables.scss" as *;
+@use "./common/mobile-drawer.scss" as *;
+@use "./common/mobile-filter-trigger.scss" as *;
+@use "./common/write-review-panel.scss" as *;
+@use "./common/footer.scss" as *;
+@use "./common/contact-us.scss" as *;
+@use "./common/auth-dialog.scss" as *;
+@use "./common/mobile-topbar.scss" as *;
+@use "./agentspage/agentspage.scss" as *;
+@use "./servicepage/servicepage.scss" as *;
+@use "./shoppage/shoppage.scss" as *;
+@use "./homepage/homepage.scss" as *;
+@use "./headers/headers.scss" as *;
+@use "./checkout/checkout.scss" as *;
+@use "./cs/cspage.scss" as *;
+@use "./communitypage/communitypage.scss" as *;
+@use "./mypage/mypage.scss" as *;
+
+/** VERSION: MOBILE **/
+#mobile-wrap {
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  max-width: 100vw;
+
+  * {
+    box-sizing: border-box;
+  }
+}

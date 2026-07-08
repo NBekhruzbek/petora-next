@@ -1,0 +1,238 @@
+@use "../../variables.scss" as *;
+
+// All 7 page-hero headers (Agents/Service/Shop/Community/MyPage/Cs/Main)
+// share one desktop DNA: a text column beside a `circle-background` stage
+// (ellipse art + floating dog/cat icon blobs) with one or more large
+// absolutely-positioned hero images, all tuned to a ~1300px-wide, ~700-800px
+// tall canvas. None of that math survives at mobile widths, so every header
+// gets the same treatment: stack text above a single hero image, and drop
+// the purely decorative layers (icon blobs, floating rank cards, extra
+// secondary images) rather than trying to rescale them.
+#mobile-wrap {
+  // ── Shared wrapper background + wave (identical across all 6 #X-top ids) ──
+  #agents-top,
+  #main-top,
+  #community-top,
+  #cs-top,
+  #mypage-top,
+  #shop-top {
+    background-color: #f2e2ff;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C360,120 1080,0 1440,60 L1440,120 L0,120 Z' fill='%23ffffff'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
+  }
+
+  // ── Shared decorative layers, dropped on every header ──
+  .circle-background {
+    position: static;
+    width: 100%;
+    margin-top: 0;
+
+    .ellipse,
+    .ellipse1,
+    .ellipse2,
+    .dog-icon,
+    .cat-icon,
+    .green-circle,
+    .purple-circle {
+      display: none;
+    }
+  }
+
+  .dog-card,
+  .cat-card {
+    display: none;
+  }
+
+  // Every header's own top-level row becomes a column; text first, hero
+  // image below.
+  .agents-top,
+  .service-header,
+  .main-header,
+  .community-top,
+  .mypage-top,
+  .shop-top,
+  .cs-top {
+    flex-direction: column;
+    height: auto;
+    padding-top: $space-5;
+
+    .text-area {
+      position: static;
+      margin-top: 0;
+      min-height: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  // ── Typography: standard 5 headers (text1/text2 = headline, text3 = body) ──
+  .agents-top,
+  .service-header,
+  .community-top,
+  .mypage-top,
+  .shop-top {
+    .text-area {
+      .text1,
+      .text2 {
+        font-size: 26px !important;
+        line-height: 1.3 !important;
+      }
+
+      .text3 {
+        width: 100% !important;
+        height: auto !important;
+        font-size: 16px !important;
+      }
+    }
+  }
+
+  // MainHeader inverts the roles (text1 = intro line, text2/text3 = headline)
+  .main-header {
+    .text-area {
+      .text1 {
+        width: 100% !important;
+        font-size: 15px !important;
+      }
+
+      .text2,
+      .text3 {
+        font-size: 26px !important;
+        line-height: 1.3 !important;
+      }
+
+      .booking-button {
+        width: 100%;
+        height: auto;
+        padding: $space-3 $space-4;
+        white-space: normal;
+        text-align: center;
+      }
+    }
+  }
+
+  // CsHeader has its own serif hero-title + support pill, not text1/2/3
+  .cs-top {
+    .text-area {
+      max-width: 100%;
+
+      .hero-title {
+        font-size: 28px !important;
+
+        // The accent icon here has no hand-icon class to catch the
+        // global hide rule below, and it's inline with the sentence
+        // rather than a standalone flourish, so size it instead of
+        // hiding it.
+        .accent-line img {
+          width: 22px;
+          height: 22px;
+          vertical-align: middle;
+        }
+      }
+
+      .text3 {
+        max-width: 100%;
+        font-size: 16px;
+      }
+
+      .support-highlights {
+        max-width: 100%;
+      }
+    }
+  }
+
+  .hand-icon {
+    display: none;
+  }
+
+  // ── Per-page hero image: keep exactly one, full width, in normal flow ──
+  #agents-top .dogs-image,
+  #main-top .service-header .dogs-image {
+    position: static;
+    width: 100%;
+    height: auto;
+    margin-top: $space-4;
+  }
+
+  #shop-top {
+    .dog2-image,
+    .products {
+      display: none;
+    }
+
+    .dogs-image-wrapper .dogs-image {
+      position: static;
+      width: 100%;
+      height: auto;
+      margin-top: $space-4;
+    }
+  }
+
+  #community-top {
+    .news-logo {
+      display: none;
+    }
+
+    .community-image-wrapper {
+      position: static;
+      width: 100%;
+      min-height: 0;
+      margin-top: $space-4;
+
+      .community-image {
+        position: static;
+        right: auto;
+        bottom: auto;
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+  #mypage-top {
+    .pets-image,
+    .cat {
+      display: none;
+    }
+
+    .girl-image-wrapper .girl-image {
+      width: 100%;
+      margin: $space-4 0 0;
+    }
+  }
+
+  #cs-top {
+    .cs-image {
+      display: none;
+    }
+
+    .cs-image-wrapper .cs-main-image {
+      width: 100%;
+      margin: $space-4 0 0;
+    }
+  }
+
+  #main-top .main-header {
+    .cat-image,
+    .cat-image-background {
+      display: none;
+    }
+
+    .dog-image {
+      width: 100%;
+      height: auto;
+      margin-top: $space-4;
+    }
+  }
+}

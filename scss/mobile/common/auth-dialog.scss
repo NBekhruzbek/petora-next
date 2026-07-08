@@ -1,0 +1,61 @@
+@use "../../variables.scss" as *;
+
+// LoginRegister's .auth-dialog is a portaled MUI Dialog rendered on
+// document.body — never a descendant of #mobile-wrap — and its pc rules
+// are already unscoped/global, so mobile adjustments must go through a
+// real media query (same as the community Q&A and notification dialogs).
+@media (max-width: #{$breakpoint-mobile}) {
+  .auth-dialog {
+    .MuiDialog-container {
+      padding-top: $space-5;
+    }
+
+    .auth-dialog-paper {
+      width: calc(100vw - #{$space-4 * 2});
+      // The pc rule forces overflow: visible (the close button hangs
+      // outside the paper there); on mobile the taller forms (register)
+      // must scroll within the viewport instead.
+      max-height: calc(100vh - #{$space-6 * 2}) !important;
+      overflow-y: auto !important;
+    }
+
+    // Desktop floats the close button just outside the dialog's top-right
+    // corner (-18px) — off a full-bleed mobile dialog that lands at the
+    // viewport edge, so pull it inside.
+    .auth-close-button {
+      top: 10px;
+      right: 10px;
+    }
+
+    .auth-shell {
+      flex-direction: column;
+
+      .auth-form-panel {
+        // Desktop's flex: 1 1 0 (basis 0) collapses the panel to its
+        // 400px min-height once the shell turns into a column, and its
+        // overflow: hidden clips the taller form content — let it take
+        // natural height instead.
+        flex: none;
+        min-height: 0;
+        border-radius: 26px;
+        padding: $space-5 $space-4 $space-4;
+
+        // Sits behind the relocated close button at this width.
+        .auth-brand-logo {
+          display: none;
+        }
+      }
+
+      // Purely promotional side panel (illustration + tagline); the form
+      // is the whole job on a phone screen.
+      .auth-visual-panel {
+        display: none;
+      }
+
+      .auth-two-columns {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+  }
+}

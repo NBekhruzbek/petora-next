@@ -1,0 +1,220 @@
+@use "../../variables.scss" as *;
+
+#mobile-wrap {
+  // The bar itself is position: fixed, so give its #top wrapper the same
+  // height to hold the space in the page flow.
+  #top {
+    height: 60px;
+  }
+
+  .mobile-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1200;
+    height: 60px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 $space-3 0 $space-4;
+    background: rgba(242, 226, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(65, 0, 117, 0.08);
+
+    .mobile-topbar-brand {
+      img {
+        width: 46px;
+      }
+
+      .logo-name {
+        margin-left: 2px;
+        font-family: "Pacifico", cursive;
+        font-size: 20px;
+        color: #410075;
+      }
+    }
+
+    .mobile-topbar-actions {
+      gap: $space-1;
+
+      .mobile-nav-toggle {
+        width: $touch-target-min;
+        height: $touch-target-min;
+        color: #410075;
+
+        svg {
+          font-size: 26px;
+        }
+      }
+    }
+  }
+}
+
+// The nav drawer portals to document.body (never inside #mobile-wrap) and
+// is only ever mounted by the mobile branch, so its classes are global.
+.mobile-nav-drawer-paper {
+  width: min(320px, 84vw);
+  border-radius: 20px 0 0 20px !important;
+  background: #fdfaff !important;
+}
+
+.mobile-nav-drawer {
+  height: 100%;
+  padding: $space-4;
+  gap: $space-4;
+  box-sizing: border-box;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  &__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .mobile-nav-drawer__brand {
+      font-family: "Pacifico", cursive;
+      font-size: 22px;
+      color: #410075;
+    }
+
+    .mobile-nav-drawer__close {
+      width: $touch-target-min;
+      height: $touch-target-min;
+      border-radius: 50%;
+      background: rgba(65, 0, 117, 0.06);
+      color: #410075;
+    }
+  }
+
+  &__list {
+    gap: $space-1;
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    min-height: $touch-target-min;
+    padding: 0 $space-4;
+    border-radius: 12px;
+    font-family: $font;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+
+    &:active {
+      background: #f3e8ff;
+    }
+
+    &.active {
+      background: #f3e8ff;
+      color: #410075;
+      font-weight: 800;
+    }
+  }
+
+  &__divider {
+    border-color: rgba(65, 0, 117, 0.08) !important;
+  }
+
+  &__lang {
+    gap: $space-2;
+
+    button {
+      flex: 1;
+      min-height: $touch-target-min;
+      border-radius: 12px;
+      border: 1px solid rgba(65, 0, 117, 0.15);
+      background: #fff;
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 700;
+      color: #6b7280;
+      cursor: pointer;
+
+      &.active {
+        border-color: #410075;
+        background: #f3e8ff;
+        color: #410075;
+      }
+    }
+  }
+
+  &__footer {
+    margin-top: auto;
+  }
+
+  &__member {
+    align-items: center;
+    gap: $space-3;
+    padding: $space-3;
+    border-radius: 14px;
+    background: #f8f2ff;
+    border: 1px solid rgba(65, 0, 117, 0.08);
+
+    .mobile-nav-drawer__avatar {
+      width: 40px !important;
+      height: 40px !important;
+    }
+
+    .mobile-nav-drawer__member-name {
+      flex: 1;
+      font-family: $font;
+      font-size: 15px;
+      font-weight: 700;
+      color: #111;
+    }
+
+    .mobile-nav-drawer__logout {
+      display: inline-flex;
+      align-items: center;
+      gap: $space-1;
+      min-height: $touch-target-min;
+      padding: 0 $space-3;
+      border: none;
+      border-radius: 10px;
+      background: rgba(220, 38, 38, 0.06);
+      color: #dc2626;
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+
+      svg {
+        font-size: 18px;
+      }
+    }
+  }
+
+  &__login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2;
+    width: 100%;
+    min-height: $touch-target-min;
+    border: none;
+    border-radius: 12px;
+    background: #410075;
+    color: #fff;
+    font-family: $font;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+    cursor: pointer;
+
+    &:active {
+      background: #34005e;
+    }
+  }
+}

@@ -1,0 +1,415 @@
+@use "../../variables.scss" as *;
+
+#mobile-wrap {
+  .products-section {
+    padding-top: $space-5;
+
+    .container {
+      padding: 0 $space-4;
+    }
+
+    .title {
+      font-size: 22px;
+      margin-bottom: $space-4;
+    }
+
+    .products-main {
+      flex-direction: column;
+      gap: $space-4;
+    }
+
+    .sorting-products {
+      gap: $space-4;
+
+      .filter-section-wrap {
+        justify-content: space-between;
+      }
+    }
+
+    .products-cards {
+      gap: $space-4;
+      min-height: 0;
+
+      .product-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+  }
+
+  // ─── Product Detail Page ───────────────────────────────────────────────
+  .product-detail-section {
+    .container {
+      padding-top: $space-5;
+      gap: $space-4;
+    }
+
+    .product-detail-grid {
+      flex-direction: column;
+      gap: $space-4;
+
+      .gallery {
+        .main-image {
+          width: 100%;
+          height: auto;
+          aspect-ratio: 1 / 1;
+        }
+
+        .thumbs {
+          flex-wrap: wrap;
+
+          // Thumbnail sizing is desktop-scoped only — restate it so the
+          // thumbnail images don't render at native (huge) size.
+          .thumb {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+
+            img {
+              width: 44px;
+              height: 44px;
+            }
+          }
+        }
+      }
+
+      .shopping-sidebar {
+        .shopping-card {
+          padding: $space-4;
+
+          .title {
+            font-size: 24px;
+          }
+
+          .pet-type {
+            width: 60px;
+            height: 30px;
+            flex-shrink: 0;
+            padding-top: 1px;
+            text-align: center;
+            border: 1px solid #9f9f9f;
+            border-radius: 30px;
+            color: #3d3d3d;
+            background-color: #f9eafb;
+          }
+
+          .price-section .price-after-discount {
+            font-size: 28px;
+          }
+
+          .cta-row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+
+            .quantity {
+              flex: 1 1 100%;
+              display: flex;
+              flex-direction: row;
+              justify-content: space-around;
+              align-items: center;
+              width: auto;
+              border: 1px solid #000;
+              border-radius: 30px;
+              overflow: hidden;
+            }
+
+            .add-btn,
+            .pay-btn {
+              flex: 1 1 0;
+              width: auto;
+              min-width: 0;
+              padding: $space-3 $space-1;
+              font-size: 13px;
+              gap: $space-1;
+            }
+          }
+        }
+      }
+    }
+
+    .product-detail-tabs-section {
+      margin-top: $space-5;
+
+      .detail-tab-panel .detail-content .detail-block .detail-info-grid {
+        max-width: 100%;
+
+        .detail-info-row {
+          grid-template-columns: minmax(120px, 40%) 1fr;
+          gap: $space-3;
+        }
+      }
+
+      .review-user-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #eef1f5;
+      }
+    }
+  }
+
+  // ─── Related Products (horizontal scroll on mobile) ───────────────────
+  .related-products {
+    margin-top: $space-5;
+    padding-bottom: $space-6;
+
+    .container {
+      padding: 0 $space-4;
+
+      .related-products-title {
+        font-size: 22px;
+      }
+
+      .product-cards {
+        gap: $space-3;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: $space-2;
+
+        .product-card {
+          width: 260px;
+          flex: 0 0 auto;
+        }
+      }
+    }
+  }
+
+  // ─── Wellness Items carousel (coverflow) ───────────────────────────────
+  // The coverflow scale/opacity/shift are inline styles (JS-driven), so
+  // they keep working on mobile untouched — only the class-based base
+  // card styling needs restating.
+  .wellness-section {
+    padding: $space-5 $space-4;
+
+    .container .wellness-header {
+      gap: $space-3;
+
+      .title {
+        font-size: 18px;
+      }
+
+      .header-nav {
+        width: 36px;
+        height: 36px;
+        min-width: $touch-target-min;
+        min-height: $touch-target-min;
+      }
+    }
+
+    .wellness-carousel {
+      padding: $space-2 0 $space-4;
+      overflow: hidden;
+      width: 100%;
+
+      // display/gap here MUST be restated — without it .carousel-track
+      // (a plain Box, not a Stack) isn't a flex container at all on
+      // mobile, so cards stack vertically instead of horizontally and the
+      // JS-driven translateX shifts that vertical stack sideways into
+      // blank space. gap:28px also must match the `cardGap` JS constant
+      // used in the same translateX calculation, same as cardWidth below.
+      .carousel-track {
+        display: flex;
+        gap: 28px;
+        align-items: flex-end;
+      }
+
+      // Width MUST stay 220px to match the `cardWidth` constant the
+      // carousel's JS uses to compute its translateX offset — changing
+      // this here without updating that constant misaligns the whole
+      // track off-screen.
+      .carousel-track .wellness-card {
+        width: 220px;
+        min-height: 200px;
+        padding: $space-3 $space-3 $space-2;
+        border-radius: 16px;
+        border: 1px solid #e5e5e5;
+        background: #fff;
+        gap: $space-2;
+
+        .card-image {
+          width: 80px;
+          height: 80px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+
+        .card-title {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  // ─── Pet Nutrition ──────────────────────────────────────────────────────
+  .pet-nutrition-section {
+    padding: $space-5 $space-4 $space-6;
+
+    .container {
+      .title {
+        font-size: 22px;
+      }
+
+      .nutrition-main {
+        margin-top: $space-5;
+        flex-direction: column;
+        gap: $space-4;
+
+        .info-card {
+          max-width: 100%;
+
+          .icon-box {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 100px;
+            background-color: #f2e2ff;
+
+            img {
+              max-width: 60%;
+              max-height: 60%;
+            }
+          }
+
+          .desc-text {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  // ─── Product Sales (Summer Sale collage) ───────────────────────────────
+  // Desktop stages ~15 absolutely-positioned decorative layers (lemons,
+  // leaves, sun-shine, wood board texture, blurred shadow svgs) across a
+  // 1000px-tall canvas. Simplified to a clean banner: title + one hero
+  // product image, matching the same treatment given to the homepage and
+  // shop DiscountAdvertisement collages.
+  .product-sales-section {
+    height: auto;
+    padding: $space-6 $space-4;
+
+    &::after {
+      display: none;
+    }
+
+    .container .main-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $space-3;
+
+      .pets-image,
+      .sun-shine-wrap,
+      .left-lemon,
+      .leav,
+      .leav2,
+      .wellness-bottom,
+      .box-shadow,
+      .box,
+      .lemons,
+      .fillet-shadow,
+      .right-lemon,
+      .bottom-leav {
+        display: none;
+      }
+
+      .board {
+        position: static;
+
+        .wood {
+          display: none;
+        }
+
+        .title {
+          position: static;
+          font-size: 32px;
+          background-image: none;
+          -webkit-text-fill-color: #8f00ff;
+          color: #8f00ff;
+        }
+
+        .hand-icon {
+          display: none;
+        }
+      }
+
+      .wellness,
+      .fillet {
+        position: static;
+        width: 160px;
+        height: 160px;
+      }
+    }
+
+    .bottom-shade {
+      display: none;
+    }
+  }
+
+  // ─── Discount Advertisement (shop variant) ─────────────────────────────
+  // Same collage-simplification treatment as the homepage version — clean
+  // promo card with one product image, decorative clutter dropped.
+  .discount-ads {
+    height: auto;
+
+    .container .discount-ads-main {
+      margin-top: $space-5;
+      height: auto;
+      flex-direction: column;
+      align-items: stretch;
+      padding: $space-5 $space-4;
+
+      .back-image,
+      .leaf-1,
+      .leaf-2,
+      .leaf-3,
+      .leaf-4,
+      .wood,
+      .grass,
+      .the,
+      .summer,
+      .dog {
+        display: none;
+      }
+
+      .main-area {
+        margin-left: 0;
+        padding-top: 0;
+        text-align: center;
+        align-items: center;
+
+        .saving-percent,
+        .title {
+          font-size: 22px;
+        }
+      }
+
+      .products {
+        position: static;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: $space-4;
+
+        .product1 {
+          position: static;
+          width: 160px;
+        }
+
+        .product2 {
+          display: none;
+        }
+      }
+    }
+  }
+}

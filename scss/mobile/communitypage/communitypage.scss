@@ -1,0 +1,65 @@
+@use "../../variables.scss" as *;
+
+#mobile-wrap {
+  .free-board-news-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .qna-question-card {
+    .qna-question-title {
+      font-size: 18px;
+    }
+  }
+
+  // .qna-question-meta and its children are scoped under #pc-wrap only —
+  // the dialog's own copies of some of these classes further down the
+  // stylesheet are unscoped and already reach mobile fine, but this
+  // listing-card copy needs its flex layout restated or each piece
+  // (avatar/name/time/answers/views) stacks on its own line.
+  .qna-question-meta {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2;
+
+    .qna-author-group {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      gap: $space-1;
+    }
+
+    .qna-author-avatar {
+      width: 28px;
+      height: 28px;
+    }
+
+    .qna-meta-icon-text {
+      display: inline-flex;
+      align-items: center;
+      gap: $space-1;
+    }
+  }
+
+  .qna-tag-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+}
+
+// The dialog itself (.qna-dialog-paper and friends) is unscoped in the pc
+// stylesheet so its base styling already applies on mobile — but MUI
+// Dialog portals to document.body, so it's never a DOM descendant of
+// #mobile-wrap and can't be targeted that way. A real media query is the
+// only way to adjust it for narrow viewports without also changing
+// desktop, since this rule is otherwise global.
+@media (max-width: #{$breakpoint-mobile}) {
+  .qna-dialog-paper {
+    margin-top: 24px !important;
+    max-height: calc(100vh - 48px) !important;
+  }
+}

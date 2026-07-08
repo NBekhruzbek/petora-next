@@ -1,0 +1,338 @@
+@use "../variables.scss" as *;
+
+.product-card {
+  flex: 0 0 calc((100% - 60px) / 4);
+  max-width: calc((100% - 60px) / 4);
+  min-height: 300px;
+  border-radius: 12px;
+  border: 1px solid #e5c3ff;
+  background: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid #4b158d;
+    outline-offset: 3px;
+  }
+
+  &:hover {
+    box-shadow: 0 12px 24px rgba(75, 21, 141, 0.12);
+    transform: translateY(-2px);
+  }
+
+  &:hover .product-image {
+    transform: scale(1.15);
+    filter: drop-shadow(0 16px 14px rgba(20, 10, 40, 0.34))
+      drop-shadow(0 4px 6px rgba(20, 10, 40, 0.2));
+  }
+
+  .card-image-wrap {
+    position: relative;
+    height: 180px;
+    padding: 14px;
+    background: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 16px;
+      width: 62%;
+      height: 18px;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(20, 10, 40, 0.28) 0%,
+        rgba(20, 10, 40, 0.14) 45%,
+        rgba(20, 10, 40, 0) 75%
+      );
+      transform: translateX(-50%) scaleX(1);
+      transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .like-meta {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      align-items: center;
+      gap: 3px;
+
+      .like-toggle {
+        width: 26px;
+        height: 26px;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .like-count {
+        color: #666;
+        text-align: center;
+        font-family: $font;
+        font-size: 11px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 1;
+      }
+    }
+
+    .pet-type-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: #eab308;
+      backdrop-filter: blur(8px);
+      color: #fff;
+      font-family: $font;
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .liked {
+      color: #e70000;
+      font-size: 20px;
+    }
+
+    .unliked {
+      color: #666;
+      font-size: 20px;
+    }
+
+    .product-image {
+      position: relative;
+      z-index: 1;
+      max-width: 68%;
+      max-height: 150px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      transition:
+        transform 0.3s ease-out,
+        filter 0.3s ease-out;
+      filter: drop-shadow(0 12px 10px rgba(20, 10, 40, 0.28))
+        drop-shadow(0 3px 5px rgba(20, 10, 40, 0.18));
+    }
+  }
+
+  .card-content {
+    padding: 15px 15px;
+    gap: 5px;
+    height: auto;
+
+    .product-title {
+      color: #252525;
+      font-family: $font;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 1.1;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rating-row {
+      align-items: center;
+      gap: 4px;
+
+      .rating-info {
+        align-items: center;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .star-rating {
+        flex-shrink: 0;
+        margin-right: 2px;
+
+        .MuiRating-iconFilled,
+        .MuiRating-iconHover {
+          color: #ff9d59;
+        }
+
+        .MuiRating-iconEmpty {
+          color: #d8d8d8;
+        }
+
+        .MuiSvgIcon-root {
+          font-size: 16px;
+        }
+      }
+
+      .rating-text {
+        color: #666;
+        font-family: $font;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .sold-text {
+      color: #666;
+      font-family: $font;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    .price-row {
+      align-items: flex-end;
+      gap: 10px;
+
+      .discounted-price {
+        color: #7100ff;
+        font-family: $font;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .discount-percent {
+        padding: 4px 5px;
+        border-radius: 5px;
+        background: rgb(245, 62, 62);
+        color: #fff;
+        font-family: $font;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .origin-price {
+        color: #353434;
+        font-family: $font;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1;
+        text-decoration-line: line-through;
+      }
+    }
+
+    .actions-row {
+      margin-top: 6px;
+      align-items: center;
+      gap: 8px;
+
+      .buy-now-btn {
+        flex: 1;
+        height: 30px;
+        color: #fff;
+        border-radius: 10px;
+        background: #410075;
+        font-family: $font;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1;
+        border: 2px solid transparent;
+        background:
+          linear-gradient(#d2a7f4, #4b0187) padding-box,
+          linear-gradient(
+              120deg,
+              #e83333 0%,
+              #d3b7ff 35%,
+              #ffffff 55%,
+              #b56cff 75%,
+              #5f18b7 100%
+            )
+            border-box;
+        background-size:
+          100% 100%,
+          250% 250%;
+        background-position:
+          0 0,
+          0% 50%;
+        animation: ctaBorderFlow 3.6s linear infinite;
+        font-family: $font;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1;
+        text-transform: none;
+        box-shadow: none;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+
+        &:hover {
+          background:
+            linear-gradient(#6200b2, #6801b8) padding-box,
+            linear-gradient(
+                120deg,
+                #c27bff 0%,
+                #f3e4ff 45%,
+                #ffffff 60%,
+                #d190ff 78%,
+                #7f2ed8 100%
+              )
+              border-box;
+          box-shadow: 0 8px 20px rgba(65, 0, 117, 0.25);
+          transform: translateY(-1px);
+        }
+      }
+
+      .cart-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        border: 1.5px solid #c4c4c4;
+        background: #fff;
+        color: #595959;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease,
+          border-color 0.15s ease,
+          background-color 0.15s ease,
+          color 0.15s ease;
+
+        &:hover {
+          border-color: #4b158d;
+          background: #f6eeff;
+          color: #4b158d;
+          box-shadow: 0 8px 16px rgba(75, 21, 141, 0.16);
+          transform: translateY(-1px);
+        }
+
+        &:focus-visible {
+          outline: 2px solid #4b158d;
+          outline-offset: 2px;
+        }
+      }
+    }
+  }
+}
+

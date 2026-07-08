@@ -15,7 +15,10 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import ProductsCard, { ProductItem } from "./ProductsCard";
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
+import MobileDrawer from "../common/MobileDrawer";
 
 type ShopProductItem = ProductItem & {
   categories: string[];
@@ -296,9 +299,12 @@ const categories = [
   "Other",
 ];
 
+const DEFAULT_PRICE_RANGE = [0, 1000];
+
 const Products = () => {
+  const device = useDeviceDetect();
   const [products, setProducts] = useState(initialProducts);
-  const [priceRange, setPriceRange] = useState<number[]>([0, 1000]);
+  const [priceRange, setPriceRange] = useState<number[]>(DEFAULT_PRICE_RANGE);
   const [isPriceOpen, setIsPriceOpen] = useState(true);
   const [isPetTypeOpen, setIsPetTypeOpen] = useState(true);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
@@ -312,7 +318,13 @@ const Products = () => {
     page: 1,
     limit: 12,
   });
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const productsTopRef = useRef<HTMLDivElement | null>(null);
+  const activeFilterCount =
+    selectedPetTypes.length +
+    selectedCategories.length +
+    (likedSelected ? 1 : 0) +
+    (priceRange[0] !== DEFAULT_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_PRICE_RANGE[1] ? 1 : 0);
 
   const handlePriceChange = (_event: Event, newValue: number | number[]) => {
     if (Array.isArray(newValue)) {
@@ -502,160 +514,180 @@ const Products = () => {
     startIndex + productSearch.limit,
   );
 
+  const sidebarContent = (
+    <>
+      <Box className="search-box">
+        <Input
+          placeholder="Search here"
+          disableUnderline
+          className="text-field"
+          value={searchText}
+          onChange={(event) => setSearchText(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              searchProductHandler();
+            }
+          }}
+        />
+        <Button className="search-button" onClick={searchProductHandler}>
+          <SearchIcon />
+        </Button>
+      </Box>
+      <Divider className="divider" />
+
+      <Stack className="price-section category-section">
+        <Stack className="category-header" onClick={togglePriceOpen}>
+          <Typography className="category-title">Price range</Typography>
+          <Box
+            className={`category-toggle ${isPriceOpen ? "is-open" : ""}`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack
+          className={`category-list ${isPriceOpen ? "is-open" : ""}`}
+        >
+          <Box className="price-range">
+            <Slider
+              value={priceRange}
+              onChange={handlePriceChange}
+              min={0}
+              max={1000}
+              valueLabelDisplay="off"
+              className="price-line"
+            />
+
+            <Typography className="selected-price">
+              ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}
+            </Typography>
+          </Box>
+        </Stack>
+      </Stack>
+
+      <Divider className="divider" />
+
+      <Stack className="category-section">
+        <Stack className="category-header" onClick={togglePetTypeOpen}>
+          <Typography className="category-title">PetTypes</Typography>
+          <Box
+            className={`category-toggle ${isPetTypeOpen ? "is-open" : ""}`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack
+          className={`category-list ${isPetTypeOpen ? "is-open" : ""}`}
+        >
+          {petTypes.map((petType) => {
+            const isSelected =
+              petType === "All"
+                ? selectedPetTypes.length === 0
+                : selectedPetTypes.includes(petType);
+
+            return (
+              <Stack
+                key={petType}
+                className={`category-option ${
+                  isSelected ? "is-selected" : ""
+                }`}
+                onClick={() => togglePetType(petType)}
+              >
+                <Box className="category-checkbox" aria-hidden="true" />
+                <Typography className="category-label">
+                  {petType}
+                </Typography>
+              </Stack>
+            );
+          })}
+        </Stack>
+      </Stack>
+
+      <Divider className="divider" />
+
+      <Stack className="category-section">
+        <Stack className="category-header" onClick={toggleCategoryOpen}>
+          <Typography className="category-title">Category</Typography>
+          <Box
+            className={`category-toggle ${
+              isCategoryOpen ? "is-open" : ""
+            }`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack
+          className={`category-list ${isCategoryOpen ? "is-open" : ""}`}
+        >
+          {categories.map((category) => {
+            const isSelected =
+              category === "All"
+                ? selectedCategories.length === 0
+                : selectedCategories.includes(category);
+
+            return (
+              <Stack
+                key={category}
+                className={`category-option ${
+                  isSelected ? "is-selected" : ""
+                }`}
+                onClick={() => toggleCategory(category)}
+              >
+                <Box className="category-checkbox" aria-hidden="true" />
+                <Typography className="category-label">
+                  {category}
+                </Typography>
+              </Stack>
+            );
+          })}
+        </Stack>
+      </Stack>
+      <Divider className="divider" />
+
+      <Stack className="liked-products-section">
+        <Stack className="likes-header" onClick={toggleLikedOpen}>
+          <Typography className="likes-title">Likes</Typography>
+          <Box
+            className={`likes-toggle ${isLikedOpen ? "is-open" : ""}`}
+            aria-hidden="true"
+          />
+        </Stack>
+        <Stack className={`likes-list ${isLikedOpen ? "is-open" : ""}`}>
+          <Stack
+            className={`likes-option ${
+              likedSelected ? "is-selected" : ""
+            }`}
+            onClick={toggleLikedSelected}
+          >
+            <Box className="likes-checkbox" aria-hidden="true" />
+            <Typography className="likes-label">
+              Liked Products
+            </Typography>
+          </Stack>
+          <Divider className="likes-divider" />
+        </Stack>
+      </Stack>
+    </>
+  );
+
   return (
     <Stack className="products-section">
       <Stack className="container">
         <Box className="title">Products</Box>
         <Stack className="products-main">
-          <Stack className="category">
-            <Box className="search-box">
-              <Input
-                placeholder="Search here"
-                disableUnderline
-                className="text-field"
-                value={searchText}
-                onChange={(event) => setSearchText(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    searchProductHandler();
-                  }
-                }}
-              />
-              <Button className="search-button" onClick={searchProductHandler}>
-                <SearchIcon />
-              </Button>
-            </Box>
-            <Divider className="divider" />
-
-            <Stack className="price-section category-section">
-              <Stack className="category-header" onClick={togglePriceOpen}>
-                <Typography className="category-title">Price range</Typography>
-                <Box
-                  className={`category-toggle ${isPriceOpen ? "is-open" : ""}`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack
-                className={`category-list ${isPriceOpen ? "is-open" : ""}`}
-              >
-                <Box className="price-range">
-                  <Slider
-                    value={priceRange}
-                    onChange={handlePriceChange}
-                    min={0}
-                    max={1000}
-                    valueLabelDisplay="off"
-                    className="price-line"
-                  />
-
-                  <Typography className="selected-price">
-                    ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}
-                  </Typography>
+          {/* ── Sidebar (desktop) / Filter trigger (mobile) ── */}
+          {device === "mobile" ? (
+            <Button
+              className="mobile-filter-trigger"
+              onClick={() => setIsFilterDrawerOpen(true)}
+            >
+              <FilterListIcon fontSize="small" />
+              Filters
+              {activeFilterCount > 0 && (
+                <Box className="mobile-filter-trigger-count">
+                  {activeFilterCount}
                 </Box>
-              </Stack>
-            </Stack>
-
-            <Divider className="divider" />
-
-            <Stack className="category-section">
-              <Stack className="category-header" onClick={togglePetTypeOpen}>
-                <Typography className="category-title">PetTypes</Typography>
-                <Box
-                  className={`category-toggle ${isPetTypeOpen ? "is-open" : ""}`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack
-                className={`category-list ${isPetTypeOpen ? "is-open" : ""}`}
-              >
-                {petTypes.map((petType) => {
-                  const isSelected =
-                    petType === "All"
-                      ? selectedPetTypes.length === 0
-                      : selectedPetTypes.includes(petType);
-
-                  return (
-                    <Stack
-                      key={petType}
-                      className={`category-option ${
-                        isSelected ? "is-selected" : ""
-                      }`}
-                      onClick={() => togglePetType(petType)}
-                    >
-                      <Box className="category-checkbox" aria-hidden="true" />
-                      <Typography className="category-label">
-                        {petType}
-                      </Typography>
-                    </Stack>
-                  );
-                })}
-              </Stack>
-            </Stack>
-
-            <Divider className="divider" />
-
-            <Stack className="category-section">
-              <Stack className="category-header" onClick={toggleCategoryOpen}>
-                <Typography className="category-title">Category</Typography>
-                <Box
-                  className={`category-toggle ${
-                    isCategoryOpen ? "is-open" : ""
-                  }`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack
-                className={`category-list ${isCategoryOpen ? "is-open" : ""}`}
-              >
-                {categories.map((category) => {
-                  const isSelected =
-                    category === "All"
-                      ? selectedCategories.length === 0
-                      : selectedCategories.includes(category);
-
-                  return (
-                    <Stack
-                      key={category}
-                      className={`category-option ${
-                        isSelected ? "is-selected" : ""
-                      }`}
-                      onClick={() => toggleCategory(category)}
-                    >
-                      <Box className="category-checkbox" aria-hidden="true" />
-                      <Typography className="category-label">
-                        {category}
-                      </Typography>
-                    </Stack>
-                  );
-                })}
-              </Stack>
-            </Stack>
-            <Divider className="divider" />
-
-            <Stack className="liked-products-section">
-              <Stack className="likes-header" onClick={toggleLikedOpen}>
-                <Typography className="likes-title">Likes</Typography>
-                <Box
-                  className={`likes-toggle ${isLikedOpen ? "is-open" : ""}`}
-                  aria-hidden="true"
-                />
-              </Stack>
-              <Stack className={`likes-list ${isLikedOpen ? "is-open" : ""}`}>
-                <Stack
-                  className={`likes-option ${
-                    likedSelected ? "is-selected" : ""
-                  }`}
-                  onClick={toggleLikedSelected}
-                >
-                  <Box className="likes-checkbox" aria-hidden="true" />
-                  <Typography className="likes-label">
-                    Liked Products
-                  </Typography>
-                </Stack>
-                <Divider className="likes-divider" />
-              </Stack>
-            </Stack>
-          </Stack>
+              )}
+            </Button>
+          ) : (
+            <Stack className="category">{sidebarContent}</Stack>
+          )}
 
           <Stack className="sorting-products" ref={productsTopRef}>
             <Box className="filter-section-wrap">
@@ -730,6 +762,20 @@ const Products = () => {
           </Stack>
         </Stack>
       </Stack>
+
+      {device === "mobile" && (
+        <MobileDrawer
+          open={isFilterDrawerOpen}
+          onClose={() => setIsFilterDrawerOpen(false)}
+          title="Filters"
+          primaryAction={{
+            label: `Show ${sortedProducts.length} product${sortedProducts.length === 1 ? "" : "s"}`,
+            onClick: () => setIsFilterDrawerOpen(false),
+          }}
+        >
+          <Stack className="category mobile-filter-panel">{sidebarContent}</Stack>
+        </MobileDrawer>
+      )}
     </Stack>
   );
 };

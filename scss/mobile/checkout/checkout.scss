@@ -1,0 +1,40 @@
+@use "../../variables.scss" as *;
+
+// checkout.scss's .checkout-page is (unusually for this codebase) NOT
+// scoped under #pc-wrap, so its base visual identity already reaches
+// mobile — only the desktop-specific layout needs overriding here.
+#mobile-wrap {
+  .checkout-page {
+    padding: $space-5 0 $space-6;
+
+    .container {
+      padding: 0 $space-4;
+      gap: $space-4;
+    }
+
+    .checkout-title {
+      font-size: 24px;
+    }
+
+    .checkout-body {
+      grid-template-columns: 1fr;
+      gap: $space-4;
+    }
+
+    // Show what's being paid for before the form on mobile.
+    .checkout-summary-col {
+      position: static;
+      top: auto;
+      order: -1;
+    }
+
+    .checkout-section {
+      padding: $space-4;
+    }
+
+    .field-row-2,
+    .field-row-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+}

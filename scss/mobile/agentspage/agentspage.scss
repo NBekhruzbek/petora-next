@@ -1,0 +1,104 @@
+@use "../../variables.scss" as *;
+
+#mobile-wrap {
+  .agents-listing-page {
+    padding-bottom: $space-6;
+
+    .container {
+      padding: $space-5 $space-4 0;
+    }
+
+    .agents-page-title {
+      font-size: 22px;
+      margin-bottom: $space-4;
+    }
+
+    .agents-main {
+      gap: $space-4;
+    }
+
+    .sorting-agents {
+      gap: $space-4;
+
+      .filter-section-wrap {
+        justify-content: space-between;
+      }
+    }
+
+    .agents-cards {
+      grid-template-columns: 1fr;
+      gap: $space-4;
+
+      .no-data-wrap {
+        padding: $space-6 0;
+
+        .no-data-img {
+          width: 200px;
+          height: 200px;
+        }
+      }
+    }
+  }
+
+  // ─── Agent Detail Page ─────────────────────────────────────────────────
+  .agent-detail-page {
+    .container {
+      padding: $space-4 $space-4 0;
+    }
+
+    .agent-detail-grid {
+      grid-template-columns: 1fr;
+      gap: $space-4;
+    }
+
+    .agent-detail-profile {
+      position: static;
+      top: auto;
+
+      // Avatar/cert image sizing lives only under #pc-wrap on desktop —
+      // restate it here so the images don't render at native size.
+      .agent-detail-avatar-wrap {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        align-self: center;
+      }
+
+      .agent-detail-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .agent-detail-verified {
+        position: absolute;
+        bottom: 2px;
+        right: -4px;
+      }
+
+      .agent-detail-cert-img {
+        width: 100%;
+        height: 90px;
+        object-fit: cover;
+      }
+    }
+
+    .review-cards-header {
+      flex-wrap: wrap;
+      gap: $space-2;
+
+      .review-sort-field {
+        min-width: 0;
+        flex: 1;
+      }
+    }
+
+    .review-card-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #410075, #9333ea);
+    }
+  }
+}
