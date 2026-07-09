@@ -378,5 +378,73 @@
         }
       }
     }
+
+    // ─── Instagram section (simplified mobile grid, no 3D coverflow) ──────
+    .instagram-frame {
+      padding: $space-5 0 $space-6;
+      background: #fff;
+
+      .container {
+        padding: 0 $space-4;
+      }
+
+      .instagram-main {
+        align-items: center;
+        gap: $space-3;
+      }
+
+      .section-title {
+        color: #410075;
+        font-family: $font;
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+
+        .social-media-text {
+          background: linear-gradient(
+            45deg,
+            #405de6,
+            #5851db,
+            #833ab4,
+            #c13584,
+            #e1306c,
+            #fd1d1d,
+            #f56040,
+            #fcaf45
+          );
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+      }
+
+      .instagram-mobile-subtitle {
+        font-family: $font;
+        font-size: 15px;
+        color: #646464;
+        text-align: center;
+      }
+
+      .instagram-mobile-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: $space-2;
+        width: 100%;
+        margin-top: $space-2;
+
+        .instagram-mobile-tile {
+          display: block;
+          aspect-ratio: 1 / 1;
+          border-radius: 14px;
+          overflow: hidden;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+        }
+      }
+    }
   }
 }

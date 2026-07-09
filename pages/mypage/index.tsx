@@ -226,6 +226,23 @@ const MyPage: NextPage = () => {
             </Stack>
           </Stack>
 
+          <Stack className="my-page-mobile-filter">
+            <TextField
+              select
+              size="small"
+              value={activeCategory}
+              onChange={(event) =>
+                handleCategoryChange(event.target.value as CategoryKey)
+              }
+            >
+              {categoryOrder.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {categoryMeta[category].label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Stack>
+
           <Stack>
             {activeCategory === "MY_PROFILE" && <MyProfile />}
             {activeCategory === "SERVICE_MANAGEMENT" && <ServiceManagement />}

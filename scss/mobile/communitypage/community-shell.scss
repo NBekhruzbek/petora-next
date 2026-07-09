@@ -1,0 +1,81 @@
+@use "../../variables.scss" as *;
+
+#mobile-wrap {
+  .community-page {
+    padding: $space-4 0 $space-6;
+
+    .container {
+      padding: 0 $space-4;
+      gap: $space-4;
+    }
+
+    // The desktop sidebar's job (category switching) is handled by the
+    // mobile category select below it in the markup.
+    .community-sidebar {
+      display: none;
+    }
+
+    .community-content {
+      gap: $space-4;
+
+      .community-content-top {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: $space-3;
+
+        .community-board-title {
+          font-family: $font;
+          font-size: 22px;
+          font-weight: 800;
+          color: #202635;
+        }
+
+        .community-board-subtitle {
+          font-family: $font;
+          font-size: 15px;
+          color: #667085;
+        }
+
+        // The gradient pill CTA is #pc-wrap-scoped — restate its visual
+        // identity here.
+        .community-write-btn {
+          flex-shrink: 0;
+          min-height: $touch-target-min;
+          padding: $space-2 $space-4;
+          border-radius: 999px;
+          border: 2px solid transparent;
+          background:
+            linear-gradient(#cda6ed, #cb33df) padding-box,
+            linear-gradient(
+                120deg,
+                #e83333 0%,
+                #d3b7ff 35%,
+                #ffffff 55%,
+                #b56cff 75%,
+                #5f18b7 100%
+              )
+              border-box;
+          background-size:
+            100% 100%,
+            250% 250%;
+          color: #fff;
+          font-family: $font;
+          font-size: 14px;
+          font-weight: 700;
+          text-transform: none;
+        }
+      }
+
+      // Hidden on desktop via #pc-wrap; on mobile it's the category nav.
+      .community-mobile-filter {
+        .MuiOutlinedInput-root {
+          border-radius: 14px;
+          background: #fff;
+          font-family: $font;
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { gsap } from "gsap";
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 
 interface InstagramPost {
   id: number;
@@ -29,10 +30,15 @@ const INSTAGRAM_URL = "https://www.instagram.com/mr_bekhruzbek1/";
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
 const SocialMedia = () => {
+  const device = useDeviceDetect();
   const contentRef = useRef<HTMLDivElement | null>(null);
   const carouselRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    // The 3D coverflow is mouse-driven; the mobile branch renders a plain
+    // grid instead, so skip the GSAP setup entirely there.
+    if (device === "mobile") return;
+
     const content = contentRef.current;
     const carousel = carouselRef.current;
     const items = carousel
@@ -122,7 +128,39 @@ const SocialMedia = () => {
       window.clearInterval(loop);
       window.removeEventListener("mousemove", onMouseMove);
     };
-  }, []);
+  }, [device]);
+
+  if (device === "mobile") {
+    return (
+      <Stack className="instagram-frame">
+        <Stack className="container">
+          <Stack className="instagram-main">
+            <Box className="section-title">
+              FOLLOW US ON <span className="social-media-text">INSTAGRAM</span>
+            </Box>
+            <Typography className="instagram-mobile-subtitle">
+              Join our Instagram community for updates, special deals, and
+              more!
+            </Typography>
+            <Box className="instagram-mobile-grid">
+              {basePosts.map((post) => (
+                <a
+                  key={post.id}
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="instagram-mobile-tile"
+                  aria-label={`${post.alt} - open on Instagram`}
+                >
+                  <img src={post.image} alt={post.alt} loading="lazy" />
+                </a>
+              ))}
+            </Box>
+          </Stack>
+        </Stack>
+      </Stack>
+    );
+  }
 
   return (
     <Stack className="instagram-frame">

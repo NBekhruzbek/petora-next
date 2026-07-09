@@ -455,6 +455,7 @@ const BookingsOrders = () => {
                   {/* Header */}
                   <Stack className="order-card-header" spacing={1.5}>
                     <Stack
+                      className="order-card-header-row"
                       direction="row"
                       justifyContent="space-between"
                       alignItems="center"
@@ -478,6 +479,7 @@ const BookingsOrders = () => {
                         </Stack>
                         {item.status === "delivered" ? (
                           <Stack
+                            className="order-delivered-actions"
                             spacing={1}
                             width={"220px"}
                             flexDirection={"row"}

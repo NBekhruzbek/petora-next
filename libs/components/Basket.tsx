@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { Box, Button, Chip, IconButton, Menu, Stack, Typography } from "@mui/material";
+import { Box, Button, Chip, Drawer, IconButton, Menu, Stack, Typography } from "@mui/material";
 import Badge from "@mui/material/Badge";
+import useDeviceDetect from "../hooks/useDeviceDetect";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -22,6 +23,7 @@ const DELIVERY_FEE = 5;
 
 const Basket = () => {
   const router = useRouter();
+  const device = useDeviceDetect();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -73,26 +75,8 @@ const Basket = () => {
       })
     );
 
-  return (
-    <Box className="basket-trigger-wrap">
-      <IconButton className="basket-icon-btn" onClick={handleClick} aria-label="cart">
-        <Badge badgeContent={totalItemCount} className="basket-badge">
-          <img src="/img/icons/shopping-cart.png" className="basket-cart-img" alt="cart" />
-        </Badge>
-      </IconButton>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        className="basket-menu"
-        disableScrollLock
-        PaperProps={{ className: "basket-menu-paper", elevation: 0 }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        sx={{ zIndex: 12000 }}
-      >
-        <Stack className="basket-frame">
+  const basketContent = (
+    <Stack className="basket-frame">
 
           {/* Header */}
           <Stack className="basket-header" direction="row" alignItems="center" justifyContent="space-between">
@@ -195,7 +179,41 @@ const Basket = () => {
             </Stack>
           )}
         </Stack>
-      </Menu>
+  );
+
+  return (
+    <Box className="basket-trigger-wrap">
+      <IconButton className="basket-icon-btn" onClick={handleClick} aria-label="cart">
+        <Badge badgeContent={totalItemCount} className="basket-badge">
+          <img src="/img/icons/shopping-cart.png" className="basket-cart-img" alt="cart" />
+        </Badge>
+      </IconButton>
+
+      {device === "mobile" ? (
+        <Drawer
+          anchor="bottom"
+          open={open}
+          onClose={handleClose}
+          PaperProps={{ className: "basket-menu-paper basket-drawer-paper" }}
+          sx={{ zIndex: 12000 }}
+        >
+          {basketContent}
+        </Drawer>
+      ) : (
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          className="basket-menu"
+          disableScrollLock
+          PaperProps={{ className: "basket-menu-paper", elevation: 0 }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          sx={{ zIndex: 12000 }}
+        >
+          {basketContent}
+        </Menu>
+      )}
     </Box>
   );
 };

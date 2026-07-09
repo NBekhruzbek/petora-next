@@ -1,0 +1,32 @@
+@use "../../variables.scss" as *;
+
+// Mobile-only bottom-sheet variant of the basket. It shares
+// .basket-menu-paper so all the item/summary styles apply as-is; only the
+// paper geometry changes (full-width sheet instead of a corner-anchored
+// popover). Portaled to document.body, so the class is global — safe
+// because only the mobile branch ever mounts it.
+.basket-drawer-paper {
+  width: 100% !important;
+  max-width: 100% !important;
+  border-radius: 20px 20px 0 0 !important;
+  border: none !important;
+  margin-top: 0 !important;
+  max-height: 85vh;
+  overflow-y: auto !important;
+
+  // The popover's little anchor arrow makes no sense on a bottom sheet.
+  &::before {
+    display: none;
+  }
+
+  .basket-frame {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  // The popover caps the list and scrolls inside; on the sheet let the
+  // whole paper scroll instead.
+  .basket-items {
+    max-height: none;
+    overflow-y: visible;
+  }
+}

@@ -1,6 +1,56 @@
 @use "../../variables.scss" as *;
 
+// The mypage mobile category select is new markup rendered on both trees,
+// so hide it everywhere and re-show it only inside #mobile-wrap (keeps the
+// desktop stylesheet untouched).
+.my-page-mobile-filter {
+  display: none !important;
+}
+
 #mobile-wrap {
+  // ─── Page shell: sidebar + content two-column → single column ─────────
+  .my-page {
+    padding: $space-4 0 $space-6;
+
+    .container {
+      padding: 0 $space-4;
+      gap: $space-4;
+    }
+
+    // Category switching moves to the mobile select; Logout lives in the
+    // nav drawer and the Admin panel is desktop-only scope.
+    .my-page-sidebar {
+      display: none;
+    }
+
+    .my-page-content {
+      gap: $space-4;
+
+      .my-page-board-title {
+        font-family: $font;
+        font-size: 22px;
+        font-weight: 800;
+        color: #202635;
+      }
+
+      .my-page-board-subtitle {
+        font-family: $font;
+        font-size: 15px;
+        color: #667085;
+      }
+    }
+  }
+
+  .my-page-mobile-filter {
+    display: flex !important;
+
+    .MuiOutlinedInput-root {
+      border-radius: 14px;
+      background: #fff;
+      font-family: $font;
+    }
+  }
+
   .my-profile-container {
     // .profile-tabs-wrapper uses the MUI Stack `direction="row"` prop
     // (not a responsive breakpoint object), so it stays row unless
@@ -121,6 +171,25 @@
   .notifications-toolbar {
     flex-wrap: wrap;
     gap: $space-2;
+  }
+
+  // ─── Bookings & Orders ──────────────────────────────────────────────────
+  // The order-card header packs order number, date, and (when delivered) a
+  // 220px-wide badge+review block into one row — wrap it on mobile.
+  .order-card-header-row {
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .order-delivered-actions {
+    width: auto !important;
+    gap: $space-2;
+  }
+
+  // Tracker geometry is %-based so it scales; only the four step labels
+  // need to shrink to avoid colliding at 390px.
+  .delivery-tracker .dt-labels .dt-label .dt-label-text {
+    font-size: 10px;
   }
 }
 

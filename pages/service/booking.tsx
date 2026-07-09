@@ -36,6 +36,7 @@ import moment, { Moment } from "moment";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import RelatedServices from "@/libs/components/servicepage/RelatedServices";
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
@@ -256,6 +257,7 @@ const Booking = () => {
   const [likeCount, setLikeCount] = useState(312);
 
   // Booking dialog
+  const device = useDeviceDetect();
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingStep, setBookingStep] = useState<1 | 2 | 3>(1);
   const [petName, setPetName] = useState("");
@@ -1024,6 +1026,7 @@ const Booking = () => {
       <Dialog
         open={bookingOpen}
         onClose={bookingStep === 3 ? closeBookingDialog : undefined}
+        fullScreen={device === "mobile"}
         className="booking-dialog"
         PaperProps={{ className: "booking-dialog-paper" }}
       >

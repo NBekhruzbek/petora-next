@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Stack } from "@mui/material";
+import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import CelebrationRoundedIcon from "@mui/icons-material/CelebrationRounded";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
@@ -16,6 +18,7 @@ interface PawPrint {
 
 const NotFoundPage = () => {
   const router = useRouter();
+  const device = useDeviceDetect();
   const [pawPrints, setPawPrints] = useState<PawPrint[]>([]);
   const [isFound, setIsFound] = useState(false);
 
@@ -30,6 +33,10 @@ const NotFoundPage = () => {
   }, []);
 
   useEffect(() => {
+    // The paw-print cursor trail follows the mouse — meaningless on touch,
+    // where pointermove only fires while dragging.
+    if (device === "mobile") return;
+
     let lastStamp = 0;
 
     const handlePointerMove = (event: PointerEvent) => {
@@ -46,7 +53,7 @@ const NotFoundPage = () => {
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
     };
-  }, [addPawPrint]);
+  }, [addPawPrint, device]);
 
   const handlePetClick = () => {
     setIsFound(true);
@@ -59,7 +66,7 @@ const NotFoundPage = () => {
         <title>404 - Page Not Found | Petora</title>
       </Head>
 
-      <Stack id="pc-wrap" className="petora-error-wrap">
+      <Stack className="petora-error-wrap">
         <main className={`petora-404 ${isFound ? "is-found" : ""}`}>
           {pawPrints.map((print, index) => (
             <span
@@ -158,4 +165,4 @@ const NotFoundPage = () => {
   );
 };
 
-export default NotFoundPage;
+export default withLayoutBasic(NotFoundPage);

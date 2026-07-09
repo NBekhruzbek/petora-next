@@ -7,6 +7,7 @@
 @use "./common/contact-us.scss" as *;
 @use "./common/auth-dialog.scss" as *;
 @use "./common/mobile-topbar.scss" as *;
+@use "./common/basket-drawer.scss" as *;
 @use "./agentspage/agentspage.scss" as *;
 @use "./servicepage/servicepage.scss" as *;
 @use "./shoppage/shoppage.scss" as *;
@@ -15,6 +16,7 @@
 @use "./checkout/checkout.scss" as *;
 @use "./cs/cspage.scss" as *;
 @use "./communitypage/communitypage.scss" as *;
+@use "./communitypage/community-shell.scss" as *;
 @use "./mypage/mypage.scss" as *;
 
 /** VERSION: MOBILE **/
