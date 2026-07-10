@@ -1,36 +1,132 @@
 @use "../../variables.scss" as *;
 
-// ContactUs appears on every page. Its .container/.contact-form-column
-// fixed widths only apply under #pc-wrap, so on mobile Stack's own column
-// default already stacks things reasonably — the one real gap is the
-// visual column's photo, which needs its absolute-position anchor and
-// sizing restated.
+// ContactUs appears on every page, directly above the footer. All of its
+// brand styling (title, outlined fields, gradient CTA, ringed-circle
+// visual) is #pc-wrap-scoped, so it must be restated here or mobile gets
+// bare browser inputs and an illegible default-MUI submit.
 #mobile-wrap {
   .contact-us {
     padding: $space-5 0 $space-6;
 
     .container {
       padding: 0 $space-4;
+      padding-bottom: 30px;
       gap: $space-4;
     }
 
     .contact-title {
+      display: inline-flex;
+      align-items: center;
+      gap: $space-2;
+      font-family: $font;
       font-size: $m-font-section-title;
+      font-weight: 700;
+      line-height: 1;
+      text-transform: uppercase;
+      color: #410075;
+
+      span img {
+        width: 26px;
+        height: 26px;
+        vertical-align: middle;
+      }
     }
 
-    .contact-visual-column {
-      position: relative;
+    .contact-form {
+      margin-top: $space-3;
+      gap: $space-3;
+    }
+
+    .field-wrapper {
       width: 100%;
-      height: 220px;
+      height: $m-btn-height + 4px; // 48px
+      border-radius: $m-radius;
+      border: 1.5px solid #c9c9c9;
+      background: #fff;
+
+      &:focus-within {
+        border-color: #410075;
+      }
+
+      input {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        padding: 0 $space-4;
+        color: #333;
+        font-family: $font;
+        font-size: 16px; // 16px+ keeps iOS from zooming the field on focus
+        font-weight: 400;
+
+        &::placeholder {
+          color: #9e9e9e;
+        }
+      }
     }
 
-    .visual-circle {
-      width: 200px;
-      height: 200px;
+    .action-row {
+      margin-top: $space-2;
+      gap: $space-3;
+
+      .submit-btn,
+      .refresh-btn {
+        height: $m-btn-height + 4px;
+        border-radius: $m-radius;
+        font-family: $font;
+        font-size: 16px;
+        text-transform: none;
+        box-shadow: none;
+      }
+
+      // Same animated-border gradient as the hero booking CTA — the one
+      // primary action in the closing band.
+      .submit-btn {
+        flex: 1;
+        border: 2px solid transparent;
+        color: #fff;
+        font-weight: 700;
+        background:
+          linear-gradient(#c390ed, #410075) padding-box,
+          linear-gradient(
+              120deg,
+              #e83333 0%,
+              #d3b7ff 35%,
+              #ffffff 55%,
+              #b56cff 75%,
+              #5f18b7 100%
+            )
+            border-box;
+        background-size:
+          100% 100%,
+          250% 250%;
+        background-position:
+          0 0,
+          0% 50%;
+        animation: ctaBorderFlow 3.6s linear infinite;
+      }
+
+      .refresh-btn {
+        width: 112px;
+        border: 1px solid #9b9b9b;
+        color: #777;
+        background: #fff;
+        font-weight: 600;
+      }
     }
 
-    .pets-image {
-      width: 340px;
+    // Desktop's pets-on-a-ringed-circle visual is dropped on mobile
+    // (user call, July 2026): the form is the point of this section and
+    // the footer wave follows right after.
+    .contact-visual-column {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-us .submit-btn {
+      animation: none;
     }
   }
 }

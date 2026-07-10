@@ -5,6 +5,17 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta charSet="UTF-8" />
+        {/* Brand font — every font-family in scss asks for Assistant */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap"
+          rel="stylesheet"
+        />
         <meta name="title" content="Petora-next" />
         <meta name="robots" content="index, follow" />
         <link rel="icon" type="img/png" href="/img/logo/Favicon.png" />

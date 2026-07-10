@@ -98,26 +98,82 @@
     }
   }
 
-  // MainHeader inverts the roles (text1 = intro line, text2/text3 = headline)
+  // MainHeader inverts the roles (text1 = intro line, text2/text3 = headline).
+  // Unlike the other 6 headers this one keeps its brand styling on mobile:
+  // all of it lives under #pc-wrap, so without these rules the hero renders
+  // colorless, gutterless, with a default-MUI CTA.
   .main-header {
     .text-area {
+      padding: 0 $space-4;
+
       .text1 {
         width: 100% !important;
-        font-size: 15px !important;
+        font-size: $m-font-body !important;
+        line-height: 1.45 !important;
+        color: #595959;
       }
 
+      // $m-font-page-title keeps "CHOOSE THE BEST WAY FOR" on one line
+      // down to 375px-wide phones — 28px+ orphans "FOR" onto its own line.
       .text2,
       .text3 {
-        font-size: 26px !important;
-        line-height: 1.3 !important;
+        font-size: $m-font-page-title !important;
+        font-weight: 800;
+        line-height: 1.15 !important;
       }
 
+      .text2 {
+        margin-top: $space-3;
+        color: #410075;
+      }
+
+      .text3 {
+        margin-top: 2px;
+        color: #a1be97;
+
+        span img {
+          width: 24px;
+          height: 24px;
+          vertical-align: middle;
+        }
+      }
+
+      // Same double-gradient CTA as desktop (ctaBorderFlow keyframes are
+      // global once compiled), sized to the mobile tap target.
       .booking-button {
         width: 100%;
         height: auto;
+        min-height: $m-btn-height;
+        margin-top: $space-4;
         padding: $space-3 $space-4;
         white-space: normal;
         text-align: center;
+        border-radius: $m-radius;
+        border: 2px solid transparent;
+        color: #fff;
+        font-family: $font;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: none;
+        background:
+          linear-gradient(#c390ed, #410075) padding-box,
+          linear-gradient(
+              120deg,
+              #e83333 0%,
+              #d3b7ff 35%,
+              #ffffff 55%,
+              #b56cff 75%,
+              #5f18b7 100%
+            )
+            border-box;
+        background-size:
+          100% 100%,
+          250% 250%;
+        background-position:
+          0 0,
+          0% 50%;
+        animation: ctaBorderFlow 3.6s linear infinite;
+        box-shadow: none;
       }
     }
   }
@@ -223,16 +279,147 @@
     }
   }
 
+  // ── Main hero collage stage ──
+  // The other headers drop to a bare photo; the homepage keeps a compact
+  // version of the desktop collage. The puppy PNG stays in flow and sizes
+  // the stage; the purple blob + green scribble ring sit absolutely behind
+  // it and one floating rating card overlaps it. Cat photo/card and the
+  // dog/cat icon dots stay dropped — one animal, one card, at this scale.
   #main-top .main-header {
     .cat-image,
     .cat-image-background {
       display: none;
     }
 
-    .dog-image {
-      width: 100%;
-      height: auto;
-      margin-top: $space-4;
+    .circle-background {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+
+      .green-circle,
+      .purple-circle {
+        display: block;
+        position: absolute;
+        margin: 0;
+        height: auto;
+
+        svg {
+          width: 100%;
+          height: auto;
+        }
+      }
+
+      // Mirrors the desktop offsets: scribble ring peeking up-right of
+      // the blob, both mostly hidden behind the puppy.
+      .green-circle {
+        width: 82%;
+        left: 15%;
+        top: 3%;
+      }
+
+      .purple-circle {
+        width: 72%;
+        left: 17%;
+        top: 9%;
+      }
     }
+
+    .dog-image {
+      position: relative;
+      z-index: 2; // above the blob AND the wave, so paws sit on the white curve like desktop
+      display: block;
+      width: 88%;
+      height: auto;
+      margin: $space-5 auto 0;
+    }
+
+    .dog-card {
+      display: flex;
+      position: absolute;
+      z-index: 3;
+      top: 7%;
+      left: $space-4;
+      width: auto;
+      height: auto;
+      margin: 0;
+      padding: $space-2 $space-3;
+      gap: $space-2;
+      flex-direction: row;
+      align-items: center;
+      background: #fff;
+      border-radius: $m-radius;
+      box-shadow: 0 6px 24px rgba(65, 0, 117, 0.16);
+      animation: mHeroCardFloat 4s ease-in-out infinite;
+
+      .left {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+
+        .name {
+          font-family: $font;
+          font-size: 14px;
+          font-weight: 700;
+          line-height: 1.2;
+          color: #410075;
+        }
+
+        .rank1,
+        .rank2 {
+          height: 4px;
+          border-radius: $m-radius-pill;
+          background: #410075;
+        }
+        .rank1 {
+          width: 64px;
+        }
+        .rank2 {
+          width: 32px;
+        }
+
+        .rank3 {
+          font-family: $font;
+          font-size: $m-font-meta;
+          font-weight: 600;
+          color: #6f00c6;
+        }
+      }
+
+      .right {
+        width: 52px;
+        height: 52px;
+        border-radius: $m-radius-sm;
+        background: #ebebeb;
+        overflow: hidden;
+
+        img {
+          // shared markup hard-codes 80px inline
+          width: 52px !important;
+          height: 52px !important;
+          display: block;
+        }
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .main-header .booking-button,
+    .main-header .dog-card {
+      animation: none;
+    }
+  }
+}
+
+// Tilted-sticker float for the hero rating card. Desktop's floatSide only
+// animates translateX, which would wipe a static rotate — so the tilt is
+// baked into every keyframe here.
+@keyframes mHeroCardFloat {
+  0%,
+  100% {
+    transform: rotate(-4deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-4deg) translateY(-6px);
   }
 }

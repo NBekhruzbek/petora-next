@@ -4,6 +4,11 @@
 #mobile-wrap {
   .home-page {
     // ─── Our Company ──────────────────────────────────────────────────────
+    // Desktop lays this out as two columns; the pc typography, card fills and
+    // button styling all live under #pc-wrap, so on mobile the copy inherits
+    // the section's purple and the cards go bare. This is a full mobile rebuild:
+    // story + services as a clean single column, then the hero dog with its
+    // credentials as a proof card that closes the section.
     .our-company {
       height: auto;
       margin-top: $space-5;
@@ -18,96 +23,217 @@
           width: 100%;
           height: auto;
           margin-top: 0;
+          gap: $space-5;
 
           .title {
-            font-size: 22px;
+            @include m-section-title;
+            display: inline-flex;
+            align-items: center;
+            gap: $space-2;
+            color: #410075;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+
+            .hand-icon {
+              width: 30px;
+              height: auto;
+            }
           }
 
-          .our-service .service-cards {
-            flex-direction: column;
+          // The three sub-headings become compact uppercase eyebrows so the
+          // parts of "our company" read as structure in a narrow column.
+          .about-us,
+          .about-consulting {
+            gap: $space-2;
 
-            .left-card,
-            .right-card {
-              width: 100% !important;
-              height: auto;
-              min-height: 140px;
-              padding-bottom: $space-4;
-              // Base card visual identity (background/radius) lives under
-              // #pc-wrap only — this component is getting a bespoke mobile
-              // layout anyway, so restate it here rather than extract.
-              border-radius: 10px;
+            > .main-text {
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 700;
+              line-height: 1.2;
+              letter-spacing: 0.6px;
+              text-transform: uppercase;
+              color: #410075;
+            }
 
-              .dog-image {
-                position: static;
-                width: 100%;
-                height: 130px;
-                object-fit: cover;
-                object-position: top center;
-                border-radius: 0 0 10px 10px;
-                margin-top: $space-2;
+            .text {
+              font-family: $font;
+              font-size: 15px;
+              font-weight: 400;
+              line-height: 1.55;
+              color: #595959;
+            }
+          }
+
+          .our-service {
+            gap: $space-3;
+
+            > .main-text {
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 700;
+              line-height: 1.2;
+              letter-spacing: 0.6px;
+              text-transform: uppercase;
+              color: #410075;
+            }
+
+            .service-cards {
+              flex-direction: column;
+              gap: $space-3;
+
+              .left-card,
+              .right-card {
+                position: relative;
+                width: 100% !important;
+                height: auto;
+                min-height: 140px;
+                padding: $space-4;
+                border-radius: 14px;
+                overflow: hidden;
+
+                .text-area {
+                  width: 62%;
+                  margin: 0;
+                  gap: $space-2;
+
+                  .main-text {
+                    margin: 0;
+                    font-family: $font;
+                    font-size: 15px;
+                    font-weight: 700;
+                    line-height: 1.25;
+                    color: #252525;
+                  }
+
+                  .text {
+                    margin: 0;
+                    font-family: $font;
+                    font-size: 13px;
+                    font-weight: 400;
+                    line-height: 1.4;
+                    color: #595959;
+                  }
+
+                  // Compact pill instead of the full-width bar the base
+                  // MUI contained button collapses to; !important beats the
+                  // emotion classes MUI injects for the background/text color.
+                  .read-more-button {
+                    align-self: flex-start;
+                    width: auto;
+                    min-width: 0;
+                    height: 34px;
+                    margin-top: $space-1;
+                    padding: 0 $space-4;
+                    border-radius: $m-radius-pill;
+                    background: linear-gradient(#c390ed, #410075) !important;
+                    color: #fff !important;
+                    font-family: $font;
+                    font-size: 12px;
+                    font-weight: 700;
+                    text-transform: none;
+                    box-shadow: 0 6px 16px rgba(65, 0, 117, 0.22);
+                  }
+                }
+
+                // Cutout dogs go back to the desktop corner-peek instead of the
+                // full-width cropped heads the base cover styling produced.
+                // Capped by height (not width) so these tall portraits never
+                // outgrow the card and get their heads clipped by overflow.
+                .dog-image {
+                  position: absolute;
+                  right: 0;
+                  bottom: 0;
+                  width: auto;
+                  max-height: 140px;
+                  margin: 0;
+                }
+              }
+
+              .left-card {
+                background: #dfefda;
+              }
+
+              .right-card {
+                background: #e5c3ff;
               }
             }
           }
         }
 
+        // Hero + stats: a flex-wrap row lets the photo take a full line and the
+        // three credential chips share the next one — no wrapper element needed.
         .right-side {
           width: 100%;
           height: auto;
           margin-left: 0;
           top: 0;
-          margin-top: $space-5;
-          flex-direction: column;
+          margin-top: $space-6;
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 0 $space-2;
           align-items: stretch;
 
-          // Tilted layered cards and decorative dots are purely
-          // ornamental filler behind the photo — at mobile widths they'd
-          // just peek out from behind the card edges, so they're dropped
-          // rather than repositioned.
+          // Tilted layers, decorative dots and the photo-fade footer are all
+          // staged for the desktop composition — dropped rather than reflowed.
           .oc-layer,
-          .oc-dot {
+          .oc-dot,
+          .oc-card-footer {
             display: none;
           }
 
+          // The hero PNG is a cutout, so it sits on a soft-purple stage rather
+          // than a bare white card to read as intentional.
           .oc-card {
-            position: static;
-            width: 100%;
-            height: 280px;
-            border-radius: 20px;
+            position: relative;
+            flex: 0 0 100%;
+            height: 300px;
+            border-radius: 22px;
             overflow: hidden;
+            background: linear-gradient(160deg, #f3e8ff 0%, #e9d5ff 100%);
+            box-shadow: 0 18px 40px rgba(109, 40, 217, 0.18);
 
             .oc-dog-img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
+              width: 90%;
+              height: 90%;
+              object-fit: contain;
+              object-position: bottom center;
               display: block;
             }
           }
 
+          // Credentials as a 3-up chip row overlapping the hero's lower edge,
+          // tying the proof points to the photo instead of trailing off below.
           .oc-badge {
-            position: static;
-            width: 100%;
-            flex-direction: row;
+            position: relative;
+            z-index: 2;
+            flex: 1 1 0;
+            min-width: 0;
+            margin-top: -$space-6;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: $space-2;
-            margin-top: $space-3;
-            transform: none;
+            gap: 2px;
+            padding: $space-3 $space-2;
             background: #fff;
-            border-radius: 14px;
-            padding: $space-2 $space-3;
-            box-shadow: 0 8px 24px rgba(109, 40, 217, 0.12);
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(109, 40, 217, 0.14);
+            transform: none;
+            text-align: center;
 
             .oc-badge-num {
               font-family: $font;
-              font-size: 16px;
+              font-size: 18px;
               font-weight: 800;
+              line-height: 1;
               color: #410075;
             }
 
             .oc-badge-label {
               font-family: $font;
-              font-size: 12px;
+              font-size: 11px;
               font-weight: 600;
+              line-height: 1.2;
               color: #9ca3af;
             }
           }
@@ -116,14 +242,18 @@
     }
 
     // ─── What We Offer ────────────────────────────────────────────────────
-    // Desktop composes this as an absolutely-positioned ring stage with two
-    // floating offer columns; that math only resolves at the 1300px
-    // container width it was built for. On mobile it becomes a plain
-    // stacked list: left offers, hero image, right offers, in DOM order.
+    // Desktop composes this as an absolutely-positioned semicircle ring stage
+    // with two floating offer columns tuned to a 1300px container. On mobile
+    // it's rebuilt as a hero-led 2×3 grid: the dog group sits on a soft-purple
+    // stage up top, the six offers become equal cards below. The offer
+    // typography, CTA and card look all live under #pc-wrap, so they're
+    // restated here — otherwise the copy inherits the section purple and the
+    // button collapses to a bare bar.
     .what-we-offer {
       height: auto;
       margin-top: $space-4;
-      padding: $space-5 0;
+      padding: $space-6 0;
+      background: #fcf7ff;
 
       .container {
         width: 100%;
@@ -133,92 +263,151 @@
         .title-block {
           position: static;
           transform: none;
-          margin-bottom: $space-4;
+          align-items: center;
+          gap: $space-3;
+          margin-bottom: $space-5;
+
+          .title {
+            @include m-section-title;
+            display: inline-flex;
+            align-items: center;
+            gap: $space-2;
+            color: #410075;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+
+            .hand-icon {
+              width: 32px;
+            }
+          }
+
+          // Compact pill instead of the full-width contained bar MUI falls
+          // back to; !important beats the emotion class background/color.
+          .service-cta {
+            align-self: center;
+            min-width: 0;
+            width: auto;
+            height: 40px;
+            padding: 0 $space-5;
+            border-radius: $m-radius-pill;
+            background: linear-gradient(#c390ed, #410075) !important;
+            color: #fff !important;
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: none;
+            box-shadow: 0 6px 16px rgba(65, 0, 117, 0.22);
+          }
         }
 
-        .title {
-          font-size: $m-font-section-title;
-        }
-
+        // A grid replaces the desktop absolute stage. Both mirrored offer
+        // columns dissolve (display: contents) so their six items become
+        // direct grid cells; the dog stage spans the top row.
         .offer-content {
           position: static;
           height: auto;
-          flex-direction: column !important;
-          gap: $space-5;
-        }
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: $space-3;
 
-        .dogs-stage {
-          position: static !important;
-          width: 100%;
-          height: auto;
-          transform: none !important;
-          display: flex;
-          justify-content: center;
-          padding: $space-4 0;
-
-          .ring {
-            display: none;
-          }
-
-          .dogs-image {
+          // The dog group is a white-background studio photo (not a cutout),
+          // so it sits on a white card where its backdrop blends seamlessly —
+          // a colored stage would frame it in a mismatched rectangle.
+          .dogs-stage {
             position: static;
-            width: 85%;
-            transform: none;
-          }
-        }
-
-        .offers-column {
-          position: static;
-          width: 100%;
-          top: auto;
-
-          .offer-item {
-            position: static !important;
-            top: auto !important;
+            grid-column: 1 / -1;
+            order: -1;
             width: 100%;
-          }
-
-          .offer-copy {
-            width: auto;
-            flex: 1;
-          }
-
-          // The number badge's circular color-coded look is desktop-scoped
-          // only; this component is already a bespoke mobile rebuild, so
-          // restate it here rather than extract from a deeply nested block.
-          .offer-number {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+            height: auto;
+            transform: none;
             display: flex;
-            align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            color: #fff;
-            font-family: $font;
-            font-size: 18px;
-            font-weight: 700;
+            align-items: center;
+            margin-bottom: $space-2;
+            padding: $space-3;
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 10px 28px rgba(65, 0, 117, 0.1);
 
-            &.purple {
-              background: #50059a;
+            .ring {
+              display: none;
             }
 
-            &.red {
-              background: #ad0000;
+            .dogs-image {
+              position: static;
+              width: 100%;
+              max-width: 440px;
+              height: auto;
+              transform: none;
             }
           }
-        }
 
-        .left-column {
-          align-items: stretch;
-
-          .offer-copy {
-            text-align: left;
+          .offers-column {
+            display: contents;
           }
-        }
 
-        .right-column {
-          align-items: stretch;
+          // Each offer becomes an equal-height card. The number is a small
+          // colored chip pinned to the top; order:-1 normalizes the two DOM
+          // orderings the mirrored desktop columns use.
+          .offer-item {
+            position: static;
+            top: auto;
+            width: auto;
+            height: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: $space-2;
+            padding: $space-4;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 6px 18px rgba(65, 0, 117, 0.08);
+
+            .offer-number {
+              order: -1;
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+              color: #fff;
+              font-family: $font;
+              font-size: 15px;
+              font-weight: 700;
+              line-height: 1;
+
+              &.purple {
+                background: #50059a;
+              }
+
+              &.red {
+                background: #ad0000;
+              }
+            }
+
+            .offer-copy {
+              width: auto;
+              text-align: left;
+
+              .offer-title {
+                font-family: $font;
+                font-size: 15px;
+                font-weight: 700;
+                line-height: 1.2;
+                color: #252525;
+              }
+
+              .offer-description {
+                margin-top: $space-1;
+                font-family: $font;
+                font-size: 12px;
+                font-weight: 400;
+                line-height: 1.4;
+                color: #595959;
+              }
+            }
+          }
         }
       }
     }
@@ -246,25 +435,27 @@
           text-transform: uppercase;
         }
 
+        // Four short categories, so distribute them edge-to-edge as a
+        // segmented row instead of a barely-overflowing scroll strip that
+        // clipped "Birds" off the right edge.
         .category-tabs {
           gap: $space-2;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          padding-bottom: 2px;
+          width: 100%;
 
           .category-tab {
-            flex: 0 0 auto;
-            min-width: 88px;
+            flex: 1 1 0;
+            min-width: 0;
             height: 40px;
-            padding: 0 $space-4;
+            padding: 0 $space-2;
             border-radius: $m-radius-pill;
             border: 1px solid #9f9f9f;
             background: transparent;
             color: #606060;
             font-family: $font;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             line-height: 1;
+            white-space: nowrap;
             cursor: pointer;
 
             &.active {
@@ -275,19 +466,37 @@
           }
         }
 
+        // Full-width card with the prev/next controls floated over the pet
+        // photo, so the card gets the whole column instead of being pinched
+        // between two arrows.
         .discovery-slider {
-          align-items: center;
-          justify-content: center;
-          gap: $space-2;
+          position: relative;
+          display: block;
+
+          .cards-track {
+            width: 100%;
+            justify-content: center;
+          }
 
           .slider-nav {
-            flex-shrink: 0;
-            width: 40px;
-            height: 40px;
+            position: absolute;
+            top: 100px;
+            z-index: 3;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
+            box-shadow: 0 4px 14px rgba(65, 0, 117, 0.2);
 
             svg {
               font-size: 22px;
+            }
+
+            &.prev {
+              left: 2px;
+            }
+
+            &.next {
+              right: 2px;
             }
 
             &.enabled {
@@ -296,14 +505,9 @@
             }
 
             &.disabled {
-              background: #d9d9d9;
-              color: #8a8a8a;
+              background: #ece7f2;
+              color: #b3aac2;
             }
-          }
-
-          .cards-track {
-            flex: 1;
-            justify-content: center;
           }
         }
 
@@ -329,50 +533,176 @@
     }
 
     // ─── Species ──────────────────────────────────────────────────────────
+    // Desktop stages the dog cutout on layered purple circles ringed by
+    // floating pet-prop badges — the bowl (nutrition) and toy/bone (play)
+    // illustrate the copy's "nutrition and even entertainment are different".
+    // That's the section's thesis, so the whole composition is rebuilt for the
+    // mobile stage rather than stripped to a bare dog. Title/body/CTA are
+    // #pc-wrap-scoped on desktop, so they're restated here or the copy
+    // inherits the section purple and the button collapses to a bar.
     .species {
       height: auto;
+      background: #fcf7ff;
+      padding: $space-6 0;
 
       .species-main {
         flex-direction: column;
-        margin-top: $space-4;
+        margin: 14;
 
         .left-side {
+          position: relative;
           width: 100%;
-          height: auto;
+          height: 320px;
           display: flex;
+          align-items: center;
           justify-content: center;
 
+          .dog-background-1 {
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 240px;
+            height: 240px;
+            margin: 0;
+            border-radius: 50%;
+            background: #f3e2ff;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+          }
+
+          .dog-background-2 {
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 190px;
+            height: 190px;
+            margin: 0;
+            border-radius: 50%;
+            background: #e9ccff;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+          }
+
           .dog-image {
+            position: relative;
+            z-index: 2;
             width: 100%;
-            max-width: 400px;
+            max-width: 270px;
             height: auto;
           }
 
-          // Floating background circles + toy props are staged for the
-          // desktop image's exact pixel footprint — hidden rather than
-          // rescaled at mobile widths.
-          .dog-background-1,
-          .dog-background-2,
-          .bone,
+          // Floating pet-prop badges re-anchored to the stage corners. Each
+          // badge is a gradient circle with its icon centered on top; the two
+          // elements are positioned separately (they're siblings in the DOM),
+          // so the icon insets match each badge's size.
           .bone-background,
-          .toy,
           .toy-background,
-          .bowl,
           .bowl-background {
-            display: none;
+            display: block;
+            position: absolute;
+            margin: 0;
+            top: auto;
+            left: auto;
+            border-radius: 50%;
+            background: linear-gradient(39deg, #e5c3ff 14.13%, #fff 85.24%);
+            box-shadow: 0 6px 16px rgba(65, 0, 117, 0.16);
+            z-index: 3;
+          }
+
+          .bone,
+          .toy,
+          .bowl {
+            display: block;
+            position: absolute;
+            top: auto;
+            left: auto;
+            height: auto;
+            z-index: 4;
+          }
+
+          // Ball — top-right (entertainment)
+          .toy-background {
+            top: 18px;
+            right: 8px;
+            width: 56px;
+            height: 56px;
+          }
+          .toy {
+            top: 32px;
+            right: 22px;
+            width: 28px;
+          }
+
+          // Bowl — bottom-right (nutrition)
+          .bowl-background {
+            bottom: 14px;
+            right: 26px;
+            width: 58px;
+            height: 58px;
+          }
+          .bowl {
+            bottom: 30px;
+            right: 35px;
+            width: 40px;
+          }
+
+          // Bone — lower-left (play)
+          .bone-background {
+            bottom: 52px;
+            left: 6px;
+            width: 52px;
+            height: 52px;
+          }
+          .bone {
+            bottom: 63px;
+            left: 17px;
+            width: 30px;
           }
         }
 
         .right-side {
           width: 100%;
           margin-right: 0;
-          margin-top: $space-4;
+          margin-top: $space-5;
           align-items: stretch;
+          gap: $space-3;
           text-align: left;
 
           .title {
-            font-size: 22px;
+            @include m-section-title;
             text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #252525;
+          }
+
+          .text {
+            font-family: $font;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.55;
+            color: #595959;
+          }
+
+          // Compact pill instead of the full-width contained bar MUI falls
+          // back to; !important beats the emotion class background/color.
+          .booking-button {
+            align-self: center;
+            width: auto;
+            min-width: 0;
+            height: 44px;
+            margin-top: $space-1;
+            padding: 0 $space-5;
+            border-radius: $m-radius-pill;
+            background: linear-gradient(#c390ed, #410075) !important;
+            color: #fff !important;
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: none;
+            box-shadow: 0 6px 16px rgba(65, 0, 117, 0.22);
           }
 
           .hand-icon1,
@@ -384,30 +714,114 @@
     }
 
     // ─── Discount Advertisement ───────────────────────────────────────────
-    // The desktop version is a hand-placed collage (leaves, wood, grass,
-    // script text, two floating product shots) tuned to a 500px banner —
-    // simplified here to a clean promo card with one product image.
+    // Desktop is a summer-sale collage: a dog peeking over a wooden "The
+    // Summer Sale" plank, palm leaves, promo copy and two product bags on a
+    // lilac banner. Rather than strip it to text-on-white, the hero collage
+    // (wood + dog + script) is rebuilt at the top of a lilac promo card, with
+    // centered copy and both bags below. Copy colors and the CTA are
+    // #pc-wrap-scoped on desktop, so they're restated here.
     .discount-ads {
       height: auto;
 
       .container .discount-ads-main {
-        margin-top: $space-5;
+        position: relative;
+        margin-top: 0;
         height: auto;
         flex-direction: column;
-        align-items: stretch;
-        padding: $space-5 $space-4;
+        align-items: center;
+        overflow: hidden;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+        background: rgba(242, 226, 255, 0.9);
+        // Top padding reserves the band the absolutely-positioned collage
+        // sits in; the in-flow copy + products start below it.
+        padding: 232px $space-4 $space-5;
 
+        // Texture wash, grass and the two mismatched small leaves are
+        // dropped; the wood, dog and a matching frond pair carry the theme.
         .back-image,
-        .leaf-1,
-        .leaf-2,
-        .leaf-3,
-        .leaf-4,
-        .wood,
         .grass,
-        .the,
-        .summer,
-        .dog {
+        .leaf-2,
+        .leaf-4 {
           display: none;
+        }
+
+        .wood {
+          display: block;
+          position: absolute;
+          top: 60px;
+          left: 50%;
+          width: 236px;
+          height: auto;
+          transform: translateX(-50%);
+          z-index: 1;
+        }
+
+        .dog {
+          display: block;
+          position: absolute;
+          top: 14px;
+          left: 50%;
+          width: 118px;
+          height: auto;
+          transform: translateX(-50%);
+          z-index: 3;
+        }
+
+        // "The Summer Sale" script, re-centered on the plank below the paws.
+        // The pc gradient-clip treatment is #pc-wrap-only, so the font and
+        // colors are restated (else it falls back to purple sans-serif).
+        .the {
+          display: block;
+          position: absolute;
+          top: 116px;
+          left: 50%;
+          transform: translateX(-50%) rotate(-13deg);
+          font-family: "Pacifico", cursive;
+          font-size: 19px;
+          color: #2f2f2f;
+          text-shadow: 0 1px 1px rgba(255, 255, 255, 0.45);
+          z-index: 2;
+        }
+
+        .summer {
+          display: block;
+          position: absolute;
+          top: 132px;
+          left: 50%;
+          transform: translateX(-50%);
+          font-family: "Pacifico", cursive;
+          font-size: 24px;
+          color: #2f2f2f;
+          text-shadow: 0 1px 1px rgba(255, 255, 255, 0.45);
+          z-index: 2;
+
+          .sale {
+            font-family: "Pacifico", cursive;
+            color: #9fbf2e;
+          }
+        }
+
+        // Matching palm fronds (leaf-1 / leaf-3 are the same cluster) tucked
+        // behind the plank's top corners, mirrored for symmetry.
+        .leaf-1,
+        .leaf-3 {
+          display: block;
+          position: absolute;
+          top: 92px;
+          width: 122px;
+          height: auto;
+          z-index: 0;
+        }
+
+        .leaf-1 {
+          left: 10px;
+        }
+
+        .leaf-3 {
+          right: 10px;
+          left: auto;
+          transform: scaleX(-1);
         }
 
         .main-area {
@@ -415,28 +829,56 @@
           padding-top: 0;
           text-align: center;
           align-items: center;
+          gap: $space-2;
 
-          .saving-percent,
-          .title {
+          .saving-percent {
+            font-family: $font;
             font-size: 22px;
+            font-weight: 700;
+            line-height: 1.2;
+            text-transform: uppercase;
+            color: #410075;
+          }
+
+          .title {
+            font-family: $font;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.2;
+            text-transform: uppercase;
+            color: #252525;
+          }
+
+          .text {
+            font-family: $font;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.4;
+            color: #595959;
+          }
+
+          .shop-button {
+            width: auto;
+            min-width: 0;
+            height: 44px;
+            margin-top: $space-2;
+            padding: 0 $space-6;
+            border-radius: $m-radius-pill;
+            background: linear-gradient(#c390ed, #410075) !important;
+            color: #fff !important;
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 6px 16px rgba(65, 0, 117, 0.24);
           }
         }
 
+        // Product bags removed per request — the collage + copy + CTA carry
+        // the promo on their own.
         .products {
-          position: static;
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          margin-top: $space-4;
-
-          .product1 {
-            position: static;
-            width: 160px;
-          }
-
-          .product2 {
-            display: none;
-          }
+          display: none;
         }
       }
     }
@@ -444,24 +886,47 @@
     // ─── Top pet foods / toys grids ───────────────────────────────────────
     .top-pet-foods,
     .top-pet-toys {
-      padding-bottom: $space-6;
-
       .container {
         padding: 0 $space-4;
+        gap: $space-2; // PC's 24px container gap is #pc-wrap-scoped
 
+        // The brand title treatment (uppercase, ink purple, paw flourish)
+        // is #pc-wrap-scoped — restated here, sized to the mobile scale.
         .section-title {
-          font-size: $m-font-section-title;
+          margin-top: 40px;
+          display: inline-flex;
+          align-items: center;
           gap: $space-2;
+          font-family: $font;
+          font-size: $m-font-section-title;
+          font-weight: 700;
+          line-height: 1;
+          text-transform: uppercase;
+          color: #410075;
 
           .hand-icon {
-            width: 34px;
+            display: inline-block; // headers.scss hides paws globally; the title flourish earns its place
+            width: 24px;
           }
+        }
+
+        .desc-text {
+          font-family: $font;
+          font-size: 13px;
+          font-weight: 500;
+          color: #595959;
         }
       }
 
+      // display:grid only exists under #pc-wrap, so without it the Stack
+      // stays a flex column and the 2-up columns never engage — that's the
+      // "one giant card per row" bug.
       .top-pet-foods-grid,
       .top-pet-toys-grid {
-        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        width: 100%;
+        margin-top: $space-2;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: $space-3;
       }
 
@@ -482,12 +947,55 @@
             max-height: 104px;
           }
         }
+
+        // Shared rating/price rows are set for a ~280px-wide card and
+        // clip at ~172px — resize to fit; the ellipsis on rating-text
+        // stays as the worst-case fallback.
+        .card-content {
+          .rating-row .rating-info {
+            .star-rating .MuiSvgIcon-root {
+              font-size: 12px;
+            }
+
+            .rating-text {
+              font-size: 11px;
+            }
+          }
+
+          .sold-text {
+            font-size: 11px;
+          }
+
+          .price-row {
+            gap: $space-1;
+
+            .discounted-price {
+              font-size: 18px;
+            }
+
+            .discount-percent {
+              padding: 3px 4px;
+              font-size: 10px;
+
+              .off-text {
+                font-size: 10px;
+              }
+            }
+
+            // Final price + the OFF pill carry the discount at this size;
+            // the struck-through original was what clipped off the edge.
+            .origin-price {
+              display: none;
+            }
+          }
+        }
       }
     }
 
     // ─── Advertisement video ──────────────────────────────────────────────
     .video-frame {
       height: 220px;
+      margin-top: 35px;
       background: #000;
     }
 
@@ -582,18 +1090,21 @@
         text-align: center;
       }
 
+      // Instagram-profile metaphor: six square thumbnails with hairline
+      // gaps, clipped as one rounded block — reads as a glance at the
+      // account itself rather than a photo dump.
       .instagram-mobile-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: $space-2;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
         width: 100%;
         margin-top: $space-2;
+        border-radius: 16px;
+        overflow: hidden;
 
         .instagram-mobile-tile {
           display: block;
           aspect-ratio: 1 / 1;
-          border-radius: 14px;
-          overflow: hidden;
 
           img {
             width: 100%;
@@ -601,6 +1112,39 @@
             object-fit: cover;
             display: block;
           }
+
+          // 3x2 grid: two of the eight posts stay behind the follow link.
+          &:nth-child(n + 7) {
+            display: none;
+          }
+
+          &:focus-visible {
+            outline: 2px solid #410075;
+            outline-offset: -2px;
+          }
+        }
+      }
+
+      // The one action this section exists for. Same gradient family as
+      // the INSTAGRAM word in the title.
+      .instagram-follow-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: $m-btn-height;
+        margin-top: $space-3;
+        padding: 0 $space-6;
+        border-radius: $m-radius-pill;
+        background: linear-gradient(45deg, #833ab4, #c13584, #e1306c, #f56040);
+        color: #fff;
+        font-family: $font;
+        font-size: 15px;
+        font-weight: 700;
+        box-shadow: 0 8px 20px rgba(193, 53, 132, 0.28);
+
+        &:focus-visible {
+          outline: 2px solid #410075;
+          outline-offset: 3px;
         }
       }
     }

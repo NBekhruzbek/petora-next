@@ -16,6 +16,5 @@
 }
 
 /** VERSION: MOBILE **/
-
-#mobile-wrap {
-}
+// Mobile styles live in scss/mobile/main.scss (imported by pages/_app.tsx),
+// scoped under #mobile-wrap there — nothing mobile belongs in this file.

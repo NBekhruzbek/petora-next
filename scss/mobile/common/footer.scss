@@ -1,15 +1,38 @@
 @use "../../variables.scss" as *;
 
 // Footer and its #footer wrapper render on every page, so this fixes the
-// same "no base style reaches mobile" gap globally in one place.
+// same "no base style reaches mobile" gap globally in one place. All brand
+// values (Pacifico wordmark, ink purple, neutral grays) are restated here
+// because the PC originals are #pc-wrap-scoped and never reach mobile.
+//
+// Mobile composition (deliberately different from the desktop 3-column row):
+// logo row, tagline, contact chips, 3-column link grid, centered social
+// row, centered Pacifico sign-off. The component nests these in two boxes
+// (footer-info / footer-nav), so both are flattened with display:contents
+// and the pieces are sequenced with `order` on the container. The desktop
+// polaroid is dropped: the hero collage and contact-section pets already
+// carry the page's photo moments; the footer is the sign-off.
 #mobile-wrap {
   #footer {
     background-color: #f2e2ff;
     height: auto;
-    padding: $space-6 0 $space-5;
+    padding: $space-4 0 $space-5;
+    position: relative; // anchor for the ::before wave (desktop gets this from #pc-wrap rules)
 
+    // Same wave hand-off from the white contact section into the lavender
+    // footer as desktop, scaled down. Without position:relative above it
+    // anchored to the page and was hidden as broken.
     &::before {
-      display: none;
+      content: "";
+      position: absolute;
+      top: -39px;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C360,0 1080,120 1440,60 L1440,120 L0,120 Z' fill='%23f2e2ff'/%3E%3C/svg%3E");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      pointer-events: none;
     }
   }
 
@@ -18,62 +41,157 @@
       flex-direction: column;
       align-items: flex-start;
       padding: 0 $space-4;
-      gap: $space-5;
+      gap: $space-4;
     }
 
     .footer-info {
-      width: 100%;
-      margin-top: 0;
+      display: contents;
 
       .logo-section {
+        order: 1;
         height: auto;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
         .logo {
-          width: 100px;
-          height: 62px;
+          width: 84px;
+          height: 52px;
         }
 
         .logo-name {
           height: auto;
           padding-top: 0;
-          font-size: $m-font-page-title; // match the topbar wordmark
+          margin-left: $space-2;
+          font-family: "Pacifico", cursive; // loaded globally by pc/main.scss @import
+          font-size: 26px;
+          font-weight: 500;
+          color: #410075;
           align-self: center;
         }
       }
+
+      .text {
+        order: 2;
+        font-family: $font;
+        font-size: $m-font-body;
+        line-height: 1.45;
+        color: #252525;
+      }
+
+      .contact-section {
+        order: 3;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: $space-2 $space-3;
+
+        // Email/phone as white pill chips — same white-card surface as the
+        // hero sticker and section cards, and a clearer tap target than
+        // bare text rows.
+        .contact {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          min-height: 36px;
+          padding: 0 $space-3;
+          background: #fff;
+          border-radius: $m-radius-pill;
+          box-shadow: 0 2px 10px rgba(65, 0, 117, 0.08);
+
+          img {
+            width: 16px;
+            height: 16px;
+          }
+
+          a {
+            font-family: $font;
+            font-size: 13px;
+            font-weight: 600;
+            color: #410075;
+          }
+        }
+
+        // The component repeats the same email/phone pair to fill the
+        // desktop 2x2 grid — stacked on mobile it reads as a bug, so
+        // keep one of each.
+        .contact:nth-child(3),
+        .contact:nth-child(4) {
+          display: none;
+        }
+      }
+
+      .social-media {
+        order: 5; // after the link grid
+        width: auto;
+        align-self: center;
+        flex-direction: row;
+        gap: $space-3;
+
+        .MuiButton-root {
+          min-width: 0;
+          padding: $space-1;
+        }
+
+        img {
+          width: 32px;
+          height: 32px;
+        }
+      }
     }
 
-    // The brand mark photo + its small decorative corner shapes are staged
-    // for a fixed 280x304 box with absolute children — condensed to a
-    // single centered mark on mobile, decorative squares dropped.
     .footer-img {
-      position: static;
-      width: 100%;
-      height: auto;
-      justify-content: center;
-      padding: $space-2 0;
-
-      .first-square,
-      .second-square {
-        display: none;
-      }
-
-      .dog-image {
-        position: static;
-        width: 160px;
-        margin: 0;
-      }
+      display: none;
     }
 
     .footer-nav {
-      width: 100%;
-      height: auto;
-      margin-top: 0;
-      margin-left: 0;
+      display: contents;
 
+      // "Navbar" is developer vocabulary; six obvious links don't need a
+      // heading announcing they're navigation. Hidden on mobile only.
+      .main-text {
+        display: none;
+      }
+
+      // 3-column link grid: the two component boxes (3 links each) are
+      // flattened with display:contents so the six links flow row-major
+      // into three aligned columns.
       .router-box {
-        .navLink-text {
-          font-size: 16px;
+        order: 4;
+        width: 100%;
+        margin-top: 0;
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        justify-content: space-between;
+        gap: 0 $space-4;
+
+        .left-box,
+        .right-box {
+          display: contents;
         }
+
+        .navLink-text {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 2px;
+          min-height: 34px;
+          font-family: $font;
+          font-size: 15px;
+          font-weight: 700;
+          line-height: 1.2;
+          color: #595959;
+        }
+      }
+
+      .enjoy-text {
+        order: 6;
+        width: 100%;
+        height: auto;
+        padding-top: $space-2;
+        text-align: center;
+        font-family: "Pacifico", cursive;
+        font-size: 24px;
+        color: #410075;
       }
     }
 

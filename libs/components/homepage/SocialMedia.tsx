@@ -156,6 +156,14 @@ const SocialMedia = () => {
                 </a>
               ))}
             </Box>
+            <a
+              className="instagram-follow-btn"
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Follow on Instagram
+            </a>
           </Stack>
         </Stack>
       </Stack>
