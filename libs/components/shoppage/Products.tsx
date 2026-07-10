@@ -722,6 +722,7 @@ const Products = () => {
                 ))
               ) : (
                 <Box
+                  className="no-data-wrap"
                   sx={{
                     width: "800px",
                     height: "800px",
@@ -732,6 +733,7 @@ const Products = () => {
                   }}
                 >
                   <img
+                    className="no-data-img"
                     src="/img/icons/no-data.png"
                     alt="No products found"
                     style={{ width: 450, height: 450, marginTop: "120px" }}

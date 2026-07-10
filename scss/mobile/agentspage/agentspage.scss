@@ -1,4 +1,5 @@
 @use "../../variables.scss" as *;
+@use "../common/foundation.scss" as *;
 
 #mobile-wrap {
   .agents-listing-page {
@@ -9,7 +10,7 @@
     }
 
     .agents-page-title {
-      font-size: 22px;
+      font-size: $m-font-section-title;
       margin-bottom: $space-4;
     }
 
@@ -28,6 +29,12 @@
     .agents-cards {
       grid-template-columns: 1fr;
       gap: $space-4;
+
+      // Stays 1-up (people directory suits a full-width cover) but the
+      // shared 200px cover image is a touch tall at 375px.
+      .agent-card .agent-card-img-wrap {
+        height: 180px;
+      }
 
       .no-data-wrap {
         padding: $space-6 0;

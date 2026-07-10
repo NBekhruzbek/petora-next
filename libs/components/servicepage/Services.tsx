@@ -477,6 +477,7 @@ const Services = () => {
                 ))
               ) : (
                 <Box
+                  className="no-data-wrap"
                   sx={{
                     width: "800px",
                     height: "800px",
@@ -486,6 +487,7 @@ const Services = () => {
                   }}
                 >
                   <img
+                    className="no-data-img"
                     src="/img/icons/no-data.png"
                     alt="No services found"
                     style={{ width: 450, height: 450, marginTop: "120px" }}

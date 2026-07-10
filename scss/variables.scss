@@ -13,3 +13,19 @@ $space-6: 32px;
 
 /** TOUCH TARGETS **/
 $touch-target-min: 44px;
+
+/** MOBILE TYPE SCALE **/
+$m-font-page-title: 26px; // hero headlines
+$m-font-section-title: 22px; // every section heading
+$m-font-card-title: 16px;
+$m-font-body: 15px;
+$m-font-meta: 12px; // labels/badges — nothing below 11px
+$m-font-price: 20px;
+
+/** MOBILE BUTTONS / RADII **/
+$m-btn-height: 44px; // standalone tappable ( = $touch-target-min)
+$m-btn-height-compact: 40px; // in-card action rows only
+$m-radius: 12px;
+$m-radius-sm: 10px;
+$m-radius-lg: 16px;
+$m-radius-pill: 999px;

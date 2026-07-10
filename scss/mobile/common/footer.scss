@@ -36,7 +36,7 @@
         .logo-name {
           height: auto;
           padding-top: 0;
-          font-size: 30px;
+          font-size: $m-font-page-title; // match the topbar wordmark
           align-self: center;
         }
       }

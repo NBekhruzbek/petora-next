@@ -1,4 +1,5 @@
 @use "../../variables.scss" as *;
+@use "../common/foundation.scss" as *;
 
 #mobile-wrap {
   .home-page {
@@ -136,7 +137,7 @@
         }
 
         .title {
-          font-size: 24px;
+          font-size: $m-font-section-title;
         }
 
         .offer-content {
@@ -218,6 +219,111 @@
 
         .right-column {
           align-items: stretch;
+        }
+      }
+    }
+
+    // ─── Discovery slider ─────────────────────────────────────────────────
+    // Desktop layout for this section lives under #pc-wrap only, so on
+    // mobile it renders bare — this is its full mobile treatment. The
+    // compact .discovery-card override lives in common/foundation.scss
+    // (shared with the /discovery page).
+    .discovery {
+      width: 100%;
+      padding: $space-6 0 $space-5;
+      background: #fff;
+
+      .container {
+        width: 100%;
+        flex-direction: column;
+        padding: 0 $space-4;
+        gap: $space-4;
+
+        .discovery-title {
+          @include m-section-title;
+          color: #252525;
+          letter-spacing: 0.3px;
+          text-transform: uppercase;
+        }
+
+        .category-tabs {
+          gap: $space-2;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          padding-bottom: 2px;
+
+          .category-tab {
+            flex: 0 0 auto;
+            min-width: 88px;
+            height: 40px;
+            padding: 0 $space-4;
+            border-radius: $m-radius-pill;
+            border: 1px solid #9f9f9f;
+            background: transparent;
+            color: #606060;
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1;
+            cursor: pointer;
+
+            &.active {
+              border-color: transparent;
+              background: linear-gradient(#c390ed, #410075);
+              color: #fff;
+            }
+          }
+        }
+
+        .discovery-slider {
+          align-items: center;
+          justify-content: center;
+          gap: $space-2;
+
+          .slider-nav {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+
+            svg {
+              font-size: 22px;
+            }
+
+            &.enabled {
+              background: #410075;
+              color: #fff;
+            }
+
+            &.disabled {
+              background: #d9d9d9;
+              color: #8a8a8a;
+            }
+          }
+
+          .cards-track {
+            flex: 1;
+            justify-content: center;
+          }
+        }
+
+        .pagination-dots {
+          align-self: center;
+          gap: $space-2;
+
+          .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid #b3b3b3;
+            background: transparent;
+            cursor: pointer;
+
+            &.active {
+              border-color: #410075;
+              background: #410075;
+            }
+          }
         }
       }
     }
@@ -344,7 +450,7 @@
         padding: 0 $space-4;
 
         .section-title {
-          font-size: 24px;
+          font-size: $m-font-section-title;
           gap: $space-2;
 
           .hand-icon {
@@ -355,8 +461,27 @@
 
       .top-pet-foods-grid,
       .top-pet-toys-grid {
-        grid-template-columns: 1fr;
-        gap: $space-4;
+        grid-template-columns: repeat(2, 1fr);
+        gap: $space-3;
+      }
+
+      // Shared card is sized for the desktop 4-up 1300px grid
+      // (min-height 380px, 248px image) — compact it for the 2-up grid.
+      .top-pet-product-card {
+        @include m-product-card-compact;
+
+        .card-image-wrap {
+          height: 130px;
+
+          &::after {
+            bottom: 10px;
+            height: 12px;
+          }
+
+          .product-image {
+            max-height: 104px;
+          }
+        }
       }
     }
 
@@ -374,8 +499,41 @@
         padding: 0 $space-4;
 
         .section-title {
-          font-size: 24px;
+          font-size: $m-font-section-title;
         }
+      }
+
+      // Shared marquee card is 250px × 364px with a 250px image —
+      // fixed width stays (the marquee needs it) but compacted.
+      .top-agents-card {
+        width: 200px;
+        min-height: 0;
+        border-radius: $m-radius-lg;
+
+        .agent-image-wrap {
+          height: 170px;
+        }
+
+        .agent-content {
+          padding: $space-3;
+
+          .agent-name {
+            font-size: 16px;
+          }
+          .agent-email {
+            font-size: 12px;
+          }
+          .message-btn {
+            width: 100%;
+            height: $m-btn-height-compact;
+            font-size: 13px;
+          }
+        }
+      }
+
+      .agents-segment {
+        gap: $space-3;
+        padding: $space-2 $space-3 $space-5 0;
       }
     }
 
@@ -396,7 +554,7 @@
       .section-title {
         color: #410075;
         font-family: $font;
-        font-size: 24px;
+        font-size: $m-font-section-title;
         font-weight: 700;
         text-align: center;
 

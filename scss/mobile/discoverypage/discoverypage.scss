@@ -1,0 +1,195 @@
+@use "../../variables.scss" as *;
+@use "../common/foundation.scss" as *;
+
+// The /discovery page has no styles anywhere (its desktop look is a
+// separate task) — this is its full mobile treatment. The compact
+// .discovery-card override lives in common/foundation.scss.
+#mobile-wrap {
+  .discovery-page {
+    padding: $space-5 0 $space-6;
+    gap: $space-6;
+
+    .container {
+      width: 100%;
+      flex-direction: column;
+      padding: 0 $space-4;
+    }
+
+    // ─── Find out what kind of pet you like ─────────────────────────────
+    .pet-you-like-section {
+      .container {
+        gap: $space-4;
+      }
+
+      .title {
+        @include m-section-title;
+        color: #252525;
+
+        .hand-icon {
+          width: 30px;
+          vertical-align: middle;
+        }
+      }
+
+      .images {
+        gap: $space-3;
+
+        img {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+          border-radius: $m-radius-lg;
+        }
+      }
+    }
+
+    // ─── What do you understand about your pet ──────────────────────────
+    .understanding-your-pet-section {
+      .container {
+        gap: $space-4;
+      }
+
+      .pets-image {
+        width: 100%;
+        height: auto;
+      }
+
+      .text-area {
+        gap: $space-3;
+
+        .title {
+          @include m-section-title;
+          color: #252525;
+
+          .green-title {
+            color: #026d00;
+
+            img {
+              width: 30px;
+              vertical-align: middle;
+            }
+          }
+        }
+
+        .desc-text {
+          gap: $space-3;
+
+          > * {
+            font-family: $font;
+            font-size: $m-font-body;
+            line-height: 1.5;
+            color: #595959;
+          }
+
+          .icon {
+            font-size: 10px;
+            color: #410075;
+            margin-right: $space-2;
+          }
+        }
+      }
+    }
+
+    // ─── Discovery slider (same recipe as the homepage section) ─────────
+    .discovery-section {
+      .container {
+        gap: $space-4;
+      }
+
+      .discovery-title {
+        @include m-section-title;
+        color: #252525;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+
+      .category-tabs {
+        gap: $space-2;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+
+        .category-tab {
+          flex: 0 0 auto;
+          min-width: 88px;
+          height: 40px;
+          padding: 0 $space-4;
+          border-radius: $m-radius-pill;
+          border: 1px solid #9f9f9f;
+          background: transparent;
+          color: #606060;
+          font-family: $font;
+          font-size: 14px;
+          font-weight: 600;
+          line-height: 1;
+          cursor: pointer;
+
+          &.active {
+            border-color: transparent;
+            background: linear-gradient(#c390ed, #410075);
+            color: #fff;
+          }
+        }
+      }
+
+      .discovery-slider {
+        align-items: center;
+        justify-content: center;
+        gap: $space-2;
+
+        .slider-nav {
+          flex-shrink: 0;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+
+          svg {
+            font-size: 22px;
+          }
+
+          &.enabled {
+            background: #410075;
+            color: #fff;
+          }
+
+          &.disabled {
+            background: #d9d9d9;
+            color: #8a8a8a;
+          }
+        }
+
+        .cards-track {
+          flex: 1;
+          justify-content: center;
+        }
+      }
+
+      .pagination-numbers {
+        align-self: center;
+        gap: $space-2;
+
+        .page-number {
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          border: 1px solid #b3b3b3;
+          background: transparent;
+          color: #606060;
+          font-family: $font;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+
+          &.active {
+            border-color: #410075;
+            background: #410075;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}

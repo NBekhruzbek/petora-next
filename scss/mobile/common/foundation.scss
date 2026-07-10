@@ -1,0 +1,189 @@
+/* MOBILE FOUNDATION — shared mixins + cross-page rules.
+   Imported first among mobile partials so page partials out-cascade it. */
+@use "../../variables.scss" as *;
+
+/* ===== MIXINS ===== */
+@mixin m-section-title {
+  font-family: $font;
+  font-size: $m-font-section-title;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+@mixin m-card-title {
+  font-family: $font;
+  font-size: $m-font-card-title;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+@mixin m-meta {
+  font-family: $font;
+  font-size: $m-font-meta;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+@mixin m-btn-base {
+  min-height: $m-btn-height;
+  border-radius: $m-radius;
+  font-family: $font;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: none;
+}
+
+@mixin m-btn-compact {
+  min-height: $m-btn-height-compact;
+  border-radius: $m-radius-sm;
+  font-family: $font;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: none;
+}
+
+@mixin m-btn-pill {
+  min-height: 36px;
+  border-radius: $m-radius-pill;
+  padding: 0 $space-4;
+  font-family: $font;
+  font-weight: 600;
+  text-transform: none;
+}
+
+@mixin m-card-pad {
+  padding: $space-4;
+}
+
+/* Compact 2-up product card (shop listing, favorites, top-pet grids share this) */
+@mixin m-product-card-compact {
+  min-height: 0;
+
+  .card-image-wrap {
+    height: 120px;
+    padding: $space-2;
+
+    .product-image {
+      max-height: 96px;
+      max-width: 80%;
+    }
+    .pet-type-badge {
+      font-size: 11px;
+      top: 8px;
+      left: 8px;
+    }
+    .like-meta {
+      top: 8px;
+      right: 8px;
+    }
+  }
+
+  .card-content {
+    height: auto;
+    padding: $space-3;
+    gap: $space-1;
+
+    .product-title {
+      font-size: 14px;
+    }
+    .discounted-price {
+      font-size: $m-font-price;
+    }
+    .discount-percent {
+      font-size: 12px;
+
+      .off-text {
+        font-size: 11px;
+      }
+    }
+    .origin-price {
+      font-size: 12px;
+    }
+    .actions-row {
+      gap: $space-2;
+
+      .buy-now-btn {
+        height: $m-btn-height-compact;
+        border-radius: $m-radius-sm;
+        font-size: 13px;
+      }
+      .cart-btn {
+        width: $m-btn-height-compact;
+        height: $m-btn-height-compact;
+        border-radius: $m-radius-sm;
+      }
+    }
+  }
+}
+
+/* ===== CROSS-PAGE RULES ===== */
+#mobile-wrap {
+  .pagination-section {
+    margin-top: $space-5 !important;
+  }
+  .MuiPaginationItem-root {
+    min-width: 40px;
+    height: 40px;
+  }
+
+  /* Global no-data pattern — pairs with .no-data-wrap/.no-data-img classNames
+     in Products/Services/Agents. !important beats the inline desktop styles. */
+  .no-data-wrap {
+    width: 100% !important;
+    height: auto !important;
+    padding: $space-6 0 !important;
+    margin: 0 !important;
+    display: flex;
+    justify-content: center;
+  }
+  .no-data-img {
+    width: 200px !important;
+    height: 200px !important;
+    margin-top: 0 !important;
+    object-fit: contain;
+    opacity: 0.6;
+  }
+
+  /* Card book/profile buttons (service cards, agent cards, favorites)
+     are 38px in the shared files — bump to the compact tap target. */
+  .service-book-btn {
+    height: $m-btn-height-compact;
+    border-radius: $m-radius-sm;
+  }
+
+  /* Compact fluid discovery card — used by the homepage Discovery slider
+     and the /discovery page (shared card is a rigid 268px × 450px box). */
+  .discovery-card {
+    width: 100%;
+    max-width: 320px;
+    min-height: 0;
+    padding: $space-3;
+
+    .pet-image-box {
+      height: 150px;
+
+      .pet-image {
+        max-width: 200px;
+        max-height: 146px;
+      }
+    }
+    .pet-title {
+      font-size: 18px;
+    }
+    .info-title,
+    .description-title {
+      font-size: 16px;
+    }
+    .country-text {
+      font-size: 14px;
+    }
+  }
+}
+
+/* Portaled MUI dialogs can't be scoped under #mobile-wrap */
+@media (max-width: #{$breakpoint-mobile}) {
+  .MuiDialog-paper {
+    margin: $space-4;
+    max-width: calc(100vw - #{$space-4 * 2}) !important;
+  }
+}

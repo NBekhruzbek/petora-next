@@ -128,7 +128,7 @@
       max-width: 100%;
 
       .hero-title {
-        font-size: 28px !important;
+        font-size: $m-font-page-title !important; // one page-title scale (26px)
 
         // The accent icon here has no hand-icon class to catch the
         // global hide rule below, and it's inline with the sentence

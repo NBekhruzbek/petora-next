@@ -1,5 +1,6 @@
 /* IMPORTS */
 @use "../variables.scss" as *;
+@use "./common/foundation.scss" as *;
 @use "./common/mobile-drawer.scss" as *;
 @use "./common/mobile-filter-trigger.scss" as *;
 @use "./common/write-review-panel.scss" as *;
@@ -18,6 +19,7 @@
 @use "./communitypage/communitypage.scss" as *;
 @use "./communitypage/community-shell.scss" as *;
 @use "./mypage/mypage.scss" as *;
+@use "./discoverypage/discoverypage.scss" as *;
 
 /** VERSION: MOBILE **/
 #mobile-wrap {

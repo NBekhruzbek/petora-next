@@ -7,8 +7,29 @@
   }
 
   .qna-question-card {
+    // Shared card keeps desktop scale (20px 22px padding, 24px vote count).
+    // Top padding stays large to clear the absolute .qna-number-tag.
+    padding: $space-6 $space-4 $space-4;
+    gap: $space-3;
+
+    .qna-question-votes {
+      min-width: 28px;
+
+      .qna-vote-count {
+        font-size: 18px;
+      }
+
+      svg {
+        font-size: 18px;
+      }
+    }
+
     .qna-question-title {
       font-size: 18px;
+    }
+
+    .qna-question-summary {
+      font-size: 14px;
     }
   }
 

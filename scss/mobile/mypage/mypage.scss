@@ -1,4 +1,5 @@
 @use "../../variables.scss" as *;
+@use "../common/foundation.scss" as *;
 
 // The mypage mobile category select is new markup rendered on both trees,
 // so hide it everywhere and re-show it only inside #mobile-wrap (keeps the
@@ -61,6 +62,10 @@
       align-items: stretch !important;
       gap: $space-3;
 
+      .MuiTab-root {
+        min-height: $m-btn-height;
+      }
+
       .action-buttons {
         width: 100%;
       }
@@ -78,6 +83,19 @@
 
     .info-form-card {
       padding: $space-4 !important;
+    }
+
+    // Cards padded via inline sx (p:5 → emotion class); the ID scope +
+    // !important wins on mobile without touching the component.
+    .billing-card-section,
+    .billing-address-section {
+      padding: $space-4 !important;
+    }
+
+    // Shared style is 30px tall — below the 44px tap minimum (source
+    // declares height with !important, so match it).
+    .check-username-btn {
+      height: $m-btn-height !important;
     }
 
     .invoice-history-section {
@@ -98,19 +116,71 @@
   .service-mgmt-container {
     .summary-cards-row {
       flex-wrap: wrap;
+      gap: $space-3;
 
       .summary-card {
         flex: 1 1 45%;
+        padding: $space-3 $space-4;
+
+        .summary-count {
+          font-size: 20px;
+        }
+      }
+    }
+
+    // The desktop toolbar right-aligns the filter/sort selects with a
+    // hard margin-left: 640px — pushes them entirely off a 375px screen.
+    .search-field {
+      flex: 1 1 100%;
+      min-width: 0;
+
+      .MuiOutlinedInput-root {
+        height: $m-btn-height;
+      }
+    }
+
+    .filter-select,
+    .sort-select {
+      // Also beats MyServicesTab's inline sx width:220 (emotion class).
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .filter-select .MuiOutlinedInput-root,
+    .sort-select .MuiOutlinedInput-root {
+      width: 100%;
+      height: $m-btn-height !important; // source declares height !important
+      margin-left: 0;
+      margin-top: 0;
+    }
+
+    .my-services-tab .services-toolbar {
+      flex-wrap: wrap;
+      gap: $space-2;
+
+      .btn-add-service {
+        width: 100%;
+        height: $m-btn-height;
+        // Stack spacing={2} puts margin-left on non-first children — at
+        // width:100% that margin overflows the wrapped row.
+        margin-left: 0 !important;
+        margin-top: $space-2;
       }
     }
   }
 
   // .fav-products-grid reuses shoppage's .product-card at a fixed 4-column
-  // flex-basis — my earlier mobile override for that class was scoped to
-  // .products-section specifically, so it doesn't reach this context.
-  .fav-products-grid .product-card {
-    flex: 1 1 100%;
-    max-width: 100%;
+  // flex-basis — the shop mobile override is scoped to .products-section,
+  // so it doesn't reach this context. Same 2-up recipe as the shop.
+  .fav-products-grid {
+    min-height: 0; // shared reserves 400px
+    gap: $space-3;
+
+    .product-card {
+      flex: 0 0 calc((100% - #{$space-3}) / 2);
+      max-width: calc((100% - #{$space-3}) / 2);
+      @include m-product-card-compact;
+    }
   }
 
   // .service-row (My Services tab) and .request-row (Booking Requests /
@@ -120,6 +190,15 @@
   .service-row {
     flex-direction: column !important;
     align-items: stretch !important;
+    // Interior keeps desktop scale (min-height 116px, 18px/20px padding)
+    // after stacking — compact it.
+    min-height: 0;
+    padding: $space-4;
+    gap: $space-3;
+
+    .agent-name {
+      font-size: 16px;
+    }
 
     .service-row-media {
       align-self: flex-start;
@@ -128,14 +207,27 @@
     .service-row-metrics {
       flex-wrap: wrap;
       padding: 0;
+      gap: $space-4;
     }
 
     .service-row-actions {
       align-items: stretch !important;
       width: 100%;
+      padding-left: 0;
+      gap: $space-2;
+
+      .service-action-tab {
+        height: $m-btn-height-compact; // 34px → tappable
+      }
 
       .service-status-tabs {
         flex-wrap: wrap;
+        height: auto;
+
+        .status-tab {
+          flex: 1;
+          height: $m-btn-height-compact - 2px; // wrapper border
+        }
       }
     }
   }
@@ -143,6 +235,13 @@
   .request-row {
     flex-direction: column !important;
     align-items: stretch !important;
+    min-height: 0;
+    padding: $space-4;
+    gap: $space-3;
+
+    .request-service {
+      font-size: 16px;
+    }
 
     .request-main,
     .request-date-block,
@@ -153,6 +252,13 @@
 
     .request-status-actions {
       justify-content: flex-start !important;
+      gap: $space-2;
+
+      .request-accept-btn,
+      .request-complete-btn {
+        height: $m-btn-height-compact; // 32px → tappable
+        border-radius: $m-radius-sm; // from the odd 5px
+      }
     }
   }
 
@@ -171,6 +277,22 @@
   .notifications-toolbar {
     flex-wrap: wrap;
     gap: $space-2;
+
+    .btn-mark-all-read {
+      min-height: $m-btn-height-compact; // shared padding yields ~26px
+    }
+  }
+
+  .notifications-empty {
+    padding: $space-6 0; // from desktop-scale 64px
+
+    .empty-icon {
+      font-size: 40px;
+    }
+
+    .empty-title {
+      font-size: $m-font-body;
+    }
   }
 
   // ─── Bookings & Orders ──────────────────────────────────────────────────
@@ -184,6 +306,16 @@
   .order-delivered-actions {
     width: auto !important;
     gap: $space-2;
+  }
+
+  .order-card {
+    padding: $space-4;
+  }
+
+  .write-review-btn {
+    // Shared style uses fractional 6.7px padding with !important — match it.
+    padding: $space-2 $space-4 !important;
+    min-height: $m-btn-height-compact;
   }
 
   // Tracker geometry is %-based so it scales; only the four step labels

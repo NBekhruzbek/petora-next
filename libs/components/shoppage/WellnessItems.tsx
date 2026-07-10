@@ -2,6 +2,7 @@ import { Box, IconButton, Stack } from "@mui/material";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 import WellnessItemsCard, {
   type WellnessItem,
 } from "@/libs/components/shoppage/WellnessItemsCard";
@@ -59,10 +60,13 @@ const wellnessItems: WellnessItem[] = [
   },
 ];
 
-const cardWidth = 220;
-const cardGap = 28;
 const autoPlayDelay = 1500;
 const WellnessItems = () => {
+  const device = useDeviceDetect();
+  // Must match .wellness-card width / .carousel-track gap in
+  // scss/mobile/shoppage/shoppage.scss (mobile) and the pc styles (desktop).
+  const cardWidth = device === "mobile" ? 160 : 220;
+  const cardGap = device === "mobile" ? 16 : 28;
   const totalItems = wellnessItems.length;
   const middleOffset = totalItems;
   const [activeIndex, setActiveIndex] = useState(
@@ -112,7 +116,7 @@ const WellnessItems = () => {
         (cardWidth + cardGap) * activeIndex
       }px))`,
     }),
-    [activeIndex],
+    [activeIndex, cardWidth, cardGap],
   );
 
   const getCardStyle = (distance: number) => {

@@ -1,4 +1,5 @@
 @use "../../variables.scss" as *;
+@use "../common/foundation.scss" as *;
 
 #mobile-wrap {
   .products-section {
@@ -9,7 +10,7 @@
     }
 
     .title {
-      font-size: 22px;
+      font-size: $m-font-section-title;
       margin-bottom: $space-4;
     }
 
@@ -26,13 +27,18 @@
       }
     }
 
+    // 2-up grid — the shared card is sized for the desktop 4-up 1300px
+    // grid (min-height 300px, 180px image band), far too big full-width.
     .products-cards {
-      gap: $space-4;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: $space-3;
       min-height: 0;
 
       .product-card {
-        flex: 1 1 100%;
-        max-width: 100%;
+        flex: 0 0 calc((100% - #{$space-3}) / 2);
+        max-width: calc((100% - #{$space-3}) / 2);
+        @include m-product-card-compact;
       }
     }
   }
@@ -78,7 +84,7 @@
           padding: $space-4;
 
           .title {
-            font-size: 24px;
+            font-size: $m-font-section-title;
           }
 
           .pet-type {
@@ -94,7 +100,7 @@
           }
 
           .price-section .price-after-discount {
-            font-size: 28px;
+            font-size: 24px; // match the booking page's price display
           }
 
           .cta-row {
@@ -119,6 +125,7 @@
               flex: 1 1 0;
               width: auto;
               min-width: 0;
+              min-height: $m-btn-height;
               padding: $space-3 $space-1;
               font-size: 13px;
               gap: $space-1;
@@ -168,8 +175,13 @@
         padding-bottom: $space-2;
 
         .product-card {
-          width: 260px;
+          width: 200px;
           flex: 0 0 auto;
+          min-height: 0;
+
+          .card-image-wrap {
+            height: 140px;
+          }
         }
       }
     }
@@ -186,7 +198,7 @@
       gap: $space-3;
 
       .title {
-        font-size: 18px;
+        font-size: $m-font-section-title;
       }
 
       .header-nav {
@@ -206,21 +218,22 @@
       // (a plain Box, not a Stack) isn't a flex container at all on
       // mobile, so cards stack vertically instead of horizontally and the
       // JS-driven translateX shifts that vertical stack sideways into
-      // blank space. gap:28px also must match the `cardGap` JS constant
-      // used in the same translateX calculation, same as cardWidth below.
+      // blank space. gap:16px also must match the mobile `cardGap` value
+      // in WellnessItems.tsx used in the same translateX calculation,
+      // same as cardWidth below.
       .carousel-track {
         display: flex;
-        gap: 28px;
+        gap: 16px;
         align-items: flex-end;
       }
 
-      // Width MUST stay 220px to match the `cardWidth` constant the
-      // carousel's JS uses to compute its translateX offset — changing
-      // this here without updating that constant misaligns the whole
-      // track off-screen.
+      // Width MUST stay 160px to match the mobile `cardWidth` value the
+      // carousel's JS (WellnessItems.tsx) uses to compute its translateX
+      // offset — changing this here without updating that constant
+      // misaligns the whole track off-screen.
       .carousel-track .wellness-card {
-        width: 220px;
-        min-height: 200px;
+        width: 160px;
+        min-height: 180px;
         padding: $space-3 $space-3 $space-2;
         border-radius: 16px;
         border: 1px solid #e5e5e5;
@@ -254,7 +267,7 @@
 
     .container {
       .title {
-        font-size: 22px;
+        font-size: $m-font-section-title;
       }
 
       .nutrition-main {
@@ -332,7 +345,7 @@
 
         .title {
           position: static;
-          font-size: 32px;
+          font-size: $m-font-section-title;
           background-image: none;
           -webkit-text-fill-color: #8f00ff;
           color: #8f00ff;
