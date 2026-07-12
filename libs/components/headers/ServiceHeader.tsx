@@ -14,7 +14,7 @@ const ServiceHeader = () => {
           </Box>
           <img className="hand-icon" src="./img/logo/Union.svg" alt="" />
         </Stack>
-        <Stack sx={{ position: "relative" }}>
+        <Stack className="hero-stage" sx={{ position: "relative" }}>
           <Box className={"circle-background"}>
             <Box className={"ellipse"}>
               <img

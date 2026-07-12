@@ -1,4 +1,5 @@
 import { Box, Stack } from "@mui/material";
+import { useState } from "react";
 import AboutServicesCard, { ServicesItem } from "./aboutServicesCard";
 
 const services: ServicesItem[] = [
@@ -47,6 +48,8 @@ const services: ServicesItem[] = [
 ];
 
 const AboutServices = () => {
+  const [openKey, setOpenKey] = useState<string | null>(null);
+
   return (
     <Stack className="service-page">
       <Stack className="about-services">
@@ -71,14 +74,20 @@ const AboutServices = () => {
                   className="service-segment"
                   direction="row"
                 >
-                  {services.map((service) => (
-                    <Box
-                      key={`${loopIndex}-${service.id}`}
-                      className="service-item"
-                    >
-                      <AboutServicesCard item={service} />
-                    </Box>
-                  ))}
+                  {services.map((service) => {
+                    const key = `${loopIndex}-${service.id}`;
+                    return (
+                      <Box key={key} className="service-item">
+                        <AboutServicesCard
+                          item={service}
+                          isOpen={openKey === key}
+                          onToggle={() =>
+                            setOpenKey((prev) => (prev === key ? null : key))
+                          }
+                        />
+                      </Box>
+                    );
+                  })}
                 </Stack>
               ))}
             </Stack>

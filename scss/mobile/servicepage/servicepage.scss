@@ -13,6 +13,19 @@
       border-radius: 0 !important;
       border: none !important;
     }
+
+    // Fields must not be squeezed by the scrolling dialog body — the
+    // multiline notes field (rows=3, ~69px) was collapsing to ~48px and
+    // clipping its placeholder. Keep each field's natural height and let
+    // the body scroll instead.
+    .booking-field {
+      flex-shrink: 0;
+    }
+
+    .booking-notes-input .MuiInputBase-root {
+      height: auto !important;
+      align-items: flex-start !important;
+    }
   }
 }
 
@@ -46,10 +59,136 @@
         gap: $space-4;
       }
     }
+
+    // The shared service card (scss/shared/servicepage-card.scss) is a tall
+    // photo-forward card tuned for the 5-up desktop grid; at full mobile
+    // width it eats the whole screen (one card per view). Recast it as a
+    // compact horizontal row — thumbnail + info — so several fit at once,
+    // and calm the animated red CTA border to a solid brand fill.
+    .agents-cards .service-card {
+      flex-direction: row;
+      align-items: stretch;
+      border-radius: $m-radius-lg;
+
+      .service-card-image-wrap {
+        width: 120px;
+        height: auto;
+        align-self: stretch;
+        flex-shrink: 0;
+
+        .service-category-badge {
+          top: 8px;
+          left: 8px;
+          padding: 2px 7px;
+          font-size: 9px;
+        }
+
+        // Bottom-anchored so it clears the badge on the narrow thumbnail.
+        .service-like-btn {
+          top: auto;
+          bottom: 8px;
+          right: 8px;
+          padding: 3px 7px 3px 5px;
+
+          svg {
+            font-size: 13px;
+          }
+          .like-count {
+            font-size: 10px;
+          }
+        }
+      }
+
+      .service-card-content {
+        flex: 1;
+        min-width: 0;
+        justify-content: center;
+        padding: $space-3;
+        gap: 4px;
+
+        .service-card-name {
+          font-size: 15px;
+        }
+
+        .service-price-row {
+          gap: 5px;
+
+          .service-price {
+            font-size: 18px;
+          }
+          .service-price-sep {
+            font-size: 13px;
+          }
+          .service-duration {
+            font-size: 12px;
+          }
+          .duration-icon {
+            font-size: 13px;
+          }
+        }
+
+        .service-location-row {
+          .location-icon {
+            font-size: 13px;
+          }
+          .service-location {
+            font-size: 12px;
+          }
+        }
+
+        .service-rating-row {
+          gap: 4px;
+          flex-wrap: wrap;
+
+          .rating-stars .MuiSvgIcon-root {
+            font-size: 13px;
+          }
+          .rating-value {
+            font-size: 12px;
+          }
+          .review-count {
+            font-size: 11px;
+          }
+          .service-booking-count {
+            font-size: 11px;
+          }
+        }
+
+        // Clean solid brand-purple fill instead of the animated red border —
+        // one calm primary action per card.
+        .service-book-btn {
+          height: 38px;
+          min-height: 38px;
+          margin-top: $space-2;
+          border: none;
+          border-radius: $m-radius-sm;
+          background: linear-gradient(135deg, #7a1bd0 0%, #410075 100%);
+          background-size: auto;
+          background-position: 0 0;
+          animation: none;
+          font-size: 13px;
+
+          &:hover {
+            background: linear-gradient(135deg, #7a1bd0 0%, #410075 100%);
+            box-shadow: none;
+            transform: none;
+          }
+        }
+      }
+    }
+
+    // Desktop centers the pager under #pc-wrap; mobile inherited a
+    // left-aligned column — center it.
+    .pagination-section {
+      flex-direction: row;
+      justify-content: center;
+      margin-top: $space-5;
+    }
   }
 
-  // ─── About Services (marquee section on /service) ─────────────────────
+  // ─── About Services (marquee showcase on /service) ────────────────────
   .about-services {
+    margin-top: 15px;
     height: auto;
 
     .container {
@@ -63,29 +202,69 @@
 
       .about-services__title {
         font-size: $m-font-section-title;
+        font-weight: 700;
         line-height: 1.3;
 
+        // Desktop paints "Care For" pink; that accent lives under #pc-wrap
+        // so mobile flattened it back to the title colour — restore it.
         .text-color {
+          color: #ff33dd;
           font-size: $m-font-section-title;
           line-height: 1.3;
         }
       }
     }
 
-    // The marquee card is meant to stay a fixed showcase size regardless
-    // of viewport (same reasoning as the homepage top-agents marquee) —
-    // fully restate it since #pc-wrap doesn't reach mobile and the shared
-    // .service-card (grid) sizing doesn't apply here. The title/copy
-    // overlay is normally hover-revealed, which touch can't do, so show
-    // it statically instead.
+    // Desktop reveals each card's description on hover — impossible on
+    // touch, and cramming the copy over every photo muddied the images.
+    // So mobile is tap-to-reveal (open state lifted to <AboutServices>):
+    // resting = vivid photo + label; tapped = the photo darkens and the
+    // description fades in, mirroring the desktop hover. It's a manual
+    // swipe row (not the desktop auto-scroll) so cards aren't moving
+    // targets when you reach to tap, and each card wears a "+" affordance.
     .services-marquee {
+      overflow-x: auto;
+      overflow-y: visible;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      // The doubled loop segment only exists for the desktop marquee.
+      .service-segment + .service-segment {
+        display: none;
+      }
+
+      .services-track {
+        width: max-content;
+      }
+
+      .service-segment {
+        flex-direction: row;
+        gap: $space-3;
+        // vertical pad keeps the card shadow from clipping (overflow-x
+        // auto forces overflow-y to auto too); right pad lets the last
+        // card clear the edge when swiped.
+        padding: $space-3 $space-3 $space-6 0;
+      }
+
+      .service-item {
+        flex: 0 0 auto;
+      }
+
       .service-card {
         position: relative;
-        width: 220px !important;
-        height: 220px !important;
-        border-radius: 20px;
-        border: 1px solid #d8dde8;
+        width: 158px !important;
+        height: 194px !important;
+        border-radius: $m-radius-lg;
+        border: none;
         overflow: hidden;
+        scroll-snap-align: start;
+        cursor: pointer;
+        box-shadow: 0 8px 18px rgba(25, 25, 35, 0.15);
 
         .service-image-wrap {
           position: relative;
@@ -101,7 +280,13 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.45);
+            background: linear-gradient(
+              to top,
+              rgba(0, 0, 0, 0.62) 0%,
+              rgba(0, 0, 0, 0.1) 42%,
+              transparent 66%
+            );
+            transition: background 0.3s ease;
           }
         }
 
@@ -111,24 +296,76 @@
           z-index: 2;
           align-items: center;
           justify-content: flex-end;
-          gap: $space-1;
+          gap: $space-2;
           padding: $space-3;
           text-align: center;
-          color: #fff;
+
+          // "+" affordance so the resting photo reads as tappable; flips
+          // to "×" when open.
+          &::after {
+            content: "+";
+            position: absolute;
+            top: $space-2;
+            right: $space-2;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #410075;
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 0;
+          }
 
           .title {
-            font-size: 18px;
-            background: rgba(0, 0, 0, 0.35);
-            padding: 4px 10px;
-            border-radius: 999px;
+            font-family: $font;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            color: #fff;
+            text-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
           }
 
           .copy {
+            font-family: $font;
             font-size: 12px;
-            font-style: italic;
-            opacity: 1;
-            transform: none;
-            max-height: none;
+            font-style: normal;
+            line-height: 1.38;
+            color: #fff;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transform: translateY(6px);
+            transition:
+              opacity 0.3s ease,
+              max-height 0.3s ease,
+              transform 0.3s ease;
+          }
+        }
+
+        // Tapped: darken the whole photo and reveal the description,
+        // centring the label + copy block (mirrors the desktop hover).
+        &.is-open {
+          .service-image-wrap::after {
+            background: rgba(0, 0, 0, 0.66);
+          }
+
+          .content {
+            justify-content: center;
+
+            &::after {
+              content: "×";
+              font-size: 16px;
+            }
+
+            .copy {
+              opacity: 1;
+              max-height: 130px;
+              transform: translateY(0);
+            }
           }
         }
       }
@@ -197,8 +434,684 @@
       }
     }
 
+    // The whole Agent Information tab (profile card, Basic Information,
+    // Location/Pricing, Certifications) is styled only under #pc-wrap, so on
+    // mobile it rendered as unstyled purple text with an unconstrained photo
+    // overflowing its box. Rebuild it here in the desktop's visual language,
+    // reflowed to a single column.
     .product-detail-tabs-section {
       margin-top: $space-5;
+      gap: $space-4;
+
+      // ── Tabs ──
+      .product-detail-tabs {
+        .MuiTabs-indicator {
+          display: none;
+        }
+        .MuiTabs-flexContainer {
+          gap: $space-2;
+        }
+        .MuiTab-root {
+          min-height: 44px;
+          padding: $space-2 $space-3;
+          border-radius: $m-radius $m-radius 0 0;
+          border-bottom: 2px solid transparent;
+          background: #f6f3fb;
+          color: #292929;
+          font-family: $font;
+          font-size: 13px;
+          font-weight: 700;
+          text-transform: none;
+
+          .tab-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            .tab-icon {
+              font-size: 16px;
+            }
+          }
+
+          &.Mui-selected {
+            background: #fbf9ff;
+            border-bottom-color: #6f2dbd;
+            color: #4b158d;
+          }
+        }
+      }
+
+      .detail-tab-panel {
+        gap: $space-4;
+        padding-top: $space-3;
+      }
+
+      // ── Shared card shell ──
+      .agent-overview-card,
+      .agent-detail-card {
+        border-radius: $m-radius-lg;
+        background: linear-gradient(180deg, #fff 0%, #fcf8ff 100%);
+        border: 1px solid #eee4f8;
+        box-shadow: 0 8px 22px rgba(76, 23, 141, 0.06);
+      }
+
+      // ── Profile card ──
+      .agent-overview-card {
+        flex-direction: column;
+        gap: $space-4;
+        padding: $space-4;
+
+        .agent-overview-image {
+          min-width: 0;
+          width: 100%;
+          height: 230px;
+          border-radius: $m-radius;
+          overflow: hidden;
+          background: #f1ecf7;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            // Portrait source — bias the crop upward so the whole face is
+            // framed instead of centring on the neck/sweater.
+            object-position: center 22%;
+          }
+        }
+
+        .agent-overview-content {
+          gap: $space-3;
+
+          .agent-overview-name {
+            font-family: $font;
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #1f1f1f;
+          }
+
+          .agent-overview-role {
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: #5d6470;
+          }
+
+          .agent-overview-metrics {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: $space-2;
+
+            .agent-metric-chip {
+              padding: 6px 12px;
+              border-radius: 999px;
+              background: #f6efe7;
+              color: #5b4a37;
+              font-family: $font;
+              font-size: 12px;
+              font-weight: 700;
+              line-height: 1.2;
+            }
+          }
+
+          .agent-overview-rating {
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: $space-2;
+
+            .MuiRating-root {
+              font-size: 18px;
+
+              .MuiRating-iconFilled {
+                color: #ffab2d;
+              }
+              .MuiRating-iconEmpty {
+                color: #e0d7eb;
+              }
+            }
+
+            .agent-overview-rating-text,
+            .agent-overview-rating-divider {
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 700;
+              color: #535862;
+            }
+          }
+
+          .agent-overview-bio {
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.7;
+            color: #5f6672;
+          }
+
+          .agent-overview-actions {
+            margin-top: $space-1;
+            gap: $space-2;
+
+            .contact-info-title {
+              font-family: $font;
+              font-size: 14px;
+              font-weight: 700;
+              color: #2b2139;
+            }
+
+            // Stack label over value so long emails don't get squeezed.
+            .contact-info-item {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 3px;
+              padding: 10px 12px;
+              border-radius: $m-radius;
+              background: linear-gradient(180deg, #ffffff 0%, #fbf8ff 100%);
+              border: 1px solid #eadff7;
+
+              .contact-info-label {
+                font-family: $font;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+                text-transform: uppercase;
+                color: #8b7ba5;
+              }
+
+              .contact-info-link {
+                font-family: $font;
+                font-size: 14px;
+                font-weight: 700;
+                color: #4b158d;
+                text-decoration: none;
+                word-break: break-word;
+              }
+            }
+          }
+        }
+      }
+
+      // ── Detail grid → single column ──
+      .agent-detail-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: $space-4;
+      }
+
+      .agent-detail-card {
+        gap: $space-3;
+        padding: $space-4;
+
+        .detail-block-title {
+          font-family: $font;
+          font-size: 17px;
+          font-weight: 700;
+          line-height: 1.2;
+          color: #202020;
+        }
+
+        .detail-info-grid {
+          gap: $space-3;
+
+          .detail-info-row {
+            display: grid;
+            grid-template-columns: minmax(104px, 40%) 1fr;
+            align-items: start;
+            gap: $space-3;
+            padding-bottom: $space-3;
+            border-bottom: 1px solid #f0e8f7;
+
+            &:last-child {
+              padding-bottom: 0;
+              border-bottom: none;
+            }
+
+            .detail-info-label {
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 700;
+              color: #4b158d;
+            }
+
+            .detail-info-value {
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 600;
+              line-height: 1.6;
+              color: #4a4f59;
+            }
+          }
+        }
+      }
+
+      // ── Location / Pricing ──
+      .compact-info-card {
+        gap: $space-3;
+
+        .compact-info-item {
+          display: flex;
+          align-items: flex-start;
+          gap: $space-3;
+          padding: $space-3;
+          border-radius: $m-radius;
+          background: #fff;
+          border: 1px solid #efe5f9;
+
+          .compact-info-icon {
+            width: 40px;
+            min-width: 40px;
+            height: 40px;
+            border-radius: $m-radius-sm;
+            background: #f4ebff;
+            color: #5e239d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            svg {
+              font-size: 20px;
+            }
+          }
+
+          .compact-info-copy {
+            gap: 2px;
+
+            .compact-info-title {
+              font-family: $font;
+              font-size: 11px;
+              font-weight: 700;
+              letter-spacing: 0.3px;
+              text-transform: uppercase;
+              color: #8b7ba5;
+            }
+
+            .compact-info-value {
+              font-family: $font;
+              font-size: 16px;
+              font-weight: 700;
+              line-height: 1.3;
+              color: #202020;
+            }
+
+            .compact-info-description {
+              font-family: $font;
+              font-size: 12.5px;
+              font-weight: 400;
+              line-height: 1.5;
+              color: #636a76;
+            }
+          }
+        }
+      }
+
+      // ── Certifications (2-up) ──
+      .certificate-gallery {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: $space-3;
+        align-items: start;
+
+        .certificate-card {
+          max-width: none;
+          padding: $space-2;
+          border-radius: $m-radius;
+          border: 1px solid #efe5f9;
+          background: #fff;
+          box-shadow: 0 6px 14px rgba(76, 23, 141, 0.05);
+
+          .certificate-image-wrap {
+            width: 100%;
+            height: 110px;
+            overflow: hidden;
+            border-radius: $m-radius-sm;
+            background: linear-gradient(180deg, #faf7ff 0%, #f3ecfb 100%);
+            margin-bottom: $space-2;
+            padding: $space-2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .certificate-image {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+          }
+
+          .certificate-title {
+            font-family: $font;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: #262626;
+          }
+        }
+      }
+
+      // ── Reviews tab ── (styled only under #pc-wrap → unstyled on mobile:
+      // plain purple text + reviewer avatars ballooning to full width)
+      .review-summary-panel,
+      .review-cards-panel {
+        border-radius: $m-radius-lg;
+        background: linear-gradient(180deg, #fff 0%, #fcf8ff 100%);
+        border: 1px solid #eee4f8;
+        box-shadow: 0 8px 22px rgba(76, 23, 141, 0.06);
+      }
+
+      // Summary: score + satisfaction + rating distribution
+      .review-summary-panel {
+        width: 100%;
+        max-width: none;
+        padding: $space-4;
+        gap: $space-4;
+
+        .review-summary-title {
+          font-family: $font;
+          font-size: 19px;
+          font-weight: 700;
+          line-height: 1.15;
+          color: #1f2937;
+        }
+
+        .review-score-row {
+          flex-direction: row;
+          align-items: center;
+          gap: $space-3;
+
+          .review-rating-stars {
+            .MuiRating-iconFilled {
+              color: #ff9d59;
+            }
+            .MuiRating-iconEmpty {
+              color: #d6d6d6;
+            }
+            .MuiSvgIcon-root {
+              font-size: 24px;
+            }
+          }
+
+          .review-score-count {
+            font-family: $font;
+            font-size: 30px;
+            font-weight: 800;
+            line-height: 1;
+            color: #1f2937;
+          }
+        }
+
+        .review-satisfied-box {
+          display: flex;
+          align-items: center;
+          gap: $space-2;
+          padding: $space-3;
+          border-radius: $m-radius;
+          background: #f5f3fa;
+
+          .review-satisfied-icon {
+            font-size: 24px;
+            color: #4b158d;
+            flex-shrink: 0;
+          }
+
+          .review-satisfied-text {
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: #253244;
+          }
+        }
+
+        .review-distribution-list {
+          gap: $space-2;
+
+          .review-distribution-row {
+            display: grid;
+            grid-template-columns: 72px 1fr 32px;
+            align-items: center;
+            gap: $space-2;
+
+            .review-distribution-label,
+            .review-distribution-value {
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 700;
+              line-height: 1.2;
+              color: #253244;
+            }
+
+            .review-distribution-value {
+              text-align: right;
+            }
+
+            .review-distribution-track {
+              position: relative;
+              width: 100%;
+              height: 8px;
+              overflow: hidden;
+              border-radius: 999px;
+              background: #e7eaef;
+
+              .review-distribution-fill {
+                height: 100%;
+                border-radius: inherit;
+
+                &.warm {
+                  background: #ff9d59;
+                }
+                &.cool {
+                  background: #aab6c4;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Review list
+      .review-cards-panel {
+        gap: $space-4;
+        padding: $space-4;
+
+        .review-cards-header {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: $space-3;
+
+          .review-cards-count {
+            font-family: $font;
+            font-size: 14px;
+            font-weight: 700;
+            color: #253244;
+            white-space: nowrap;
+          }
+
+          .review-sort-field {
+            flex: 0 0 auto;
+            width: 140px;
+            min-width: 0;
+
+            .MuiOutlinedInput-root {
+              border-radius: $m-radius-sm;
+              background: #fff;
+              font-family: $font;
+              font-size: 13px;
+              color: #222;
+            }
+            .MuiOutlinedInput-notchedOutline {
+              border-color: #dcd6e8;
+            }
+            .MuiSelect-select {
+              padding: 8px 30px 8px 12px;
+            }
+          }
+        }
+
+        // Desktop is a 2-col (user | body) grid; stack it on mobile.
+        .review-card {
+          display: flex;
+          flex-direction: column;
+          gap: $space-3;
+          padding-bottom: $space-4;
+          margin-bottom: $space-4;
+          border-bottom: 1px solid #eceff3;
+
+          &:last-of-type {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+          }
+
+          .review-card-user {
+            flex-direction: row;
+            align-items: center;
+            gap: $space-3;
+
+            .review-user-avatar {
+              width: 44px;
+              height: 44px;
+              flex-shrink: 0;
+              overflow: hidden;
+              border-radius: 50%;
+              background: #eef1f5;
+
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+
+            .review-user-meta {
+              gap: 2px;
+              min-width: 0;
+
+              .review-user-name {
+                font-family: $font;
+                font-size: 15px;
+                font-weight: 700;
+                line-height: 1.3;
+                color: #222f3d;
+              }
+
+              .review-user-location,
+              .review-user-purchase {
+                font-family: $font;
+                font-size: 12.5px;
+                font-weight: 500;
+                line-height: 1.4;
+                color: #7e8794;
+              }
+            }
+          }
+
+          .review-card-body {
+            gap: $space-3;
+            min-width: 0;
+
+            .review-card-top {
+              flex-direction: row;
+              align-items: center;
+              justify-content: space-between;
+              gap: $space-2;
+
+              .review-card-stars {
+                .MuiRating-iconFilled {
+                  color: #ff9d59;
+                }
+                .MuiRating-iconEmpty {
+                  color: #d6d6d6;
+                }
+                .MuiSvgIcon-root {
+                  font-size: 18px;
+                }
+              }
+
+              .review-card-date {
+                font-family: $font;
+                font-size: 12px;
+                font-weight: 500;
+                color: #7e8794;
+                white-space: nowrap;
+              }
+            }
+
+            .review-photo-list {
+              flex-direction: row;
+              flex-wrap: wrap;
+              gap: $space-2;
+
+              .review-photo-item {
+                width: 76px;
+                height: 58px;
+                overflow: hidden;
+                border-radius: $m-radius-sm;
+                background: #eef1f4;
+
+                img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+            }
+
+            .review-card-text {
+              font-family: $font;
+              font-size: 14px;
+              font-weight: 500;
+              line-height: 1.7;
+              color: #444f5b;
+            }
+
+            .review-card-toggle {
+              align-self: flex-start;
+              min-width: auto;
+              padding: 0;
+              font-family: $font;
+              font-size: 13px;
+              font-weight: 700;
+              text-transform: none;
+              color: #4b158d;
+
+              &:hover {
+                background: transparent;
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+
+        .review-pagination {
+          align-items: center;
+          margin-top: $space-1;
+
+          .MuiPagination-ul {
+            gap: $space-1;
+            justify-content: center;
+          }
+
+          .MuiPaginationItem-root {
+            min-width: 34px;
+            height: 34px;
+            border-radius: $m-radius-sm;
+            font-family: $font;
+            font-size: 13px;
+            font-weight: 700;
+            color: #5f6671;
+            background: #f4f6f8;
+          }
+
+          .Mui-selected {
+            background: #5e239d;
+            color: #fff;
+          }
+        }
+      }
     }
 
     // Shared booking/details cards keep desktop scale (28px 32px padding,
@@ -229,37 +1142,6 @@
       }
     }
 
-    .agent-overview-card {
-      flex-direction: column;
-      padding: $space-4;
-
-      .agent-overview-image {
-        min-width: 0;
-        width: 100%;
-        height: 260px;
-      }
-    }
-
-    .agent-detail-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .agent-detail-card {
-      padding: $space-4;
-
-      .detail-info-grid .detail-info-row {
-        grid-template-columns: minmax(120px, 40%) 1fr;
-        gap: $space-3;
-      }
-    }
-
-    .certificate-gallery {
-      grid-template-columns: repeat(2, 1fr);
-
-      .certificate-card {
-        max-width: none;
-      }
-    }
   }
 
   // ─── Related Services (horizontal scroll, shown on booking page) ──────
@@ -270,20 +1152,129 @@
       padding: 0 $space-4;
 
       .related-services-title {
-        font-size: 22px;
+        font-size: $m-font-section-title;
       }
 
+      // A swipeable carousel of compact cards — the "you might also like"
+      // pattern. The MUI Stack defaults to flex-direction:column, so the
+      // old rule (display:flex + overflow-x, no row) just stacked full 220px
+      // cards vertically with dead space. Force a row and compact each card.
       .agents-cards {
         display: flex;
+        flex-direction: row;
         grid-template-columns: none;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
         gap: $space-3;
         padding-bottom: $space-2;
 
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
         .service-card {
-          width: 220px;
+          width: 200px;
           flex: 0 0 auto;
+          scroll-snap-align: start;
+          border-radius: $m-radius-lg;
+
+          .service-card-image-wrap {
+            height: 118px;
+
+            .service-category-badge {
+              top: 8px;
+              left: 8px;
+              padding: 2px 7px;
+              font-size: 9px;
+            }
+
+            .service-like-btn {
+              top: 8px;
+              right: 8px;
+              padding: 3px 7px 3px 5px;
+
+              svg {
+                font-size: 13px;
+              }
+              .like-count {
+                font-size: 10px;
+              }
+            }
+          }
+
+          .service-card-content {
+            padding: $space-3;
+            gap: 4px;
+
+            .service-card-name {
+              font-size: 14px;
+            }
+
+            .service-price-row {
+              gap: 5px;
+
+              .service-price {
+                font-size: 18px;
+              }
+              .service-price-sep {
+                font-size: 13px;
+              }
+              .service-duration {
+                font-size: 12px;
+              }
+              .duration-icon {
+                font-size: 13px;
+              }
+            }
+
+            .service-location-row {
+              .location-icon {
+                font-size: 13px;
+              }
+              .service-location {
+                font-size: 12px;
+              }
+            }
+
+            .service-rating-row {
+              gap: 4px;
+              flex-wrap: wrap;
+
+              .rating-stars .MuiSvgIcon-root {
+                font-size: 13px;
+              }
+              .rating-value {
+                font-size: 12px;
+              }
+              .review-count {
+                font-size: 11px;
+              }
+              .service-booking-count {
+                font-size: 11px;
+              }
+            }
+
+            // Same calm solid fill as the main listing (no animated red CTA).
+            .service-book-btn {
+              height: $m-btn-height-compact;
+              margin-top: $space-1;
+              border: none;
+              border-radius: $m-radius-sm;
+              background: linear-gradient(135deg, #7a1bd0 0%, #410075 100%);
+              background-size: auto;
+              background-position: 0 0;
+              animation: none;
+              font-size: 13px;
+
+              &:hover {
+                background: linear-gradient(135deg, #7a1bd0 0%, #410075 100%);
+                box-shadow: none;
+                transform: none;
+              }
+            }
+          }
         }
       }
     }

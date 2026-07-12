@@ -11,11 +11,16 @@ export type ServicesItem = {
 
 type ServicesCardProps = {
   item: ServicesItem;
+  isOpen?: boolean;
+  onToggle?: () => void;
 };
 
-const AboutServicesCard = ({ item }: ServicesCardProps) => {
+const AboutServicesCard = ({ item, isOpen, onToggle }: ServicesCardProps) => {
   return (
-    <Stack className="service-card">
+    <Stack
+      className={`service-card${isOpen ? " is-open" : ""}`}
+      onClick={onToggle}
+    >
       <Box className="service-image-wrap">
         <img className="service-image" src={item.image} alt={item.title} />
       </Box>

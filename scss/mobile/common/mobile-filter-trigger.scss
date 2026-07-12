@@ -37,11 +37,16 @@
 
 // Filter content re-rendered inside the MobileDrawer's bottom sheet — only
 // ever mounted on mobile, so no #mobile-wrap scoping needed (it lives in a
-// portal outside it), but the fixed pixel widths from the pc sidebars need
-// to give way to the sheet's full-bleed width. Shared across all three
-// sidebar-filter pages since they reuse the same .category/.category-section
-// markup and class names.
+// portal outside it). The pc sidebar's checkbox/slider/collapse styling all
+// live under #pc-wrap, so none of it reaches this portal — the panel would
+// render as a plain list of purple words with invisible 0-size checkboxes.
+// Restate the whole control set here, full-bleed and brand-tinted. Shared
+// across all three sidebar-filter pages (same .category markup + classes).
 .mobile-filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
   .search-box,
   .divider,
   .category-section,
@@ -50,5 +55,207 @@
   .liked-agents-section,
   .liked-products-section {
     width: 100% !important;
+  }
+
+  // ── Search ──
+  .search-box {
+    height: 46px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    border-radius: $m-radius;
+    border: 1px solid #e5e0ee;
+    background: #fff;
+
+    .text-field {
+      flex: 1;
+      height: 100%;
+      padding: 0 $space-3;
+      font-family: $font;
+      font-size: 15px;
+      color: #1f1f1f;
+
+      input::placeholder {
+        color: #8a8a8a;
+        opacity: 1;
+      }
+    }
+
+    .search-button {
+      min-width: 40px;
+      width: 40px;
+      height: 38px;
+      border-radius: $m-radius-sm;
+      background: rgba(65, 0, 117, 0.06);
+      color: #410075;
+    }
+  }
+
+  // ── Section dividers (component drops one between every section) ──
+  .divider {
+    height: 1px !important;
+    margin: 0;
+    background-color: #ececec;
+    border: none;
+  }
+
+  // ── Collapsible section shell ──
+  .category-section,
+  .liked-agents-section {
+    gap: $space-3;
+  }
+
+  .category-header,
+  .likes-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    cursor: pointer;
+
+    .category-title,
+    .likes-title {
+      font-family: $font;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #111;
+    }
+
+    .category-toggle,
+    .likes-toggle {
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid #410075;
+      border-top: 2px solid #410075;
+      transform: rotate(135deg);
+      transition: transform 0.3s ease;
+
+      &.is-open {
+        transform: rotate(-45deg);
+      }
+    }
+  }
+
+  .category-list,
+  .likes-list {
+    gap: $space-1;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.2s ease;
+
+    &.is-open {
+      max-height: 720px;
+      opacity: 1;
+    }
+  }
+
+  // ── Options + brand checkbox ──
+  .category-option,
+  .likes-option {
+    flex-direction: row;
+    align-items: center;
+    gap: $space-3;
+    min-height: 40px;
+    cursor: pointer;
+
+    .category-checkbox,
+    .likes-checkbox {
+      position: relative;
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: #fff;
+      border: 2px solid #cfc7dc;
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .category-checkbox::after,
+    .likes-checkbox::after {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 11px;
+      border: solid transparent;
+      border-width: 0 2.5px 2.5px 0;
+      left: 6px;
+      top: 2.5px;
+      transform: rotate(45deg);
+    }
+
+    .category-label,
+    .likes-label {
+      font-family: $font;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: #3a3a3a;
+    }
+  }
+
+  .category-option.is-selected .category-checkbox,
+  .likes-option.is-selected .likes-checkbox {
+    background: #410075;
+    border-color: #410075;
+  }
+
+  .category-option.is-selected .category-checkbox::after,
+  .likes-option.is-selected .likes-checkbox::after {
+    border-color: #fff;
+  }
+
+  // ── Price slider ──
+  // Inset horizontally so the end thumbs sit inside the column — otherwise
+  // the collapsible `.category-list` (overflow:hidden) clips them in half.
+  .price-range {
+    padding: 0 $space-3;
+
+    .price-line {
+      height: 4px;
+      padding: $space-2 0;
+      color: #410075;
+
+      .MuiSlider-rail {
+        height: 4px;
+        color: #e5e0ee;
+        opacity: 1;
+      }
+      .MuiSlider-track {
+        height: 4px;
+        border: none;
+      }
+      .MuiSlider-thumb {
+        width: 16px;
+        height: 16px;
+        background: #fff;
+        border: 2px solid #410075;
+        box-shadow: 0 2px 6px rgba(65, 0, 117, 0.3);
+
+        &:hover,
+        &.Mui-focusVisible,
+        &.Mui-active {
+          box-shadow: 0 0 0 6px rgba(65, 0, 117, 0.12);
+        }
+      }
+    }
+
+    .selected-price {
+      margin-top: $space-2;
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 600;
+      color: #410075;
+    }
+  }
+
+  .likes-divider {
+    display: none;
   }
 }

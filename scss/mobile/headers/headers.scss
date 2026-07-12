@@ -70,7 +70,7 @@
 
     .text-area {
       position: static;
-      margin-top: 0;
+      margin: 12px;
       min-height: 0;
       width: 100%;
       max-width: 100%;
@@ -403,9 +403,174 @@
     }
   }
 
+  // ── Service hero collage stage ──
+  // The /service hero shares the homepage DNA — concentric purple rings, a
+  // floating vet-credential card, and pet cutouts. The generic rules above
+  // strip it to a bare photo on flat purple, which reads as unfinished. This
+  // rebuilds the compact collage: the pets size the stage, the rings glow
+  // behind them, and the dr_Jane rating card floats over the top corner as
+  // the section's thesis (top-rated, 1k+ reviews). Dog/cat icon dots stay
+  // dropped — the photo already shows both species, so the badges are noise.
+  #main-top .service-header {
+    // Restore the desktop two-tone brand headline — the generic mobile rule
+    // only resizes text1/text2, so both lines collapse to one flat colour at
+    // book weight. Purple statement line + green accent line, both heavy and
+    // uppercase, read as the section's voice instead of a caption.
+    .text-area {
+      .text1 {
+        color: #410075;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        line-height: 1.1 !important;
+      }
+
+      .text2 {
+        margin-top: 2px;
+        color: #8ba97f; // desktop green #a1be97 deepened for legibility at 26px
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        line-height: 1.1 !important;
+      }
+
+      .text3 {
+        margin-top: $space-3;
+        color: #595959;
+        line-height: 1.5 !important;
+      }
+    }
+
+    .hero-stage {
+      position: relative;
+      margin-top: $space-3;
+    }
+
+    .circle-background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      margin: 0;
+      z-index: 0;
+      pointer-events: none;
+
+      .ellipse {
+        display: block;
+        position: absolute;
+        inset: 0;
+      }
+
+      // Concentric arcs bottom-anchored and centered so the pets sit inside
+      // the glow, mirroring the desktop portal.
+      .ellipse1,
+      .ellipse2 {
+        display: block;
+        position: absolute;
+        left: 50%;
+        bottom: 7%; // tuck the ring bottoms behind the pets/wave
+        height: auto;
+        transform: translateX(-50%);
+      }
+      .ellipse1 {
+        width: 86%;
+      }
+      .ellipse2 {
+        width: 58%;
+      }
+
+      .dog-icon,
+      .cat-icon {
+        display: none;
+      }
+    }
+
+    .dogs-image {
+      position: relative;
+      z-index: 2;
+      display: block;
+      width: 96%;
+      max-width: 430px;
+      height: auto;
+      margin: $space-6 auto 0; // top room for the floating card
+    }
+
+    .dog-card {
+      display: flex;
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      left: $space-4;
+      width: auto;
+      height: auto;
+      margin: 0;
+      padding: $space-2 $space-3;
+      gap: $space-2;
+      flex-direction: row;
+      align-items: center;
+      background: #fff;
+      border-radius: $m-radius;
+      box-shadow: 0 6px 24px rgba(65, 0, 117, 0.16);
+      animation: mHeroCardFloat 4s ease-in-out infinite;
+
+      .left {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+
+        .name {
+          font-family: $font;
+          font-size: 14px;
+          font-weight: 700;
+          line-height: 1.2;
+          color: #410075;
+        }
+
+        .rank1,
+        .rank2 {
+          height: 4px;
+          border-radius: $m-radius-pill;
+          background: #410075;
+        }
+        .rank1 {
+          width: 64px;
+        }
+        .rank2 {
+          width: 32px;
+        }
+
+        .rank3 {
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          font-family: $font;
+          font-size: $m-font-meta;
+          font-weight: 600;
+          color: #6f00c6;
+        }
+      }
+
+      .right {
+        width: 54px;
+        height: 54px;
+        border-radius: $m-radius-sm;
+        background: #ebebeb;
+        overflow: hidden;
+
+        img {
+          // markup hard-codes 98px inline
+          width: 54px !important;
+          height: 54px !important;
+          display: block;
+          object-fit: cover;
+        }
+      }
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .main-header .booking-button,
-    .main-header .dog-card {
+    .main-header .dog-card,
+    .service-header .dog-card {
       animation: none;
     }
   }

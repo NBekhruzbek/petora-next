@@ -2,29 +2,197 @@
 
 // Reused verbatim (same class names) across agents/detail, shop/detail, and
 // the service booking wizard — one shared mobile treatment for all three.
+// Desktop styles the whole panel (card, textarea, stars, photo upload,
+// submit) under #pc-wrap, none of which reaches mobile — so restate it here
+// as a single-column card, not just the row→column layout switch.
 #mobile-wrap {
   .write-review-panel {
     flex-direction: column !important;
+    width: 100%;
     padding: $space-4;
+    gap: $space-4;
+    border-radius: $m-radius-lg;
+    border: 1.5px solid #e9d5ff;
+    background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
 
+    // Title + rating — a centred header above a divider.
     .write-review-left {
       min-width: 0;
       width: 100%;
+      gap: $space-3;
       padding-right: 0;
       padding-bottom: $space-4;
       border-right: none;
       border-bottom: 1.5px solid #f3e8ff;
       align-items: center;
       text-align: center;
+
+      .write-review-panel-title {
+        font-family: $font;
+        font-size: 18px;
+        font-weight: 800;
+        color: #111;
+      }
+
+      .write-review-rating-row {
+        gap: $space-2;
+        align-items: center;
+
+        .write-review-label {
+          font-family: $font;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          color: #6b7280;
+        }
+
+        .write-review-stars {
+          font-size: 32px !important;
+
+          .MuiRating-iconFilled {
+            color: #f59e0b;
+          }
+          .MuiRating-iconEmpty {
+            color: #e5e7eb;
+          }
+        }
+      }
     }
 
+    // Textarea + photo upload + submit.
     .write-review-right {
+      gap: $space-3;
       padding-left: 0;
       padding-top: $space-4;
+
+      .write-review-textfield {
+        .MuiOutlinedInput-root {
+          min-height: 120px !important;
+          align-items: flex-start;
+          border-radius: $m-radius !important;
+          background: #fff;
+          font-family: $font;
+          font-size: 14px;
+          color: #111;
+
+          fieldset {
+            border-color: #e9d5ff !important;
+          }
+          &.Mui-focused fieldset {
+            border-color: #410075 !important;
+          }
+        }
+      }
+
+      .write-review-images-row {
+        gap: $space-2;
+
+        .write-review-img-preview {
+          position: relative;
+          width: 66px;
+          height: 66px;
+          border-radius: $m-radius-sm;
+          overflow: hidden;
+          flex-shrink: 0;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+
+          .write-review-img-remove {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            font-size: 10px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+          }
+        }
+
+        .write-review-img-upload {
+          width: 66px;
+          height: 66px;
+          border-radius: $m-radius-sm;
+          border: 1.5px dashed #c4b5fd;
+          background: #faf5ff;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 2px;
+          cursor: pointer;
+          flex-shrink: 0;
+
+          .write-review-img-upload-icon {
+            font-size: 20px;
+            line-height: 1;
+            color: #7c3aed;
+          }
+
+          .write-review-img-upload-text {
+            font-family: $font;
+            font-size: 10px;
+            font-weight: 600;
+            color: #7c3aed;
+          }
+        }
+      }
+
+      // Full-width, calm solid fill (mobile CTA treatment — no animated
+      // red border like the #pc-wrap original).
+      .write-review-submit-btn {
+        align-self: stretch;
+        width: 100%;
+        height: $m-btn-height;
+        border: none;
+        border-radius: $m-radius-sm;
+        background: linear-gradient(135deg, #7a1bd0 0%, #410075 100%);
+        color: #fff !important;
+        font-family: $font;
+        font-size: 15px;
+        font-weight: 700;
+        text-transform: none;
+        box-shadow: none;
+        animation: none;
+
+        &.Mui-disabled {
+          background: #e5e7eb !important;
+          color: #9ca3af !important;
+        }
+      }
     }
 
-    .write-review-submit-btn {
-      align-self: stretch;
+    .write-review-success {
+      align-items: center;
+      justify-content: center;
+      gap: $space-2;
+      padding: $space-4 0;
+
+      .write-review-success-title {
+        font-family: $font;
+        font-size: 18px;
+        font-weight: 800;
+        color: #166534;
+      }
+
+      .write-review-success-sub {
+        font-family: $font;
+        font-size: 13px;
+        color: #4b5563;
+        text-align: center;
+      }
     }
   }
 }
