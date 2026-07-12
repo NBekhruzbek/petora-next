@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { AdminAgent } from "@/libs/data/adminMockData";
 import { Box, Button, Rating, Stack, Typography } from "@mui/material";
-import VerifiedIcon from "@mui/icons-material/Verified";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import WorkHistoryOutlinedIcon from "@mui/icons-material/WorkHistoryOutlined";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
@@ -26,12 +25,6 @@ const AgentCard = ({ item }: AgentCardProps) => {
       <Box className="agent-card-img-wrap">
         <img src={item.avatar} alt={item.fullName} className="agent-card-img" />
         <Box className="agent-type-badge">{item.serviceType}</Box>
-        {item.verified && (
-          <Box className="agent-verified-badge">
-            <VerifiedIcon sx={{ fontSize: 13 }} />
-            Verified
-          </Box>
-        )}
         <Box
           className={`service-like-btn ${liked ? "is-liked" : ""}`}
           onClick={toggleLike}

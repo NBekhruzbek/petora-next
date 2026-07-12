@@ -567,12 +567,153 @@
     }
   }
 
+  // ── Agents hero collage stage ──
+  // The /agents hero shares the header DNA — two-tone brand headline, a pack
+  // of pets inside a purple ellipse portal, and floating species badges. The
+  // generic rules above strip it to a flat photo on flat purple (the brand
+  // colours + badges are all #pc-wrap-scoped), which reads as unfinished. This
+  // rebuilds the compact collage: the pack sizes the stage, the ellipse ring
+  // glows behind it, and the green-dog / red-cat sticker badges float over the
+  // corners as the section's tell — Petora covers every pet, not just the dogs
+  // in frame.
+  #agents-top {
+    // Restore the desktop two-tone headline. The generic rule only resizes
+    // text1/text2, so both lines collapse to one flat colour at book weight —
+    // purple statement line + green accent line, heavy and uppercase, read as
+    // the section's voice instead of a caption.
+    .agents-top .text-area {
+      .text1 {
+        color: #410075;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        line-height: 1.12 !important;
+      }
+
+      .text2 {
+        margin-top: 2px;
+        color: #8ba97f; // desktop green #a1be97 deepened for legibility at 26px
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        line-height: 1.12 !important;
+
+        // Paw flourish sits inline with the accent line, sized down from the
+        // desktop scroll-wiggle glyph. Overrides the global .hand-icon hide.
+        .hand-icon {
+          display: inline-block;
+          width: 20px;
+          height: auto;
+          margin-left: 8px;
+          vertical-align: middle;
+        }
+      }
+
+      .text3 {
+        margin-top: $space-3;
+        max-width: 100%;
+        color: #595959;
+        line-height: 1.5 !important;
+      }
+    }
+
+    .hero-stage {
+      position: relative;
+      margin: $space-4 12px 0; // align the stage with the text gutter
+    }
+
+    // Ellipse ring + species badges live under one wrapper. Absolute + inset:0
+    // covers the stage, but deliberately NO z-index/transform here: keeping it
+    // out of a stacking context lets the ellipse (z-index:0) sit behind the
+    // pack (z-index:1) while the badges (z-index:2) float above it.
+    .hero-stage .circle-background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      margin: 0;
+      pointer-events: none;
+
+      // Purple portal ring, bottom-anchored and centered so the pack sits
+      // inside the glow, mirroring the desktop composition.
+      .ellipse {
+        display: block;
+        position: absolute;
+        left: 50%;
+        bottom: 4%;
+        width: 94%;
+        height: auto;
+        transform: translateX(-50%);
+        z-index: 0;
+      }
+
+      // Species badges → floating corner stickers with a white ring, tuned to
+      // the desktop placement (green dog upper-right, red cat mid-left).
+      .dog-icon,
+      .cat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 6px 18px rgba(65, 0, 117, 0.22);
+        z-index: 2;
+        animation: mBadgeFloat 4.5s ease-in-out infinite;
+
+        img {
+          width: 24px;
+          height: 24px;
+          display: block;
+        }
+      }
+
+      .dog-icon {
+        top: 9%;
+        right: 3%;
+        background: #6ab052;
+      }
+
+      .cat-icon {
+        top: 43%;
+        left: 2%;
+        background: #c80006;
+        animation-delay: -2.25s; // desync the two stickers
+      }
+    }
+
+    // The pack sizes the stage and sits above the ring + white wave, so the
+    // paws land on the curve like desktop.
+    .hero-stage .dogs-image {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      max-width: 430px;
+      height: auto;
+      margin: 0 auto;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .main-header .booking-button,
     .main-header .dog-card,
-    .service-header .dog-card {
+    .service-header .dog-card,
+    #agents-top .dog-icon,
+    #agents-top .cat-icon {
       animation: none;
     }
+  }
+}
+
+// Gentle vertical bob for the floating species badges (desktop uses floatSide's
+// horizontal drift; a slow bob reads calmer for corner stickers).
+@keyframes mBadgeFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
   }
 }
 

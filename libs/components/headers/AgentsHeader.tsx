@@ -17,7 +17,7 @@ const AgentsHeader = () => {
             service, location, and ratings.
           </Box>
         </Stack>
-        <Stack sx={{ position: "relative" }}>
+        <Stack className="hero-stage" sx={{ position: "relative" }}>
           <Box className={"circle-background"}>
             <img
               className="ellipse"

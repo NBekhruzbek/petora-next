@@ -41,22 +41,6 @@
       backdrop-filter: blur(4px);
     }
 
-    .agent-verified-badge {
-      position: absolute;
-      bottom: 10px;
-      left: 12px;
-      background: rgba(255, 255, 255, 0.92);
-      color: #410075;
-      font-size: 11px;
-      font-weight: 700;
-      font-family: $font;
-      padding: 3px 8px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-
     .service-like-btn {
       position: absolute;
       top: 10px;

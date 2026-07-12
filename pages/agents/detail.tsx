@@ -9,7 +9,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import VerifiedIcon from "@mui/icons-material/Verified";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WorkHistoryOutlinedIcon from "@mui/icons-material/WorkHistoryOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -213,12 +212,6 @@ const AgentDetail: NextPage = () => {
                 alt={agent.fullName}
                 className="agent-detail-avatar"
               />
-              {agent.verified && (
-                <Box className="agent-detail-verified">
-                  <VerifiedIcon sx={{ fontSize: 14 }} />
-                  Verified
-                </Box>
-              )}
             </Box>
 
             <Typography className="agent-detail-name">{agent.fullName}</Typography>

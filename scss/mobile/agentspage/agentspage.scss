@@ -18,6 +18,23 @@
       gap: $space-4;
     }
 
+    // The desktop centring is #pc-wrap-scoped, so on mobile the pager sits
+    // left-aligned. Centre it (the section is a column Stack → align-items).
+    .pagination-section {
+      align-items: center;
+      justify-content: center;
+      padding-top: $space-4;
+
+      .MuiPaginationItem-root {
+        font-family: $font;
+
+        &.Mui-selected {
+          background-color: #410075 !important;
+          color: #fff;
+        }
+      }
+    }
+
     .sorting-agents {
       gap: $space-4;
 
@@ -30,10 +47,114 @@
       grid-template-columns: 1fr;
       gap: $space-4;
 
-      // Stays 1-up (people directory suits a full-width cover) but the
-      // shared 200px cover image is a touch tall at 375px.
-      .agent-card .agent-card-img-wrap {
-        height: 180px;
+      // The shared agent card (scss/shared/agentspage-card.scss) is a tall,
+      // photo-forward card built for the desktop grid. At full mobile width it
+      // eats the screen (~1 card/view = "sooo big") AND squashes portrait
+      // headshots into a wide 180px banner that lops off foreheads and chins
+      // ("faces look not good"). Recast it as a compact horizontal row: an
+      // upright portrait face thumbnail — the primary trust signal in a people
+      // directory — beside stacked info. ~3 scannable cards per screen.
+      .agent-card {
+        flex-direction: row;
+        align-items: stretch;
+        border-radius: $m-radius-lg;
+
+        .agent-card-img-wrap {
+          width: 122px;
+          height: auto; // stretch to the info column instead of a fixed banner
+          align-self: stretch;
+          flex-shrink: 0;
+
+          // Portrait headshots now sit upright; bias the crop to the face so
+          // the top of the head survives when the source runs tall.
+          .agent-card-img {
+            object-position: center 28%;
+          }
+
+          .agent-type-badge {
+            top: 8px;
+            left: 8px;
+            padding: 2px 8px;
+            font-size: 9px;
+          }
+
+          .service-like-btn {
+            top: 8px;
+            right: 8px;
+            padding: 3px 7px 3px 5px;
+
+            svg {
+              font-size: 13px;
+            }
+            .like-count {
+              font-size: 10px;
+            }
+          }
+        }
+
+        .agent-card-content {
+          flex: 1;
+          min-width: 0;
+          justify-content: center;
+          padding: $space-3;
+          gap: 4px;
+
+          .agent-card-name {
+            font-size: 15px;
+          }
+
+          .agent-card-role {
+            font-size: 12px;
+          }
+
+          .agent-card-rating-row {
+            flex-wrap: wrap;
+            gap: 4px;
+
+            .agent-rating-stars .MuiSvgIcon-root {
+              font-size: 13px;
+            }
+            .agent-rating-value {
+              font-size: 12px;
+            }
+            .agent-booking-count {
+              font-size: 11px;
+            }
+          }
+
+          .agent-card-meta {
+            gap: 5px;
+
+            .agent-meta-icon {
+              font-size: 13px !important;
+            }
+            .agent-meta-text {
+              font-size: 11px;
+            }
+          }
+
+          // One calm primary action: solid brand-purple fill instead of the
+          // animated red-glow border (which reads as a glitch when repeated
+          // down a list). Matches the service-card treatment.
+          .service-book-btn {
+            height: 36px;
+            min-height: 36px;
+            margin-top: $space-2;
+            border: none;
+            border-radius: $m-radius-sm;
+            background: linear-gradient(135deg, #7a1bd0 0%, #410075 100%);
+            background-size: auto;
+            background-position: 0 0;
+            animation: none;
+            font-size: 13px;
+
+            &:hover {
+              background: linear-gradient(135deg, #7a1bd0 0%, #410075 100%);
+              box-shadow: none;
+              transform: none;
+            }
+          }
+        }
       }
 
       .no-data-wrap {
@@ -48,9 +169,28 @@
   }
 
   // ─── Agent Detail Page ─────────────────────────────────────────────────
+  // The ENTIRE detail page (colours, card fills, borders, typography, the
+  // rating-distribution bars, image sizing) is styled only under #pc-wrap, so
+  // on mobile it collapsed to inherited-purple text, native-size cert/review
+  // images, and broken bars. Restate the whole composition for one narrow
+  // column: a stacked profile card above the reviews stack.
   .agent-detail-page {
+    padding-bottom: $space-6;
+
+    // Desktop's 85px decorative band is #pc-wrap-only; the mobile header
+    // already carries the purple, so keep the strip minimal.
+    .agent-detail-top {
+      height: 0;
+    }
+
     .container {
       padding: $space-4 $space-4 0;
+    }
+
+    .agent-detail-breadcrumb {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: $space-3;
     }
 
     .agent-detail-grid {
@@ -58,54 +198,359 @@
       gap: $space-4;
     }
 
+    // ── Profile card ──
     .agent-detail-profile {
       position: static;
       top: auto;
+      background: #fff;
+      border: 1px solid rgba(143, 143, 143, 0.22);
+      border-radius: $m-radius-lg;
+      padding: $space-5 $space-4;
+      gap: $space-3;
+      box-shadow: 0 4px 20px rgba(65, 0, 117, 0.05);
 
-      // Avatar/cert image sizing lives only under #pc-wrap on desktop —
-      // restate it here so the images don't render at native size.
       .agent-detail-avatar-wrap {
         position: relative;
-        width: 120px;
-        height: 120px;
+        width: 104px;
+        height: 104px;
         align-self: center;
       }
 
       .agent-detail-avatar {
-        width: 120px;
-        height: 120px;
+        width: 104px;
+        height: 104px;
         border-radius: 50%;
         object-fit: cover;
+        display: block;
+        border: 3px solid #f3e8ff;
       }
 
-      .agent-detail-verified {
-        position: absolute;
-        bottom: 2px;
-        right: -4px;
+      .agent-detail-name {
+        font-size: 20px;
+        font-weight: 800;
+        color: #111;
+        text-align: center;
       }
 
-      .agent-detail-cert-img {
-        width: 100%;
-        height: 90px;
-        object-fit: cover;
+      .agent-detail-role {
+        font-size: 13px;
+        color: #6b7280;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .agent-detail-rating-row {
+        gap: 6px;
+        justify-content: center;
+
+        .MuiRating-root {
+          color: #f59e0b !important;
+        }
+        .agent-detail-rating-score {
+          font-size: 14px;
+          font-weight: 700;
+          color: #111;
+        }
+        .agent-detail-rating-sep {
+          color: #d1d5db;
+        }
+        .agent-detail-rating-count {
+          font-size: 13px;
+          color: #6b7280;
+        }
+      }
+
+      // Divided info blocks, mirroring the desktop card rhythm.
+      .agent-detail-bio {
+        font-size: 13px;
+        color: #4b5563;
+        line-height: 1.6;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding-top: $space-3;
+      }
+
+      .agent-detail-info-list {
+        gap: $space-2;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding-top: $space-3;
+
+        .agent-detail-info-row {
+          gap: $space-2;
+
+          .agent-detail-info-icon {
+            font-size: 17px !important;
+            color: #777777;
+            flex-shrink: 0;
+          }
+          .agent-detail-info-text {
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .agent-detail-certs {
+        gap: $space-3;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        padding-top: $space-3;
+
+        .agent-detail-certs-title-row {
+          gap: 6px;
+
+          .agent-detail-certs-icon {
+            font-size: 18px !important;
+            color: #410075;
+          }
+          .agent-detail-certs-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111;
+          }
+        }
+
+        .agent-detail-certs-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: $space-2;
+
+          .agent-detail-cert-card {
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            border-radius: $m-radius-sm;
+            overflow: hidden;
+            background: #faf5ff;
+
+            .agent-detail-cert-img {
+              width: 100%;
+              height: 82px;
+              object-fit: cover;
+              display: block;
+            }
+          }
+        }
       }
     }
 
-    .review-cards-header {
-      flex-wrap: wrap;
-      gap: $space-2;
+    // ── Reviews stack ──
+    .agent-detail-reviews {
+      gap: $space-4;
+    }
 
-      .review-sort-field {
-        min-width: 0;
-        flex: 1;
+    // Summary panel: heading, big score, satisfaction pill, distribution bars.
+    .review-summary-panel {
+      background: #fff;
+      border: 1px solid rgba(143, 143, 143, 0.22);
+      border-radius: $m-radius-lg;
+      padding: $space-4;
+      gap: $space-3;
+      box-shadow: 0 4px 20px rgba(65, 0, 117, 0.05);
+
+      .review-summary-title {
+        font-size: 17px;
+        font-weight: 800;
+        color: #111;
+      }
+
+      .review-score-row {
+        gap: $space-2;
+
+        .review-rating-stars {
+          color: #f59e0b !important;
+          font-size: 22px !important;
+        }
+        .review-score-count {
+          font-size: 24px;
+          font-weight: 800;
+          color: #111;
+        }
+      }
+
+      .review-satisfied-box {
+        display: flex;
+        align-items: center;
+        gap: $space-2;
+        background: #f0fdf4;
+        border-radius: $m-radius-sm;
+        padding: $space-2 $space-3;
+
+        .review-satisfied-icon {
+          color: #16a34a;
+          font-size: 18px !important;
+          flex-shrink: 0;
+        }
+        .review-satisfied-text {
+          font-size: 12px;
+          color: #15803d;
+          font-weight: 600;
+          line-height: 1.35;
+        }
+      }
+
+      // The most-broken piece on mobile — the track + warm/cool fills are all
+      // #pc-wrap-scoped, so it degraded to stacked "label / value" text.
+      .review-distribution-list {
+        gap: 7px;
+
+        .review-distribution-row {
+          display: flex;
+          align-items: center;
+          gap: $space-2;
+
+          .review-distribution-label {
+            font-size: 12px;
+            color: #4b5563;
+            min-width: 62px;
+          }
+          .review-distribution-value {
+            font-size: 12px;
+            color: #4b5563;
+            text-align: right;
+            min-width: 30px;
+          }
+          .review-distribution-track {
+            flex: 1;
+            height: 7px;
+            background: #f3f4f6;
+            border-radius: 99px;
+            overflow: hidden;
+
+            .review-distribution-fill {
+              height: 100%;
+              border-radius: 99px;
+
+              &.warm {
+                background: #f59e0a;
+              }
+              &.cool {
+                background: #d1d5db;
+              }
+            }
+          }
+        }
       }
     }
 
-    .review-card-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #410075, #9333ea);
+    // Review cards panel: header + sort, cards, pagination.
+    .review-cards-panel {
+      gap: $space-3;
+
+      .review-cards-header {
+        flex-wrap: wrap;
+        gap: $space-2;
+
+        .review-cards-count {
+          font-size: 15px;
+          font-weight: 700;
+          color: #111;
+        }
+        .review-sort-field {
+          min-width: 0;
+          flex: 1;
+
+          .MuiOutlinedInput-root {
+            border-radius: $m-radius-sm !important;
+            font-size: 13px;
+          }
+        }
+      }
+
+      .review-card {
+        background: #fff;
+        border: 1px solid rgba(143, 143, 143, 0.2);
+        border-radius: $m-radius;
+        padding: $space-4;
+        gap: $space-2;
+
+        .review-card-header {
+          gap: $space-2;
+
+          .review-card-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #410075, #9333ea);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+          }
+
+          .review-card-user-info {
+            gap: 1px;
+
+            .review-card-username {
+              font-size: 14px;
+              font-weight: 700;
+              color: #111;
+            }
+            .review-card-location {
+              font-size: 12px;
+              color: #9ca3af;
+            }
+          }
+        }
+
+        .review-card-booking-info {
+          font-size: 12px;
+          color: #6b7280;
+          font-weight: 500;
+        }
+
+        .review-card-rating-row {
+          gap: $space-2;
+
+          .MuiRating-root {
+            color: #f59e0b !important;
+          }
+          .review-card-date {
+            font-size: 12px;
+            color: #9ca3af;
+          }
+        }
+
+        .review-card-content {
+          font-size: 13px;
+          color: #374151;
+          line-height: 1.6;
+        }
+
+        .review-toggle-btn {
+          font-size: 13px;
+          color: #410075;
+          font-weight: 600;
+        }
+
+        // Native-size on mobile before — clamp to a small thumbnail row.
+        .review-card-photos {
+          gap: $space-2;
+          flex-wrap: wrap;
+
+          .review-card-photo {
+            width: 84px;
+            height: 84px;
+            object-fit: cover;
+            border-radius: $m-radius-sm;
+            border: 1px solid rgba(0, 0, 0, 0.07);
+          }
+        }
+      }
+
+      .review-pagination {
+        align-items: center;
+        padding-top: $space-2;
+
+        .MuiPaginationItem-root {
+          font-family: $font;
+
+          &.Mui-selected {
+            background-color: #410075 !important;
+            color: #fff;
+          }
+        }
+      }
     }
   }
 }
