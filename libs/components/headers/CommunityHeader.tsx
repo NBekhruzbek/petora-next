@@ -20,7 +20,7 @@ const CommunityHeader = () => {
         <Box>
           <img className="news-logo" src="./img/headers/news-logo.png" alt="" />
         </Box>
-        <Stack sx={{ position: "relative" }}>
+        <Stack className="hero-stage" sx={{ position: "relative" }}>
           <Box className={"circle-background"}>
             <img
               className="ellipse"

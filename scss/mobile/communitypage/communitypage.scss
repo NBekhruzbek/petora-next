@@ -1,66 +1,234 @@
 @use "../../variables.scss" as *;
 
 #mobile-wrap {
-  .free-board-news-card {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-
-  .qna-question-card {
-    // Shared card keeps desktop scale (20px 22px padding, 24px vote count).
-    // Top padding stays large to clear the absolute .qna-number-tag.
-    padding: $space-6 $space-4 $space-4;
+  // ── Free Board / News feed cards → compact horizontal rows ──
+  // The shared .free-board-news-card is tuned for the 3-up desktop magazine grid
+  // (184px cover, 18px title, 3-line excerpt). At full mobile width it balloons
+  // to one giant card per screen — the same "soo big" problem the service /
+  // agents / mypage list cards had. Recast it as a thumbnail-left row so the
+  // board scans like a news feed: ~4 stories per screen. Matches the app's
+  // established mobile card language (see agentspage-card / servicepage-card).
+  .community-card-flex {
+    flex-direction: column;
     gap: $space-3;
+  }
 
-    .qna-question-votes {
-      min-width: 28px;
+  .free-board-news-card {
+    flex: 1 1 auto;
+    flex-direction: row;
+    align-items: stretch;
+    max-width: 100%;
 
-      .qna-vote-count {
-        font-size: 18px;
-      }
+    // Thumbnail on the left, stretched to the card's content-driven height.
+    .free-board-news-media {
+      flex: 0 0 120px;
+      width: 120px;
+      height: auto;
+      align-self: stretch;
 
-      svg {
-        font-size: 18px;
+      // The full date pill is too wide for the narrow thumb — shrink it to a
+      // compact corner chip, top-left so it clears the (usually centered)
+      // subject of the photo.
+      .free-board-news-date {
+        top: $space-2;
+        left: $space-2;
+        right: auto;
+        height: 22px;
+        padding: 0 $space-2;
+        font-size: 11px;
       }
     }
 
-    .qna-question-title {
-      font-size: 18px;
-    }
+    // Content column fills the rest and centers against the thumbnail.
+    .free-board-news-body {
+      flex: 1;
+      min-width: 0;
+      justify-content: center;
+      gap: $space-1;
+      padding: $space-3 $space-3 $space-3 $space-4;
 
-    .qna-question-summary {
-      font-size: 14px;
+      .free-board-news-title {
+        font-size: $m-font-card-title;
+        line-height: 1.3;
+      }
+
+      // The desktop excerpt reserves 3 lines with a min-height; on the short
+      // row that leaves a dead gap, so drop to 2 lines and release the floor.
+      .free-board-news-description {
+        min-height: 0;
+        font-size: 13px;
+        line-height: 1.5;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+      }
+
+      .free-board-news-meta {
+        gap: $space-4;
+        padding-top: 2px;
+
+        .free-board-news-stat {
+          gap: 5px;
+          font-size: $m-font-meta;
+
+          svg {
+            font-size: 16px;
+          }
+        }
+      }
     }
   }
 
-  // .qna-question-meta and its children are scoped under #pc-wrap only —
-  // the dialog's own copies of some of these classes further down the
-  // stylesheet are unscoped and already reach mobile fine, but this
-  // listing-card copy needs its flex layout restated or each piece
-  // (avatar/name/time/answers/views) stacks on its own line.
+  // The list's gap (10px on desktop) is #pc-wrap-scoped, so on mobile the cards
+  // butt together at 0px and only their drop shadows fake a gutter. Add a real
+  // one so they read as separate rows.
+  .qna-card-list {
+    gap: $space-1;
+  }
+
+  // ── Q&A question cards → compact, scannable list rows ──
+  // The shared .qna-question-card is a wide desktop row; on mobile the MUI Stack
+  // collapses it to a column, and the meta greys + avatar gradient are all
+  // #pc-wrap-scoped — so each card ballooned to ~320px tall with the whole
+  // author/time/answers/views line rendering flat #410075 purple (inherited),
+  // which read as broken. Recast as a tight question row: a quiet index eyebrow,
+  // clamped title/summary, muted meta, ~2.5 cards/screen.
+  .qna-question-card {
+    padding: $space-4;
+    gap: $space-2;
+
+    // The card number is a descending list index — not a rank or a step the
+    // reader needs — so demote it from the absolute corner tab (which forced a
+    // ~32px dead band above the title) to a small, quiet index pill in flow.
+    .qna-question-votes {
+      position: static;
+      min-width: 0;
+    }
+
+    .qna-number-tag {
+      position: static;
+      align-self: flex-start;
+      padding: 2px 10px;
+      border: none;
+      border-radius: $m-radius-pill;
+      background: #f4ecfb;
+      font-size: 11px;
+      color: #9b30bf;
+      box-shadow: none;
+    }
+
+    .qna-question-main {
+      gap: $space-2;
+    }
+
+    // Clamp the title to 2 lines so a long question doesn't dominate the card.
+    .qna-question-title {
+      font-size: $m-font-card-title;
+      line-height: 1.3;
+      display: -webkit-box;
+      line-clamp: 2;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    // Summary is JS-truncated to 120 chars; hold it to 2 lines to stay compact.
+    .qna-question-summary {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #687184;
+      display: -webkit-box;
+      line-clamp: 2;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    // Smaller preview tiles so an image row adds ~52px, not ~62px.
+    .qna-question-image-row {
+      gap: $space-2;
+
+      .qna-question-image-thumb {
+        width: 52px;
+        height: 52px;
+        border-radius: $m-radius-sm;
+      }
+    }
+  }
+
+  // Question meta (author • time • N answers • N views). Both the row layout AND
+  // every colour here are #pc-wrap-scoped on desktop, so mobile inherited flat
+  // purple for the whole line. Restate the layout + muted greys + avatar
+  // gradient so it reads as quiet metadata, with the asker's name the only
+  // lightly-emphasised item.
   .qna-question-meta {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    gap: $space-2;
+    gap: 5px $space-2;
 
     .qna-author-group {
       display: inline-flex;
       flex-direction: row;
       align-items: center;
-      gap: $space-1;
+      gap: $space-2;
     }
 
     .qna-author-avatar {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(135deg, #ff9b45 0%, #cb33df 100%);
+    }
+
+    .qna-author-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #3a4354;
+    }
+
+    .qna-meta-text,
+    .qna-meta-dot {
+      font-size: 13px;
+      font-weight: 600;
+      color: #8a93a3;
     }
 
     .qna-meta-icon-text {
       display: inline-flex;
       align-items: center;
-      gap: $space-1;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #8a93a3;
+
+      svg {
+        font-size: 16px;
+        color: #aab1be;
+      }
+    }
+  }
+
+  // Pagination: the centering + brand-purple selected pill are #pc-wrap-scoped,
+  // so on mobile it degraded to a left-aligned row with a plain grey active
+  // page. Restate both.
+  .qna-pagination-wrap {
+    align-items: center;
+  }
+
+  .qna-pagination {
+    .MuiPaginationItem-root {
+      font-family: $font;
+      font-weight: 700;
+      color: #526076;
+      border-radius: $m-radius;
+    }
+
+    .Mui-selected {
+      background: linear-gradient(180deg, #d26fee 0%, #9d2ede 100%);
+      color: #ffffff;
     }
   }
 
@@ -82,5 +250,109 @@
   .qna-dialog-paper {
     margin-top: 24px !important;
     max-height: calc(100vh - 48px) !important;
+
+    // The desktop dialog title (23px) and section titles (28px) are banner-sized
+    // on a ~326px paper — the title wraps to 3 lines and eats the header. Pull
+    // them down so the title fits ~2 lines and the section heads read as
+    // headings, not banners.
+    // Nested under .qna-dialog-header to match the desktop rule's specificity
+    // (.qna-dialog-paper .qna-dialog-header .qna-dialog-title) — a flatter
+    // selector loses to it and the title stays 23px.
+    .qna-dialog-header .qna-dialog-title {
+      font-size: 19px;
+      line-height: 1.3;
+    }
+
+    .qna-section-title {
+      font-size: 20px;
+    }
+
+    // The post meta ("1,248 views • 89 likes • Mar 28, 2026") is a forced
+    // single no-wrap row on desktop; squeezed into the narrow paper each item
+    // broke mid-phrase ("1,248 / views"). Let the row wrap between items and
+    // keep every item on its own line so it reads as clean chips.
+    .free-board-detail-meta {
+      flex-wrap: wrap;
+      gap: $space-2 $space-3;
+
+      .free-board-news-stat,
+      .free-board-news-stat span,
+      .qna-meta-text {
+        white-space: nowrap;
+        font-size: 13px;
+      }
+    }
+
+    // Question images: the desktop 162×102 thumbs wrap to a lonely left-aligned
+    // column on the narrow paper (1 per row, dead space to the right). Recast as
+    // a horizontal thumbnail strip so they read as a compact preview row.
+    // (.qna-question-main keeps parity with the pc rule's 3-class specificity.)
+    .qna-question-main .qna-seledted-question-image-row {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: $space-2;
+
+      .qna-seledted-question-image-thumb {
+        flex: 0 0 auto;
+        width: 92px;
+        height: 68px;
+      }
+    }
+  }
+
+  // ── Image lightbox: fit the image instead of a fixed 560px letterbox ──
+  // The desktop stage is a fixed min(560px, 68vh) grey box with the image
+  // object-fit:contain'd inside it, so on a phone a landscape shot floats in a
+  // tall grey void (huge dead bands above/below). Collapse the stage to the
+  // image's own height and shrink the oversized close/nav chrome.
+  .qna-image-dialog-paper {
+    max-width: 94vw !important;
+    margin-top: 72px !important;
+
+    .qna-image-dialog-body {
+      gap: $space-3;
+      padding: $space-3 $space-3 $space-4;
+
+      .qna-image-stage {
+        width: 100%;
+        height: auto;
+        max-height: 64vh;
+
+        .qna-stage-image {
+          width: 100%;
+          height: auto;
+          max-height: 64vh;
+        }
+      }
+
+      .qna-image-dialog-close {
+        top: $space-2;
+        right: $space-2;
+        width: 36px;
+        height: 36px;
+      }
+
+      .qna-image-dialog-nav {
+        width: 40px;
+        height: 40px;
+
+        &.prev {
+          left: $space-2;
+        }
+
+        &.next {
+          right: $space-2;
+        }
+
+        svg {
+          font-size: 18px;
+        }
+      }
+
+      .qna-image-dialog-thumb {
+        width: 60px;
+        height: 46px;
+      }
+    }
   }
 }

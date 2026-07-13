@@ -358,24 +358,139 @@
     }
   }
 
+  // ── Community hero collage stage ──
+  // The /community hero shares the header DNA — a two-tone brand headline and a
+  // diverse pack of pets (puppy, kitten, guinea pig, mastiff) inside a purple
+  // ellipse portal, tagged with a red "NEWS!" rubber stamp. The generic rules
+  // above strip it to flat title-case purple text on a bare photo, which reads
+  // as unfinished. This rebuilds the compact collage: the pack sizes the stage,
+  // the rings glow behind it, and the NEWS stamp floats over the top corner as
+  // the section's thesis — this is where fresh pet stories land. Each collage
+  // header floats a different tell (main = rank card, service = vet card,
+  // agents/shop = species badges); community's is the stamp. The green-dog /
+  // red-cat badges stay dropped: the photo already shows four species, so the
+  // dots would be noise (same call as the service hero).
   #community-top {
-    .news-logo {
-      display: none;
+    // .community-top anchors the floating NEWS stamp. Bottom-anchoring the stamp
+    // to it (rather than to the stage) keeps the stamp glued to the photo region
+    // regardless of how many lines the headline wraps to.
+    .community-top {
+      position: relative;
     }
 
-    .community-image-wrapper {
-      position: static;
+    // Restore the desktop two-tone headline — pc-scoped, so on mobile both lines
+    // collapsed to flat title-case purple. Purple statement line (COMMUNITY
+    // PAGE) over a green accent line (DISCOVER PET STORIES & TIPS), heavy and
+    // uppercase, read as the section's voice instead of a caption.
+    .text-area {
+      .text2 {
+        color: #410075;
+        font-size: 26px !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        line-height: 1.15 !important;
+      }
+
+      .text1 {
+        margin-top: 2px;
+        color: #8ba97f; // desktop green #a1be97 deepened for legibility at size
+        font-size: 22px !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        line-height: 1.15 !important;
+
+        // Paw flourish sits inline with the accent line (overrides the global
+        // .hand-icon hide).
+        .hand-icon {
+          display: inline-block;
+          width: 20px;
+          height: auto;
+          margin-left: 8px;
+          vertical-align: middle;
+        }
+      }
+
+      .text3 {
+        margin-top: $space-3;
+        color: #595959;
+        line-height: 1.5 !important;
+      }
+    }
+
+    .hero-stage {
+      position: relative;
+      margin-top: $space-5;
+    }
+
+    // Ellipse portal rings behind the pack. Absolute + inset:0 covers the stage;
+    // deliberately no z-index here so the rings (z-index:0) stay behind the photo
+    // (z-index:1) while the stamp (z-index:3) floats above both.
+    .hero-stage .circle-background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      margin: 0;
+      pointer-events: none;
+
+      // Concentric rings, bottom-anchored + centered so the pack sits inside the
+      // glow. The photo is wide-but-short (860×378), so the rings stay small
+      // enough that their tops clear the headline above the stage.
+      .ellipse,
+      .ellipse2 {
+        display: block;
+        position: absolute;
+        left: 50%;
+        bottom: 2%;
+        height: auto;
+        transform: translateX(-50%);
+        z-index: 0;
+      }
+      .ellipse {
+        width: 80%;
+      }
+      .ellipse2 {
+        width: 54%;
+      }
+    }
+
+    // The pack sizes the stage and sits above the rings + white wave.
+    .hero-stage .community-image-wrapper {
+      position: relative;
+      z-index: 1;
       width: 100%;
       min-height: 0;
-      margin-top: $space-4;
+      margin: 0;
 
       .community-image {
         position: static;
         right: auto;
         bottom: auto;
+        display: block;
         width: 100%;
         max-width: 100%;
+        margin: 0 auto;
       }
+    }
+
+    // NEWS rubber stamp → the section's signature. Floats over the top-right of
+    // the photo, bottom-anchored to .community-top (so it tracks the photo, not
+    // the headline), tilted like a real stamped mark with a gentle bob. The tilt
+    // is a static transform AND baked into every keyframe, so reduced-motion
+    // (animation:none) keeps the tilt and just drops the bob.
+    .news-logo {
+      display: block;
+      position: absolute;
+      right: 4px;
+      bottom: 150px;
+      z-index: 3;
+      width: 124px;
+      height: auto;
+      transform: rotate(-7deg);
+      animation: mStampFloat 3.6s ease-in-out infinite;
+      filter: drop-shadow(0 8px 16px rgba(65, 0, 117, 0.18));
+      pointer-events: none;
     }
   }
 
@@ -824,9 +939,23 @@
     #agents-top .dog-icon,
     #agents-top .cat-icon,
     #shop-top .dog-icon,
-    #shop-top .cat-icon {
+    #shop-top .cat-icon,
+    #community-top .news-logo {
       animation: none;
     }
+  }
+}
+
+// Tilted-stamp float for the community NEWS mark. Like mHeroCardFloat, the tilt
+// is baked into every frame because animating transform would otherwise wipe the
+// static rotate.
+@keyframes mStampFloat {
+  0%,
+  100% {
+    transform: rotate(-7deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-7deg) translateY(-6px);
   }
 }
 
