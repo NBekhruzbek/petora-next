@@ -65,8 +65,8 @@ const WellnessItems = () => {
   const device = useDeviceDetect();
   // Must match .wellness-card width / .carousel-track gap in
   // scss/mobile/shoppage/shoppage.scss (mobile) and the pc styles (desktop).
-  const cardWidth = device === "mobile" ? 160 : 220;
-  const cardGap = device === "mobile" ? 16 : 28;
+  const cardWidth = device === "mobile" ? 136 : 220;
+  const cardGap = device === "mobile" ? 12 : 28;
   const totalItems = wellnessItems.length;
   const middleOffset = totalItems;
   const [activeIndex, setActiveIndex] = useState(

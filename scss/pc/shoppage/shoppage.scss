@@ -310,6 +310,12 @@
               align-items: center;
               border-radius: 100px;
               background-color: #f2e2ff;
+
+              // Match the 40px stroke SVGs used by the other two cards.
+              .expert-icon {
+                font-size: 40px;
+                color: #410075;
+              }
             }
             .main-text {
               text-align: center;

@@ -1,4 +1,5 @@
 import { Box, Stack } from "@mui/material";
+import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 
 const PetNutrition = () => {
   return (
@@ -34,7 +35,7 @@ const PetNutrition = () => {
           </Stack>
           <Stack className="info-card">
             <Box className={"icon-box"}>
-              <img src="./img/icons/HandHeart.svg" alt="" />
+              <WorkspacePremiumOutlinedIcon className="expert-icon" />
             </Box>
             <Box className={"main-text"}>Expert Guidance</Box>
             <Box className={"desc-text"}>
