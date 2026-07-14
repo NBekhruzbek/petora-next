@@ -29,7 +29,7 @@ const CsHeader = () => {
             </Stack>
           </Stack>
         </Stack>
-        <Stack sx={{ position: "relative" }}>
+        <Stack className="hero-stage" sx={{ position: "relative" }}>
           <Box className={"circle-background"}>
             <img
               className="ellipse"

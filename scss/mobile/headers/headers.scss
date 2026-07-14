@@ -178,18 +178,35 @@
     }
   }
 
-  // CsHeader has its own serif hero-title + support pill, not text1/2/3
+  // CsHeader is the concierge desk of the site — its own editorial voice, not
+  // the sans-serif brand headers. The two-tone SERIF headline is CS's signature
+  // (kept from desktop), so unlike the other headers this block restates the
+  // serif display + the "24/7 Support" chip rather than the text1/2/3 scale.
   .cs-top {
     .text-area {
+      // width:100% + margin:12px (border-box) runs 24px past the viewport → the
+      // serif headline and body both clipped under #mobile-wrap's overflow-x
+      // hidden. Auto width inside symmetric gutters, same fix as shop.
+      width: auto;
+      margin: 0 12px;
       max-width: 100%;
+      gap: $space-4;
 
+      // Restore the desktop two-tone serif display — base #24163e + accent
+      // #6826c9 are pc-scoped, so on mobile the whole headline collapsed to a
+      // flat inherited purple. 26px keeps "Need help? We've got you" on its own
+      // line without clipping; the serif carries CS's reassuring, human tone.
       .hero-title {
-        font-size: $m-font-page-title !important; // one page-title scale (26px)
+        color: #24163e;
+        font-size: $m-font-page-title !important; // 26px
+        line-height: 1.15 !important;
 
-        // The accent icon here has no hand-icon class to catch the
-        // global hide rule below, and it's inline with the sentence
-        // rather than a standalone flourish, so size it instead of
-        // hiding it.
+        .accent-line {
+          color: #6826c9;
+        }
+
+        // The paw flourish sits inline in the sentence (no .hand-icon class to
+        // catch the global hide), so size it rather than dropping it.
         .accent-line img {
           width: 22px;
           height: 22px;
@@ -200,10 +217,49 @@
       .text3 {
         max-width: 100%;
         font-size: 16px;
+        color: #463d61; // muted plum-grey (pc-scoped, else inherited purple)
       }
 
+      // The support label becomes a real chip so it reads as a live status, not
+      // loose icons+text. A green "online" dot signals a human is available now
+      // — exactly the section's thesis ("our team is always ready").
       .support-highlights {
         max-width: 100%;
+
+        .support-pill {
+          min-width: 0;
+          align-self: flex-start;
+          gap: 8px;
+          padding: 9px 15px 9px 30px;
+          border-radius: 999px;
+          background: #efe0fc;
+          border: 1px solid #e2c9f7;
+          color: #2f2350;
+          font-size: 15px;
+          position: relative;
+
+          // Live "online" dot with a soft pulse ring.
+          &::before {
+            content: "";
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            width: 8px;
+            height: 8px;
+            margin-top: -4px;
+            border-radius: 50%;
+            background: #2fb457;
+            box-shadow: 0 0 0 0 rgba(47, 180, 87, 0.5);
+            animation: csLivePulse 2s ease-out infinite;
+          }
+
+          .pill-icon {
+            font-size: 20px;
+          }
+          .pill-icon.purple {
+            color: #7a59f4;
+          }
+        }
       }
     }
   }
@@ -651,14 +707,111 @@
     }
   }
 
+  // ── CS hero collage stage ──
+  // Shares the header DNA — a hero cutout inside a purple ellipse portal with
+  // floating species badges. Here the cutout is the four-person support TEAM;
+  // the green-dog/red-cat badges signal the pets those humans serve (same call
+  // as the pet-photo headers, which use the badges for the missing species).
   #cs-top {
     .cs-image {
       display: none;
     }
 
-    .cs-image-wrapper .cs-main-image {
+    // The team cutout emerges from the white wave like desktop instead of
+    // showing the PNG's hard bottom edge — lift the wave taller and slot it
+    // between the photo (z-index:1) and the badges (z-index:3). Same technique
+    // as mypage.
+    &::after {
+      height: 130px;
+      z-index: 2;
+    }
+
+    .hero-stage {
+      position: relative;
+      margin-top: $space-5;
+    }
+
+    // Single purple ellipse portal + badges under one wrapper. Absolute +
+    // inset:0 with deliberately NO z-index so it doesn't form a stacking
+    // context: the ring (z-index:0) sits behind the team (z-index:1) while the
+    // badges (z-index:3) float above both the team and the wave.
+    .hero-stage .circle-background {
+      position: absolute;
+      inset: 0;
       width: 100%;
-      margin: $space-4 0 0;
+      margin: 0;
+      pointer-events: none;
+
+      // One soft ellipse, bottom-anchored + centered so the team stands inside
+      // the glow. The ring art (1.45:1) mirrors the team photo (1.5:1), so at
+      // ~90% width it halos all four without arcing into the headline.
+      .ellipse {
+        display: block;
+        position: absolute;
+        left: 50%;
+        bottom: 5%;
+        width: 90%;
+        height: auto;
+        transform: translateX(-50%);
+        z-index: 0;
+      }
+
+      // Species badges → floating corner stickers (green dog upper-right, red
+      // cat lower-left), matching the shop/mypage placement.
+      .dog-icon,
+      .cat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 6px 18px rgba(65, 0, 117, 0.22);
+        z-index: 3; // above the wave (z-index:2) so the stickers stay crisp
+        animation: mBadgeFloat 4.5s ease-in-out infinite;
+
+        img {
+          width: 24px;
+          height: 24px;
+          display: block;
+        }
+      }
+
+      // Pushed into the top-right corner (up off the rightmost agent's hair)
+      // so it floats on the ring's right shoulder as a sticker, not on a face.
+      .dog-icon {
+        top: -14%;
+        right: 2%;
+        background: #6ab052;
+      }
+
+      .cat-icon {
+        bottom: 30%;
+        left: 3%;
+        background: #c80006;
+        animation-delay: -2.25s; // desync the two stickers
+      }
+    }
+
+    // The team photo sizes the stage: above the ring (z-index:0) but under the
+    // white wave (z-index:2), so the wave hides its crop edge like on desktop.
+    .hero-stage .cs-image-wrapper {
+      position: relative;
+      z-index: 1;
+
+      .cs-main-image {
+        position: static;
+        display: block;
+        width: 100%;
+        max-width: 430px;
+        height: auto;
+        margin: 0 auto;
+        // Drop the desktop's heavy 38px drop-shadow (it reads as a smudge on
+        // the narrow stage); the cutout stands on the portal glow instead.
+        filter: none;
+      }
     }
   }
 
@@ -1126,5 +1279,31 @@
   }
   50% {
     transform: rotate(-4deg) translateY(-6px);
+  }
+}
+
+// "Online now" pulse on the CS support chip — a ring blooms out and fades so
+// the dot reads as a live signal, not a static bullet.
+@keyframes csLivePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(47, 180, 87, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(47, 180, 87, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(47, 180, 87, 0);
+  }
+}
+
+// Quality floor: honour reduced-motion for the CS hero's ambient motion (the
+// badge bob + the live pulse) — the dot stays solid green, badges stay put.
+@media (prefers-reduced-motion: reduce) {
+  #mobile-wrap #cs-top {
+    .support-pill::before,
+    .dog-icon,
+    .cat-icon {
+      animation: none;
+    }
   }
 }
