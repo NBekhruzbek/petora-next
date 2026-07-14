@@ -26,7 +26,7 @@ const ShopHeader = () => {
         <Box>
           <img className="cat" src="./img/headers/cat.png" alt="" />
         </Box>
-        <Stack sx={{ position: "relative" }}>
+        <Stack className="hero-stage" sx={{ position: "relative" }}>
           <Box className={"circle-background"}>
             <img
               className="ellipse"

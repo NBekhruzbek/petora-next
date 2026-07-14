@@ -494,15 +494,160 @@
     }
   }
 
+  // ── My Page hero collage stage ──
+  // The /my-page hero shares the header DNA — a two-tone brand headline (soft
+  // green "MY PAGE" over a purple tagline) and the owner-with-pets cutout inside
+  // a concentric purple ellipse portal tagged with green-dog / red-cat badges.
+  // The generic rules above strip it to flat title-case text on a bare photo
+  // floating in dead purple space, which read as unfinished. This rebuilds the
+  // compact collage: the owner photo sizes the stage, the rings halo it, and the
+  // species badges float in the corners. The photo shows the owner holding TWO
+  // dogs (no cat), so — like the shop/agents heroes — the red-cat badge earns its
+  // place by adding the missing species. Per the request, the standalone raincoat
+  // dog (.pets-image) and the lone kitten (.cat) stay dropped on mobile.
   #mypage-top {
     .pets-image,
     .cat {
       display: none;
     }
 
-    .girl-image-wrapper .girl-image {
+    // Match the desktop treatment where the white wave rides OVER the bottom of
+    // the owner cutout so she emerges from it — otherwise the PNG's hard crop
+    // edge shows as a rectangular photo bottom. Taller + lifted for this header
+    // only, slotted between the photo (z-index:1) and the badges (z-index:3).
+    &::after {
+      height: 140px;
+      z-index: 2;
+    }
+
+    // Restore the desktop two-tone headline — both colours + the uppercase are
+    // pc-scoped, so on mobile the hero collapsed to flat dark title-case. "MY
+    // PAGE" is the green section display (deepened from #a1be97 for legibility at
+    // size), the tagline the purple statement beneath it, with the paw flourish
+    // inline on the display line.
+    .text-area {
+      .text2 {
+        color: #8ba97f;
+        font-size: 30px !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        line-height: 1.1 !important;
+
+        // Paw flourish sits inline with the display line (overrides the global
+        // .hand-icon hide).
+        .hand-icon {
+          display: inline-block;
+          width: 22px;
+          height: auto;
+          margin-left: 8px;
+          vertical-align: middle;
+        }
+      }
+
+      .text1 {
+        margin-top: 2px;
+        color: #410075;
+        font-size: 19px !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        line-height: 1.25 !important;
+      }
+    }
+
+    .hero-stage {
+      position: relative;
+      margin-top: $space-5;
+    }
+
+    // Ellipse portal rings behind the owner photo. Absolute + inset:0 covers the
+    // stage; deliberately no z-index here so it doesn't form a stacking context —
+    // the rings (z-index:0) sit behind the photo (z-index:1) while the badges
+    // (z-index:2) float above it.
+    .hero-stage .circle-background {
+      position: absolute;
+      inset: 0;
       width: 100%;
-      margin: $space-4 0 0;
+      margin: 0;
+      pointer-events: none;
+
+      // Concentric rings, bottom-anchored + centered so the owner-and-pets sit
+      // inside the glow. The cutout is wide-but-tall enough (1280×771) that the
+      // rings can halo it fully without their tops arcing into the headline.
+      .ellipse,
+      .ellipse2 {
+        display: block;
+        position: absolute;
+        left: 50%;
+        bottom: 2%;
+        height: auto;
+        transform: translateX(-50%);
+        z-index: 0;
+      }
+      .ellipse {
+        width: 84%;
+      }
+      .ellipse2 {
+        width: 58%;
+      }
+
+      // Species badges → floating corner stickers (green dog upper-right, red cat
+      // lower-left), tuned to the desktop placement. The red cat adds the species
+      // the photo is missing.
+      .dog-icon,
+      .cat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 6px 18px rgba(65, 0, 117, 0.22);
+        z-index: 3; // above the wave (z-index:2) so the stickers stay crisp
+        animation: mBadgeFloat 4.5s ease-in-out infinite;
+
+        img {
+          width: 24px;
+          height: 24px;
+          display: block;
+        }
+      }
+
+      .dog-icon {
+        top: 12%;
+        right: 4%;
+        background: #6ab052;
+      }
+
+      // Kept above the wave line (raised from the shop 26%) so it floats over the
+      // photo, not the white below it.
+      .cat-icon {
+        bottom: 34%;
+        left: 3%;
+        background: #c80006;
+        animation-delay: -2.25s; // desync the two stickers
+      }
+    }
+
+    // The owner photo sizes the stage: above the rings (z-index:0) but under the
+    // white wave (z-index:2), so the wave hides its crop edge like on desktop.
+    .hero-stage .girl-image-wrapper {
+      position: relative;
+      z-index: 1;
+      overflow: visible;
+
+      .girl-image {
+        position: static;
+        display: block;
+        width: 100%;
+        max-width: 380px;
+        height: auto;
+        margin: auto;
+        margin-bottom: 50px;
+      }
     }
   }
 

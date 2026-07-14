@@ -75,14 +75,221 @@
       .btn-cancel {
         flex: 1;
       }
+
+      // Calm the animated red ctaBorderFlow edge to a solid brand fill — as the
+      // single primary action here it doesn't need the flashing hero border.
+      .btn-edit {
+        background: linear-gradient(135deg, #7a1bd0, #410075) !important;
+        border: none !important;
+        animation: none !important;
+      }
     }
 
+    // Tighten the gap between the stacked cards (Stack spacing={4} = 32px).
+    .personal-info-wrapper > :not(style) + :not(style) {
+      margin-top: $space-4 !important;
+    }
+
+    // ── Profile header → centered identity card ──
+    // Desktop lays it out avatar-left / text-right; at mobile width that crams
+    // the text into a narrow column. Recast as a centered card with a soft brand
+    // wash and a purple avatar ring that echoes the hero portal above.
     .profile-header-card {
-      padding: $space-4 !important;
+      padding: $space-5 $space-4 !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      text-align: center;
+      background: linear-gradient(180deg, #faf5ff 0%, #ffffff 62%) !important;
+
+      // The row spacing put margin-left on the text column; make it a vertical
+      // gap now that the card is a column.
+      > :not(style) + :not(style) {
+        margin-left: 0 !important;
+        margin-top: $space-3 !important;
+      }
+
+      .MuiAvatar-root {
+        width: 96px !important;
+        height: 96px !important;
+        border: 3px solid #fff;
+        box-shadow:
+          0 0 0 3px #e2c9f7,
+          0 8px 20px rgba(65, 0, 117, 0.14);
+      }
+
+      // Centre the text column; let the name + badge row wrap tidily.
+      > .MuiStack-root {
+        align-items: center;
+        width: 100%;
+
+        > .MuiStack-root {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+
+      .profile-name {
+        font-size: 20px;
+      }
+
+      .agent-role {
+        font-size: 14px;
+      }
+
+      .member-since {
+        font-size: 13px;
+      }
+
+      // The bio reads as an "about" blurb below a hairline, full width.
+      .profile-bio {
+        width: 100%;
+        margin-top: $space-3 !important;
+        padding-top: $space-3;
+        border-top: 1px solid #f0e6fa;
+        font-size: 14px;
+        line-height: 1.6;
+      }
     }
 
+    // ── Info cards: softer lift + tighter title→content rhythm ──
     .info-form-card {
       padding: $space-4 !important;
+      border-color: #ece7f2 !important;
+      box-shadow: 0 4px 16px rgba(65, 0, 117, 0.04);
+
+      // Stack spacing={3} leaves a 24px void under each section title; halve it.
+      > :not(style) + :not(style) {
+        margin-top: $space-4 !important;
+      }
+
+      .section-title {
+        font-size: 17px;
+      }
+    }
+
+    // ── Read-only fields → label/value rows, not disabled input boxes ──
+    // In view mode every field is a bordered, greyed-out TextField, so the whole
+    // page reads as a locked form. Strip the input chrome so each field is a
+    // clean label-over-value row split by a hairline — the standard mobile
+    // profile look. Editable mode keeps the real inputs (the .editable class
+    // guards this), so editing is unchanged.
+    .info-form-card:not(.editable) {
+      // Single column on mobile — drop the MUI Grid gutters and pace the rows
+      // with per-field padding + dividers instead.
+      .MuiGrid-container {
+        margin: 0 !important;
+        width: 100% !important;
+      }
+      .MuiGrid-item {
+        padding: 0 !important;
+      }
+
+      // The Bio is a fixed rows={4} textarea, so in read-only it clips to 4
+      // lines and shows a mid-sentence fragment. It's already displayed in full
+      // in the profile header above, so hide the redundant field here; it comes
+      // back as an editable field in edit mode (this block is :not(.editable)).
+      .MuiGrid-item:has(.MuiInputBase-multiline) {
+        display: none;
+      }
+
+      // Each field group (label + value) gets a divider; the last one drops it.
+      .MuiGrid-item > .MuiStack-root {
+        padding-bottom: $space-3;
+        border-bottom: 1px solid #f1eef5;
+
+        // Tighten the label→value pair (the Stack spacing={1} gap is too airy
+        // once the field is just text).
+        > :not(style) + :not(style) {
+          margin-top: $space-1 !important;
+        }
+      }
+      .MuiGrid-item:last-child > .MuiStack-root {
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      // The hidden bio is still the DOM :last-child, so also drop the divider on
+      // the row before it (the real last visible field in Personal Information).
+      .MuiGrid-item:has(+ .MuiGrid-item:has(.MuiInputBase-multiline))
+        > .MuiStack-root {
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+
+      // Value: unbox the disabled TextField into plain, readable text — and
+      // collapse the 48px input row to its text height so it hugs the label.
+      .MuiOutlinedInput-root {
+        background: transparent !important;
+        padding: 0 !important;
+        min-height: 0 !important;
+        height: auto !important;
+
+        .MuiOutlinedInput-notchedOutline {
+          border: none !important;
+        }
+
+        &.MuiInputBase-multiline {
+          height: auto !important;
+          padding: 0 !important;
+        }
+
+        input,
+        textarea,
+        .MuiSelect-select {
+          padding: 0 !important;
+          font-size: 15px !important;
+          font-weight: 600 !important;
+          color: #1c2333 !important;
+          -webkit-text-fill-color: #1c2333 !important;
+        }
+      }
+
+      // Certifications sit in an .info-form-card too, but their Grid holds image
+      // cards (Box), not label/value Stacks — so the divider rule skips them.
+      // Just show each certificate in full instead of a 200px cover-crop, and
+      // restore a gap between stacked certs (the gutter reset above removed it).
+      .cert-card .cert-image {
+        height: auto !important;
+      }
+      .MuiGrid-item + .MuiGrid-item .cert-card {
+        margin-top: $space-3;
+      }
+    }
+
+    // ── Edit mode → compact the form ──
+    // Edit mode keeps the real inputs (correct), but the desktop Grid
+    // spacing={3} (24px gutters) + Stack spacing leave big voids on a phone.
+    // Single column, zeroed gutters (keep only a top gap under the title), and
+    // one consistent gap between fields.
+    .info-form-card.editable {
+      .MuiGrid-container {
+        margin: $space-4 0 0 !important; // title→grid gap; no side/bottom gutters
+        width: 100% !important;
+      }
+      .MuiGrid-item {
+        padding: 0 !important;
+      }
+      .MuiGrid-item + .MuiGrid-item {
+        margin-top: $space-4;
+      }
+
+      // Show the full certificate in the uploader too (desktop 200px crops it),
+      // and swap the full-cover dark scrim for a bottom gradient so the cert
+      // stays legible while the "Upload Image" affordance reads clearly.
+      .cert-card {
+        .cert-image {
+          height: auto !important;
+        }
+
+        .cert-upload-overlay {
+          align-items: flex-end;
+          padding-bottom: $space-3;
+          background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.6) 0%,
+            rgba(0, 0, 0, 0) 46%
+          );
+        }
+      }
     }
 
     // Cards padded via inline sx (p:5 → emotion class); the ID scope +
@@ -165,6 +372,10 @@
         // width:100% that margin overflows the wrapped row.
         margin-left: 0 !important;
         margin-top: $space-2;
+        // Calm the animated red ctaBorderFlow edge to a solid brand fill.
+        background: linear-gradient(135deg, #7a1bd0, #410075) !important;
+        border: none !important;
+        animation: none !important;
       }
     }
   }
@@ -183,46 +394,199 @@
     }
   }
 
+  // Favorites → Services tab reuses the servicepage .service-card (a tall
+  // photo-forward card tuned for the desktop grid), so at full mobile width each
+  // one eats the screen. The servicepage's mobile recast is scoped to
+  // .agents-cards, so it doesn't reach here — mirror it: single-column grid of
+  // compact horizontal rows (thumbnail + info), and calm the animated red CTA.
+  .fav-services-wrap {
+    .fav-agents-grid {
+      grid-template-columns: 1fr;
+      gap: $space-3;
+      min-height: 0; // shared reserves 400px
+    }
+
+    .service-card {
+      flex-direction: row;
+      align-items: stretch;
+      border-radius: $m-radius-lg;
+
+      .service-card-image-wrap {
+        width: 120px;
+        height: auto;
+        align-self: stretch;
+        flex-shrink: 0;
+
+        .service-category-badge {
+          top: 8px;
+          left: 8px;
+          padding: 2px 7px;
+          font-size: 9px;
+        }
+
+        // Bottom-anchored so it clears the badge on the narrow thumbnail.
+        .service-like-btn {
+          top: auto;
+          bottom: 8px;
+          right: 8px;
+          padding: 3px 7px 3px 5px;
+
+          svg {
+            font-size: 13px;
+          }
+          .like-count {
+            font-size: 10px;
+          }
+        }
+      }
+
+      .service-card-content {
+        flex: 1;
+        min-width: 0;
+        justify-content: center;
+        padding: $space-3;
+        gap: 4px;
+
+        .service-card-name {
+          font-size: 15px;
+        }
+
+        .service-price-row {
+          gap: 5px;
+
+          .service-price {
+            font-size: 18px;
+          }
+          .service-price-sep {
+            font-size: 13px;
+          }
+          .service-duration {
+            font-size: 12px;
+          }
+          .duration-icon {
+            font-size: 13px;
+          }
+        }
+
+        .service-location-row {
+          .location-icon {
+            font-size: 13px;
+          }
+          .service-location {
+            font-size: 12px;
+          }
+        }
+
+        .service-rating-row {
+          gap: 4px;
+          flex-wrap: wrap;
+
+          .rating-stars .MuiSvgIcon-root {
+            font-size: 13px;
+          }
+          .rating-value {
+            font-size: 12px;
+          }
+          .review-count {
+            font-size: 11px;
+          }
+        }
+
+        // One calm solid-purple primary instead of the animated red border.
+        .service-book-btn {
+          height: 38px;
+          min-height: 38px;
+          margin-top: $space-2;
+          border: none;
+          border-radius: $m-radius-sm;
+          background: linear-gradient(135deg, #7a1bd0 0%, #410075 100%);
+          background-size: auto;
+          background-position: 0 0;
+          animation: none;
+          font-size: 13px;
+
+          &:hover {
+            background: linear-gradient(135deg, #7a1bd0 0%, #410075 100%);
+            box-shadow: none;
+            transform: none;
+          }
+        }
+      }
+    }
+  }
+
   // .service-row (My Services tab) and .request-row (Booking Requests /
   // Upcoming / Completed tabs) are all fixed direction="row" Stacks whose
   // flex-basis values sum to 800px+ (media + main + metrics + actions) —
   // stack them for mobile instead of squeezing four columns into ~360px.
+  // My Services card: the desktop 4-column row (thumb | text | metrics |
+  // actions) sums past 800px. Recast as a wrapping card — thumbnail + text in a
+  // header row, then metrics and the action rail each on their own full-width
+  // row divided by hairlines. flex-wrap does the splitting: the header items
+  // take row 1, the flex:1 1 100% items are forced onto their own rows below.
   .service-row {
-    flex-direction: column !important;
-    align-items: stretch !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    align-items: flex-start !important;
     // Interior keeps desktop scale (min-height 116px, 18px/20px padding)
     // after stacking — compact it.
     min-height: 0;
     padding: $space-4;
     gap: $space-3;
+    border-radius: $m-radius !important;
 
-    .agent-name {
-      font-size: 16px;
-    }
-
+    // Square thumbnail anchoring the header row (shared sets radius/border).
     .service-row-media {
       align-self: flex-start;
+      flex: 0 0 84px;
+      width: 84px;
+      height: 84px;
+    }
+
+    // Text sits beside the thumbnail and takes the rest of the header row.
+    .service-row-main {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    // Name + description can wrap now (desktop clips them to one line).
+    .agent-name {
+      font-size: 16px !important;
+      white-space: normal !important;
+    }
+
+    .service-description {
+      white-space: normal !important;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .service-row-metrics {
+      flex: 1 1 100% !important;
       flex-wrap: wrap;
-      padding: 0;
+      padding: $space-3 0 0;
       gap: $space-4;
+      border-top: 1px solid #f1eef5;
     }
 
     .service-row-actions {
+      flex: 1 1 100% !important;
       align-items: stretch !important;
       width: 100%;
-      padding-left: 0;
+      padding: $space-3 0 0;
       gap: $space-2;
+      border-top: 1px solid #f1eef5;
 
       .service-action-tab {
         height: $m-btn-height-compact; // 34px → tappable
       }
 
       .service-status-tabs {
-        flex-wrap: wrap;
+        flex-wrap: nowrap; // keep Active/Pause/Deleted as one segmented row
         height: auto;
+        width: 100%;
 
         .status-tab {
           flex: 1;
@@ -232,16 +596,19 @@
     }
   }
 
+  // Booking / Upcoming / Completed cards: desktop is a 4-column row of
+  // label→value pairs. On mobile that stacked into a tall form with redundant
+  // ALL-CAPS labels ("SERVICE NAME" above the name it labels, etc.). Recast as a
+  // booking card: name is the title, date is a muted line with a calendar glyph,
+  // the customer note lives in a tinted quote box, and status + action sit in a
+  // divided footer.
   .request-row {
     flex-direction: column !important;
     align-items: stretch !important;
     min-height: 0;
     padding: $space-4;
-    gap: $space-3;
-
-    .request-service {
-      font-size: 16px;
-    }
+    gap: $space-2;
+    border-radius: $m-radius !important;
 
     .request-main,
     .request-date-block,
@@ -250,14 +617,80 @@
       flex: 1 1 100% !important;
     }
 
+    // "Service Name" / "Date" labels are redundant (the value speaks for
+    // itself); keep only the note's label as a caption inside its box.
+    .request-main .request-label,
+    .request-date-block .request-label {
+      display: none;
+    }
+
+    .request-service {
+      font-size: 17px !important;
+      white-space: normal !important; // let long names wrap instead of clipping
+    }
+
+    // Date → muted line prefixed with a small calendar glyph.
+    .request-date {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: normal !important;
+      color: #6b6473 !important;
+      font-size: 13px !important;
+      font-weight: 700 !important;
+
+      &::before {
+        content: "";
+        flex: 0 0 auto;
+        width: 15px;
+        height: 15px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239a93a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E")
+          no-repeat center / contain;
+      }
+    }
+
+    // Customer request → tinted quote box with a small caption.
+    .request-note-block {
+      margin-top: $space-1;
+      padding: $space-2 $space-3;
+      background: #f7f4fb;
+      border-left: 3px solid #d9c6ef;
+      border-radius: $m-radius-sm;
+
+      .request-label {
+        display: block;
+        font-size: 10px !important;
+        color: #9a7bc0 !important;
+      }
+
+      .request-note {
+        white-space: normal !important; // desktop clips to one line
+        color: #5a5364 !important;
+        font-weight: 600 !important;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    // Footer: status chip (left) + action button (right), above a hairline.
     .request-status-actions {
-      justify-content: flex-start !important;
+      justify-content: space-between !important;
+      align-items: center;
       gap: $space-2;
+      margin-top: $space-1;
+      padding-top: $space-3;
+      border-top: 1px solid #f1eef5;
 
       .request-accept-btn,
       .request-complete-btn {
-        height: $m-btn-height-compact; // 32px → tappable
+        height: $m-btn-height-compact;
+        min-width: 108px;
         border-radius: $m-radius-sm; // from the odd 5px
+        background: #16a34a !important; // solid green → clear primary action
+        color: #ffffff !important;
+        border: none !important;
       }
     }
   }
@@ -296,11 +729,96 @@
   }
 
   // ─── Bookings & Orders ──────────────────────────────────────────────────
-  // The order-card header packs order number, date, and (when delivered) a
-  // 220px-wide badge+review block into one row — wrap it on mobile.
-  .order-card-header-row {
+
+  // Shared Write-Review CTA (bookings "Review Service/Agent" + orders "Write
+  // Review"): calm the animated red ctaBorderFlow edge to a solid brand fill.
+  .write-review-btn {
+    padding: $space-2 $space-4 !important; // shared uses fractional 6.7px
+    min-height: $m-btn-height-compact;
+    background: linear-gradient(135deg, #7a1bd0, #410075) !important;
+    border: none !important;
+    animation: none !important;
+  }
+
+  // ── Bookings tab ──
+  // The card reuses .service-row (recast above into thumbnail-header + wrapping
+  // rows), but adds a .booking-end-block (booked date + status + review buttons)
+  // the service-row rules don't cover. On desktop it's a right-hand side column
+  // with a left border; on mobile make it a full-width footer row under a
+  // hairline, with the date left, status right, and review buttons on their own
+  // row.
+  .bo-bookings-tab .booking-end-block {
+    flex: 1 1 100% !important;
+    flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
     gap: $space-2;
+    padding: $space-3 0 0;
+    border-left: none;
+    border-top: 1px solid #f1eef5;
+
+    // BOOKED label + date, left-aligned (desktop right-aligns them).
+    > .MuiStack-root:first-child {
+      align-items: flex-start;
+    }
+    .booking-date {
+      white-space: normal;
+      text-align: left;
+    }
+
+    // Review buttons (completed only) → their own full-width row, side by side.
+    > .MuiStack-root:has(.write-review-btn) {
+      flex: 1 1 100%;
+      flex-direction: row;
+      gap: $space-2;
+
+      .write-review-btn {
+        flex: 1;
+      }
+    }
+  }
+
+  // ── Orders tab ──
+  // Card padding 0 so the header/footer bands span edge-to-edge (overflow:hidden
+  // clips them to the radius); each section keeps its own mobile-scale padding.
+  .order-card {
+    padding: 0;
+
+    .order-card-header {
+      padding: $space-4;
+    }
+    .order-card-products {
+      padding: $space-3 $space-4;
+    }
+    .order-card-footer {
+      padding: $space-3 $space-4;
+    }
+  }
+
+  // Header: stack the order number, then a full-width row with the date (left)
+  // and the status/action group (right) — the desktop single row packs a
+  // 220px badge+review block that overflows a phone.
+  .order-card-header-row {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: $space-3;
+
+    > .MuiStack-root + .MuiStack-root {
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between !important;
+      align-items: center !important;
+
+      // date column left-aligned (desktop right-aligns it)
+      > .MuiStack-root {
+        align-items: flex-start !important;
+      }
+    }
+  }
+
+  .order-card-date {
+    text-align: left !important;
   }
 
   .order-delivered-actions {
@@ -308,14 +826,20 @@
     gap: $space-2;
   }
 
-  .order-card {
-    padding: $space-4;
-  }
-
-  .write-review-btn {
-    // Shared style uses fractional 6.7px padding with !important — match it.
-    padding: $space-2 $space-4 !important;
-    min-height: $m-btn-height-compact;
+  // Product line: let the (long, uppercase) title wrap to 2 lines instead of
+  // hard-truncating to "PAW & COAT CARE B…", and allow the meta to wrap.
+  .order-product-card {
+    .order-product-title {
+      white-space: normal !important;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .order-product-meta {
+      flex-wrap: wrap;
+      row-gap: $space-1;
+    }
   }
 
   // Tracker geometry is %-based so it scales; only the four step labels
@@ -333,6 +857,106 @@
   .notif-dialog {
     .MuiDialog-paper {
       margin: $space-4 !important;
+    }
+  }
+
+  // Add/Edit Service dialog (`@at-root .add-service-dialog` in the pc stylesheet,
+  // so global/portaled). Layout survives at mobile width; these just trim the
+  // desktop-scale padding, keep the dropzone compact, and fix the footer — the
+  // Publish/Update button flashed the red ctaBorderFlow edge AND wrapped its
+  // label to two lines in a fixed 150px box.
+  .add-service-dialog {
+    .add-dialog-title {
+      padding: $space-4 $space-4 $space-3;
+
+      > .MuiStack-root {
+        gap: $space-3;
+      }
+
+      span {
+        font-size: 20px;
+      }
+    }
+
+    .add-dialog-content {
+      padding: $space-4 !important;
+    }
+
+    .add-service-form .form-grid {
+      gap: $space-3;
+    }
+
+    // Description: guarantee a comfortable multi-line box so it clearly reads as
+    // a description area (the fixed rows can render short on some browsers).
+    .add-service-field.description-field .MuiOutlinedInput-root.MuiInputBase-multiline {
+      align-items: flex-start;
+      min-height: 112px;
+    }
+
+    .image-upload-section {
+      padding: $space-3;
+    }
+
+    // Desktop lays the dropzone out icon-left / copy-right, which crams and
+    // wraps the text against the right edge on a phone. Center it as a proper
+    // drop target: icon on top, copy centered beneath.
+    .upload-dropzone {
+      label {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: $space-2;
+        min-height: 0;
+        padding: $space-5 $space-4;
+      }
+
+      .upload-icon-wrap {
+        flex: 0 0 52px;
+        width: 52px;
+        height: 52px;
+
+        svg {
+          font-size: 26px;
+        }
+      }
+
+      .upload-title {
+        font-size: 16px;
+      }
+
+      .upload-note {
+        font-size: 13px;
+        max-width: 34ch; // keep the centered note to a tidy measure
+      }
+    }
+
+    .add-dialog-actions {
+      padding: $space-4;
+      gap: $space-2;
+
+      .btn-dialog-cancel,
+      .btn-dialog-publish {
+        min-width: 0;
+        height: $m-btn-height;
+        font-size: 15px;
+        white-space: nowrap;
+      }
+
+      // Secondary hugs its label; primary fills the rest so "Update Service"
+      // fits on one line.
+      .btn-dialog-cancel {
+        flex: 0 0 auto;
+        padding: 0 18px;
+      }
+
+      .btn-dialog-publish {
+        flex: 1;
+        padding: 0 16px;
+        // Calm the animated red ctaBorderFlow edge to a solid brand fill.
+        background: linear-gradient(135deg, #7a1bd0, #410075) !important;
+        border: none !important;
+        animation: none !important;
+      }
     }
   }
 }
