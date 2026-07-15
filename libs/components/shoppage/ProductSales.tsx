@@ -34,7 +34,7 @@ const ProductSales = () => {
               <path
                 d="M192 86.5C67.6 93.7 25.5 69.5 20 56.5L253.5 20L328.5 56.5L192 86.5Z"
                 fill="#094120"
-                fill-opacity="0.4"
+                fillOpacity="0.4"
               />
             </g>
             <defs>
@@ -45,9 +45,9 @@ const ProductSales = () => {
                 width="348.5"
                 height="107.812"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -74,7 +74,7 @@ const ProductSales = () => {
               <path
                 d="M75 142.5L20 103.5L273 20L452 23L513 32L75 142.5Z"
                 fill="#094120"
-                fill-opacity="0.6"
+                fillOpacity="0.6"
               />
             </g>
             <defs>
@@ -85,9 +85,9 @@ const ProductSales = () => {
                 width="533"
                 height="162.5"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -115,7 +115,7 @@ const ProductSales = () => {
               <path
                 d="M289.5 439L20 400L286.5 35.5L318.5 20L386.5 25L359.5 355.5L289.5 439Z"
                 fill="#094120"
-                fill-opacity="0.6"
+                fillOpacity="0.6"
               />
             </g>
             <defs>
@@ -126,9 +126,9 @@ const ProductSales = () => {
                 width="406.5"
                 height="459"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"

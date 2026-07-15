@@ -39,13 +39,13 @@ const agents: TopAgentItem[] = [
     image: "/img/agents/topAgent7.jpeg",
   },
   {
-    id: "agent-6",
+    id: "agent-7",
     name: "Noah Taylor",
     email: "noah.taylor@gmail.com",
     image: "/img/agents/topAgent6.jpg",
   },
   {
-    id: "agent-6",
+    id: "agent-8",
     name: "Noah Taylor",
     email: "noah.taylor@gmail.com",
     image: "/img/agents/topAgent8.jpeg",
