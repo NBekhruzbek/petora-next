@@ -239,10 +239,7 @@ const Booking = () => {
   const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
   const [time, setTime] = useState("");
 
-  const availableTimeSlots = useMemo(
-    () => getAvailableTimeSlots(date),
-    [date],
-  );
+  const availableTimeSlots = useMemo(() => getAvailableTimeSlots(date), [date]);
 
   const isDateFullyBooked = (day: Moment) =>
     getAvailableTimeSlots(day.format("YYYY-MM-DD")).length === 0;
@@ -264,17 +261,27 @@ const Booking = () => {
   const [petType, setPetType] = useState("");
   const [petAge, setPetAge] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
-  const [bookingRef] = useState(`BK-${Math.floor(10000 + Math.random() * 90000)}`);
+  const [bookingRef] = useState(
+    `BK-${Math.floor(10000 + Math.random() * 90000)}`,
+  );
   const [petErrors, setPetErrors] = useState({ petName: "", petType: "" });
 
-  const openBookingDialog = () => { setBookingStep(1); setBookingOpen(true); };
-  const closeBookingDialog = () => { setBookingOpen(false); };
+  const openBookingDialog = () => {
+    setBookingStep(1);
+    setBookingOpen(true);
+  };
+  const closeBookingDialog = () => {
+    setBookingOpen(false);
+  };
 
   const handleBookingNext = () => {
     const errors = { petName: "", petType: "" };
     if (!petName.trim()) errors.petName = "Pet name is required";
     if (!petType.trim()) errors.petType = "Please select a pet type";
-    if (errors.petName || errors.petType) { setPetErrors(errors); return; }
+    if (errors.petName || errors.petType) {
+      setPetErrors(errors);
+      return;
+    }
     setPetErrors({ petName: "", petType: "" });
     setBookingStep(2);
   };
@@ -283,7 +290,9 @@ const Booking = () => {
   const router = useRouter();
   const writeReviewRef = useRef<HTMLDivElement | null>(null);
   const [value, setValue] = useState(0);
-  const [writeReviewRating, setWriteReviewRating] = useState<number | null>(null);
+  const [writeReviewRating, setWriteReviewRating] = useState<number | null>(
+    null,
+  );
   const [writeReviewText, setWriteReviewText] = useState("");
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [reviewImages, setReviewImages] = useState<string[]>([]);
@@ -308,7 +317,10 @@ const Booking = () => {
     if (router.query.writeReview === "true") {
       setValue(1);
       setTimeout(() => {
-        writeReviewRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        writeReviewRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }, 300);
     }
   }, [router.query.writeReview]);
@@ -403,13 +415,28 @@ const Booking = () => {
               </Typography>
 
               {/* Rating */}
-              <Stack className="booking-rating-row" direction="row" alignItems="center">
-                <Rating value={agentProfile.rating} precision={0.1} readOnly size="small" />
-                <Typography className="booking-rating-score">{agentProfile.rating.toFixed(1)}</Typography>
+              <Stack
+                className="booking-rating-row"
+                direction="row"
+                alignItems="center"
+              >
+                <Rating
+                  value={agentProfile.rating}
+                  precision={0.1}
+                  readOnly
+                  size="small"
+                />
+                <Typography className="booking-rating-score">
+                  {agentProfile.rating.toFixed(1)}
+                </Typography>
                 <Typography className="booking-rating-sep">·</Typography>
-                <Typography className="booking-rating-count">{agentProfile.reviewCount} reviews</Typography>
+                <Typography className="booking-rating-count">
+                  {agentProfile.reviewCount} reviews
+                </Typography>
                 <Typography className="booking-rating-sep">·</Typography>
-                <Typography className="booking-booking-count">{agentProfile.bookingCount.toLocaleString()} booked</Typography>
+                <Typography className="booking-booking-count">
+                  {agentProfile.bookingCount.toLocaleString()} booked
+                </Typography>
               </Stack>
 
               {/* Service chips */}
@@ -423,7 +450,9 @@ const Booking = () => {
               </Stack>
 
               {/* Price */}
-              <Typography className="price-display">$195 <span className="price-unit">/ session</span></Typography>
+              <Typography className="price-display">
+                $195 <span className="price-unit">/ session</span>
+              </Typography>
 
               {/* Date */}
               <Stack className="date-time-row" direction="row" gap={2}>
@@ -475,13 +504,21 @@ const Booking = () => {
 
               {/* CTAs */}
               <Stack className="cta-row">
-                <Button className="book-now-btn" variant="contained" fullWidth onClick={openBookingDialog} disabled={!time}>
+                <Button
+                  className="book-now-btn"
+                  variant="contained"
+                  fullWidth
+                  onClick={openBookingDialog}
+                  disabled={!time}
+                >
                   Book Now
                 </Button>
                 <Button
                   className={`save-favorites-btn ${liked ? "is-liked" : ""}`}
                   fullWidth
-                  startIcon={liked ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
+                  startIcon={
+                    liked ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />
+                  }
                   onClick={() => {
                     setLiked((prev) => {
                       setLikeCount((c) => Math.max(0, c + (prev ? -1 : 1)));
@@ -489,7 +526,8 @@ const Booking = () => {
                     });
                   }}
                 >
-                  {liked ? "Saved to favorites" : "Save to favorites"} · {likeCount}
+                  {liked ? "Saved to favorites" : "Save to favorites"} ·{" "}
+                  {likeCount}
                 </Button>
               </Stack>
             </Paper>
@@ -782,77 +820,95 @@ const Booking = () => {
 
           {value === 1 && (
             <Stack className="detail-tab-panel review-tab-panel">
-
               {/* ── Write Review (only visible when navigated from completed booking) ── */}
               {router.query.writeReview === "true" && (
-              <Stack className="write-review-panel" ref={writeReviewRef}>
-                {reviewSubmitted ? (
-                  <Stack className="write-review-success">
-                    <Typography className="write-review-success-title">✓ Thank you for your review!</Typography>
-                    <Typography className="write-review-success-sub">Your feedback helps other pet owners find the best care.</Typography>
-                  </Stack>
-                ) : (
-                  <>
-                    {/* Left: title + rating */}
-                    <Stack className="write-review-left">
-                      <Typography className="write-review-panel-title">Write a Review</Typography>
-                      <Stack className="write-review-rating-row">
-                        <Typography className="write-review-label">Your Rating</Typography>
-                        <Rating
-                          value={writeReviewRating}
-                          onChange={(_e, val) => setWriteReviewRating(val)}
-                          className="write-review-stars"
+                <Stack className="write-review-panel" ref={writeReviewRef}>
+                  {reviewSubmitted ? (
+                    <Stack className="write-review-success">
+                      <Typography className="write-review-success-title">
+                        ✓ Thank you for your review!
+                      </Typography>
+                      <Typography className="write-review-success-sub">
+                        Your feedback helps other pet owners find the best care.
+                      </Typography>
+                    </Stack>
+                  ) : (
+                    <>
+                      {/* Left: title + rating */}
+                      <Stack className="write-review-left">
+                        <Typography className="write-review-panel-title">
+                          Write a Review
+                        </Typography>
+                        <Stack className="write-review-rating-row">
+                          <Typography className="write-review-label">
+                            Your Rating
+                          </Typography>
+                          <Rating
+                            value={writeReviewRating}
+                            onChange={(_e, val) => setWriteReviewRating(val)}
+                            className="write-review-stars"
+                          />
+                        </Stack>
+                      </Stack>
+                      {/* Right: textarea + images + submit */}
+                      <Stack className="write-review-right">
+                        <TextField
+                          fullWidth
+                          multiline
+                          rows={5}
+                          placeholder="Share your experience with this service..."
+                          value={writeReviewText}
+                          onChange={(e) => setWriteReviewText(e.target.value)}
+                          className="write-review-textfield"
                         />
-                      </Stack>
-                    </Stack>
-                    {/* Right: textarea + images + submit */}
-                    <Stack className="write-review-right">
-                      <TextField
-                        fullWidth
-                        multiline
-                        rows={5}
-                        placeholder="Share your experience with this service..."
-                        value={writeReviewText}
-                        onChange={(e) => setWriteReviewText(e.target.value)}
-                        className="write-review-textfield"
-                      />
 
-                      {/* Image upload */}
-                      <Stack className="write-review-images-row" direction="row" flexWrap="wrap">
-                        {reviewImages.map((src, i) => (
-                          <Box key={i} className="write-review-img-preview">
-                            <img src={src} alt={`upload-${i}`} />
-                            <Box className="write-review-img-remove" onClick={() => removeReviewImage(i)}>
-                              ✕
+                        {/* Image upload */}
+                        <Stack
+                          className="write-review-images-row"
+                          direction="row"
+                          flexWrap="wrap"
+                        >
+                          {reviewImages.map((src, i) => (
+                            <Box key={i} className="write-review-img-preview">
+                              <img src={src} alt={`upload-${i}`} />
+                              <Box
+                                className="write-review-img-remove"
+                                onClick={() => removeReviewImage(i)}
+                              >
+                                ✕
+                              </Box>
                             </Box>
-                          </Box>
-                        ))}
-                        {reviewImages.length < 4 && (
-                          <label className="write-review-img-upload">
-                            <input
-                              hidden
-                              type="file"
-                              accept="image/*"
-                              multiple
-                              onChange={handleReviewImageUpload}
-                            />
-                            <Box className="write-review-img-upload-icon">+</Box>
-                            <Typography className="write-review-img-upload-text">Add Photo</Typography>
-                          </label>
-                        )}
-                      </Stack>
+                          ))}
+                          {reviewImages.length < 4 && (
+                            <label className="write-review-img-upload">
+                              <input
+                                hidden
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={handleReviewImageUpload}
+                              />
+                              <Box className="write-review-img-upload-icon">
+                                +
+                              </Box>
+                              <Typography className="write-review-img-upload-text">
+                                Add Photo
+                              </Typography>
+                            </label>
+                          )}
+                        </Stack>
 
-                      <Button
-                        className="write-review-submit-btn"
-                        disabled={!writeReviewRating}
-                        onClick={handleWriteReviewSubmit}
-                      >
-                        Submit Review
-                      </Button>
-                    </Stack>
-                  </>
-                )}
-              </Stack>
+                        <Button
+                          className="write-review-submit-btn"
+                          disabled={!writeReviewRating}
+                          onClick={handleWriteReviewSubmit}
+                        >
+                          Submit Review
+                        </Button>
+                      </Stack>
+                    </>
+                  )}
+                </Stack>
               )}
 
               <Stack className="review-summary-panel">
@@ -1031,7 +1087,12 @@ const Booking = () => {
         PaperProps={{ className: "booking-dialog-paper" }}
       >
         {/* Header */}
-        <Stack className="booking-dialog-header" direction="row" alignItems="center" justifyContent="space-between">
+        <Stack
+          className="booking-dialog-header"
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <Stack gap="2px">
             <Typography className="booking-dialog-title">
               {bookingStep === 1 && "Pet Details"}
@@ -1039,10 +1100,15 @@ const Booking = () => {
               {bookingStep === 3 && "Request Submitted"}
             </Typography>
             {bookingStep < 3 && (
-              <Typography className="booking-dialog-step">Step {bookingStep} of 2</Typography>
+              <Typography className="booking-dialog-step">
+                Step {bookingStep} of 2
+              </Typography>
             )}
           </Stack>
-          <IconButton className="booking-dialog-close" onClick={closeBookingDialog}>
+          <IconButton
+            className="booking-dialog-close"
+            onClick={closeBookingDialog}
+          >
             <CloseIcon />
           </IconButton>
         </Stack>
@@ -1050,41 +1116,70 @@ const Booking = () => {
         {/* Step 1 — Pet Details */}
         {bookingStep === 1 && (
           <Stack className="booking-dialog-body">
-            <Stack className="booking-service-summary" direction="row" alignItems="center" gap="12px">
+            <Stack
+              className="booking-service-summary"
+              direction="row"
+              alignItems="center"
+              gap="12px"
+            >
               <Box className="booking-summary-img">
                 <img src={images[selectedImage]} alt="service" />
               </Box>
               <Stack gap="2px">
-                <Typography className="booking-summary-name">Training with {agentProfile.name}</Typography>
+                <Typography className="booking-summary-name">
+                  Training with {agentProfile.name}
+                </Typography>
                 <Stack direction="row" alignItems="center" gap="10px">
-                  <Stack direction="row" alignItems="center" gap="5px" className="booking-summary-meta">
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    gap="5px"
+                    className="booking-summary-meta"
+                  >
                     <CalendarMonthOutlinedIcon fontSize="small" />
                     <span>{moment(date).format("MMM D, YYYY")}</span>
                   </Stack>
-                  <Stack direction="row" alignItems="center" gap="5px" className="booking-summary-meta">
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    gap="5px"
+                    className="booking-summary-meta"
+                  >
                     <AccessTimeOutlinedIcon fontSize="small" />
                     <span>{time}</span>
                   </Stack>
                 </Stack>
-                <Typography className="booking-summary-price">$195 / session</Typography>
+                <Typography className="booking-summary-price">
+                  $195 / session
+                </Typography>
               </Stack>
             </Stack>
 
             <Divider className="booking-dialog-divider" />
 
             <Stack gap="14px">
-              <Stack direction="row" alignItems="center" gap="8px" className="booking-section-label">
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap="8px"
+                className="booking-section-label"
+              >
                 <PetsOutlinedIcon fontSize="small" />
                 <Typography>Tell us about your pet</Typography>
               </Stack>
 
               <Stack className="booking-field">
-                <Typography className="booking-field-label">Your Pet's Name *</Typography>
+                <Typography className="booking-field-label">
+                  Your Pet's Name *
+                </Typography>
                 <TextField
                   size="small"
                   placeholder="e.g. Max, Luna, Buddy…"
                   value={petName}
-                  onChange={(e) => { setPetName(e.target.value); setPetErrors((p) => ({ ...p, petName: "" })); }}
+                  onChange={(e) => {
+                    setPetName(e.target.value);
+                    setPetErrors((p) => ({ ...p, petName: "" }));
+                  }}
                   error={!!petErrors.petName}
                   helperText={petErrors.petName}
                   className="booking-input"
@@ -1092,19 +1187,28 @@ const Booking = () => {
               </Stack>
 
               <Stack className="booking-field">
-                <Typography className="booking-field-label">Pet Type *</Typography>
+                <Typography className="booking-field-label">
+                  Pet Type *
+                </Typography>
                 <Stack direction="row" flexWrap="wrap" gap="8px">
                   {["Dog", "Cat", "Bird", "Rabbit", "Other"].map((value) => (
                     <Box
                       key={value}
                       className={`pet-chip ${petType === value ? "selected" : ""}`}
-                      onClick={() => { setPetType(value); setPetErrors((p) => ({ ...p, petType: "" })); }}
+                      onClick={() => {
+                        setPetType(value);
+                        setPetErrors((p) => ({ ...p, petType: "" }));
+                      }}
                     >
                       <span>{value}</span>
                     </Box>
                   ))}
                 </Stack>
-                {petErrors.petType && <Typography className="booking-chip-error">{petErrors.petType}</Typography>}
+                {petErrors.petType && (
+                  <Typography className="booking-chip-error">
+                    {petErrors.petType}
+                  </Typography>
+                )}
               </Stack>
 
               <Stack className="booking-field">
@@ -1112,9 +1216,9 @@ const Booking = () => {
                 <Stack direction="row" flexWrap="wrap" gap="8px">
                   {[
                     { value: "Under 1 year", label: "Under 1 yr" },
-                    { value: "1–3 years",    label: "1–3 yrs"    },
-                    { value: "3–7 years",    label: "3–7 yrs"    },
-                    { value: "7+ years",     label: "7+ yrs"     },
+                    { value: "1–3 years", label: "1–3 yrs" },
+                    { value: "3–7 years", label: "3–7 yrs" },
+                    { value: "7+ years", label: "7+ yrs" },
                   ].map(({ value, label }) => (
                     <Box
                       key={value}
@@ -1128,7 +1232,9 @@ const Booking = () => {
               </Stack>
 
               <Stack className="booking-field">
-                <Typography className="booking-field-label">Special Requests / Notes</Typography>
+                <Typography className="booking-field-label">
+                  Special Requests / Notes
+                </Typography>
                 <TextField
                   size="small"
                   multiline
@@ -1142,7 +1248,12 @@ const Booking = () => {
               </Stack>
             </Stack>
 
-            <Button className="btn-booking-next" endIcon={<ArrowForwardIcon />} onClick={handleBookingNext} fullWidth>
+            <Button
+              className="btn-booking-next"
+              endIcon={<ArrowForwardIcon />}
+              onClick={handleBookingNext}
+              fullWidth
+            >
               Continue to Confirm
             </Button>
           </Stack>
@@ -1152,19 +1263,27 @@ const Booking = () => {
         {bookingStep === 2 && (
           <Stack className="booking-dialog-body">
             <Stack className="booking-confirm-card">
-              <Typography className="confirm-section-title">Booking Summary</Typography>
+              <Typography className="confirm-section-title">
+                Booking Summary
+              </Typography>
 
               <Stack className="confirm-row">
                 <Typography className="confirm-label">Service</Typography>
-                <Typography className="confirm-value">Training Session</Typography>
+                <Typography className="confirm-value">
+                  Training Session
+                </Typography>
               </Stack>
               <Stack className="confirm-row">
                 <Typography className="confirm-label">Agent</Typography>
-                <Typography className="confirm-value">{agentProfile.name}</Typography>
+                <Typography className="confirm-value">
+                  {agentProfile.name}
+                </Typography>
               </Stack>
               <Stack className="confirm-row">
                 <Typography className="confirm-label">Date</Typography>
-                <Typography className="confirm-value">{moment(date).format("MMMM D, YYYY")}</Typography>
+                <Typography className="confirm-value">
+                  {moment(date).format("MMMM D, YYYY")}
+                </Typography>
               </Stack>
               <Stack className="confirm-row">
                 <Typography className="confirm-label">Time</Typography>
@@ -1172,12 +1291,17 @@ const Booking = () => {
               </Stack>
               <Stack className="confirm-row">
                 <Typography className="confirm-label">Pet</Typography>
-                <Typography className="confirm-value">{petName} · {petType}{petAge ? ` · ${petAge}` : ""}</Typography>
+                <Typography className="confirm-value">
+                  {petName} · {petType}
+                  {petAge ? ` · ${petAge}` : ""}
+                </Typography>
               </Stack>
               {specialNotes && (
                 <Stack className="confirm-row confirm-row-notes">
                   <Typography className="confirm-label">Notes</Typography>
-                  <Typography className="confirm-value confirm-notes">{specialNotes}</Typography>
+                  <Typography className="confirm-value confirm-notes">
+                    {specialNotes}
+                  </Typography>
                 </Stack>
               )}
               <Divider className="booking-dialog-divider" />
@@ -1188,12 +1312,23 @@ const Booking = () => {
             </Stack>
 
             <Stack className="booking-confirm-policy">
-              <Typography>Free cancellation up to 24 hours before the session.</Typography>
+              <Typography>
+                Free cancellation up to 24 hours before the session.
+              </Typography>
             </Stack>
 
             <Stack direction="row" gap="10px">
-              <Button className="btn-booking-back" onClick={() => setBookingStep(1)}>Back</Button>
-              <Button className="btn-booking-confirm" onClick={handleConfirmBooking} fullWidth>
+              <Button
+                className="btn-booking-back"
+                onClick={() => setBookingStep(1)}
+              >
+                Back
+              </Button>
+              <Button
+                className="btn-booking-confirm"
+                onClick={handleConfirmBooking}
+                fullWidth
+              >
                 Confirm Booking
               </Button>
             </Stack>
@@ -1204,12 +1339,23 @@ const Booking = () => {
         {bookingStep === 3 && (
           <Stack className="booking-dialog-body booking-success-body">
             <Box className="booking-pending-badge">Pending</Box>
-            <Typography className="booking-success-title">Booking Request Sent!</Typography>
-            <Typography className="booking-success-ref">Ref: {bookingRef}</Typography>
-            <Typography className="booking-success-msg">
-              Your request has been sent to {agentProfile.name} for {moment(date).format("MMMM D, YYYY")} at {time}. The agent will review and accept your booking shortly. You'll be notified once it's confirmed.
+            <Typography className="booking-success-title">
+              Booking Request Sent!
             </Typography>
-            <Button className="btn-booking-done" onClick={closeBookingDialog} fullWidth>
+            <Typography className="booking-success-ref">
+              Ref: {bookingRef}
+            </Typography>
+            <Typography className="booking-success-msg">
+              Your request has been sent to {agentProfile.name} for{" "}
+              {moment(date).format("MMMM D, YYYY")} at {time}. The agent will
+              review and accept your booking shortly. You'll be notified once
+              it's confirmed.
+            </Typography>
+            <Button
+              className="btn-booking-done"
+              onClick={closeBookingDialog}
+              fullWidth
+            >
               Done
             </Button>
           </Stack>

@@ -19,6 +19,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { getJwtToken, logIn, signUp } from "@/libs/auth";
 
 interface LoginRegisterProps {
   open: boolean;
@@ -26,8 +27,7 @@ interface LoginRegisterProps {
 }
 
 type AuthMode = "login" | "register" | "verify" | "forgot" | "reset";
-type UserType = "admin" | "agent" | "user";
-type IdStatus = "idle" | "checking" | "available" | "taken";
+type UserType = "ADMIN" | "AGENT" | "USER";
 
 const userTypes: {
   value: UserType;
@@ -36,24 +36,30 @@ const userTypes: {
   Icon: typeof PersonOutline;
 }[] = [
   {
-    value: "admin",
+    value: "ADMIN",
     label: "Admin",
     description: "Manage platform operations",
     Icon: AdminPanelSettings,
   },
   {
-    value: "agent",
+    value: "AGENT",
     label: "Service Agent",
     description: "Offer pet care services",
     Icon: SupportAgent,
   },
   {
-    value: "user",
+    value: "USER",
     label: "User",
     description: "Book, shop and join Petora",
     Icon: PersonOutline,
   },
 ];
+
+const memberTypeMap: Record<UserType, string> = {
+  ADMIN: "ADMIN",
+  AGENT: "AGENT",
+  USER: "USER",
+};
 
 const maskId = (value: string) => {
   if (!value) return "your account ID";
@@ -70,9 +76,11 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [selectedUserType, setSelectedUserType] = useState<UserType>("user");
-  const [idStatus, setIdStatus] = useState<IdStatus>("idle");
+  const [selectedUserType, setSelectedUserType] = useState<UserType>("USER");
   const [registerError, setRegisterError] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [registerLoading, setRegisterLoading] = useState(false);
   const [loginForm, setLoginForm] = useState({ name: "", password: "" });
   const [registerForm, setRegisterForm] = useState({
     name: "",
@@ -126,6 +134,8 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
       setMode("login");
       setShowPassword(false);
       setShowConfirmPassword(false);
+      setLoginError("");
+      setRegisterError("");
     }
   }, [open]);
 
@@ -182,11 +192,20 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     setMode("login");
   };
 
-  const handleLoginSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleLoginSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!loginForm.name || !loginForm.password) return;
+
+    setLoginError("");
+    setLoginLoading(true);
+    await logIn(loginForm.name, loginForm.password);
+    setLoginLoading(false);
+
+    if (getJwtToken()) onClose();
+    else setLoginError("Please check your ID and password.");
   };
 
-  const handleRegisterSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleRegisterSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (registerForm.password !== registerForm.confirmPassword) {
@@ -194,9 +213,19 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
       return;
     }
 
-    setMode("verify");
-    setTimeLeft(180);
-    window.setTimeout(() => otpRefs.current[0]?.focus(), 80);
+    setRegisterError("");
+    setRegisterLoading(true);
+    await signUp(
+      registerForm.name,
+      registerForm.email,
+      registerForm.password,
+      registerForm.phone,
+      memberTypeMap[selectedUserType],
+    );
+    setRegisterLoading(false);
+
+    if (getJwtToken()) onClose();
+    else setRegisterError("Registration failed. Please try again.");
   };
 
   const handleForgotSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -383,8 +412,14 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                 </button>
               </div>
 
-              <button className="auth-primary-button" type="submit">
-                Login
+              {loginError && <p className="auth-form-error">{loginError}</p>}
+
+              <button
+                className="auth-primary-button"
+                type="submit"
+                disabled={loginLoading}
+              >
+                {loginLoading ? "Logging in..." : "Login"}
               </button>
 
               <p className="auth-switch-copy">
@@ -574,8 +609,12 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                 <p className="auth-form-error">{registerError}</p>
               )}
 
-              <button className="auth-primary-button" type="submit">
-                Create Account
+              <button
+                className="auth-primary-button"
+                type="submit"
+                disabled={registerLoading}
+              >
+                {registerLoading ? "Creating account..." : "Create Account"}
               </button>
 
               <p className="auth-switch-copy">

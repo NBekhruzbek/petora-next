@@ -10,6 +10,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useReactiveVar } from "@apollo/client";
+import { userVar } from "@/apollo/store";
+import { logOut } from "@/libs/auth";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Link from "next/link";
@@ -25,7 +28,17 @@ import LoginRegister from "./account/LoginRegister";
 import useDeviceDetect from "../hooks/useDeviceDetect";
 
 const Top = () => {
-  const authMember = true;
+  const user = useReactiveVar(userVar);
+  const authMember = Boolean(user._id);
+  const memberDisplayName =
+    user.memberFullName || user.memberUserName || "Member";
+  const memberTypeLabel =
+    user.memberType === "AGENT"
+      ? "Service Agent"
+      : user.memberType === "ADMIN"
+        ? "Admin"
+        : "User";
+  const memberAvatar = user.memberImage || "/img/profile/defaultUser.png";
   const router = useRouter();
   const [colorChange, setColorChange] = useState<boolean>(false);
   const [bgColor, setBgColor] = useState<boolean>(false);
@@ -199,16 +212,19 @@ const Top = () => {
               {authMember ? (
                 <Stack className="mobile-nav-drawer__member" direction="row">
                   <Avatar
-                    src="/img/profile/defaultUser.png"
+                    src={memberAvatar}
                     className="mobile-nav-drawer__avatar"
                   />
                   <Typography className="mobile-nav-drawer__member-name">
-                    Member
+                    {memberDisplayName}
                   </Typography>
                   <button
                     type="button"
                     className="mobile-nav-drawer__logout"
-                    onClick={closeMobileNav}
+                    onClick={() => {
+                      closeMobileNav();
+                      logOut();
+                    }}
                   >
                     <Logout />
                     Logout
@@ -366,7 +382,7 @@ const Top = () => {
                     aria-haspopup="true"
                     aria-expanded={logoutOpen ? "true" : undefined}
                   >
-                    <img src="/img/profile/defaultUser.png" alt="profile" />
+                    <img src={memberAvatar} alt="profile" />
                   </div>
 
                   <Menu
@@ -444,7 +460,7 @@ const Top = () => {
                               lineHeight: 1,
                             }}
                           >
-                            John Doe
+                            {memberDisplayName}
                           </Typography>
                           <Stack
                             direction="row"
@@ -469,7 +485,7 @@ const Top = () => {
                                 color: "#6d28d9",
                               }}
                             >
-                              Service Agent
+                              {memberTypeLabel}
                             </Typography>
                           </Stack>
                         </Stack>
@@ -550,7 +566,7 @@ const Top = () => {
                       <MenuItem
                         onClick={() => {
                           handleLogoutMenuClose();
-                          void router.push("/");
+                          logOut();
                         }}
                         sx={{
                           minHeight: "42px",

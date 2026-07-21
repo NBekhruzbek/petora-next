@@ -16,7 +16,6 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import TextField from "@mui/material/TextField";
-import RelatedServices from "@/libs/components/servicepage/RelatedServices";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
@@ -158,7 +157,9 @@ const Detail = () => {
   const [likeCount, setLikeCount] = useState(312);
   const [quantity, setQuantity] = useState(1);
   const [value, setValue] = useState(0);
-  const [writeReviewRating, setWriteReviewRating] = useState<number | null>(null);
+  const [writeReviewRating, setWriteReviewRating] = useState<number | null>(
+    null,
+  );
   const [writeReviewText, setWriteReviewText] = useState("");
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [reviewImages, setReviewImages] = useState<string[]>([]);
@@ -167,7 +168,10 @@ const Detail = () => {
     if (router.query.writeReview === "true") {
       setValue(1);
       setTimeout(() => {
-        writeReviewRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        writeReviewRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }, 300);
     }
   }, [router.query.writeReview]);
@@ -436,20 +440,28 @@ const Detail = () => {
 
           {value === 1 && (
             <Stack className="detail-tab-panel review-tab-panel">
-
               {router.query.writeReview === "true" && (
                 <Stack className="write-review-panel" ref={writeReviewRef}>
                   {reviewSubmitted ? (
                     <Stack className="write-review-success">
-                      <Typography className="write-review-success-title">✓ Thank you for your review!</Typography>
-                      <Typography className="write-review-success-sub">Your feedback helps other pet owners find the best products.</Typography>
+                      <Typography className="write-review-success-title">
+                        ✓ Thank you for your review!
+                      </Typography>
+                      <Typography className="write-review-success-sub">
+                        Your feedback helps other pet owners find the best
+                        products.
+                      </Typography>
                     </Stack>
                   ) : (
                     <>
                       <Stack className="write-review-left">
-                        <Typography className="write-review-panel-title">Write a Review</Typography>
+                        <Typography className="write-review-panel-title">
+                          Write a Review
+                        </Typography>
                         <Stack className="write-review-rating-row">
-                          <Typography className="write-review-label">Your Rating</Typography>
+                          <Typography className="write-review-label">
+                            Your Rating
+                          </Typography>
                           <Rating
                             value={writeReviewRating}
                             onChange={(_e, val) => setWriteReviewRating(val)}
@@ -467,18 +479,37 @@ const Detail = () => {
                           onChange={(e) => setWriteReviewText(e.target.value)}
                           className="write-review-textfield"
                         />
-                        <Stack className="write-review-images-row" direction="row" flexWrap="wrap">
+                        <Stack
+                          className="write-review-images-row"
+                          direction="row"
+                          flexWrap="wrap"
+                        >
                           {reviewImages.map((src, i) => (
                             <Box key={i} className="write-review-img-preview">
                               <img src={src} alt={`upload-${i}`} />
-                              <Box className="write-review-img-remove" onClick={() => removeReviewImage(i)}>✕</Box>
+                              <Box
+                                className="write-review-img-remove"
+                                onClick={() => removeReviewImage(i)}
+                              >
+                                ✕
+                              </Box>
                             </Box>
                           ))}
                           {reviewImages.length < 4 && (
                             <label className="write-review-img-upload">
-                              <input hidden type="file" accept="image/*" multiple onChange={handleReviewImageUpload} />
-                              <Box className="write-review-img-upload-icon">+</Box>
-                              <Typography className="write-review-img-upload-text">Add Photo</Typography>
+                              <input
+                                hidden
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={handleReviewImageUpload}
+                              />
+                              <Box className="write-review-img-upload-icon">
+                                +
+                              </Box>
+                              <Typography className="write-review-img-upload-text">
+                                Add Photo
+                              </Typography>
                             </label>
                           )}
                         </Stack>

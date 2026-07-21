@@ -79,7 +79,7 @@
           top: 12px;
           left: 100px;
           right: 100px;
-          height: 54px;
+          height: 58px;
           padding: 0 28px;
           border-radius: 16px;
           background-color: rgba(242, 226, 255, 0.85);
@@ -164,7 +164,7 @@
             }
           }
           .user-box {
-            width: 190px;
+            width: auto;
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
@@ -181,8 +181,8 @@
               transform: scale(1.05);
             }
             .join-box {
-              width: 184px;
               height: 40px;
+              padding: 0 22px;
               display: flex;
               align-items: center;
               justify-content: center;
@@ -190,6 +190,7 @@
               color: #595959;
               border: 1px solid #595959;
               cursor: pointer;
+              box-shadow: 0 2px 8px rgba(41, 12, 72, 0.08);
               transition:
                 transform 0.35s ease,
                 background 0.25s ease,
@@ -197,6 +198,7 @@
                 box-shadow 0.35s ease;
               svg {
                 margin-right: 10px;
+                flex-shrink: 0;
                 display: inline-block;
                 transition:
                   color 0.25s ease,
@@ -208,6 +210,7 @@
                 font-style: normal;
                 font-weight: 600;
                 line-height: normal;
+                white-space: nowrap;
                 display: inline-block;
                 transition:
                   color 0.25s ease,
@@ -252,15 +255,24 @@
               justify-content: center;
 
               img {
-                width: 52px;
-                height: 52px;
+                width: 50px;
+                height: 50px;
                 border-radius: 50%;
                 object-fit: cover;
-                transition: transform 0.25s ease;
+                border: 2px solid #ffffff;
+                box-shadow:
+                  0 0 0 1px rgba(65, 0, 117, 0.08),
+                  0 4px 12px rgba(41, 12, 72, 0.18);
+                transition:
+                  transform 0.25s ease,
+                  box-shadow 0.25s ease;
               }
 
               &:hover img {
                 transform: scale(1.06);
+                box-shadow:
+                  0 0 0 1px rgba(65, 0, 117, 0.14),
+                  0 8px 20px rgba(41, 12, 72, 0.24);
               }
             }
           }

@@ -54,7 +54,7 @@ const MY_ARTICLES: FreeBoardNewsCardType[] = [
     views: 1875,
     likes: 142,
     author: "You",
-    authorImage: "/img/profile/defaultUser.png",
+    authorImage: "/img/profile/.png",
     comments: [
       {
         id: "c3",
@@ -76,7 +76,7 @@ const MY_ARTICLES: FreeBoardNewsCardType[] = [
     views: 2640,
     likes: 196,
     author: "You",
-    authorImage: "/img/profile/defaultUser.png",
+    authorImage: "/img/profile/.png",
     comments: [],
   },
   {
