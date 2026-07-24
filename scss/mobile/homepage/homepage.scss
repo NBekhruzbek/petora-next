@@ -883,9 +883,9 @@
       }
     }
 
-    // ─── Top pet foods / toys grids ───────────────────────────────────────
-    .top-pet-foods,
-    .top-pet-toys {
+    // ─── Top pet products / services grids ────────────────────────────────
+    .top-pet-products,
+    .top-pet-services {
       .container {
         padding: 0 $space-4;
         gap: $space-2; // PC's 24px container gap is #pc-wrap-scoped
@@ -921,13 +921,45 @@
       // display:grid only exists under #pc-wrap, so without it the Stack
       // stays a flex column and the 2-up columns never engage — that's the
       // "one giant card per row" bug.
-      .top-pet-foods-grid,
-      .top-pet-toys-grid {
+      .top-pet-products-grid,
+      .top-pet-services-grid {
         display: grid;
         width: 100%;
         margin-top: $space-2;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: $space-3;
+      }
+
+      // Shared servicepage card is tuned for the desktop grid; compact its
+      // image + calm the animated red CTA border (a signature reserved for
+      // hero CTAs — it reads as a glitchy edge on these small 2-up cards).
+      .service-card {
+        .service-card-image-wrap {
+          height: 120px;
+        }
+
+        .service-card-content {
+          padding: 12px 12px 14px;
+
+          .service-price-row .service-price {
+            font-size: 19px;
+          }
+
+          // "N booked" wraps + clips on the narrow 2-up card — drop it and
+          // its dangling separator so the rating row stays one clean line.
+          .service-rating-row {
+            .service-booking-count,
+            .service-price-sep {
+              display: none;
+            }
+          }
+        }
+
+        .service-book-btn {
+          background: linear-gradient(135deg, #7a1bd0, #410075);
+          border: none;
+          animation: none;
+        }
       }
 
       // Shared card is sized for the desktop 4-up 1300px grid

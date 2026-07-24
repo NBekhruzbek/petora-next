@@ -2,7 +2,7 @@ import { Box, Stack } from "@mui/material";
 import { useState } from "react";
 import TopPetProductsCard, { TopPetProductItem } from "./TopPetProductsCard";
 
-const topPetFoodItems: TopPetProductItem[] = [
+const topPetProductItems: TopPetProductItem[] = [
   {
     id: "food-1",
     name: "FILLET 'O' LAKES - KIT CAT",
@@ -15,6 +15,34 @@ const topPetFoodItems: TopPetProductItem[] = [
     price: 200,
     discountPercent: 50,
     likesCount: 1240,
+    liked: true,
+  },
+  {
+    id: "toy-1",
+    name: "Dog Toys to Mouth",
+    image: "/img/products/dog-toys-to-mouth.png",
+    petType: "Dogs",
+    rating: 5.0,
+    reviewCount: 185,
+    sold: 1000,
+    discountedPrice: 320,
+    price: 396,
+    discountPercent: 19,
+    likesCount: 1560,
+    liked: false,
+  },
+  {
+    id: "toy-2",
+    name: "Basketball and Football Shaped Dog and Cat Toys",
+    image: "/img/products/basketball-ball.png",
+    petType: "Cats",
+    rating: 4.0,
+    reviewCount: 236,
+    sold: 329,
+    discountedPrice: 300,
+    price: 328.85,
+    discountPercent: 9,
+    likesCount: 1195,
     liked: true,
   },
   {
@@ -31,38 +59,10 @@ const topPetFoodItems: TopPetProductItem[] = [
     likesCount: 982,
     liked: true,
   },
-  {
-    id: "food-3",
-    name: "ROYAL CANIN - CARE DIGEST",
-    image: "/img/products/royal-canin.png",
-    petType: "Dogs",
-    rating: 4.5,
-    reviewCount: 618,
-    sold: 900,
-    discountedPrice: 600,
-    price: 630.44,
-    discountPercent: 5,
-    likesCount: 743,
-    liked: false,
-  },
-  {
-    id: "food-4",
-    name: "WELLNESS - SIGNATURE SELECTS",
-    image: "/img/products/wellness.png",
-    petType: "Cats",
-    rating: 3.0,
-    reviewCount: 19,
-    sold: 12,
-    discountedPrice: 200,
-    price: 293.01,
-    discountPercent: 32,
-    likesCount: 214,
-    liked: false,
-  },
 ];
 
-const TopPetFoods = () => {
-  const [items, setItems] = useState(topPetFoodItems);
+const TopPetProducts = () => {
+  const [items, setItems] = useState(topPetProductItems);
 
   const onToggleLike = (id: string) => {
     setItems((prev) =>
@@ -82,15 +82,15 @@ const TopPetFoods = () => {
   };
 
   return (
-    <Stack className="top-pet-foods">
+    <Stack className="top-pet-products">
       <Stack className="container">
         <Box className="section-title">
-          top pet foods
-          <img className="hand-icon" src="/img/logo/union.svg" alt="" />
+          top pet products
+          <img className="hand-icon" src="/img/logo/Union.svg" alt="" />
         </Box>
-        <Box className={"desc-text"}>Top Foods are based on Likes</Box>
+        <Box className={"desc-text"}>Top Products are based on Likes</Box>
 
-        <Stack className="top-pet-foods-grid">
+        <Stack className="top-pet-products-grid">
           {items.map((item) => (
             <TopPetProductsCard
               key={item.id}
@@ -104,4 +104,4 @@ const TopPetFoods = () => {
   );
 };
 
-export default TopPetFoods;
+export default TopPetProducts;

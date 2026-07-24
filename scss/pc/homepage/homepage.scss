@@ -119,7 +119,7 @@
                   .text {
                     /* Web/18px-Content/Regular */
                     font-family: $font;
-                    font-size: 12px;
+                    font-size: 11px;
                     font-style: normal;
                     font-weight: 400;
                     color: var(--Neutral-700, #595959);
@@ -203,7 +203,7 @@
                     color: var(--Neutral-800, #252525);
                   }
                   .text {
-                    margin-top: 8px;
+                    margin-top: 4px;
                     /* Web/18px-Content/Regular */
                     font-family: $font;
                     font-size: 12px;
@@ -214,7 +214,7 @@
                   .read-more-button {
                     width: 88px;
                     height: 28px;
-                    top: 5px;
+                    top: 6px;
                     font-size: 10px;
                     font-weight: 600;
                     animation:
@@ -786,7 +786,6 @@
             width: 100%;
             margin-left: 65px;
             gap: 30px;
-
           }
         }
 
@@ -1244,7 +1243,8 @@
       }
     }
 
-    .top-pet-foods {
+    .top-pet-products,
+    .top-pet-services {
       width: 100%;
       padding-bottom: 100px;
 
@@ -1270,51 +1270,33 @@
           }
         }
 
-        .top-pet-foods-grid {
-          display: grid;
-          width: 100%;
-          grid-template-columns: repeat(4, minmax(0, 280px));
-          justify-content: space-around;
-          gap: 1px;
-
+        .desc-text {
+          margin-top: -14px;
+          color: #6b6b6b;
+          font-family: $font;
+          font-size: 16px;
+          font-weight: 500;
         }
       }
     }
 
-    .top-pet-toys {
-      width: 100%;
-      padding-bottom: 100px;
+    .top-pet-products {
+      .top-pet-products-grid {
+        display: grid;
+        width: 100%;
+        grid-template-columns: repeat(4, minmax(0, 280px));
+        justify-content: space-around;
+        gap: 24px 1px;
+      }
+    }
 
-      .container {
-        flex-direction: column;
+    .top-pet-services {
+      .top-pet-services-grid {
+        display: grid;
+        width: 100%;
+        grid-template-columns: repeat(4, minmax(0, 280px));
+        justify-content: space-around;
         gap: 24px;
-
-        .section-title {
-          display: inline-flex;
-          align-items: center;
-          gap: 20px;
-          color: #410075;
-          font-family: $font;
-          font-size: 42px;
-          font-style: normal;
-          font-weight: 700;
-          line-height: 1;
-          text-transform: uppercase;
-
-          .hand-icon {
-            width: 54px;
-            height: auto;
-          }
-        }
-
-        .top-pet-toys-grid {
-          display: grid;
-          width: 100%;
-          grid-template-columns: repeat(4, minmax(0, 280px));
-          justify-content: space-around;
-          gap: 1px;
-
-        }
       }
     }
 
@@ -1353,9 +1335,7 @@
             height: auto;
           }
         }
-
       }
-
     }
 
     .instagram-frame {

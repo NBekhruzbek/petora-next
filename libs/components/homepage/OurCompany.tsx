@@ -40,8 +40,8 @@ const OurCompany = () => {
                 <Stack className="text-area">
                   <Box className={"main-text"}>Physical checkup your pet</Box>
                   <Box className={"text"}>
-                    Regular physical checkups are essential for maintaining
-                    your pet's health.
+                    Regular physical checkups are essential for maintaining your
+                    pet's health.
                   </Box>
                   <Button
                     className="read-more-button"
@@ -56,10 +56,10 @@ const OurCompany = () => {
               </Stack>
               <Stack className="right-card">
                 <Stack className="text-area">
-                  <Box className={"main-text"}>Spa</Box>
+                  <Box className={"main-text"}>Grooming</Box>
                   <Box className={"text"}>
-                    Our pet spa offers a luxurious and relaxing experience for
-                    your pet.
+                    Our professional service keeps your pet clean, and looking
+                    their best.
                   </Box>
                   <Button
                     className="read-more-button"

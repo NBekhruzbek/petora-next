@@ -6,8 +6,8 @@ import WhatWeOffer from "@/libs/components/homepage/WhatWeOffer";
 import Species from "@/libs/components/homepage/Species";
 import Advertisement from "@/libs/components/homepage/Advertisement";
 import DiscountAdvertisement from "@/libs/components/homepage/DiscountAdvertisement";
-import TopPetFoods from "@/libs/components/homepage/TopPetFoods";
-import TopPetToys from "@/libs/components/homepage/TopPetToys";
+import TopPetProducts from "@/libs/components/homepage/TopPetProducts";
+import TopPetServices from "@/libs/components/homepage/TopPetServices";
 import TopAgents from "@/libs/components/homepage/TopAgents";
 import Discovery from "@/libs/components/homepage/Discovery";
 import SocialMedia from "@/libs/components/homepage/SocialMedia";
@@ -20,8 +20,8 @@ const Home: NextPage = () => {
       <Discovery />
       <Species />
       <DiscountAdvertisement />
-      <TopPetFoods />
-      <TopPetToys />
+      <TopPetProducts />
+      <TopPetServices />
       <Advertisement />
       <TopAgents />
       <SocialMedia />
