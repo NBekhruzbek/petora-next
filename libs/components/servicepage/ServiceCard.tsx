@@ -47,21 +47,35 @@ const ServiceCard = ({ item, onToggleLike }: ServiceCardProps) => {
       </Box>
 
       <Stack className="service-card-content">
-        <Typography className="service-card-name">{item.serviceName}</Typography>
+        <Typography className="service-card-name">
+          {item.serviceName}
+        </Typography>
 
-        <Stack className="service-price-row" direction="row" alignItems="center">
+        <Stack
+          className="service-price-row"
+          direction="row"
+          alignItems="center"
+        >
           <Typography className="service-price">${item.price}</Typography>
           <Typography className="service-price-sep">·</Typography>
           <AccessTimeOutlinedIcon className="duration-icon" />
           <Typography className="service-duration">{item.duration}</Typography>
         </Stack>
 
-        <Stack className="service-location-row" direction="row" alignItems="center">
+        <Stack
+          className="service-location-row"
+          direction="row"
+          alignItems="center"
+        >
           <LocationOnOutlinedIcon className="location-icon" />
           <Typography className="service-location">{item.location}</Typography>
         </Stack>
 
-        <Stack className="service-rating-row" direction="row" alignItems="center">
+        <Stack
+          className="service-rating-row"
+          direction="row"
+          alignItems="center"
+        >
           <Rating
             value={item.rating}
             precision={0.5}
@@ -69,15 +83,20 @@ const ServiceCard = ({ item, onToggleLike }: ServiceCardProps) => {
             size="small"
             className="rating-stars"
           />
-          <Typography className="rating-value">{item.rating.toFixed(1)}</Typography>
-          <Typography className="review-count">({item.reviewCount.toLocaleString()})</Typography>
+          <Typography className="rating-value">
+            {item.rating.toFixed(1)}
+          </Typography>
+          <Typography className="review-count">
+            ({item.reviewCount.toLocaleString()})
+          </Typography>
           {item.bookingCount !== undefined && (
             <>
               <Typography className="service-price-sep">·</Typography>
               <Typography className="service-booking-count">
                 {item.bookingCount >= 1000
                   ? `${(item.bookingCount / 1000).toFixed(1)}k`
-                  : item.bookingCount} booked
+                  : item.bookingCount}{" "}
+                booked
               </Typography>
             </>
           )}
