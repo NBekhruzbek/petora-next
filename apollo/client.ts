@@ -15,6 +15,7 @@ import { onError } from "@apollo/client/link/error";
 import { getJwtToken } from "../libs/auth";
 import { TokenRefreshLink } from "apollo-link-token-refresh";
 import { sweetErrorAlert } from "../libs/sweetAlert";
+import { Message } from "../libs/enums/common.enum";
 import { socketVar } from "./store";
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
@@ -107,7 +108,12 @@ function createIsomorphicLink() {
           console.log(
             `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
           );
-          if (!message.includes("input")) sweetErrorAlert(message);
+          // "No data found!" is how the API signals an empty result set for a
+          // list/aggregation query — list screens render their own empty state
+          // (no-data image), so don't surface it as an error popup.
+          if (!message.includes("input") && message !== Message.NO_DATA_FOUND) {
+            sweetErrorAlert(message);
+          }
         });
       }
       if (networkError) console.log(`[Network error]: ${networkError}`);
