@@ -2,8 +2,13 @@ import React, { ChangeEvent, useRef, useState } from "react";
 import { Box, Pagination, PaginationItem, Stack, Tab, Tabs } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { useQuery } from "@apollo/client";
 import ProductsCard, { ProductItem } from "../shoppage/ProductsCard";
-import ServiceCard, { ServiceItem } from "../servicepage/ServiceCard";
+import ServiceCard from "../servicepage/ServiceCard";
+import { GET_FAVORITE_SERVICES } from "@/apollo/user/query";
+import { Service } from "@/libs/types/service/service";
+import { T } from "@/libs/types/common";
+import { Message } from "@/libs/enums/common.enum";
 
 const FAV_PRODUCTS: ProductItem[] = [
   {
@@ -177,99 +182,6 @@ const FAV_PRODUCTS: ProductItem[] = [
   },
 ];
 
-const FAV_SERVICES: ServiceItem[] = [
-  {
-    _id: "fav-s-1",
-    serviceName: "Premium Dog Grooming",
-    category: "Grooming",
-    image: "/img/services/grooming.jpg",
-    price: 50,
-    duration: "45 min",
-    location: "Seoul",
-    rating: 4.4,
-    reviewCount: 128,
-    likes: 121,
-    liked: true,
-  },
-  {
-    _id: "fav-s-2",
-    serviceName: "Daily Dog Walk – 1 hr",
-    category: "Walking",
-    image: "/img/services/walking.jpg",
-    price: 25,
-    duration: "60 min",
-    location: "Seoul",
-    rating: 4.7,
-    reviewCount: 256,
-    likes: 201,
-    liked: true,
-  },
-  {
-    _id: "fav-s-3",
-    serviceName: "Cat Overnight Boarding",
-    category: "Boarding",
-    image: "/img/services/boarding.png",
-    price: 65,
-    duration: "per night",
-    location: "Daegu",
-    rating: 4.9,
-    reviewCount: 89,
-    likes: 312,
-    liked: true,
-  },
-  {
-    _id: "fav-s-4",
-    serviceName: "Dog Home Boarding",
-    category: "Boarding",
-    image: "/img/services/boarding.png",
-    price: 55,
-    duration: "per night",
-    location: "Suwon",
-    rating: 4.6,
-    reviewCount: 143,
-    likes: 187,
-    liked: true,
-  },
-  {
-    _id: "fav-s-5",
-    serviceName: "Basic Obedience Training",
-    category: "Training",
-    image: "/img/services/grooming.jpg",
-    price: 90,
-    duration: "60 min",
-    location: "Seoul",
-    rating: 4.8,
-    reviewCount: 211,
-    likes: 321,
-    liked: true,
-  },
-  {
-    _id: "fav-s-6",
-    serviceName: "Full Day Pet Day Care",
-    category: "Day Care",
-    image: "/img/services/boarding.png",
-    price: 45,
-    duration: "8 hrs",
-    location: "Busan",
-    rating: 4.6,
-    reviewCount: 172,
-    likes: 143,
-    liked: true,
-  },
-  {
-    _id: "fav-s-7",
-    serviceName: "Vet Check-Up & Vaccines",
-    category: "Veterinary",
-    image: "/img/services/grooming.jpg",
-    price: 80,
-    duration: "30 min",
-    location: "Seoul",
-    rating: 4.7,
-    reviewCount: 304,
-    likes: 267,
-    liked: true,
-  },
-];
 
 const PRODUCT_LIMIT = 12;
 const SERVICE_LIMIT = 6;
@@ -279,9 +191,35 @@ const MyFavorites = () => {
   const [products, setProducts] = useState(FAV_PRODUCTS);
   const [productPage, setProductPage] = useState(1);
   const [servicePage, setServicePage] = useState(1);
+  const [favServices, setFavServices] = useState<Service[]>([]);
+  const [serviceTotal, setServiceTotal] = useState(0);
 
   const productsTopRef = useRef<HTMLDivElement | null>(null);
   const servicesTopRef = useRef<HTMLDivElement | null>(null);
+
+  /** APOLLO REQUESTS **/
+
+  // Favorite products are still mock (pending the shop migration); only the
+  // services tab is wired to the API for now.
+  const { refetch: favServicesRefetch } = useQuery(GET_FAVORITE_SERVICES, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: { page: servicePage, limit: SERVICE_LIMIT } },
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data: T) => {
+      setFavServices(data?.getFavoriteServices?.list ?? []);
+      setServiceTotal(data?.getFavoriteServices?.metaCounter?.[0]?.total ?? 0);
+    },
+    // The API throws "No data found!" for an empty list instead of returning
+    // an empty array, so clear the state to render the empty grid.
+    onError: (error) => {
+      if (
+        error.graphQLErrors?.some((e) => e.message === Message.NO_DATA_FOUND)
+      ) {
+        setFavServices([]);
+        setServiceTotal(0);
+      }
+    },
+  });
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -321,9 +259,7 @@ const MyFavorites = () => {
   const productStart = (productPage - 1) * PRODUCT_LIMIT;
   const pagedProducts = products.slice(productStart, productStart + PRODUCT_LIMIT);
 
-  const serviceTotalPages = Math.max(1, Math.ceil(FAV_SERVICES.length / SERVICE_LIMIT));
-  const serviceStart = (servicePage - 1) * SERVICE_LIMIT;
-  const pagedServices = FAV_SERVICES.slice(serviceStart, serviceStart + SERVICE_LIMIT);
+  const serviceTotalPages = Math.max(1, Math.ceil(serviceTotal / SERVICE_LIMIT));
 
   return (
     <Stack className="my-favorites-container" spacing={3}>
@@ -372,11 +308,16 @@ const MyFavorites = () => {
         {activeTab === 1 && (
           <Stack className="fav-services-wrap" ref={servicesTopRef}>
             <Stack className="fav-agents-grid">
-              {pagedServices.map((service) => (
-                <ServiceCard key={service._id} item={service} />
+              {favServices.map((service) => (
+                <ServiceCard
+                  key={service._id}
+                  service={service}
+                  getServicesRefetch={favServicesRefetch}
+                  defaultFavorite
+                />
               ))}
             </Stack>
-            {FAV_SERVICES.length > SERVICE_LIMIT && (
+            {serviceTotal > SERVICE_LIMIT && (
               <Stack className="pagination-section">
                 <Pagination
                   count={serviceTotalPages}

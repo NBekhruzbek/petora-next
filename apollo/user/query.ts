@@ -440,6 +440,11 @@ export const GET_FAVORITE_SERVICES = gql`
         memberId
         createdAt
         updatedAt
+        meLiked {
+          memberId
+          likeRefId
+          myFavorite
+        }
       }
       metaCounter {
         total
