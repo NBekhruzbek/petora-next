@@ -1,34 +1,50 @@
 import { Box, Button, Stack } from "@mui/material";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import Link from "next/link";
+import { Member } from "@/libs/types/member/member";
+import { REACT_APP_API_URL } from "@/libs/config";
+import router from "next/router";
+import { KeyboardEvent } from "react";
 
-export type TopAgentItem = {
-  id: string;
-  name: string;
-  email: string;
-  image: string;
+type TopServiceAgentsProps = {
+  agent: Member;
 };
 
-type TopAgentsCardProps = {
-  item: TopAgentItem;
-};
+const agentDetailHref = "/agents/detail";
 
-const TopAgentsCard = ({ item }: TopAgentsCardProps) => {
+const TopAgentsCard = ({ agent }: TopServiceAgentsProps) => {
+  /** HANDLERS **/
+
+  const handleCardClick = () => {
+    void router.push(agentDetailHref);
+  };
+
+  const handleCardKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleCardClick();
+    }
+  };
+
   return (
     <Stack className="top-agents-card">
       <Box className="agent-image-wrap">
-        <img className="agent-image" src={item.image} alt={item.name} />
+        <img
+          className="agent-image"
+          src={`${REACT_APP_API_URL}/${agent?.memberImage}`}
+          alt={agent.memberUserName}
+        />
       </Box>
 
       <Stack className="agent-content">
-        <Box className="agent-name">{item.name}</Box>
-        <Box className="agent-email">{item.email}</Box>
+        <Box className="agent-name">{agent.memberUserName}</Box>
+        <Box className="agent-email">{agent.memberEmail}</Box>
 
         <Button
           className="message-btn"
           variant="outlined"
-          component={Link}
-          href="/service/booking"
+          onClick={handleCardClick}
+          onKeyDown={handleCardKeyDown}
           startIcon={<ChatBubbleOutlineRoundedIcon />}
         >
           Read More
