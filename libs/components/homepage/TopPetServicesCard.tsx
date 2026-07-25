@@ -3,6 +3,7 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import Link from "next/link";
 import { Service } from "@/libs/types/service/service";
 import {
@@ -87,14 +88,24 @@ const TopPetServicesCard = (props: TopPetServicesProps) => {
     >
       <Box className="service-card-image-wrap">
         <Box className="service-category-badge">{service.serviceType}</Box>
-        <Box
-          className={`service-like-btn ${myFavorite ? "is-liked" : ""}`}
-          onClick={(event: MouseEvent<HTMLDivElement>) =>
-            likeServiceHandler(event, service._id)
-          }
-        >
-          {myFavorite ? <FavoriteRoundedIcon /> : <FavoriteBorderRoundedIcon />}
-          <Box className="like-count">{service.serviceLikes}</Box>
+        <Box className="service-meta-badges">
+          <Box
+            className={`meta-badge meta-like ${myFavorite ? "is-liked" : ""}`}
+            onClick={(event: MouseEvent<HTMLDivElement>) =>
+              likeServiceHandler(event, service._id)
+            }
+          >
+            {myFavorite ? (
+              <FavoriteRoundedIcon />
+            ) : (
+              <FavoriteBorderRoundedIcon />
+            )}
+            <Box className="meta-count">{service.serviceLikes}</Box>
+          </Box>
+          <Box className="meta-badge meta-views">
+            <VisibilityOutlinedIcon />
+            <Box className="meta-count">{service.serviceViews}</Box>
+          </Box>
         </Box>
         <img
           className="service-card-image"

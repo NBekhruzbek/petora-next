@@ -93,6 +93,64 @@
         line-height: 1;
       }
     }
+
+    // Like + views badges as a single translucent pill (one background so the
+    // two rows read as one element — no seam from stacked transparent layers).
+    .service-meta-badges {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(8px);
+
+      .meta-badge {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 9px 5px 7px;
+
+        svg {
+          font-size: 17px;
+          color: #fff;
+          transition:
+            color 0.2s ease,
+            transform 0.2s ease;
+          flex-shrink: 0;
+        }
+
+        .meta-count {
+          color: #fff;
+          font-family: $font;
+          font-size: 12px;
+          font-weight: 700;
+          line-height: 1;
+        }
+      }
+
+      .meta-like {
+        cursor: pointer;
+        transition: background 0.2s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+
+        &.is-liked svg {
+          color: #f43f5e;
+          transform: scale(1.15);
+        }
+      }
+
+      .meta-views {
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
+      }
+    }
   }
 
   .service-card-content {
@@ -245,4 +303,3 @@
     }
   }
 }
-
