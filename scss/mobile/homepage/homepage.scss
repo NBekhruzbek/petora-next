@@ -978,24 +978,34 @@
           .product-image {
             max-height: 104px;
           }
+
+          .like-meta {
+            top: auto;
+            bottom: 8px;
+            gap: 8px;
+            padding: 4px 9px;
+
+            .views-icon {
+              font-size: 18px;
+            }
+          }
         }
 
         // Shared rating/price rows are set for a ~280px-wide card and
-        // clip at ~172px — resize to fit; the ellipsis on rating-text
-        // stays as the worst-case fallback.
+        // clip at ~172px — shrink the meta row to fit the compact width.
         .card-content {
-          .rating-row .rating-info {
+          .rating-row {
+            gap: 4px;
+
             .star-rating .MuiSvgIcon-root {
               font-size: 12px;
             }
 
-            .rating-text {
+            .rating-value,
+            .review-count,
+            .sold-count {
               font-size: 11px;
             }
-          }
-
-          .sold-text {
-            font-size: 11px;
           }
 
           .price-row {

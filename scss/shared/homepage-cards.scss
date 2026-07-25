@@ -232,11 +232,22 @@
 
     .like-meta {
       position: absolute;
-      top: 12px;
+      bottom: 12px;
       right: 12px;
       z-index: 2;
       align-items: center;
-      gap: 3px;
+      gap: 10px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 2px 8px rgba(20, 10, 40, 0.12);
+
+      .meta-item {
+        align-items: center;
+        gap: 4px;
+      }
 
       .like-toggle {
         width: 26px;
@@ -250,7 +261,8 @@
         justify-content: center;
       }
 
-      .like-count {
+      .like-count,
+      .views-count {
         color: #666;
         text-align: center;
         font-family: $font;
@@ -258,6 +270,11 @@
         font-style: normal;
         font-weight: 600;
         line-height: 1;
+      }
+
+      .views-icon {
+        color: #666;
+        font-size: 20px;
       }
     }
 
@@ -326,49 +343,56 @@
 
     .rating-row {
       align-items: center;
-      gap: 4px;
+      gap: 6px;
 
-      .rating-info {
-        align-items: center;
-        gap: 2px;
+      .star-rating {
+        color: #ff9d59;
 
-        .star-rating {
+        .MuiRating-iconHover {
           color: #ff9d59;
-
-          .MuiRating-iconHover {
-            color: #ff9d59;
-          }
-
-          .MuiRating-iconEmpty {
-            color: #d8d8d8;
-          }
-
-          .MuiSvgIcon-root {
-            font-size: 16px;
-          }
         }
 
-        .rating-text {
-          color: #666;
-          font-family: $font;
-          font-size: 13px;
-          font-style: normal;
-          font-weight: 400;
-          line-height: 1.1;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+        .MuiRating-iconEmpty {
+          color: #d8d8d8;
+        }
+
+        .MuiSvgIcon-root {
+          font-size: 15px;
         }
       }
-    }
 
-    .sold-text {
-      color: #666;
-      font-family: $font;
-      font-size: 13px;
-      font-style: normal;
-      font-weight: 600;
-      line-height: 1.1;
+      .rating-value {
+        color: #374151;
+        font-family: $font;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+
+      .review-count {
+        color: #9ca3af;
+        font-family: $font;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.1;
+      }
+
+      .rating-sep {
+        color: #d1d5db;
+        font-size: 16px;
+        line-height: 1;
+      }
+
+      .sold-count {
+        color: #7c3aed;
+        font-family: $font;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 1.1;
+      }
     }
 
     .price-row {

@@ -25,6 +25,7 @@ export interface Product {
   productReviews: number;
   productRating: number;
   productRank: number;
+  productSoldTimes: number;
   createdAt: Date;
   updatedAt: Date;
   /** from aggregation */

@@ -28,7 +28,7 @@ interface PriceRange {
 
 interface PISearch {
   priceRange?: PriceRange;
-  onlyLiked: boolean;
+  onlyLiked?: boolean;
   productPetType?: ProductPetType[];
   productType?: ProductType[];
   productStatus?: ProductStatus[];
