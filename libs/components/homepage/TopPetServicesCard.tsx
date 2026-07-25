@@ -66,7 +66,10 @@ const TopPetServicesCard = (props: TopPetServicesProps) => {
   };
 
   const handleCardClick = () => {
-    void router.push(serviceDetailHref);
+    void router.push({
+      pathname: serviceDetailHref,
+      query: { id: service._id },
+    });
   };
 
   const handleCardKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {

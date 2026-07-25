@@ -74,7 +74,10 @@ const TopPetProductsCard = (props: TopPetProductsProps) => {
   };
 
   const handleCardClick = () => {
-    void router.push(productDetailHref);
+    void router.push({
+      pathname: productDetailHref,
+      query: { id: product._id },
+    });
   };
 
   const handleCardKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {

@@ -16,7 +16,7 @@ const TopAgentsCard = ({ agent }: TopServiceAgentsProps) => {
   /** HANDLERS **/
 
   const handleCardClick = () => {
-    void router.push(agentDetailHref);
+    void router.push({ pathname: agentDetailHref, query: { id: agent._id } });
   };
 
   const handleCardKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
