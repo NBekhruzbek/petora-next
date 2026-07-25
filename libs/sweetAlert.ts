@@ -141,3 +141,26 @@ export const sweetTopSmallSuccessAlert = async (
     }
   });
 };
+
+export const sweetBottomSmallSuccessAlert = async (
+  msg: string,
+  duration: number = 2000,
+  enable_forward: boolean = false,
+) => {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "bottom-end",
+    showConfirmButton: false,
+    timer: duration,
+    timerProgressBar: true,
+  });
+
+  Toast.fire({
+    icon: "success",
+    title: msg,
+  }).then((data) => {
+    if (enable_forward) {
+      window.location.reload();
+    }
+  });
+};
