@@ -3,52 +3,123 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-import Link from "next/link";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import {
+  ApolloQueryResult,
+  OperationVariables,
+  useMutation,
+  useReactiveVar,
+} from "@apollo/client";
+import { useRouter } from "next/router";
+import { KeyboardEvent, MouseEvent } from "react";
+import { Service } from "@/libs/types/service/service";
+import { T } from "@/libs/types/common";
+import { userVar } from "@/apollo/store";
+import { LIKE_TARGET_SERVICE } from "@/apollo/user/mutation";
+import { Messages, REACT_APP_API_URL } from "@/libs/config";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
 
-export type ServiceItem = {
-  _id: string;
-  serviceName: string;
-  category: string;
-  image: string;
-  price: number;
-  duration: string;
-  location: string;
-  rating: number;
-  reviewCount: number;
-  likes: number;
-  liked?: boolean;
-  bookingCount?: number;
-};
+interface ServiceCardProps {
+  service: Service;
+  getServicesRefetch: (
+    variables?: Partial<OperationVariables>,
+  ) => Promise<ApolloQueryResult<T>>;
+  // Fallback like state for lists where every item is known to be favorited
+  // (e.g. the favorites page) and the API doesn't return a per-member meLiked.
+  defaultFavorite?: boolean;
+}
 
-type ServiceCardProps = {
-  item: ServiceItem;
-  onToggleLike?: () => void;
-};
+const serviceDetailHref = "/service/booking";
 
-const ServiceCard = ({ item, onToggleLike }: ServiceCardProps) => {
-  const liked = item.liked ?? false;
+const ServiceCard = (props: ServiceCardProps) => {
+  const { service, getServicesRefetch, defaultFavorite } = props;
+  const router = useRouter();
+  const user = useReactiveVar(userVar);
+  const myFavorite =
+    service?.meLiked?.[0]?.myFavorite ?? Boolean(defaultFavorite);
+
+  /** APOLLO REQUESTS **/
+
+  const [likeTargetService] = useMutation(LIKE_TARGET_SERVICE);
+
+  /** HANDLERS **/
+
+  const likeServiceHandler = async (
+    event: MouseEvent<HTMLDivElement>,
+    serviceId: string,
+  ) => {
+    // The whole card is a link to the detail page, so keep the like
+    // interaction from bubbling up and triggering navigation.
+    event.stopPropagation();
+    try {
+      if (!user?._id) throw new Error(Messages.error2);
+
+      await likeTargetService({ variables: { input: serviceId } });
+
+      // Refetch so the local list re-syncs meLiked + serviceLikes.
+      await getServicesRefetch();
+
+      await sweetBottomSmallSuccessAlert("Success!", 700);
+    } catch (err: any) {
+      console.log("ERROR, likeServiceHandler:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
+
+  const handleCardClick = () => {
+    void router.push({
+      pathname: serviceDetailHref,
+      query: { id: service._id },
+    });
+  };
+
+  const handleCardKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleCardClick();
+    }
+  };
 
   return (
-    <Stack className="service-card">
+    <Stack
+      className="service-card"
+      onKeyDown={handleCardKeyDown}
+      onClick={handleCardClick}
+    >
       <Box className="service-card-image-wrap">
-        <Box className="service-category-badge">{item.category}</Box>
-        <Box
-          className={`service-like-btn ${liked ? "is-liked" : ""}`}
-          onClick={onToggleLike}
-        >
-          {liked ? <FavoriteRoundedIcon /> : <FavoriteBorderRoundedIcon />}
-          <Box className="like-count">{item.likes}</Box>
+        <Box className="service-category-badge">{service.serviceType}</Box>
+        <Box className="service-meta-badges">
+          <Box
+            className={`meta-badge meta-like ${myFavorite ? "is-liked" : ""}`}
+            onClick={(event: MouseEvent<HTMLDivElement>) =>
+              likeServiceHandler(event, service._id)
+            }
+          >
+            {myFavorite ? (
+              <FavoriteRoundedIcon />
+            ) : (
+              <FavoriteBorderRoundedIcon />
+            )}
+            <Box className="meta-count">{service.serviceLikes}</Box>
+          </Box>
+          <Box className="meta-badge meta-views">
+            <VisibilityOutlinedIcon />
+            <Box className="meta-count">{service.serviceViews}</Box>
+          </Box>
         </Box>
         <img
           className="service-card-image"
-          src={item.image}
-          alt={item.serviceName}
+          src={`${REACT_APP_API_URL}/${service?.serviceImages[0]}`}
+          alt={service.serviceTitle}
         />
       </Box>
 
       <Stack className="service-card-content">
         <Typography className="service-card-name">
-          {item.serviceName}
+          {service.serviceTitle}
         </Typography>
 
         <Stack
@@ -56,19 +127,25 @@ const ServiceCard = ({ item, onToggleLike }: ServiceCardProps) => {
           direction="row"
           alignItems="center"
         >
-          <Typography className="service-price">${item.price}</Typography>
+          <Typography className="service-price">
+            ₩{service.servicePrice}
+          </Typography>
           <Typography className="service-price-sep">·</Typography>
           <AccessTimeOutlinedIcon className="duration-icon" />
-          <Typography className="service-duration">{item.duration}</Typography>
-        </Stack>
+          <Typography className="service-duration">
+            {service.serviceDurationMinutes} minutes
+          </Typography>
 
-        <Stack
-          className="service-location-row"
-          direction="row"
-          alignItems="center"
-        >
-          <LocationOnOutlinedIcon className="location-icon" />
-          <Typography className="service-location">{item.location}</Typography>
+          <Stack
+            className="service-location-row"
+            direction="row"
+            alignItems="center"
+          >
+            <LocationOnOutlinedIcon className="location-icon" />
+            <Typography className="service-location">
+              {service.serviceLocation}
+            </Typography>
+          </Stack>
         </Stack>
 
         <Stack
@@ -77,25 +154,25 @@ const ServiceCard = ({ item, onToggleLike }: ServiceCardProps) => {
           alignItems="center"
         >
           <Rating
-            value={item.rating}
+            value={service.serviceRating}
             precision={0.5}
             readOnly
             size="small"
             className="rating-stars"
           />
           <Typography className="rating-value">
-            {item.rating.toFixed(1)}
+            {service.serviceRating.toFixed(1)}
           </Typography>
           <Typography className="review-count">
-            ({item.reviewCount.toLocaleString()})
+            ({service.serviceReviews.toLocaleString()} reviews)
           </Typography>
-          {item.bookingCount !== undefined && (
+          {service.serviceBookings !== undefined && (
             <>
               <Typography className="service-price-sep">·</Typography>
               <Typography className="service-booking-count">
-                {item.bookingCount >= 1000
-                  ? `${(item.bookingCount / 1000).toFixed(1)}k`
-                  : item.bookingCount}{" "}
+                {service.serviceBookings >= 1000
+                  ? `${(service.serviceBookings / 1000).toFixed(1)}k`
+                  : service.serviceBookings}{" "}
                 booked
               </Typography>
             </>
@@ -104,8 +181,7 @@ const ServiceCard = ({ item, onToggleLike }: ServiceCardProps) => {
 
         <Button
           className="service-book-btn"
-          component={Link}
-          href="/service/booking"
+          onClick={handleCardClick}
           fullWidth
         >
           Book Now

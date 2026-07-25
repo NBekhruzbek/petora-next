@@ -23,7 +23,9 @@ export enum Message {
   ALREADY_REVIEWED = "You have already reviewed this item!",
 }
 
+// GraphQL serializes enums by member name, so the values must be the enum
+// tokens the API expects ("ASC" / "DESC"), not Mongo's numeric 1 / -1.
 export enum Direction {
-  ASC = 1,
-  DESC = -1,
+  ASC = "ASC",
+  DESC = "DESC",
 }

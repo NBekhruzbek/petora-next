@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -13,278 +13,270 @@ import {
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import ServiceCard, { ServiceItem } from "./ServiceCard";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import { useQuery, useReactiveVar } from "@apollo/client";
 import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 import MobileDrawer from "../common/MobileDrawer";
-
-const initialServices: ServiceItem[] = [
-  {
-    _id: "svc-1",
-    serviceName: "Premium Dog Grooming",
-    category: "Grooming",
-    image: "/img/services/grooming.jpg",
-    price: 50,
-    duration: "45 min",
-    location: "Seoul",
-    rating: 4.4,
-    reviewCount: 128,
-    likes: 121,
-    liked: false,
-    bookingCount: 843,
-  },
-  {
-    _id: "svc-2",
-    serviceName: "Full Cat Spa & Trim",
-    category: "Grooming",
-    image: "/img/services/grooming.jpg",
-    price: 40,
-    duration: "40 min",
-    location: "Busan",
-    rating: 4.2,
-    reviewCount: 84,
-    likes: 98,
-    liked: false,
-    bookingCount: 412,
-  },
-  {
-    _id: "svc-3",
-    serviceName: "Daily Dog Walk – 1 hr",
-    category: "Walking",
-    image: "/img/services/walking.jpg",
-    price: 25,
-    duration: "60 min",
-    location: "Seoul",
-    rating: 4.7,
-    reviewCount: 256,
-    likes: 201,
-    liked: true,
-    bookingCount: 2140,
-  },
-  {
-    _id: "svc-4",
-    serviceName: "Morning Park Walk",
-    category: "Walking",
-    image: "/img/services/walking.jpg",
-    price: 18,
-    duration: "45 min",
-    location: "Incheon",
-    rating: 4.3,
-    reviewCount: 97,
-    likes: 76,
-    liked: false,
-    bookingCount: 638,
-  },
-  {
-    _id: "svc-5",
-    serviceName: "Cat Overnight Boarding",
-    category: "Boarding",
-    image: "/img/services/boarding.png",
-    price: 65,
-    duration: "per night",
-    location: "Daegu",
-    rating: 4.9,
-    reviewCount: 89,
-    likes: 312,
-    liked: true,
-    bookingCount: 527,
-  },
-  {
-    _id: "svc-6",
-    serviceName: "Dog Home Boarding",
-    category: "Boarding",
-    image: "/img/services/boarding.png",
-    price: 55,
-    duration: "per night",
-    location: "Suwon",
-    rating: 4.6,
-    reviewCount: 143,
-    likes: 187,
-    liked: false,
-    bookingCount: 1380,
-  },
-  {
-    _id: "svc-7",
-    serviceName: "Basic Obedience Training",
-    category: "Training",
-    image: "/img/services/grooming.jpg",
-    price: 90,
-    duration: "60 min",
-    location: "Seoul",
-    rating: 4.8,
-    reviewCount: 211,
-    likes: 321,
-    liked: true,
-    bookingCount: 1920,
-  },
-  {
-    _id: "svc-8",
-    serviceName: "Puppy Socialization Class",
-    category: "Training",
-    image: "/img/services/walking.jpg",
-    price: 75,
-    duration: "50 min",
-    location: "Gyeongju",
-    rating: 4.5,
-    reviewCount: 61,
-    likes: 89,
-    liked: false,
-    bookingCount: 294,
-  },
-  {
-    _id: "svc-9",
-    serviceName: "Full Day Pet Day Care",
-    category: "Day Care",
-    image: "/img/services/boarding.png",
-    price: 45,
-    duration: "8 hrs",
-    location: "Busan",
-    rating: 4.6,
-    reviewCount: 172,
-    likes: 143,
-    liked: false,
-    bookingCount: 765,
-  },
-  {
-    _id: "svc-10",
-    serviceName: "Vet Check-Up & Vaccines",
-    category: "Veterinary",
-    image: "/img/services/grooming.jpg",
-    price: 80,
-    duration: "30 min",
-    location: "Seoul",
-    rating: 4.7,
-    reviewCount: 304,
-    likes: 267,
-    liked: false,
-    bookingCount: 3210,
-  },
-];
+import ServiceCard from "./ServiceCard";
+import { userVar } from "@/apollo/store";
+import { GET_ALL_SERVICES } from "@/apollo/user/query";
+import { ServicesInquiry } from "@/libs/types/service/service.input";
+import { Service } from "@/libs/types/service/service";
+import { Direction, Message } from "@/libs/enums/common.enum";
+import { ServiceLocation, ServiceType } from "@/libs/enums/service.enum";
+import { T } from "@/libs/types/common";
 
 type SortOption = "new" | "rating" | "likes" | "price-low" | "price-high";
 
-const categories = [
-  "Day Care",
-  "Walking",
-  "Grooming",
-  "Boarding",
-  "Training",
-  "Veterinary",
+const SORT_OPTIONS: {
+  value: SortOption;
+  label: string;
+  sort: string;
+  direction: Direction;
+}[] = [
+  { value: "new", label: "New", sort: "createdAt", direction: Direction.DESC },
+  {
+    value: "rating",
+    label: "Highest Rating",
+    sort: "serviceRating",
+    direction: Direction.DESC,
+  },
+  {
+    value: "likes",
+    label: "Most Liked",
+    sort: "serviceLikes",
+    direction: Direction.DESC,
+  },
+  {
+    value: "price-low",
+    label: "Price: Low to High",
+    sort: "servicePrice",
+    direction: Direction.ASC,
+  },
+  {
+    value: "price-high",
+    label: "Price: High to Low",
+    sort: "servicePrice",
+    direction: Direction.DESC,
+  },
 ];
 
-const locations = [
-  "Seoul",
-  "Busan",
-  "Incheon",
-  "Daegu",
-  "Suwon",
-  "Gyeongju",
-  "Gwangju",
-  "Chonju",
-  "Daejon",
-  "Jeju",
+const CATEGORY_OPTIONS: { label: string; value: ServiceType }[] = [
+  { label: "Day Care", value: ServiceType.DAY_CARE },
+  { label: "Walking", value: ServiceType.WALKING },
+  { label: "Grooming", value: ServiceType.GROOMING },
+  { label: "Boarding", value: ServiceType.BOARDING },
+  { label: "Training", value: ServiceType.TRAINING },
+  { label: "Veterinary", value: ServiceType.VETERINARY },
+];
+
+const LOCATION_OPTIONS: { label: string; value: ServiceLocation }[] = [
+  { label: "Seoul", value: ServiceLocation.SEOUL },
+  { label: "Busan", value: ServiceLocation.BUSAN },
+  { label: "Incheon", value: ServiceLocation.INCHEON },
+  { label: "Daegu", value: ServiceLocation.DAEGU },
+  { label: "Suwon", value: ServiceLocation.SUWON },
+  { label: "Gyeongju", value: ServiceLocation.GYEONGJU },
+  { label: "Gwangju", value: ServiceLocation.GWANGJU },
+  { label: "Jeonju", value: ServiceLocation.JEONJU },
+  { label: "Daejeon", value: ServiceLocation.DAEJEON },
+  { label: "Jeju", value: ServiceLocation.JEJU },
 ];
 
 const DEFAULT_PRICE_RANGE = [0, 200];
 
-const Services = () => {
+const initialInput: ServicesInquiry = {
+  page: 1,
+  limit: 6,
+  sort: "createdAt",
+  direction: Direction.DESC,
+  search: {
+    onlyLiked: false,
+  },
+};
+
+interface ServicesProps {
+  initialInput?: ServicesInquiry;
+}
+
+const Services = ({
+  initialInput: propInput = initialInput,
+}: ServicesProps) => {
   const device = useDeviceDetect();
-  const [services, setServices] = useState(initialServices);
+  const user = useReactiveVar(userVar);
+
+  const [searchFilter, setSearchFilter] = useState<ServicesInquiry>(propInput);
+  const [services, setServices] = useState<Service[]>([]);
+  const [total, setTotal] = useState<number>(0);
+
+  // `priceRange` mirrors the slider while dragging; the query is only updated
+  // once the drag is committed (see priceCommitHandler).
   const [priceRange, setPriceRange] = useState<number[]>(DEFAULT_PRICE_RANGE);
+  const [searchText, setSearchText] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("new");
+
   const [isPriceOpen, setIsPriceOpen] = useState(true);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
   const [isLocationOpen, setIsLocationOpen] = useState(true);
   const [isLikedOpen, setIsLikedOpen] = useState(true);
-  const [likedSelected, setLikedSelected] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-  const [searchText, setSearchText] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("new");
-  const [serviceSearch, setServiceSearch] = useState({ page: 1, limit: 6 });
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const servicesTopRef = useRef<HTMLDivElement | null>(null);
+
+  /** APOLLO REQUESTS **/
+
+  const { loading: getServicesLoading, refetch: getServicesRefetch } = useQuery(
+    GET_ALL_SERVICES,
+    {
+      fetchPolicy: "cache-and-network", // cache + => network
+      variables: { input: searchFilter },
+      notifyOnNetworkStatusChange: true,
+      onCompleted: (data: T) => {
+        setServices(data?.getAllServices?.list ?? []);
+        setTotal(data?.getAllServices?.metaCounter?.[0]?.total ?? 0);
+      },
+      // The API throws "No data found!" instead of returning an empty list, so
+      // clear the previous results to let the no-data empty state render.
+      onError: (error) => {
+        if (
+          error.graphQLErrors?.some(
+            (e) => e.message === Message.NO_DATA_FOUND,
+          )
+        ) {
+          setServices([]);
+          setTotal(0);
+        }
+      },
+    },
+  );
+
+  /** LIFECYCLES **/
+
+  // meLiked / onlyLiked are computed server-side from the auth token, so re-run
+  // the query whenever the logged-in member changes (login / logout / reload).
+  useEffect(() => {
+    getServicesRefetch({ input: searchFilter });
+  }, [user?._id]);
+
+  // Debounced live search: apply the typed text to the query a short beat after
+  // the user stops typing — updates results while typing without firing a
+  // request on every keystroke. Enter / the search button apply immediately.
+  useEffect(() => {
+    const nextText = searchText.trim() || undefined;
+    const timer = setTimeout(() => {
+      setSearchFilter((prev) =>
+        prev.search.text === nextText
+          ? prev
+          : { ...prev, page: 1, search: { ...prev.search, text: nextText } },
+      );
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchText]);
+
+  /** DERIVED **/
+
+  const selectedCategories = searchFilter.search.serviceType ?? [];
+  const selectedLocations = searchFilter.search.serviceLocation ?? [];
+  const likedSelected = searchFilter.search.onlyLiked;
+  const priceChanged =
+    priceRange[0] !== DEFAULT_PRICE_RANGE[0] ||
+    priceRange[1] !== DEFAULT_PRICE_RANGE[1];
+  const totalPages = Math.max(1, Math.ceil(total / searchFilter.limit));
   const activeFilterCount =
     selectedCategories.length +
     selectedLocations.length +
     (likedSelected ? 1 : 0) +
-    (priceRange[0] !== DEFAULT_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_PRICE_RANGE[1] ? 1 : 0);
+    (priceChanged ? 1 : 0);
 
-  const toggleServiceLike = (id: string) => {
-    setServices((prev) =>
-      prev.map((s) =>
-        s._id === id
-          ? { ...s, liked: !s.liked, likes: Math.max(0, s.likes + (s.liked ? -1 : 1)) }
-          : s,
-      ),
-    );
+  /** HANDLERS **/
+
+  const categoryToggleHandler = (value: ServiceType) => {
+    setSearchFilter((prev) => {
+      const current = prev.search.serviceType ?? [];
+      const next = current.includes(value)
+        ? current.filter((t) => t !== value)
+        : [...current, value];
+      return {
+        ...prev,
+        page: 1,
+        search: { ...prev.search, serviceType: next.length ? next : undefined },
+      };
+    });
+  };
+
+  const locationToggleHandler = (value: ServiceLocation) => {
+    setSearchFilter((prev) => {
+      const current = prev.search.serviceLocation ?? [];
+      const next = current.includes(value)
+        ? current.filter((l) => l !== value)
+        : [...current, value];
+      return {
+        ...prev,
+        page: 1,
+        search: {
+          ...prev.search,
+          serviceLocation: next.length ? next : undefined,
+        },
+      };
+    });
+  };
+
+  const likedToggleHandler = () => {
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      search: { ...prev.search, onlyLiked: !prev.search.onlyLiked },
+    }));
+  };
+
+  const priceCommitHandler = (
+    _event: Event | ChangeEvent<unknown>,
+    value: number | number[],
+  ) => {
+    const range = value as number[];
+    setPriceRange(range);
+    const isDefault =
+      range[0] === DEFAULT_PRICE_RANGE[0] &&
+      range[1] === DEFAULT_PRICE_RANGE[1];
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      search: {
+        ...prev.search,
+        priceRange: isDefault ? undefined : { min: range[0], max: range[1] },
+      },
+    }));
+  };
+
+  const searchApplyHandler = () => {
+    const text = searchText.trim();
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      search: { ...prev.search, text: text.length ? text : undefined },
+    }));
+  };
+
+  const sortHandler = (value: SortOption) => {
+    setSortBy(value);
+    const option = SORT_OPTIONS.find((o) => o.value === value);
+    if (!option) return;
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      sort: option.sort,
+      direction: option.direction,
+    }));
   };
 
   const paginationHandler = (_event: ChangeEvent<unknown>, page: number) => {
-    setServiceSearch((prev) => ({ ...prev, page }));
+    setSearchFilter((prev) => ({ ...prev, page }));
     if (!servicesTopRef.current) return;
     const scrollTarget =
       window.scrollY + servicesTopRef.current.getBoundingClientRect().top - 210;
     window.scrollTo({ top: Math.max(0, scrollTarget), behavior: "smooth" });
   };
-
-  const filteredServices = useMemo(() => {
-    const [minPrice, maxPrice] = priceRange;
-    const normalizedSearch = searchText.trim().toLowerCase();
-
-    return services.filter((s) => {
-      const matchesPrice = s.price >= minPrice && s.price <= maxPrice;
-      const matchesCategory =
-        selectedCategories.length === 0 || selectedCategories.includes(s.category);
-      const matchesLocation =
-        selectedLocations.length === 0 || selectedLocations.includes(s.location);
-      const matchesLiked = !likedSelected || Boolean(s.liked);
-      const matchesSearch =
-        normalizedSearch.length === 0 ||
-        s.serviceName.toLowerCase().includes(normalizedSearch) ||
-        s.category.toLowerCase().includes(normalizedSearch) ||
-        s.location.toLowerCase().includes(normalizedSearch);
-
-      return matchesPrice && matchesCategory && matchesLocation && matchesLiked && matchesSearch;
-    });
-  }, [services, priceRange, selectedCategories, selectedLocations, likedSelected, searchText]);
-
-  const sortedServices = useMemo(() => {
-    const next = [...filteredServices];
-    switch (sortBy) {
-      case "rating":
-        next.sort((a, b) => b.rating - a.rating);
-        break;
-      case "likes":
-        next.sort((a, b) => b.likes - a.likes);
-        break;
-      case "price-low":
-        next.sort((a, b) => a.price - b.price);
-        break;
-      case "price-high":
-        next.sort((a, b) => b.price - a.price);
-        break;
-      default:
-        break;
-    }
-    return next;
-  }, [filteredServices, sortBy]);
-
-  useEffect(() => {
-    setServiceSearch((prev) => ({ ...prev, page: 1 }));
-  }, [searchText, selectedCategories, selectedLocations, priceRange, likedSelected, sortBy]);
-
-  const totalPages = Math.max(1, Math.ceil(sortedServices.length / serviceSearch.limit));
-
-  useEffect(() => {
-    if (serviceSearch.page > totalPages) {
-      setServiceSearch((prev) => ({ ...prev, page: totalPages }));
-    }
-  }, [serviceSearch.page, totalPages]);
-
-  const startIndex = (serviceSearch.page - 1) * serviceSearch.limit;
-  const pagedServices = sortedServices.slice(startIndex, startIndex + serviceSearch.limit);
 
   const sidebarContent = (
     <>
@@ -296,13 +288,10 @@ const Services = () => {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") setSearchText((prev) => prev.trim());
+            if (e.key === "Enter") searchApplyHandler();
           }}
         />
-        <Button
-          className="search-button"
-          onClick={() => setSearchText((prev) => prev.trim())}
-        >
+        <Button className="search-button" onClick={searchApplyHandler}>
           <SearchIcon />
         </Button>
       </Box>
@@ -324,6 +313,7 @@ const Services = () => {
             <Slider
               value={priceRange}
               onChange={(_e, v) => setPriceRange(v as number[])}
+              onChangeCommitted={priceCommitHandler}
               min={0}
               max={200}
               valueLabelDisplay="off"
@@ -350,18 +340,14 @@ const Services = () => {
           />
         </Stack>
         <Stack className={`category-list ${isCategoryOpen ? "is-open" : ""}`}>
-          {categories.map((cat) => (
+          {CATEGORY_OPTIONS.map((cat) => (
             <Stack
-              key={cat}
-              className={`category-option ${selectedCategories.includes(cat) ? "is-selected" : ""}`}
-              onClick={() =>
-                setSelectedCategories((prev) =>
-                  prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
-                )
-              }
+              key={cat.value}
+              className={`category-option ${selectedCategories.includes(cat.value) ? "is-selected" : ""}`}
+              onClick={() => categoryToggleHandler(cat.value)}
             >
               <Box className="category-checkbox" aria-hidden="true" />
-              <Typography className="category-label">{cat}</Typography>
+              <Typography className="category-label">{cat.label}</Typography>
             </Stack>
           ))}
         </Stack>
@@ -381,18 +367,14 @@ const Services = () => {
           />
         </Stack>
         <Stack className={`category-list ${isLocationOpen ? "is-open" : ""}`}>
-          {locations.map((loc) => (
+          {LOCATION_OPTIONS.map((loc) => (
             <Stack
-              key={loc}
-              className={`category-option ${selectedLocations.includes(loc) ? "is-selected" : ""}`}
-              onClick={() =>
-                setSelectedLocations((prev) =>
-                  prev.includes(loc) ? prev.filter((l) => l !== loc) : [...prev, loc],
-                )
-              }
+              key={loc.value}
+              className={`category-option ${selectedLocations.includes(loc.value) ? "is-selected" : ""}`}
+              onClick={() => locationToggleHandler(loc.value)}
             >
               <Box className="category-checkbox" aria-hidden="true" />
-              <Typography className="category-label">{loc}</Typography>
+              <Typography className="category-label">{loc.label}</Typography>
             </Stack>
           ))}
         </Stack>
@@ -401,7 +383,10 @@ const Services = () => {
       <Divider className="divider" />
 
       <Stack className="liked-agents-section">
-        <Stack className="likes-header" onClick={() => setIsLikedOpen((p) => !p)}>
+        <Stack
+          className="likes-header"
+          onClick={() => setIsLikedOpen((p) => !p)}
+        >
           <Typography className="likes-title">Likes</Typography>
           <Box
             className={`likes-toggle ${isLikedOpen ? "is-open" : ""}`}
@@ -411,7 +396,7 @@ const Services = () => {
         <Stack className={`likes-list ${isLikedOpen ? "is-open" : ""}`}>
           <Stack
             className={`likes-option ${likedSelected ? "is-selected" : ""}`}
-            onClick={() => setLikedSelected((p) => !p)}
+            onClick={likedToggleHandler}
           >
             <Box className="likes-checkbox" aria-hidden="true" />
             <Typography className="likes-label">My Favorites</Typography>
@@ -450,7 +435,7 @@ const Services = () => {
             <Box className="filter-section-wrap">
               <Select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                onChange={(e) => sortHandler(e.target.value as SortOption)}
                 className="filter-section"
                 MenuProps={{
                   disableScrollLock: true,
@@ -458,24 +443,24 @@ const Services = () => {
                   MenuListProps: { className: "filter-menu-list" },
                 }}
               >
-                <MenuItem value="new">New</MenuItem>
-                <MenuItem value="rating">Highest Rating</MenuItem>
-                <MenuItem value="likes">Most Liked</MenuItem>
-                <MenuItem value="price-low">Price: Low to High</MenuItem>
-                <MenuItem value="price-high">Price: High to Low</MenuItem>
+                {SORT_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
               </Select>
             </Box>
 
             <Stack className="agents-cards">
-              {pagedServices.length !== 0 ? (
-                pagedServices.map((service) => (
+              {services.length !== 0 ? (
+                services.map((service) => (
                   <ServiceCard
                     key={service._id}
-                    item={service}
-                    onToggleLike={() => toggleServiceLike(service._id)}
+                    service={service}
+                    getServicesRefetch={getServicesRefetch}
                   />
                 ))
-              ) : (
+              ) : !getServicesLoading ? (
                 <Box
                   className="no-data-wrap"
                   sx={{
@@ -493,16 +478,19 @@ const Services = () => {
                     style={{ width: 450, height: 450, marginTop: "120px" }}
                   />
                 </Box>
-              )}
+              ) : null}
 
               <Stack className="pagination-section">
-                {pagedServices.length !== 0 ? (
+                {services.length !== 0 ? (
                   <Pagination
                     count={totalPages}
-                    page={serviceSearch.page}
+                    page={searchFilter.page}
                     renderItem={(item) => (
                       <PaginationItem
-                        components={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                        components={{
+                          previous: ArrowBackIcon,
+                          next: ArrowForwardIcon,
+                        }}
                         {...item}
                         color="primary"
                       />
@@ -522,11 +510,13 @@ const Services = () => {
           onClose={() => setIsFilterDrawerOpen(false)}
           title="Filters"
           primaryAction={{
-            label: `Show ${sortedServices.length} service${sortedServices.length === 1 ? "" : "s"}`,
+            label: `Show ${total} service${total === 1 ? "" : "s"}`,
             onClick: () => setIsFilterDrawerOpen(false),
           }}
         >
-          <Stack className="category mobile-filter-panel">{sidebarContent}</Stack>
+          <Stack className="category mobile-filter-panel">
+            {sidebarContent}
+          </Stack>
         </MobileDrawer>
       )}
     </Stack>
