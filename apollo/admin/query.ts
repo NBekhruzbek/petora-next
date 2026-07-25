@@ -123,6 +123,7 @@ export const GET_ALL_PRODUCTS_BY_ADMIN = gql`
         productReviews
         productRating
         productRank
+        productSoldTimes
         createdAt
         updatedAt
       }

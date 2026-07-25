@@ -136,8 +136,14 @@ export const GET_PRODUCT = gql`
       productReviews
       productRating
       productRank
+      productSoldTimes
       createdAt
       updatedAt
+      meLiked {
+        memberId
+        likeRefId
+        myFavorite
+      }
     }
   }
 `;
@@ -165,6 +171,7 @@ export const GET_PRODUCTS = gql`
         productReviews
         productRating
         productRank
+        productSoldTimes
         createdAt
         updatedAt
         meLiked {
@@ -202,6 +209,7 @@ export const GET_RELATED_PRODUCTS = gql`
       productReviews
       productRating
       productRank
+      productSoldTimes
       createdAt
       updatedAt
       meLiked {
@@ -236,6 +244,7 @@ export const GET_FAVORITE_PRODUCTS = gql`
         productReviews
         productRating
         productRank
+        productSoldTimes
         createdAt
         updatedAt
         meLiked {

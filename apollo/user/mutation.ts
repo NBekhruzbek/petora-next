@@ -213,6 +213,7 @@ export const LIKE_TARGET_PRODUCT = gql`
       productReviews
       productRating
       productRank
+      productSoldTimes
       createdAt
       updatedAt
     }

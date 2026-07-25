@@ -71,6 +71,7 @@ export const CREATE_PRODUCT = gql`
       productReviews
       productRating
       productRank
+      productSoldTimes
       createdAt
       updatedAt
     }
@@ -99,6 +100,7 @@ export const UPDATE_PRODUCT = gql`
       productReviews
       productRating
       productRank
+      productSoldTimes
       createdAt
       updatedAt
     }
