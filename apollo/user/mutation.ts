@@ -782,3 +782,15 @@ export const UPDATE_REVIEW = gql`
     }
   }
 `;
+
+/***********************************
+ *             UPLOADER            *
+ ***********************************/
+
+// `target` is the uploads/<target> folder the files are written to, and the
+// returned paths ("uploads/<target>/<file>") are what the models store.
+export const IMAGES_UPLOADER = gql`
+  mutation ImagesUploader($files: [Upload!]!, $target: String!) {
+    imagesUploader(files: $files, target: $target)
+  }
+`;

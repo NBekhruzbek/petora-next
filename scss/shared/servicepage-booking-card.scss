@@ -18,6 +18,39 @@
       margin: 0;
       color: #222;
     }
+
+    .booking-card-head {
+      gap: 12px;
+
+      .title {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+
+    // Deliberately unenclosed: the chips below are enclosed because they are
+    // categorical attributes, so leaving the view count as bare type keeps it a
+    // plain fact about the listing rather than another attribute of the service.
+    .booking-views {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 9px;
+      font-family: $font;
+      font-size: 12px;
+      font-weight: 500;
+      color: #9ca3af;
+      line-height: 1;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+
+      svg {
+        font-size: 14px;
+        color: #c4b5fd;
+      }
+    }
+
     .subtitle {
       margin: 8px 0 0;
       font-family: $font;
