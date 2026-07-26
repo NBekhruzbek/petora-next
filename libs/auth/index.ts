@@ -26,8 +26,10 @@ export const logIn = async (nick: string, password: string): Promise<void> => {
     }
   } catch (err) {
     console.warn("login err", err);
-    logOut();
-    // throw new Error('Login Err');
+    // A failed attempt never stored a token, so there is no session to end.
+    // Clearing state must not reload the page — that would tear down the login
+    // dialog before it can show the error.
+    clearAuthState();
   }
 };
 
@@ -88,9 +90,8 @@ export const signUp = async (
       updateUserInfo(jwtToken);
     }
   } catch (err) {
-    console.warn("login err", err);
-    logOut();
-    // throw new Error('Login Err');
+    console.warn("signup err", err);
+    clearAuthState();
   }
 };
 
@@ -187,9 +188,16 @@ export const updateUserInfo = (jwtToken: any) => {
   });
 };
 
-export const logOut = () => {
+// Drops the stored token and the cached member without touching the page, so
+// callers that must stay mounted (a failed login) can reuse it.
+const clearAuthState = () => {
   deleteStorage();
   deleteUserInfo();
+};
+
+// Signing out reloads so every cached query is refetched as a guest.
+export const logOut = () => {
+  clearAuthState();
   window.location.reload();
 };
 
