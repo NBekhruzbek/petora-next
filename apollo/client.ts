@@ -87,6 +87,7 @@ function createIsomorphicLink() {
     // @ts-ignore
     const link = new createUploadLink({
       uri: process.env.NEXT_PUBLIC_API_GRAPHQL_URL,
+      headers: { "apollo-require-preflight": "true" },
     });
 
     /* WEBSOCKET SUBSCRIPTION LINK */
