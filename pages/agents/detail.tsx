@@ -2,6 +2,7 @@ import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
 import {
   Box,
   Button,
+  CircularProgress,
   MenuItem,
   Pagination,
   Rating,
@@ -9,7 +10,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import WorkHistoryOutlinedIcon from "@mui/icons-material/WorkHistoryOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import TranslateOutlinedIcon from "@mui/icons-material/TranslateOutlined";
@@ -18,149 +18,191 @@ import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import WorkOutlinedIcon from "@mui/icons-material/WorkOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
-import { useEffect, useRef, useState } from "react";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { NextPage } from "next";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { userVar } from "@/apollo/store";
+import { GET_MEMBER, GET_REVIEWS } from "@/apollo/user/query";
+import { CREATE_NEW_REVIEW, IMAGES_UPLOADER } from "@/apollo/user/mutation";
+import { Member } from "@/libs/types/member/member";
+import { Review, ReviewStats } from "@/libs/types/review/review";
+import { ReviewGroup } from "@/libs/enums/review.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import { Messages, REACT_APP_API_URL } from "@/libs/config";
+import { sweetMixinErrorAlert } from "@/libs/sweetAlert";
 
-const agent = {
-  fullName: "Maria Garcia",
-  role: "Pet Groomer • Skin Care Specialist",
-  serviceType: "Grooming",
-  avatar: "/img/agents/topAgent1.jpg",
-  bio: "Maria specialises in breed-specific grooming with 6 years of hands-on experience. She works with all coat types and is particularly skilled with anxious or first-time grooming dogs. Her calm, patient approach makes every session stress-free.",
-  experience: "6+ years experience",
-  approach: "Gentle, patient, positive reinforcement",
-  languages: "Korean, English, Spanish",
-  serviceArea: "Gangnam, Seoul",
-  responseTime: "Usually replies within 10 minutes",
-  rating: 4.9,
-  verified: true,
-  totalBookings: 214,
-  joinDate: "Nov 20, 2025",
-  certifications: [
-    {
-      title: "Pet Care Accreditation",
-      image: "/img/certifications/PACCC-fb-thumb.png",
-    },
-    {
-      title: "Professional Grooming Certification",
-      image: "/img/certifications/Pet-certification.webp",
-    },
-  ],
-};
+const REVIEWS_PER_PAGE = 3;
+const REVIEW_PREVIEW_LIMIT = 260;
+const MAX_REVIEW_IMAGES = 4;
 
-const reviewSummary = {
-  title: "Client Reviews",
-  rating: 4.9,
-  totalReviews: 124,
-  satisfiedText: "96% of pet parents would recommend Maria",
-};
+type ReviewSortOption = "newest" | "highest" | "lowest";
 
-const reviewDistribution = [
-  { label: "Excellent", percent: 82, tone: "warm" },
-  { label: "Good", percent: 11, tone: "warm" },
-  { label: "Average", percent: 4, tone: "cool" },
-  { label: "Poor", percent: 2, tone: "cool" },
-  { label: "Bad", percent: 1, tone: "cool" },
+const REVIEW_SORT_OPTIONS: {
+  value: ReviewSortOption;
+  label: string;
+  sort: string;
+  direction: Direction;
+}[] = [
+  {
+    value: "newest",
+    label: "Newest",
+    sort: "createdAt",
+    direction: Direction.DESC,
+  },
+  {
+    value: "highest",
+    label: "High to Lowest rated",
+    sort: "reviewRating",
+    direction: Direction.DESC,
+  },
+  {
+    value: "lowest",
+    label: "Low to Highest rated",
+    sort: "reviewRating",
+    direction: Direction.ASC,
+  },
 ];
 
-const reviewCards = [
-  {
-    userName: "Mina Park",
-    location: "Seoul",
-    bookingInfo: "Booked grooming session • Verified booking",
-    rating: 5,
-    date: "February 18, 2026",
-    content:
-      "Maria was incredibly patient from the very first session. Our dog used to get anxious during grooming, but she made the whole experience stress-free. The coat was beautifully done and she gave us great tips for at-home maintenance.",
-    photos: ["/img/services/grooming.jpg"],
-  },
-  {
-    userName: "Daniel Cho",
-    location: "Gangnam",
-    bookingInfo: "Booked full spa & trim • Verified booking",
-    rating: 5,
-    date: "January 30, 2026",
-    content:
-      "We have an older dog with sensitive skin and Maria handled him with such care. She used the right products for his coat type and explained everything she was doing. We will absolutely be coming back.",
-    photos: ["/img/services/grooming.jpg", "/img/services/walking.jpg"],
-  },
-  {
-    userName: "Sora Han",
-    location: "Mapo",
-    bookingInfo: "Booked puppy first groom • Verified booking",
-    rating: 4,
-    date: "December 22, 2025",
-    content:
-      "Very warm and professional with our puppy's first grooming. She took it slow and made sure our pup was comfortable throughout. Would have loved a slightly longer drying step but overall very happy with the result.",
-    photos: [],
-  },
-  {
-    userName: "James Lee",
-    location: "Yongsan",
-    bookingInfo: "Booked breed cut • Verified booking",
-    rating: 5,
-    date: "November 14, 2025",
-    content:
-      "Excellent attention to detail. Maria nailed the breed-specific cut perfectly and was clearly knowledgeable about the coat type. The session was calm and our dog seemed relaxed the whole time.",
-    photos: ["/img/services/grooming.jpg"],
-  },
-  {
-    userName: "Yuri Kim",
-    location: "Songpa",
-    bookingInfo: "Booked de-shedding treatment • Verified booking",
-    rating: 5,
-    date: "October 03, 2025",
-    content:
-      "The de-shedding treatment was fantastic — our house has noticeably less fur now. Maria was thorough, gentle, and clearly loves what she does. Highly recommend her for any coat type.",
-    photos: [],
-  },
-  {
-    userName: "Kevin Moon",
-    location: "Seodaemun",
-    bookingInfo: "Booked full groom • Verified booking",
-    rating: 4,
-    date: "September 09, 2025",
-    content:
-      "Smooth booking process and great communication beforehand. Maria arrived prepared and did a thorough, careful job. Our dog looked great afterward and seemed at ease throughout.",
-    photos: [],
-  },
+// `stats.ratingDistribution` always comes back ordered 5 → 1 stars.
+const DISTRIBUTION_ROWS = [
+  { label: "Excellent", tone: "warm" },
+  { label: "Good", tone: "warm" },
+  { label: "Average", tone: "cool" },
+  { label: "Poor", tone: "cool" },
+  { label: "Bad", tone: "cool" },
 ];
+
+// Enum values arrive as tokens ("DAY_CARE", "GANGNAM") — render them as words.
+const prettifyEnum = (value?: string) =>
+  (value ?? "")
+    .toLowerCase()
+    .split("_")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+const imageUrl = (path?: string, fallback = "") =>
+  path ? `${REACT_APP_API_URL}/${path}` : fallback;
 
 const AgentDetail: NextPage = () => {
   const router = useRouter();
-  const writeReviewRef = useRef<HTMLDivElement | null>(null);
-  const [writeReviewRating, setWriteReviewRating] = useState<number | null>(null);
-  const [writeReviewText, setWriteReviewText] = useState("");
-  const [reviewImages, setReviewImages] = useState<string[]>([]);
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const user = useReactiveVar(userVar);
+  const agentId = router.query.id as string | undefined;
 
-  const [reviewSort, setReviewSort] = useState("newest");
+  const writeReviewRef = useRef<HTMLDivElement | null>(null);
+  const [writeReviewRating, setWriteReviewRating] = useState<number | null>(
+    null,
+  );
+  const [writeReviewText, setWriteReviewText] = useState("");
+  // The picked files are kept alongside their data-URL preview so the images
+  // can be uploaded on submit while still rendering instantly.
+  const [reviewImages, setReviewImages] = useState<
+    { file: File; preview: string }[]
+  >([]);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+
+  const [reviewSort, setReviewSort] = useState<ReviewSortOption>("newest");
   const [reviewPage, setReviewPage] = useState(1);
-  const [expandedReviews, setExpandedReviews] = useState<Record<string, boolean>>({});
-  const reviewPreviewLimit = 260;
-  const reviewsPerPage = 3;
+  const [expandedReviews, setExpandedReviews] = useState<
+    Record<string, boolean>
+  >({});
+
+  const activeReviewSort =
+    REVIEW_SORT_OPTIONS.find((option) => option.value === reviewSort) ??
+    REVIEW_SORT_OPTIONS[0];
+
+  /** APOLLO REQUESTS **/
+
+  const {
+    data: getAgentData,
+    loading: getAgentLoading,
+    refetch: getAgentRefetch,
+  } = useQuery(GET_MEMBER, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: agentId },
+    skip: !agentId,
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const agent: Member | undefined = getAgentData?.getMember;
+
+  const { data: getReviewsData, refetch: getReviewsRefetch } = useQuery(
+    GET_REVIEWS,
+    {
+      fetchPolicy: "cache-and-network",
+      variables: {
+        input: {
+          page: reviewPage,
+          limit: REVIEWS_PER_PAGE,
+          sort: activeReviewSort.sort,
+          direction: activeReviewSort.direction,
+          search: {
+            reviewGroup: ReviewGroup.AGENT,
+            reviewRefId: agentId,
+          },
+        },
+      },
+      skip: !agentId,
+      notifyOnNetworkStatusChange: true,
+    },
+  );
+
+  const [createNewReview] = useMutation(CREATE_NEW_REVIEW);
+  const [imagesUploader] = useMutation(IMAGES_UPLOADER);
+
+  /** DERIVED **/
+
+  const reviews: Review[] = getReviewsData?.getReviews?.list ?? [];
+  const reviewStats: ReviewStats | undefined =
+    getReviewsData?.getReviews?.stats;
+  const reviewTotal =
+    getReviewsData?.getReviews?.metaCounter?.[0]?.total ??
+    reviewStats?.totalReviews ??
+    0;
+  const reviewPageCount = Math.ceil(reviewTotal / REVIEWS_PER_PAGE);
+  const reviewDistribution = (reviewStats?.ratingDistribution ?? []).map(
+    (entry, index) => ({
+      label: DISTRIBUTION_ROWS[index]?.label ?? `${entry.star} stars`,
+      tone: DISTRIBUTION_ROWS[index]?.tone ?? "cool",
+      percent: entry.percentage,
+    }),
+  );
+  const positivePercent = (reviewStats?.ratingDistribution ?? [])
+    .filter((entry) => entry.star >= 4)
+    .reduce((sum, entry) => sum + entry.percentage, 0);
+
+  /** LIFECYCLES **/
 
   useEffect(() => {
     if (router.query.writeReview === "true") {
       setTimeout(() => {
-        writeReviewRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        writeReviewRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }, 100);
     }
   }, [router.query.writeReview]);
 
-  const handleWriteReviewSubmit = () => {
-    if (!writeReviewRating) return;
-    setReviewSubmitted(true);
-  };
+  /** HANDLERS **/
 
   const handleReviewImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
+    const files = Array.from(e.target.files ?? []).slice(
+      0,
+      MAX_REVIEW_IMAGES - reviewImages.length,
+    );
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (ev) => {
-        setReviewImages((prev) => [...prev, ev.target?.result as string]);
+        setReviewImages((prev) =>
+          prev.length >= MAX_REVIEW_IMAGES
+            ? prev
+            : [...prev, { file, preview: ev.target?.result as string }],
+        );
       };
       reader.readAsDataURL(file);
     });
@@ -171,29 +213,129 @@ const AgentDetail: NextPage = () => {
     setReviewImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const sortedReviewCards = [...reviewCards].sort((a, b) => {
-    const dateDiff =
-      moment(b.date, "MMMM DD, YYYY").valueOf() -
-      moment(a.date, "MMMM DD, YYYY").valueOf();
-    if (reviewSort === "highest") return b.rating - a.rating || dateDiff;
-    if (reviewSort === "lowest") return a.rating - b.rating || dateDiff;
-    return dateDiff;
-  });
+  const handleWriteReviewSubmit = async () => {
+    if (!writeReviewRating || !agentId) return;
+    if (!user?._id) {
+      await sweetMixinErrorAlert(Messages.error2);
+      return;
+    }
 
-  const reviewPageCount = Math.ceil(sortedReviewCards.length / reviewsPerPage);
-  const paginatedReviews = sortedReviewCards.slice(
-    (reviewPage - 1) * reviewsPerPage,
-    reviewPage * reviewsPerPage,
-  );
+    setReviewSubmitting(true);
+    try {
+      let uploadedImages: string[] = [];
+      if (reviewImages.length) {
+        try {
+          const { data } = await imagesUploader({
+            variables: {
+              files: reviewImages.map((image) => image.file),
+              target: "review",
+            },
+          });
+          uploadedImages = (data?.imagesUploader ?? []).filter(Boolean);
+        } catch (err: any) {
+          // A failed upload shouldn't lose the written review.
+          console.log("ERROR, review imagesUploader:", err.message);
+        }
+      }
+
+      await createNewReview({
+        variables: {
+          input: {
+            reviewGroup: ReviewGroup.AGENT,
+            reviewRefId: agentId,
+            reviewRating: writeReviewRating,
+            ...(writeReviewText.trim()
+              ? { reviewMessage: writeReviewText.trim() }
+              : {}),
+            ...(uploadedImages.length ? { reviewImages: uploadedImages } : {}),
+          },
+        },
+      });
+
+      setReviewSubmitted(true);
+      setReviewPage(1);
+      await getReviewsRefetch();
+      // The agent rating / review counter are recomputed server-side.
+      await getAgentRefetch({ input: agentId });
+    } catch (err: any) {
+      console.log("ERROR, handleWriteReviewSubmit:", err.message);
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   const handleReviewSortChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setReviewSort(e.target.value);
+    setReviewSort(e.target.value as ReviewSortOption);
     setReviewPage(1);
   };
 
   const toggleExpand = (key: string) => {
     setExpandedReviews((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  if (!agent) {
+    return (
+      <Stack className="agent-detail-page">
+        <Box className="agent-detail-top" />
+        <Stack
+          className="container"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ minHeight: "40vh" }}
+        >
+          {getAgentLoading ? (
+            <CircularProgress />
+          ) : (
+            <Typography>Agent not found.</Typography>
+          )}
+        </Stack>
+      </Stack>
+    );
+  }
+
+  // Agent profiles are optional server-side, so every line falls back to the
+  // next best field and the row is dropped when nothing is filled in.
+  const agentName = agent.memberFullName || agent.memberUserName;
+  const serviceTypes = (agent.memberServiceTypes ?? []).map(prettifyEnum);
+  const agentRole =
+    agent.memberSpecialty ||
+    (serviceTypes.length ? serviceTypes.join(" • ") : "Pet Care Agent");
+  // memberExperience is free text and seeded as "0" when unset.
+  const experienceYears = Number(agent.memberExperience ?? 0);
+  const serviceArea = (agent.memberServiceArea ?? [])
+    .map(prettifyEnum)
+    .join(", ");
+  const certificates = (agent.memberCertificates ?? []).filter(Boolean);
+
+  const infoRows: { icon: ReactNode; text: string }[] = [
+    {
+      icon: <WorkOutlinedIcon className="agent-detail-info-icon" />,
+      text: serviceTypes.join(", "),
+    },
+    {
+      icon: <WorkHistoryOutlinedIcon className="agent-detail-info-icon" />,
+      text:
+        experienceYears > 0
+          ? `${experienceYears}+ year${experienceYears === 1 ? "" : "s"} experience`
+          : "",
+    },
+    {
+      icon: <FavoriteOutlinedIcon className="agent-detail-info-icon" />,
+      text: agent.memberApproach ?? "",
+    },
+    {
+      icon: <TranslateOutlinedIcon className="agent-detail-info-icon" />,
+      text: agent.memberLanguages ?? "",
+    },
+    {
+      icon: <LocationOnOutlinedIcon className="agent-detail-info-icon" />,
+      text: serviceArea || (agent.memberAddress ?? ""),
+    },
+    {
+      icon: <AccessTimeOutlinedIcon className="agent-detail-info-icon" />,
+      text: agent.memberResponseTime ?? "",
+    },
+  ].filter((row) => row.text);
 
   return (
     <Stack className="agent-detail-page">
@@ -208,68 +350,82 @@ const AgentDetail: NextPage = () => {
           <Stack className="agent-detail-profile">
             <Box className="agent-detail-avatar-wrap">
               <img
-                src={agent.avatar}
-                alt={agent.fullName}
+                src={imageUrl(
+                  agent.memberImage,
+                  "/img/profile/defaultUser.png",
+                )}
+                alt={agentName}
                 className="agent-detail-avatar"
               />
             </Box>
 
-            <Typography className="agent-detail-name">{agent.fullName}</Typography>
-            <Typography className="agent-detail-role">{agent.role}</Typography>
+            <Typography className="agent-detail-name">{agentName}</Typography>
+            <Typography className="agent-detail-role">{agentRole}</Typography>
 
-            <Stack className="agent-detail-rating-row" direction="row" alignItems="center">
-              <Rating value={agent.rating} precision={0.1} readOnly size="small" />
+            <Stack
+              className="agent-detail-rating-row"
+              direction="row"
+              alignItems="center"
+            >
+              <Rating
+                value={agent.memberRating}
+                precision={0.1}
+                readOnly
+                size="small"
+              />
               <Typography className="agent-detail-rating-score">
-                {agent.rating.toFixed(1)}
+                {agent.memberRating.toFixed(1)}
               </Typography>
               <Typography className="agent-detail-rating-sep">·</Typography>
               <Typography className="agent-detail-rating-count">
-                {reviewSummary.totalReviews} reviews
+                {agent.memberReviews.toLocaleString()} review
+                {agent.memberReviews === 1 ? "" : "s"}
               </Typography>
             </Stack>
 
-            <Typography className="agent-detail-bio">{agent.bio}</Typography>
+            <Typography className="agent-detail-bio">
+              {agent.memberDesc ||
+                "This agent has not added a profile description yet."}
+            </Typography>
 
-            <Stack className="agent-detail-info-list">
-              <Stack className="agent-detail-info-row" direction="row" alignItems="center">
-                <WorkOutlinedIcon className="agent-detail-info-icon" />
-                <Typography className="agent-detail-info-text">{agent.serviceType}</Typography>
+            {infoRows.length > 0 && (
+              <Stack className="agent-detail-info-list">
+                {infoRows.map((row) => (
+                  <Stack
+                    key={row.text}
+                    className="agent-detail-info-row"
+                    direction="row"
+                    alignItems="center"
+                  >
+                    {row.icon}
+                    <Typography className="agent-detail-info-text">
+                      {row.text}
+                    </Typography>
+                  </Stack>
+                ))}
               </Stack>
-              <Stack className="agent-detail-info-row" direction="row" alignItems="center">
-                <WorkHistoryOutlinedIcon className="agent-detail-info-icon" />
-                <Typography className="agent-detail-info-text">{agent.experience}</Typography>
-              </Stack>
-              <Stack className="agent-detail-info-row" direction="row" alignItems="center">
-                <FavoriteOutlinedIcon className="agent-detail-info-icon" />
-                <Typography className="agent-detail-info-text">{agent.approach}</Typography>
-              </Stack>
-              <Stack className="agent-detail-info-row" direction="row" alignItems="center">
-                <TranslateOutlinedIcon className="agent-detail-info-icon" />
-                <Typography className="agent-detail-info-text">{agent.languages}</Typography>
-              </Stack>
-              <Stack className="agent-detail-info-row" direction="row" alignItems="center">
-                <LocationOnOutlinedIcon className="agent-detail-info-icon" />
-                <Typography className="agent-detail-info-text">{agent.serviceArea}</Typography>
-              </Stack>
-              <Stack className="agent-detail-info-row" direction="row" alignItems="center">
-                <AccessTimeOutlinedIcon className="agent-detail-info-icon" />
-                <Typography className="agent-detail-info-text">{agent.responseTime}</Typography>
-              </Stack>
-            </Stack>
+            )}
 
             {/* Certifications */}
-            {agent.certifications.length > 0 && (
+            {certificates.length > 0 && (
               <Stack className="agent-detail-certs">
-                <Stack direction="row" spacing={1} alignItems="center" className="agent-detail-certs-title-row">
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  alignItems="center"
+                  className="agent-detail-certs-title-row"
+                >
                   <WorkspacePremiumOutlinedIcon className="agent-detail-certs-icon" />
-                  <Typography className="agent-detail-certs-title">Certifications</Typography>
+                  <Typography className="agent-detail-certs-title">
+                    Certifications
+                  </Typography>
                 </Stack>
                 <Stack className="agent-detail-certs-grid">
-                  {agent.certifications.map((cert, i) => (
-                    <Box key={i} className="agent-detail-cert-card">
+                  {certificates.map((certificate, i) => (
+                    <Box key={certificate} className="agent-detail-cert-card">
                       <img
-                        src={cert.image}
-                        alt={cert.title}
+                        src={imageUrl(certificate)}
+                        alt={`Certificate ${i + 1}`}
                         className="agent-detail-cert-img"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = "none";
@@ -284,21 +440,28 @@ const AgentDetail: NextPage = () => {
 
           {/* ── Right: Reviews ── */}
           <Stack className="agent-detail-reviews">
-
             {/* ── Write Review (visible when navigated from completed booking) ── */}
             {router.query.writeReview === "true" && (
               <Stack className="write-review-panel" ref={writeReviewRef}>
                 {reviewSubmitted ? (
                   <Stack className="write-review-success">
-                    <Typography className="write-review-success-title">✓ Thank you for your review!</Typography>
-                    <Typography className="write-review-success-sub">Your feedback helps other pet owners find the best agent.</Typography>
+                    <Typography className="write-review-success-title">
+                      ✓ Thank you for your review!
+                    </Typography>
+                    <Typography className="write-review-success-sub">
+                      Your feedback helps other pet owners find the best agent.
+                    </Typography>
                   </Stack>
                 ) : (
                   <>
                     <Stack className="write-review-left">
-                      <Typography className="write-review-panel-title">Write a Review</Typography>
+                      <Typography className="write-review-panel-title">
+                        Write a Review
+                      </Typography>
                       <Stack className="write-review-rating-row">
-                        <Typography className="write-review-label">Your Rating</Typography>
+                        <Typography className="write-review-label">
+                          Your Rating
+                        </Typography>
                         <Rating
                           value={writeReviewRating}
                           onChange={(_e, val) => setWriteReviewRating(val)}
@@ -316,36 +479,47 @@ const AgentDetail: NextPage = () => {
                         onChange={(e) => setWriteReviewText(e.target.value)}
                         className="write-review-textfield"
                       />
-                      <Stack className="write-review-images-row" direction="row" flexWrap="wrap">
-                        {reviewImages.map((src, i) => (
+                      <Stack
+                        className="write-review-images-row"
+                        direction="row"
+                        flexWrap="wrap"
+                      >
+                        {reviewImages.map((image, i) => (
                           <Box key={i} className="write-review-img-preview">
-                            <img src={src} alt={`upload-${i}`} />
-                            <Box className="write-review-img-remove" onClick={() => removeReviewImage(i)}>
+                            <img src={image.preview} alt={`upload-${i}`} />
+                            <Box
+                              className="write-review-img-remove"
+                              onClick={() => removeReviewImage(i)}
+                            >
                               ✕
                             </Box>
                           </Box>
                         ))}
-                        {reviewImages.length < 4 && (
+                        {reviewImages.length < MAX_REVIEW_IMAGES && (
                           <label className="write-review-img-upload">
                             <input
                               hidden
                               type="file"
-                              accept="image/*"
+                              accept="image/png, image/jpeg"
                               multiple
                               onChange={handleReviewImageUpload}
                             />
-                            <Box className="write-review-img-upload-icon">+</Box>
-                            <Typography className="write-review-img-upload-text">Add Photo</Typography>
+                            <Box className="write-review-img-upload-icon">
+                              +
+                            </Box>
+                            <Typography className="write-review-img-upload-text">
+                              Add Photo
+                            </Typography>
                           </label>
                         )}
                       </Stack>
                       <Button
                         className="write-review-submit-btn"
-                        disabled={!writeReviewRating}
+                        disabled={!writeReviewRating || reviewSubmitting}
                         onClick={handleWriteReviewSubmit}
                         startIcon={<RateReviewOutlinedIcon />}
                       >
-                        Submit Review
+                        {reviewSubmitting ? "Submitting…" : "Submit Review"}
                       </Button>
                     </Stack>
                   </>
@@ -355,25 +529,31 @@ const AgentDetail: NextPage = () => {
 
             <Stack className="review-summary-panel">
               <Typography className="review-summary-title">
-                {reviewSummary.title}
+                Client Reviews
               </Typography>
 
-              <Stack className="review-score-row" direction="row" alignItems="center">
+              <Stack
+                className="review-score-row"
+                direction="row"
+                alignItems="center"
+              >
                 <Rating
                   className="review-rating-stars"
-                  value={reviewSummary.rating}
+                  value={reviewStats?.averageRating ?? 0}
                   precision={0.1}
                   readOnly
                 />
                 <Typography className="review-score-count">
-                  {reviewSummary.rating.toFixed(1)}
+                  {(reviewStats?.averageRating ?? 0).toFixed(1)}
                 </Typography>
               </Stack>
 
               <Box className="review-satisfied-box">
                 <SentimentSatisfiedAltOutlinedIcon className="review-satisfied-icon" />
                 <Typography className="review-satisfied-text">
-                  {reviewSummary.satisfiedText}
+                  {reviewTotal > 0
+                    ? `${positivePercent}% of pet parents rated ${agentName} 4 stars or higher`
+                    : "No reviews yet — be the first to share your experience"}
                 </Typography>
               </Box>
 
@@ -398,9 +578,14 @@ const AgentDetail: NextPage = () => {
             </Stack>
 
             <Stack className="review-cards-panel">
-              <Stack className="review-cards-header" direction="row" justifyContent="space-between" alignItems="center">
+              <Stack
+                className="review-cards-header"
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
                 <Typography className="review-cards-count">
-                  {sortedReviewCards.length} reviews
+                  {reviewTotal} review{reviewTotal === 1 ? "" : "s"}
                 </Typography>
                 <TextField
                   className="review-sort-field"
@@ -415,72 +600,115 @@ const AgentDetail: NextPage = () => {
                     },
                   }}
                 >
-                  <MenuItem value="newest">Newest</MenuItem>
-                  <MenuItem value="highest">High to Lowest rated</MenuItem>
-                  <MenuItem value="lowest">Low to Highest rated</MenuItem>
+                  {REVIEW_SORT_OPTIONS.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
                 </TextField>
               </Stack>
 
-              {paginatedReviews.map((review) => {
-                const reviewKey = `${review.userName}-${review.date}`;
-                const isExpanded = expandedReviews[reviewKey];
-                const shouldTruncate = review.content.length > reviewPreviewLimit;
-                const reviewContent =
-                  shouldTruncate && !isExpanded
-                    ? `${review.content.slice(0, reviewPreviewLimit).trimEnd()}...`
-                    : review.content;
+              {reviews.length === 0 ? (
+                <Typography className="review-empty-text">
+                  This agent has no reviews yet.
+                </Typography>
+              ) : (
+                reviews.map((review) => {
+                  const reviewer = review.memberData;
+                  const reviewerName =
+                    reviewer?.memberFullName || reviewer?.memberUserName || "";
+                  const isExpanded = expandedReviews[review._id];
+                  const content = review.reviewMessage ?? "";
+                  const shouldTruncate = content.length > REVIEW_PREVIEW_LIMIT;
+                  const reviewContent =
+                    shouldTruncate && !isExpanded
+                      ? `${content.slice(0, REVIEW_PREVIEW_LIMIT).trimEnd()}...`
+                      : content;
+                  const photos = review.reviewImages ?? [];
 
-                return (
-                  <Stack key={reviewKey} className="review-card">
-                    <Stack className="review-card-header" direction="row" alignItems="center">
-                      <Box className="review-card-avatar">
-                        {review.userName.charAt(0)}
-                      </Box>
-                      <Stack className="review-card-user-info">
-                        <Typography className="review-card-username">
-                          {review.userName}
-                        </Typography>
-                        <Typography className="review-card-location">
-                          {review.location}
-                        </Typography>
-                      </Stack>
-                    </Stack>
-
-                    <Typography className="review-card-booking-info">
-                      {review.bookingInfo}
-                    </Typography>
-
-                    <Stack className="review-card-rating-row" direction="row" alignItems="center">
-                      <Rating value={review.rating} precision={0.5} readOnly size="small" />
-                      <Typography className="review-card-date">{review.date}</Typography>
-                    </Stack>
-
-                    <Typography className="review-card-content">{reviewContent}</Typography>
-
-                    {shouldTruncate && (
-                      <Typography
-                        className="review-toggle-btn"
-                        onClick={() => toggleExpand(reviewKey)}
+                  return (
+                    <Stack key={review._id} className="review-card">
+                      <Stack
+                        className="review-card-header"
+                        direction="row"
+                        alignItems="center"
                       >
-                        {isExpanded ? "Show less" : "Show more"}
-                      </Typography>
-                    )}
-
-                    {review.photos.length > 0 && (
-                      <Stack className="review-card-photos" direction="row">
-                        {review.photos.map((photo, i) => (
-                          <img
-                            key={i}
-                            src={photo}
-                            alt={`Review photo ${i + 1}`}
-                            className="review-card-photo"
-                          />
-                        ))}
+                        <Box className="review-card-avatar">
+                          {reviewer?.memberImage ? (
+                            <img
+                              src={imageUrl(reviewer.memberImage)}
+                              alt={`${reviewerName} avatar`}
+                            />
+                          ) : (
+                            reviewerName.charAt(0).toUpperCase()
+                          )}
+                        </Box>
+                        <Stack className="review-card-user-info">
+                          <Typography className="review-card-username">
+                            {reviewerName}
+                          </Typography>
+                          {reviewer?.memberAddress && (
+                            <Typography className="review-card-location">
+                              {reviewer.memberAddress}
+                            </Typography>
+                          )}
+                        </Stack>
                       </Stack>
-                    )}
-                  </Stack>
-                );
-              })}
+
+                      {reviewer?.createdAt && (
+                        <Typography className="review-card-booking-info">
+                          Member since{" "}
+                          {moment(reviewer.createdAt).format("MMMM YYYY")}
+                        </Typography>
+                      )}
+
+                      <Stack
+                        className="review-card-rating-row"
+                        direction="row"
+                        alignItems="center"
+                      >
+                        <Rating
+                          value={review.reviewRating}
+                          precision={0.5}
+                          readOnly
+                          size="small"
+                        />
+                        <Typography className="review-card-date">
+                          {moment(review.createdAt).format("MMMM D, YYYY")}
+                        </Typography>
+                      </Stack>
+
+                      {reviewContent && (
+                        <Typography className="review-card-content">
+                          {reviewContent}
+                        </Typography>
+                      )}
+
+                      {shouldTruncate && (
+                        <Typography
+                          className="review-toggle-btn"
+                          onClick={() => toggleExpand(review._id)}
+                        >
+                          {isExpanded ? "Show less" : "Show more"}
+                        </Typography>
+                      )}
+
+                      {photos.length > 0 && (
+                        <Stack className="review-card-photos" direction="row">
+                          {photos.map((photo, i) => (
+                            <img
+                              key={`${review._id}-photo-${i}`}
+                              src={imageUrl(photo)}
+                              alt={`Review photo ${i + 1}`}
+                              className="review-card-photo"
+                            />
+                          ))}
+                        </Stack>
+                      )}
+                    </Stack>
+                  );
+                })
+              )}
 
               {reviewPageCount > 1 && (
                 <Stack className="review-pagination">
