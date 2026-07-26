@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import {
   ApolloClient,
   ApolloLink,
+  HttpLink,
   InMemoryCache,
   split,
   from,
@@ -137,6 +138,11 @@ function createIsomorphicLink() {
 
     return from([errorLink, tokenRefreshLink, splitLink]);
   }
+
+  // Server-side render: no localStorage for auth headers and no websockets, so
+  // a plain transport is enough — but it has to be explicit, or Apollo warns
+  // and substitutes a default link pointed at the Next.js origin.
+  return new HttpLink({ uri: process.env.NEXT_PUBLIC_API_GRAPHQL_URL });
 }
 
 function createApolloClient() {
