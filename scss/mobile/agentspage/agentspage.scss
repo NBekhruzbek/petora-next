@@ -78,16 +78,24 @@
             font-size: 9px;
           }
 
-          .service-like-btn {
+          // The likes/views capsule stacks two rows over a 122px-wide portrait,
+          // so keep the same compact scale the single badge used — at full size
+          // it reaches the eyeline of the face it sits on.
+          .service-meta-badges {
             top: 8px;
             right: 8px;
-            padding: 3px 7px 3px 5px;
+            border-radius: 11px;
 
-            svg {
-              font-size: 13px;
-            }
-            .like-count {
-              font-size: 10px;
+            .meta-badge {
+              padding: 3px 7px 3px 5px;
+              gap: 4px;
+
+              svg {
+                font-size: 13px;
+              }
+              .meta-count {
+                font-size: 10px;
+              }
             }
           }
         }

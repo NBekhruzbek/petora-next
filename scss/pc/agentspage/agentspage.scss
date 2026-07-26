@@ -346,6 +346,17 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 24px;
 
+        // Agent profiles are filled in optionally, so a card may render with
+        // fewer meta rows than its neighbours. Let the content column absorb
+        // the slack and pin the CTA down, so buttons stay on one line per row.
+        .agent-card .agent-card-content {
+          flex: 1;
+
+          .service-book-btn {
+            margin-top: auto;
+          }
+        }
+
         .no-data-wrap {
           grid-column: 1 / -1;
           display: flex;
