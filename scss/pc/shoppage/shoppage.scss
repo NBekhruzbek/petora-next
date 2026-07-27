@@ -1061,6 +1061,20 @@
             min-height: 700px;
             align-content: flex-start;
             justify-content: flex-start;
+
+            .no-data-wrap {
+              width: 100%;
+              display: flex;
+              justify-content: center;
+              padding: 80px 0;
+
+              .no-data-img {
+                width: 400px;
+                height: 400px;
+                object-fit: contain;
+                opacity: 0.6;
+              }
+            }
           }
           .pagination-section {
             width: 100%;

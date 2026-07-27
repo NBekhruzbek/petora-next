@@ -5,40 +5,81 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import {
+  ApolloQueryResult,
+  OperationVariables,
+  useMutation,
+  useReactiveVar,
+} from "@apollo/client";
+import { Product } from "@/libs/types/product/product";
+import { userVar } from "@/apollo/store";
+import { LIKE_TARGET_PRODUCT } from "@/apollo/user/mutation";
+import { REACT_APP_API_URL, Messages } from "@/libs/config";
+import {
+  sweetMixinErrorAlert,
+  sweetBottomSmallSuccessAlert,
+} from "@/libs/sweetAlert";
+import { T } from "@/libs/types/common";
 
-export type ProductItem = {
-  id: string;
-  name: string;
-  image: string;
-  petType?: string;
-  rating: number;
-  reviewCount: number;
-  sold: number;
-  discountedPrice: number;
-  price: number;
-  discountPercent: number;
-  likesCount: number;
-  liked?: boolean;
-};
+interface ProductsCardProps {
+  product: Product;
+  getProductsRefetch: (
+    variables?: Partial<OperationVariables>,
+  ) => Promise<ApolloQueryResult<T>>;
+  // Fallback like state for lists where every item is known to be favorited
+  // (e.g. the favorites page) and the API doesn't return a per-member meLiked.
+  defaultFavorite?: boolean;
+}
 
-type ProductsProps = {
-  item: ProductItem;
-  onToggleLike?: () => void;
-};
-
-const formatPrice = (value: number) => `$${value.toFixed(2)}`;
+const formatPrice = (value: number) =>
+  `₩${Math.round(value).toLocaleString("ko-KR")}`;
 const productDetailHref = "/shop/detail";
 
-const ProductsCard = ({ item, onToggleLike }: ProductsProps) => {
+const ProductsCard = ({
+  product,
+  getProductsRefetch,
+  defaultFavorite,
+}: ProductsCardProps) => {
   const router = useRouter();
-  const discountPercent =
-    typeof item.discountPercent === "number"
-      ? item.discountPercent
-      : Math.round(((item.price - item.discountedPrice) / item.price) * 100);
-  const likesCount = typeof item.likesCount === "number" ? item.likesCount : 0;
+  const user = useReactiveVar(userVar);
+
+  const discountPercent = product.productDiscount;
+  const hasDiscount = discountPercent > 0;
+  const currentPrice =
+    hasDiscount && product.productPriceAfterDiscount != null
+      ? product.productPriceAfterDiscount
+      : product.productPrice;
+  const myFavorite =
+    product?.meLiked?.[0]?.myFavorite ?? Boolean(defaultFavorite);
+  const detailLink = `${productDetailHref}?id=${product._id}`;
+
+  /** APOLLO REQUESTS **/
+
+  const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
+
+  /** HANDLERS **/
+
+  const likeProductHandler = async (event: MouseEvent<HTMLButtonElement>) => {
+    // The whole card is a link to the detail page, so keep the like
+    // interaction from bubbling up and triggering navigation.
+    event.stopPropagation();
+    try {
+      if (!user?._id) throw new Error(Messages.error2);
+
+      await likeTargetProduct({ variables: { input: product._id } });
+
+      // Refetch so the list re-syncs meLiked + productLikes.
+      await getProductsRefetch();
+
+      await sweetBottomSmallSuccessAlert("Success!", 700);
+    } catch (err: any) {
+      console.log("ERROR, likeProductHandler:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
 
   const handleCardClick = () => {
-    void router.push(productDetailHref);
+    void router.push(detailLink);
   };
 
   const handleCardKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -46,11 +87,6 @@ const ProductsCard = ({ item, onToggleLike }: ProductsProps) => {
       event.preventDefault();
       handleCardClick();
     }
-  };
-
-  const handleLikeClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    onToggleLike?.();
   };
 
   const stopCardClickPropagation = (
@@ -73,50 +109,62 @@ const ProductsCard = ({ item, onToggleLike }: ProductsProps) => {
             component="button"
             type="button"
             className="like-toggle"
-            onClick={handleLikeClick}
+            onClick={likeProductHandler}
             aria-label={
-              item.liked ? "Remove from favorites" : "Add to favorites"
+              myFavorite ? "Remove from favorites" : "Add to favorites"
             }
           >
-            {item.liked ? (
+            {myFavorite ? (
               <FavoriteRoundedIcon className="liked" />
             ) : (
               <FavoriteBorderRoundedIcon className="unliked" />
             )}
           </Box>
-          <Box className="like-count">{likesCount.toLocaleString()}</Box>
+          <Box className="like-count">
+            {product.productLikes.toLocaleString()}
+          </Box>
         </Stack>
-        {item.petType ? (
-          <Box className="pet-type-badge">{item.petType}</Box>
+        {product.productPetType ? (
+          <Box className="pet-type-badge">{product.productPetType}</Box>
         ) : null}
-        <img className="product-image" src={item.image} alt={item.name} />
+        <img
+          className="product-image"
+          src={`${REACT_APP_API_URL}/${product?.productImages?.[0]}`}
+          alt={product.productName}
+        />
       </Box>
 
       <Stack className="card-content">
-        <Box className="product-title">{item.name}</Box>
+        <Box className="product-title">{product.productName}</Box>
 
         <Stack className="rating-row" direction="row">
           <Stack className="rating-info" direction="row">
             <Rating
               className="star-rating"
-              value={item.rating}
+              value={product.productRating}
               precision={0.5}
               readOnly
             />
             <Box className="rating-text">
-              {item.rating.toFixed(1)} ({item.reviewCount.toLocaleString()}{" "}
-              reviews)
+              {product.productRating.toFixed(1)} (
+              {product.productReviews.toLocaleString()} reviews)
             </Box>
           </Stack>
         </Stack>
-        <Box className="sold-text">{item.sold.toLocaleString()} Sold</Box>
+        <Box className="sold-text">
+          {product.productSoldTimes.toLocaleString()} Sold
+        </Box>
 
         <Stack className="price-row" direction="row">
-          <Box className="discounted-price">
-            {formatPrice(item.discountedPrice)}
-          </Box>
-          <Box className="discount-percent">-{discountPercent}%</Box>
-          <Box className="origin-price">{formatPrice(item.price)}</Box>
+          <Box className="discounted-price">{formatPrice(currentPrice)}</Box>
+          {hasDiscount ? (
+            <>
+              <Box className="discount-percent">-{discountPercent}%</Box>
+              <Box className="origin-price">
+                {formatPrice(product.productPrice)}
+              </Box>
+            </>
+          ) : null}
         </Stack>
 
         <Stack className="actions-row" direction="row">
@@ -124,7 +172,7 @@ const ProductsCard = ({ item, onToggleLike }: ProductsProps) => {
             className="buy-now-btn"
             variant="contained"
             component={Link}
-            href={productDetailHref}
+            href={detailLink}
             onClick={stopCardClickPropagation}
           >
             See Product

@@ -202,26 +202,38 @@
       line-height: 1.1;
     }
 
+    // Won prices run to 7 glyphs (₩50,000), far wider than the $-amounts this
+    // row was sized for, so the three chips no longer fit the 190px content
+    // column at the shop grid's 4-up width. Keep each amount unbroken and let
+    // the strike-through price drop to a second line instead of clipping.
     .price-row {
       align-items: flex-end;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 4px 8px;
+
+      .discounted-price,
+      .discount-percent,
+      .origin-price {
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
 
       .discounted-price {
         color: #7100ff;
         font-family: $font;
-        font-size: 24px;
+        font-size: 20px;
         font-style: normal;
         font-weight: 700;
         line-height: 1;
       }
 
       .discount-percent {
-        padding: 4px 5px;
+        padding: 3px 4px;
         border-radius: 5px;
         background: rgb(245, 62, 62);
         color: #fff;
         font-family: $font;
-        font-size: 14px;
+        font-size: 12px;
         font-style: normal;
         font-weight: 700;
         line-height: 1;
@@ -230,7 +242,7 @@
       .origin-price {
         color: #353434;
         font-family: $font;
-        font-size: 14px;
+        font-size: 13px;
         font-style: normal;
         font-weight: 400;
         line-height: 1;

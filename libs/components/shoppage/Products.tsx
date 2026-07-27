@@ -1,4 +1,10 @@
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  SyntheticEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Box,
   Button,
@@ -16,374 +22,302 @@ import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import ProductsCard, { ProductItem } from "./ProductsCard";
+import { useQuery, useReactiveVar } from "@apollo/client";
+import ProductsCard from "./ProductsCard";
 import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 import MobileDrawer from "../common/MobileDrawer";
+import { userVar } from "@/apollo/store";
+import { GET_PRODUCTS } from "@/apollo/user/query";
+import { ProductsInquiry } from "@/libs/types/product/product.input";
+import { Product } from "@/libs/types/product/product";
+import { Direction } from "@/libs/enums/common.enum";
+import { ProductPetType, ProductType } from "@/libs/enums/product.enum";
+import { Messages } from "@/libs/config";
+import { sweetMixinErrorAlert } from "@/libs/sweetAlert";
 
-type ShopProductItem = ProductItem & {
-  categories: string[];
-  petType: string;
-  createdAt: string;
+type SortOption =
+  | "new"
+  | "rating"
+  | "most-liked"
+  | "sold"
+  | "price-low"
+  | "price-high";
+
+// The API only accepts these sort keys (createdAt, productRating, productRank,
+// productLikes, productSoldTimes, productPriceAfterDiscount).
+const SORT_OPTIONS: {
+  value: SortOption;
+  label: string;
+  sort: string;
+  direction: Direction;
+}[] = [
+  { value: "new", label: "New", sort: "createdAt", direction: Direction.DESC },
+  {
+    value: "rating",
+    label: "Highest rating",
+    sort: "productRating",
+    direction: Direction.DESC,
+  },
+  {
+    value: "most-liked",
+    label: "Most Liked",
+    sort: "productLikes",
+    direction: Direction.DESC,
+  },
+  {
+    value: "sold",
+    label: "Best selling",
+    sort: "productSoldTimes",
+    direction: Direction.DESC,
+  },
+  {
+    value: "price-low",
+    label: "Price: Low to High",
+    sort: "productPriceAfterDiscount",
+    direction: Direction.ASC,
+  },
+  {
+    value: "price-high",
+    label: "Price: High to Low",
+    sort: "productPriceAfterDiscount",
+    direction: Direction.DESC,
+  },
+];
+
+const PET_TYPE_OPTIONS: { label: string; value: ProductPetType }[] = [
+  { label: "Dogs", value: ProductPetType.DOG },
+  { label: "Cats", value: ProductPetType.CAT },
+  { label: "Rabbits", value: ProductPetType.RABBIT },
+  { label: "Birds", value: ProductPetType.BIRD },
+  { label: "Hamsters", value: ProductPetType.HAMSTER },
+  { label: "Other", value: ProductPetType.OTHER },
+];
+
+const CATEGORY_OPTIONS: { label: string; value: ProductType }[] = [
+  { label: "Foods", value: ProductType.FOOD },
+  { label: "Toys", value: ProductType.TOY },
+  { label: "Clothes", value: ProductType.CLOTHES },
+  { label: "Health", value: ProductType.HEALTH },
+  { label: "Accessories", value: ProductType.ACCESSORIES },
+  { label: "Other", value: ProductType.OTHER },
+];
+
+// Prices are stored in won, and priceRange matches against the discounted
+// price the card shows.
+const PRICE_MIN = 0;
+const PRICE_MAX = 200000;
+const PRICE_STEP = 1000;
+const DEFAULT_PRICE_RANGE: number[] = [PRICE_MIN, PRICE_MAX];
+
+const formatPrice = (value: number) => `₩${value.toLocaleString("ko-KR")}`;
+
+const initialInput: ProductsInquiry = {
+  page: 1,
+  limit: 12,
+  sort: "createdAt",
+  direction: Direction.DESC,
+  search: {},
 };
 
-type SortOption = "new" | "rating" | "most-liked" | "sold" | "price-low";
+interface ProductsProps {
+  initialInput?: ProductsInquiry;
+}
 
-const initialProducts: ShopProductItem[] = [
-  {
-    id: "food-1",
-    name: "FILLET 'O' LAKES - KIT CAT",
-    image: "/img/products/fillet.png",
-    rating: 5.0,
-    reviewCount: 842,
-    sold: 1000,
-    discountedPrice: 100,
-    price: 200,
-    discountPercent: 50,
-    likesCount: 1240,
-    liked: true,
-    categories: ["Foods"],
-    petType: "Cats",
-    createdAt: "2026-03-18",
-  },
-  {
-    id: "food-2",
-    name: "ENCORE - CAT FOOD",
-    image: "/img/products/encore.png",
-    rating: 4.0,
-    reviewCount: 274,
-    sold: 329,
-    discountedPrice: 400,
-    price: 450.54,
-    discountPercent: 11,
-    likesCount: 982,
-    liked: true,
-    categories: ["Foods", "Health"],
-    petType: "Cats",
-    createdAt: "2026-03-10",
-  },
-  {
-    id: "food-3",
-    name: "ROYAL CANIN - CARE DIGEST",
-    image: "/img/products/royal-canin.png",
-    rating: 4.5,
-    reviewCount: 618,
-    sold: 900,
-    discountedPrice: 600,
-    price: 630.44,
-    discountPercent: 5,
-    likesCount: 743,
-    liked: false,
-    categories: ["Foods", "Health"],
-    petType: "Dogs",
-    createdAt: "2026-03-14",
-  },
-  {
-    id: "food-4",
-    name: "WELLNESS - SIGNATURE SELECTS",
-    image: "/img/products/wellness.png",
-    rating: 3.0,
-    reviewCount: 19,
-    sold: 12,
-    discountedPrice: 200,
-    price: 293.01,
-    discountPercent: 32,
-    likesCount: 214,
-    liked: false,
-    categories: ["Foods"],
-    petType: "Cats",
-    createdAt: "2026-03-04",
-  },
-  {
-    id: "toy-1",
-    name: "KITTY FEATHER PLAY SET",
-    image: "/img/products/bone-toy.png",
-    rating: 4.7,
-    reviewCount: 401,
-    sold: 540,
-    discountedPrice: 85,
-    price: 120,
-    discountPercent: 29,
-    likesCount: 1560,
-    liked: true,
-    categories: ["Toys"],
-    petType: "Dogs",
-    createdAt: "2026-03-19",
-  },
-  {
-    id: "toy-2",
-    name: "PUPPY CHEW STARTER PACK",
-    image: "/img/products/basketball-ball.png",
-    rating: 4.3,
-    reviewCount: 236,
-    sold: 470,
-    discountedPrice: 150,
-    price: 180,
-    discountPercent: 17,
-    likesCount: 688,
-    liked: false,
-    categories: ["Toys", "Accessories"],
-    petType: "Cats",
-    createdAt: "2026-03-16",
-  },
-  {
-    id: "care-1",
-    name: "PAW & COAT CARE BUNDLE",
-    image: "/img/products/dog-toys-to-mouth.png",
-    rating: 4.8,
-    reviewCount: 185,
-    sold: 220,
-    discountedPrice: 260,
-    price: 310,
-    discountPercent: 16,
-    likesCount: 1195,
-    liked: true,
-    categories: ["Health", "Accessories"],
-    petType: "Dogs",
-    createdAt: "2026-03-12",
-  },
-  {
-    id: "wear-1",
-    name: "EVERYDAY PET HOODIE",
-    image: "/img/products/wellness.png",
-    rating: 4.1,
-    reviewCount: 88,
-    sold: 156,
-    discountedPrice: 95,
-    price: 140,
-    discountPercent: 32,
-    likesCount: 437,
-    liked: false,
-    categories: ["Clothes"],
-    petType: "Dogs",
-    createdAt: "2026-03-08",
-  },
-  {
-    id: "food-5",
-    name: "BIRD SEED NUTRITION MIX",
-    image: "/img/products/fillet.png",
-    rating: 4.4,
-    reviewCount: 117,
-    sold: 188,
-    discountedPrice: 70,
-    price: 95,
-    discountPercent: 26,
-    likesCount: 321,
-    liked: false,
-    categories: ["Foods", "Health"],
-    petType: "Birds",
-    createdAt: "2026-03-17",
-  },
-  {
-    id: "toy-3",
-    name: "HAMSTER TUNNEL PLAY KIT",
-    image: "/img/products/encore.png",
-    rating: 4.6,
-    reviewCount: 164,
-    sold: 241,
-    discountedPrice: 110,
-    price: 145,
-    discountPercent: 24,
-    likesCount: 574,
-    liked: true,
-    categories: ["Toys", "Accessories"],
-    petType: "Hamsters",
-    createdAt: "2026-03-15",
-  },
-  {
-    id: "care-2",
-    name: "PET VITAMIN DAILY DROPS",
-    image: "/img/products/royal-canin.png",
-    rating: 4.9,
-    reviewCount: 433,
-    sold: 611,
-    discountedPrice: 175,
-    price: 220,
-    discountPercent: 20,
-    likesCount: 863,
-    liked: true,
-    categories: ["Health"],
-    petType: "Other",
-    createdAt: "2026-03-20",
-  },
-  {
-    id: "wear-2",
-    name: "WINTER WALK DOG JACKET",
-    image: "/img/products/wellness.png",
-    rating: 4.2,
-    reviewCount: 94,
-    sold: 132,
-    discountedPrice: 210,
-    price: 260,
-    discountPercent: 19,
-    likesCount: 294,
-    liked: false,
-    categories: ["Clothes", "Accessories"],
-    petType: "Dogs",
-    createdAt: "2026-03-11",
-  },
-  {
-    id: "acc-1",
-    name: "CAT TRAVEL FEEDER BOWL",
-    image: "/img/products/fillet.png",
-    rating: 4.5,
-    reviewCount: 248,
-    sold: 387,
-    discountedPrice: 98,
-    price: 130,
-    discountPercent: 25,
-    likesCount: 515,
-    liked: true,
-    categories: ["Accessories"],
-    petType: "Cats",
-    createdAt: "2026-03-13",
-  },
-  {
-    id: "food-6",
-    name: "GRAIN FREE PUPPY BITES",
-    image: "/img/products/encore.png",
-    rating: 4.7,
-    reviewCount: 319,
-    sold: 502,
-    discountedPrice: 145,
-    price: 190,
-    discountPercent: 24,
-    likesCount: 409,
-    liked: false,
-    categories: ["Foods"],
-    petType: "Dogs",
-    createdAt: "2026-03-09",
-  },
-  {
-    id: "toy-4",
-    name: "BIRD SWING ACTIVITY SET",
-    image: "/img/products/royal-canin.png",
-    rating: 4.1,
-    reviewCount: 61,
-    sold: 97,
-    discountedPrice: 88,
-    price: 118,
-    discountPercent: 25,
-    likesCount: 187,
-    liked: false,
-    categories: ["Toys"],
-    petType: "Birds",
-    createdAt: "2026-03-07",
-  },
-  {
-    id: "acc-2",
-    name: "SMALL PET CARRY CASE",
-    image: "/img/products/wellness.png",
-    rating: 4.3,
-    reviewCount: 102,
-    sold: 164,
-    discountedPrice: 230,
-    price: 290,
-    discountPercent: 21,
-    likesCount: 266,
-    liked: true,
-    categories: ["Accessories", "Other"],
-    petType: "Hamsters",
-    createdAt: "2026-03-06",
-  },
-];
-
-const petTypes = ["All", "Dogs", "Cats", "Birds", "Hamsters", "Other"];
-
-const categories = [
-  "All",
-  "Foods",
-  "Toys",
-  "Clothes",
-  "Health",
-  "Accessories",
-  "Other",
-];
-
-const DEFAULT_PRICE_RANGE = [0, 1000];
-
-const Products = () => {
+const Products = ({
+  initialInput: propInput = initialInput,
+}: ProductsProps) => {
   const device = useDeviceDetect();
-  const [products, setProducts] = useState(initialProducts);
+  const user = useReactiveVar(userVar);
+
+  const [searchFilter, setSearchFilter] = useState<ProductsInquiry>(propInput);
+
+  const [searchText, setSearchText] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("new");
+  // The slider tracks the drag locally; only the released value reaches the
+  // query, so dragging doesn't fire a request per pixel.
   const [priceRange, setPriceRange] = useState<number[]>(DEFAULT_PRICE_RANGE);
+
   const [isPriceOpen, setIsPriceOpen] = useState(true);
   const [isPetTypeOpen, setIsPetTypeOpen] = useState(true);
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
   const [isLikedOpen, setIsLikedOpen] = useState(true);
-  const [likedSelected, setLikedSelected] = useState(false);
-  const [selectedPetTypes, setSelectedPetTypes] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [searchText, setSearchText] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("new");
-  const [productSearch, setProductSearch] = useState({
-    page: 1,
-    limit: 12,
-  });
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const productsTopRef = useRef<HTMLDivElement | null>(null);
+
+  /** APOLLO REQUESTS **/
+
+  const {
+    data: getProductsData,
+    previousData: getProductsPreviousData,
+    error: getProductsError,
+    loading: getProductsLoading,
+    refetch: getProductsRefetch,
+  } = useQuery(GET_PRODUCTS, {
+    fetchPolicy: "cache-and-network", // cache + => network
+    variables: { input: searchFilter },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  /** LIFECYCLES **/
+
+  // meLiked is computed server-side from the auth token, so re-run the query
+  // whenever the logged-in member changes (login / logout / reload).
+  useEffect(() => {
+    getProductsRefetch({ input: searchFilter });
+  }, [user?._id]);
+
+  // Debounced live search: apply the typed text to the query a short beat after
+  // the user stops typing — updates results while typing without firing a
+  // request on every keystroke. Enter / the search button apply immediately.
+  useEffect(() => {
+    const nextText = searchText.trim() || undefined;
+    const timer = setTimeout(() => {
+      setSearchFilter((prev) =>
+        prev.search.text === nextText
+          ? prev
+          : { ...prev, page: 1, search: { ...prev.search, text: nextText } },
+      );
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchText]);
+
+  /** DERIVED **/
+
+  // Keep the previous page of results on screen while the next filter loads,
+  // but drop them the moment the query errors — the API answers an empty result
+  // set with "No data found!" rather than an empty list, and that has to surface
+  // as the no-data empty state.
+  const getProductsResult = getProductsError
+    ? undefined
+    : (getProductsData ?? getProductsPreviousData);
+  const products: Product[] = getProductsResult?.getProducts?.list ?? [];
+  const total: number =
+    getProductsResult?.getProducts?.metaCounter?.[0]?.total ?? 0;
+
+  const selectedPetTypes = searchFilter.search.productPetType ?? [];
+  const selectedCategories = searchFilter.search.productType ?? [];
+  const likedSelected = Boolean(searchFilter.search.onlyLiked);
+  const isDefaultPriceRange =
+    priceRange[0] === PRICE_MIN && priceRange[1] === PRICE_MAX;
+  const totalPages = Math.max(1, Math.ceil(total / searchFilter.limit));
   const activeFilterCount =
     selectedPetTypes.length +
     selectedCategories.length +
     (likedSelected ? 1 : 0) +
-    (priceRange[0] !== DEFAULT_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_PRICE_RANGE[1] ? 1 : 0);
+    (isDefaultPriceRange ? 0 : 1);
 
-  const handlePriceChange = (_event: Event, newValue: number | number[]) => {
-    if (Array.isArray(newValue)) {
-      setPriceRange(newValue);
-    }
+  /** HANDLERS **/
+
+  const petTypeToggleHandler = (value: ProductPetType) => {
+    setSearchFilter((prev) => {
+      const current = prev.search.productPetType ?? [];
+      const next = current.includes(value)
+        ? current.filter((petType) => petType !== value)
+        : [...current, value];
+      return {
+        ...prev,
+        page: 1,
+        search: {
+          ...prev.search,
+          productPetType: next.length ? next : undefined,
+        },
+      };
+    });
   };
 
-  const toggleCategoryOpen = () => {
-    setIsCategoryOpen((prev) => !prev);
+  const categoryToggleHandler = (value: ProductType) => {
+    setSearchFilter((prev) => {
+      const current = prev.search.productType ?? [];
+      const next = current.includes(value)
+        ? current.filter((type) => type !== value)
+        : [...current, value];
+      return {
+        ...prev,
+        page: 1,
+        search: { ...prev.search, productType: next.length ? next : undefined },
+      };
+    });
   };
 
-  const togglePriceOpen = () => {
-    setIsPriceOpen((prev) => !prev);
+  const petTypeClearHandler = () => {
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      search: { ...prev.search, productPetType: undefined },
+    }));
   };
 
-  const togglePetTypeOpen = () => {
-    setIsPetTypeOpen((prev) => !prev);
+  const categoryClearHandler = () => {
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      search: { ...prev.search, productType: undefined },
+    }));
   };
 
-  const togglePetType = (name: string) => {
-    if (name === "All") {
-      setSelectedPetTypes([]);
+  const priceChangeHandler = (_event: Event, newValue: number | number[]) => {
+    if (Array.isArray(newValue)) setPriceRange(newValue);
+  };
+
+  const priceCommitHandler = (
+    _event: Event | SyntheticEvent,
+    newValue: number | number[],
+  ) => {
+    if (!Array.isArray(newValue)) return;
+    const [min, max] = newValue;
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      search: {
+        ...prev.search,
+        // An untouched slider must not filter anything out — a product priced
+        // above the slider maximum should still be listed.
+        priceRange:
+          min === PRICE_MIN && max === PRICE_MAX ? undefined : { min, max },
+      },
+    }));
+  };
+
+  const likedToggleHandler = async () => {
+    // onlyLiked is resolved from the auth token, so it is a silent no-op for
+    // guests — ask them to log in instead of showing an unchanged list.
+    if (!user?._id) {
+      await sweetMixinErrorAlert(Messages.error2);
       return;
     }
-
-    setSelectedPetTypes((prev) =>
-      prev.includes(name)
-        ? prev.filter((item) => item !== name)
-        : [...prev, name],
-    );
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      search: {
+        ...prev.search,
+        onlyLiked: prev.search.onlyLiked ? undefined : true,
+      },
+    }));
   };
 
-  const toggleCategory = (name: string) => {
-    if (name === "All") {
-      setSelectedCategories([]);
-      return;
-    }
-
-    setSelectedCategories((prev) =>
-      prev.includes(name)
-        ? prev.filter((item) => item !== name)
-        : [...prev, name],
-    );
+  const searchApplyHandler = () => {
+    const text = searchText.trim();
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      search: { ...prev.search, text: text.length ? text : undefined },
+    }));
   };
 
-  const toggleLikedOpen = () => {
-    setIsLikedOpen((prev) => !prev);
-  };
-
-  const toggleLikedSelected = () => {
-    setLikedSelected((prev) => !prev);
-  };
-
-  const searchProductHandler = () => {
-    setSearchText((prev) => prev.trim());
+  const sortHandler = (value: SortOption) => {
+    setSortBy(value);
+    const option = SORT_OPTIONS.find((o) => o.value === value);
+    if (!option) return;
+    setSearchFilter((prev) => ({
+      ...prev,
+      page: 1,
+      sort: option.sort,
+      direction: option.direction,
+    }));
   };
 
   const paginationHandler = (_event: ChangeEvent<unknown>, page: number) => {
-    setProductSearch((prev) => ({ ...prev, page }));
+    setSearchFilter((prev) => ({ ...prev, page }));
 
     if (!productsTopRef.current) return;
 
@@ -396,124 +330,6 @@ const Products = () => {
     });
   };
 
-  const toggleProductLike = (productId: string) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === productId
-          ? {
-              ...product,
-              liked: !product.liked,
-              likesCount: Math.max(
-                0,
-                (product.likesCount ?? 0) + (product.liked ? -1 : 1),
-              ),
-            }
-          : product,
-      ),
-    );
-  };
-
-  const filteredProducts = useMemo(() => {
-    const [minPrice, maxPrice] = priceRange;
-    const normalizedSearch = searchText.trim().toLowerCase();
-
-    return products.filter((product) => {
-      const matchesPrice =
-        product.discountedPrice >= minPrice &&
-        product.discountedPrice <= maxPrice;
-      const matchesPetType =
-        selectedPetTypes.length === 0 ||
-        selectedPetTypes.includes(product.petType);
-      const matchesCategory =
-        selectedCategories.length === 0 ||
-        product.categories.some((category) =>
-          selectedCategories.includes(category),
-        );
-      const matchesLiked = !likedSelected || Boolean(product.liked);
-      const searchableText = [
-        product.name,
-        product.petType,
-        ...product.categories,
-      ]
-        .join(" ")
-        .toLowerCase();
-      const matchesSearch =
-        normalizedSearch.length === 0 ||
-        searchableText.includes(normalizedSearch);
-
-      return (
-        matchesPrice &&
-        matchesPetType &&
-        matchesCategory &&
-        matchesLiked &&
-        matchesSearch
-      );
-    });
-  }, [
-    likedSelected,
-    priceRange,
-    products,
-    searchText,
-    selectedCategories,
-    selectedPetTypes,
-  ]);
-
-  const sortedProducts = useMemo(() => {
-    const next = [...filteredProducts];
-
-    switch (sortBy) {
-      case "rating":
-        next.sort((a, b) => b.rating - a.rating);
-        break;
-      case "most-liked":
-        next.sort((a, b) => b.likesCount - a.likesCount);
-        break;
-      case "sold":
-        next.sort((a, b) => b.sold - a.sold);
-        break;
-      case "price-low":
-        next.sort((a, b) => a.discountedPrice - b.discountedPrice);
-        break;
-      case "new":
-      default:
-        next.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
-        break;
-    }
-
-    return next;
-  }, [filteredProducts, sortBy]);
-
-  useEffect(() => {
-    setProductSearch((prev) => ({ ...prev, page: 1 }));
-  }, [
-    likedSelected,
-    priceRange,
-    searchText,
-    selectedCategories,
-    selectedPetTypes,
-    sortBy,
-  ]);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(sortedProducts.length / productSearch.limit),
-  );
-
-  useEffect(() => {
-    if (productSearch.page > totalPages) {
-      setProductSearch((prev) => ({ ...prev, page: totalPages }));
-    }
-  }, [productSearch.page, totalPages]);
-
-  const startIndex = (productSearch.page - 1) * productSearch.limit;
-  const pagedProducts = sortedProducts.slice(
-    startIndex,
-    startIndex + productSearch.limit,
-  );
-
   const sidebarContent = (
     <>
       <Box className="search-box">
@@ -525,39 +341,42 @@ const Products = () => {
           onChange={(event) => setSearchText(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
-              searchProductHandler();
+              searchApplyHandler();
             }
           }}
         />
-        <Button className="search-button" onClick={searchProductHandler}>
+        <Button className="search-button" onClick={searchApplyHandler}>
           <SearchIcon />
         </Button>
       </Box>
       <Divider className="divider" />
 
       <Stack className="price-section category-section">
-        <Stack className="category-header" onClick={togglePriceOpen}>
+        <Stack
+          className="category-header"
+          onClick={() => setIsPriceOpen((prev) => !prev)}
+        >
           <Typography className="category-title">Price range</Typography>
           <Box
             className={`category-toggle ${isPriceOpen ? "is-open" : ""}`}
             aria-hidden="true"
           />
         </Stack>
-        <Stack
-          className={`category-list ${isPriceOpen ? "is-open" : ""}`}
-        >
+        <Stack className={`category-list ${isPriceOpen ? "is-open" : ""}`}>
           <Box className="price-range">
             <Slider
               value={priceRange}
-              onChange={handlePriceChange}
-              min={0}
-              max={1000}
+              onChange={priceChangeHandler}
+              onChangeCommitted={priceCommitHandler}
+              min={PRICE_MIN}
+              max={PRICE_MAX}
+              step={PRICE_STEP}
               valueLabelDisplay="off"
               className="price-line"
             />
 
             <Typography className="selected-price">
-              ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}
+              {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
             </Typography>
           </Box>
         </Stack>
@@ -566,82 +385,89 @@ const Products = () => {
       <Divider className="divider" />
 
       <Stack className="category-section">
-        <Stack className="category-header" onClick={togglePetTypeOpen}>
+        <Stack
+          className="category-header"
+          onClick={() => setIsPetTypeOpen((prev) => !prev)}
+        >
           <Typography className="category-title">PetTypes</Typography>
           <Box
             className={`category-toggle ${isPetTypeOpen ? "is-open" : ""}`}
             aria-hidden="true"
           />
         </Stack>
-        <Stack
-          className={`category-list ${isPetTypeOpen ? "is-open" : ""}`}
-        >
-          {petTypes.map((petType) => {
-            const isSelected =
-              petType === "All"
-                ? selectedPetTypes.length === 0
-                : selectedPetTypes.includes(petType);
-
-            return (
-              <Stack
-                key={petType}
-                className={`category-option ${
-                  isSelected ? "is-selected" : ""
-                }`}
-                onClick={() => togglePetType(petType)}
-              >
-                <Box className="category-checkbox" aria-hidden="true" />
-                <Typography className="category-label">
-                  {petType}
-                </Typography>
-              </Stack>
-            );
-          })}
+        <Stack className={`category-list ${isPetTypeOpen ? "is-open" : ""}`}>
+          <Stack
+            className={`category-option ${
+              selectedPetTypes.length === 0 ? "is-selected" : ""
+            }`}
+            onClick={petTypeClearHandler}
+          >
+            <Box className="category-checkbox" aria-hidden="true" />
+            <Typography className="category-label">All</Typography>
+          </Stack>
+          {PET_TYPE_OPTIONS.map((petType) => (
+            <Stack
+              key={petType.value}
+              className={`category-option ${
+                selectedPetTypes.includes(petType.value) ? "is-selected" : ""
+              }`}
+              onClick={() => petTypeToggleHandler(petType.value)}
+            >
+              <Box className="category-checkbox" aria-hidden="true" />
+              <Typography className="category-label">
+                {petType.label}
+              </Typography>
+            </Stack>
+          ))}
         </Stack>
       </Stack>
 
       <Divider className="divider" />
 
       <Stack className="category-section">
-        <Stack className="category-header" onClick={toggleCategoryOpen}>
+        <Stack
+          className="category-header"
+          onClick={() => setIsCategoryOpen((prev) => !prev)}
+        >
           <Typography className="category-title">Category</Typography>
           <Box
-            className={`category-toggle ${
-              isCategoryOpen ? "is-open" : ""
-            }`}
+            className={`category-toggle ${isCategoryOpen ? "is-open" : ""}`}
             aria-hidden="true"
           />
         </Stack>
-        <Stack
-          className={`category-list ${isCategoryOpen ? "is-open" : ""}`}
-        >
-          {categories.map((category) => {
-            const isSelected =
-              category === "All"
-                ? selectedCategories.length === 0
-                : selectedCategories.includes(category);
-
-            return (
-              <Stack
-                key={category}
-                className={`category-option ${
-                  isSelected ? "is-selected" : ""
-                }`}
-                onClick={() => toggleCategory(category)}
-              >
-                <Box className="category-checkbox" aria-hidden="true" />
-                <Typography className="category-label">
-                  {category}
-                </Typography>
-              </Stack>
-            );
-          })}
+        <Stack className={`category-list ${isCategoryOpen ? "is-open" : ""}`}>
+          <Stack
+            className={`category-option ${
+              selectedCategories.length === 0 ? "is-selected" : ""
+            }`}
+            onClick={categoryClearHandler}
+          >
+            <Box className="category-checkbox" aria-hidden="true" />
+            <Typography className="category-label">All</Typography>
+          </Stack>
+          {CATEGORY_OPTIONS.map((category) => (
+            <Stack
+              key={category.value}
+              className={`category-option ${
+                selectedCategories.includes(category.value) ? "is-selected" : ""
+              }`}
+              onClick={() => categoryToggleHandler(category.value)}
+            >
+              <Box className="category-checkbox" aria-hidden="true" />
+              <Typography className="category-label">
+                {category.label}
+              </Typography>
+            </Stack>
+          ))}
         </Stack>
       </Stack>
       <Divider className="divider" />
 
       <Stack className="liked-products-section">
-        <Stack className="likes-header" onClick={toggleLikedOpen}>
+        <Stack
+          className="likes-header"
+          onClick={() => setIsLikedOpen((prev) => !prev)}
+        >
           <Typography className="likes-title">Likes</Typography>
           <Box
             className={`likes-toggle ${isLikedOpen ? "is-open" : ""}`}
@@ -650,15 +476,11 @@ const Products = () => {
         </Stack>
         <Stack className={`likes-list ${isLikedOpen ? "is-open" : ""}`}>
           <Stack
-            className={`likes-option ${
-              likedSelected ? "is-selected" : ""
-            }`}
-            onClick={toggleLikedSelected}
+            className={`likes-option ${likedSelected ? "is-selected" : ""}`}
+            onClick={likedToggleHandler}
           >
             <Box className="likes-checkbox" aria-hidden="true" />
-            <Typography className="likes-label">
-              Liked Products
-            </Typography>
+            <Typography className="likes-label">Liked Products</Typography>
           </Stack>
           <Divider className="likes-divider" />
         </Stack>
@@ -694,7 +516,7 @@ const Products = () => {
               <Select
                 value={sortBy}
                 onChange={(event) =>
-                  setSortBy(event.target.value as SortOption)
+                  sortHandler(event.target.value as SortOption)
                 }
                 className="filter-section"
                 MenuProps={{
@@ -703,49 +525,38 @@ const Products = () => {
                   MenuListProps: { className: "filter-menu-list" },
                 }}
               >
-                <MenuItem value="new">New</MenuItem>
-                <MenuItem value="rating">Highest rating</MenuItem>
-                <MenuItem value="most-liked">Most Liked</MenuItem>
-                <MenuItem value="sold">Best selling</MenuItem>
-                <MenuItem value="price-low">Price: Low to High</MenuItem>
+                {SORT_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
               </Select>
             </Box>
 
             <Stack className="products-cards">
-              {pagedProducts.length !== 0 ? (
-                pagedProducts.map((product) => (
+              {products.length !== 0 ? (
+                products.map((product) => (
                   <ProductsCard
-                    key={product.id}
-                    item={product}
-                    onToggleLike={() => toggleProductLike(product.id)}
+                    key={product._id}
+                    product={product}
+                    getProductsRefetch={getProductsRefetch}
                   />
                 ))
-              ) : (
-                <Box
-                  className="no-data-wrap"
-                  sx={{
-                    width: "800px",
-                    height: "800px",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignContent: "center",
-                    justifyContent: "center",
-                  }}
-                >
+              ) : !getProductsLoading ? (
+                <Box className="no-data-wrap">
                   <img
                     className="no-data-img"
                     src="/img/icons/no-data.png"
                     alt="No products found"
-                    style={{ width: 450, height: 450, marginTop: "120px" }}
                   />
                 </Box>
-              )}
+              ) : null}
 
               <Stack className="pagination-section">
-                {pagedProducts.length !== 0 ? (
+                {products.length !== 0 && (
                   <Pagination
                     count={totalPages}
-                    page={productSearch.page}
+                    page={searchFilter.page}
                     renderItem={(item) => (
                       <PaginationItem
                         components={{
@@ -758,7 +569,7 @@ const Products = () => {
                     )}
                     onChange={paginationHandler}
                   />
-                ) : null}
+                )}
               </Stack>
             </Stack>
           </Stack>
@@ -771,11 +582,13 @@ const Products = () => {
           onClose={() => setIsFilterDrawerOpen(false)}
           title="Filters"
           primaryAction={{
-            label: `Show ${sortedProducts.length} product${sortedProducts.length === 1 ? "" : "s"}`,
+            label: `Show ${total} product${total === 1 ? "" : "s"}`,
             onClick: () => setIsFilterDrawerOpen(false),
           }}
         >
-          <Stack className="category mobile-filter-panel">{sidebarContent}</Stack>
+          <Stack className="category mobile-filter-panel">
+            {sidebarContent}
+          </Stack>
         </MobileDrawer>
       )}
     </Stack>

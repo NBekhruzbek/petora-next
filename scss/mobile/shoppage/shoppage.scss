@@ -40,6 +40,17 @@
         max-width: calc((100% - #{$space-3}) / 2);
         @include m-product-card-compact;
       }
+
+      // The desktop empty state reserves a 400px square; scale it to the
+      // narrow column so it doesn't overflow the viewport.
+      .no-data-wrap {
+        padding: $space-5 0;
+
+        .no-data-img {
+          width: 200px;
+          height: 200px;
+        }
+      }
     }
   }
 
