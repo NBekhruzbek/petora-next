@@ -59,6 +59,10 @@
     .container {
       padding-top: $space-5;
       gap: $space-4;
+
+      .breadcrumb {
+        margin-left: 12px;
+      }
     }
 
     .product-detail-grid {
@@ -79,14 +83,21 @@
           margin-right: 15px;
           width: 93%;
           aspect-ratio: 4 / 3;
+          padding: $space-4;
           border-radius: $m-radius-lg;
           overflow: hidden;
           background: #f1f1f1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
+          // Same as desktop: portrait packshots must not be cropped by `cover`.
           img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
             display: block;
           }
         }
@@ -108,16 +119,21 @@
             flex: 0 0 auto;
             width: 62px;
             height: 62px;
-            padding: 0;
+            padding: 6px;
             border-radius: 12px;
             border: 2px solid #ececec;
             background: #fff;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
             img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
+              max-width: 100%;
+              max-height: 100%;
+              width: auto;
+              height: auto;
+              object-fit: contain;
             }
 
             &.active {

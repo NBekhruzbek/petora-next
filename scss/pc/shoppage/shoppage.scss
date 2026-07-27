@@ -1145,11 +1145,14 @@
                 border-color 0.2s ease,
                 transform 0.2s ease;
 
+              // Same reason as .main-image below: `cover` cropped portrait
+              // packshots down to their middle band.
               img {
-                width: 54px;
-                height: 54px;
-                object-fit: cover;
-                border-radius: 12px;
+                max-width: 54px;
+                max-height: 54px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
               }
 
               &:hover {
@@ -1165,6 +1168,8 @@
           .main-image {
             width: 620px;
             height: 520px;
+            box-sizing: border-box;
+            padding: 32px;
             border-radius: 28px;
             background: #f1f1f1;
             overflow: hidden;
@@ -1172,10 +1177,15 @@
             align-items: center;
             justify-content: center;
 
+            // Product packshots are tall portraits (royal-canin is 1242x1920)
+            // while this box is landscape — `cover` cropped away half the
+            // package. `contain` keeps the whole product visible.
             img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
+              max-width: 100%;
+              max-height: 100%;
+              width: auto;
+              height: auto;
+              object-fit: contain;
             }
           }
         }
