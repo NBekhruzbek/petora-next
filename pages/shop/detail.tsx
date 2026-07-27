@@ -39,7 +39,11 @@ import { ReviewGroup } from "@/libs/enums/review.enum";
 import { Direction } from "@/libs/enums/common.enum";
 import { userVar } from "@/apollo/store";
 import { REACT_APP_API_URL, Messages } from "@/libs/config";
-import { sweetMixinErrorAlert } from "@/libs/sweetAlert";
+import {
+  sweetMixinErrorAlert,
+  sweetBottomSmallSuccessAlert,
+} from "@/libs/sweetAlert";
+import { addToBasket } from "@/libs/basket";
 import moment from "moment";
 
 const REVIEWS_PER_PAGE = 5;
@@ -258,6 +262,12 @@ const Detail = () => {
     }
   };
 
+  const addToBasketHandler = async () => {
+    if (!product) return;
+    addToBasket(product, quantity);
+    await sweetBottomSmallSuccessAlert("Added to basket!", 700);
+  };
+
   const increase = () => setQuantity((prev) => prev + 1);
   const decrease = () => {
     if (quantity > 1) setQuantity((prev) => prev - 1);
@@ -437,7 +447,11 @@ const Detail = () => {
                     <AddOutlinedIcon className="dec-inc-icon" />
                   </Button>
                 </Stack>
-                <Button className="add-btn" variant="contained">
+                <Button
+                  className="add-btn"
+                  variant="contained"
+                  onClick={addToBasketHandler}
+                >
                   Add to cart
                 </Button>
                 <Button className="pay-btn" variant="contained">
@@ -661,10 +675,13 @@ const Detail = () => {
                   reviews.map((review) => {
                     const reviewer = review.memberData;
                     const reviewerName =
-                      reviewer?.memberFullName || reviewer?.memberUserName || "";
+                      reviewer?.memberFullName ||
+                      reviewer?.memberUserName ||
+                      "";
                     const isExpanded = expandedReviews[review._id];
                     const content = review.reviewMessage ?? "";
-                    const shouldTruncate = content.length > REVIEW_PREVIEW_LIMIT;
+                    const shouldTruncate =
+                      content.length > REVIEW_PREVIEW_LIMIT;
                     const reviewContent =
                       shouldTruncate && !isExpanded
                         ? `${content.slice(0, REVIEW_PREVIEW_LIMIT).trimEnd()}...`

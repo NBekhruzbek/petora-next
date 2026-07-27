@@ -1,7 +1,10 @@
 import { makeVar } from "@apollo/client";
 
 import { CustomJwtPayload } from "../libs/types/customJwtPayload";
+import { BasketItem } from "../libs/types/basket/basket";
 export const themeVar = makeVar({});
+
+export const basketVar = makeVar<BasketItem[]>([]);
 
 export const userVar = makeVar<CustomJwtPayload>({
   _id: "",

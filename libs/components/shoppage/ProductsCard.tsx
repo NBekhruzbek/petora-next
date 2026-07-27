@@ -19,6 +19,7 @@ import {
   sweetMixinErrorAlert,
   sweetBottomSmallSuccessAlert,
 } from "@/libs/sweetAlert";
+import { addToBasket } from "@/libs/basket";
 import { T } from "@/libs/types/common";
 
 interface ProductsCardProps {
@@ -76,6 +77,12 @@ const ProductsCard = ({
       console.log("ERROR, likeProductHandler:", err.message);
       await sweetMixinErrorAlert(err.message);
     }
+  };
+
+  const addToBasketHandler = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    addToBasket(product);
+    await sweetBottomSmallSuccessAlert("Added to basket!", 700);
   };
 
   const handleCardClick = () => {
@@ -177,7 +184,11 @@ const ProductsCard = ({
           >
             See Product
           </Button>
-          <Button className="cart-btn" onClick={stopCardClickPropagation}>
+          <Button
+            className="cart-btn"
+            onClick={addToBasketHandler}
+            aria-label={`Add ${product.productName} to basket`}
+          >
             <ShoppingCartOutlinedIcon />
           </Button>
         </Stack>
