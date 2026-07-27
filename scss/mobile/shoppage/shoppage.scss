@@ -523,6 +523,11 @@
       .review-cards-panel {
         gap: $space-4;
 
+        .review-empty-text {
+          padding: $space-4 $space-3;
+          font-size: 13px;
+        }
+
         .review-card {
           display: flex;
           flex-direction: column;

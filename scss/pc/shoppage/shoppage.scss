@@ -1911,6 +1911,16 @@
           .review-cards-panel {
             flex: 1;
             gap: 18px;
+            .review-empty-text {
+              background: #fff;
+              border: 1px dashed rgba(143, 143, 143, 0.35);
+              border-radius: 14px;
+              padding: 28px 20px;
+              font-family: $font;
+              font-size: 14px;
+              color: #6b7280;
+              text-align: center;
+            }
             .review-card {
               display: grid;
               grid-template-columns: 210px minmax(0, 1fr);

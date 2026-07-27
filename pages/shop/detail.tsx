@@ -27,100 +27,44 @@ import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import RelatedProducts from "@/libs/components/shoppage/RelatedProducts";
-import { GET_PRODUCT } from "@/apollo/user/query";
-import { LIKE_TARGET_PRODUCT } from "@/apollo/user/mutation";
+import { GET_PRODUCT, GET_REVIEWS } from "@/apollo/user/query";
+import {
+  CREATE_NEW_REVIEW,
+  IMAGES_UPLOADER,
+  LIKE_TARGET_PRODUCT,
+} from "@/apollo/user/mutation";
 import { Product } from "@/libs/types/product/product";
+import { Review, ReviewStats } from "@/libs/types/review/review";
+import { ReviewGroup } from "@/libs/enums/review.enum";
+import { Direction } from "@/libs/enums/common.enum";
 import { userVar } from "@/apollo/store";
 import { REACT_APP_API_URL, Messages } from "@/libs/config";
 import { sweetMixinErrorAlert } from "@/libs/sweetAlert";
+import moment from "moment";
+
+const REVIEWS_PER_PAGE = 5;
+const REVIEW_PREVIEW_LIMIT = 260;
+const MAX_REVIEW_IMAGES = 4;
+
+// `stats.ratingDistribution` always comes back ordered 5 → 1 stars.
+const DISTRIBUTION_ROWS = [
+  { label: "Excellent", tone: "warm" },
+  { label: "Good", tone: "warm" },
+  { label: "Average", tone: "cool" },
+  { label: "Poor", tone: "cool" },
+  { label: "Bad", tone: "cool" },
+];
 
 const formatPrice = (value: number) =>
   `₩${Math.round(value).toLocaleString("ko-KR")}`;
+
+const imageUrl = (path?: string, fallback = "") =>
+  path ? `${REACT_APP_API_URL}/${path}` : fallback;
 
 const Detail = () => {
   const router = useRouter();
   const user = useReactiveVar(userVar);
   const productId = router.query.id as string | undefined;
-
-  // Reviews are not yet exposed by the API, so this section keeps sample
-  // content until a review query exists.
-  const reviewSummary = {
-    title: "Product Review",
-    satisfiedText: "More than 200 customers are satisfied",
-  };
-  const reviewDistribution = [
-    { label: "Excellent", percent: 79, tone: "warm" },
-    { label: "Good", percent: 10, tone: "warm" },
-    { label: "Average", percent: 4, tone: "cool" },
-    { label: "Poor", percent: 3, tone: "cool" },
-    { label: "Bad", percent: 4, tone: "cool" },
-  ];
-  const reviewCards = [
-    {
-      userName: "Astro Ridge",
-      location: "United States",
-      purchaseInfo: "Verified buyer • Buying for over 1 year",
-      rating: 2,
-      date: "July 20, 2023",
-      content:
-        "We have shipped thousands of pet-care orders with this formula, and this is one of the few foods our cats consistently finish. The texture is soft, the flakes smell fresh, and even picky eaters in our home adjusted quickly after just a few meals.",
-      photos: [
-        "/img/services/grooming.jpg",
-        "/img/services/walking.jpg",
-        "/img/services/training.jpg",
-      ],
-    },
-    {
-      userName: "The Pond Shop",
-      location: "United States",
-      purchaseInfo: "Verified buyer • Repeat order",
-      rating: 3,
-      date: "March 29, 2023",
-      content:
-        "Customer service was smooth and shipping was fast. The product quality feels premium, although one of our cats needed a short transition period before fully enjoying it. After a week, appetite and digestion both looked much better.",
-      photos: ["/img/services/boarding.png", "/img/services/day-care.jpg"],
-    },
-    {
-      userName: "Mia Carter",
-      location: "Canada",
-      purchaseInfo: "Verified buyer • First purchase",
-      rating: 5,
-      date: "January 11, 2024",
-      content:
-        "Packaging arrived clean and sealed, portion size is practical, and the ingredient profile gave me confidence. My senior cat usually refuses new food, but this one worked surprisingly well and left no stomach issues.",
-      photos: [],
-    },
-    {
-      userName: "Ethan Brooks",
-      location: "Australia",
-      purchaseInfo: "Verified buyer • Monthly subscriber",
-      rating: 4,
-      date: "December 03, 2023",
-      content:
-        "The ingredient balance looks much better than the previous brand we used, and our cats transitioned without any stress. We also noticed less leftover food in the bowls and more consistent energy during the day. Delivery packaging was sturdy and the bag stayed fresh after opening.",
-      photos: ["/img/services/training.jpg", "/img/services/day-care.jpg"],
-    },
-    {
-      userName: "Olivia Chen",
-      location: "Singapore",
-      purchaseInfo: "Verified buyer • Cat parent of 3",
-      rating: 5,
-      date: "November 18, 2023",
-      content:
-        "Flavor acceptance was excellent from the first serving. I appreciate that the flakes are easy to mix with other meals and the smell is not overpowering. One of my cats usually has a sensitive stomach, but this food has been gentle so far and the stools stayed normal.",
-      photos: ["/img/services/grooming.jpg"],
-    },
-    {
-      userName: "Liam Foster",
-      location: "United Kingdom",
-      purchaseInfo: "Verified buyer • Reordered twice",
-      rating: 4,
-      date: "October 02, 2023",
-      content:
-        "Solid quality overall. The package arrived on time, the food looked fresh, and the feeding instructions were clear. I would have liked a slightly larger value pack option, but for quality and consistency this one has still been worth it for our home.",
-      photos: [],
-    },
-  ];
 
   const writeReviewRef = useRef<HTMLDivElement | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -131,7 +75,12 @@ const Detail = () => {
   );
   const [writeReviewText, setWriteReviewText] = useState("");
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const [reviewImages, setReviewImages] = useState<string[]>([]);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  // The picked files are kept alongside their data-URL preview so the images
+  // can be uploaded on submit while still rendering instantly.
+  const [reviewImages, setReviewImages] = useState<
+    { file: File; preview: string }[]
+  >([]);
   const [reviewPage, setReviewPage] = useState(1);
   const [expandedReviews, setExpandedReviews] = useState<
     Record<string, boolean>
@@ -152,7 +101,53 @@ const Detail = () => {
 
   const product: Product | undefined = getProductData?.getProduct;
 
+  const { data: getReviewsData, refetch: getReviewsRefetch } = useQuery(
+    GET_REVIEWS,
+    {
+      fetchPolicy: "cache-and-network",
+      variables: {
+        input: {
+          page: reviewPage,
+          limit: REVIEWS_PER_PAGE,
+          sort: "createdAt",
+          direction: Direction.DESC,
+          search: {
+            reviewGroup: ReviewGroup.PRODUCT,
+            reviewRefId: productId,
+          },
+        },
+      },
+      skip: !productId,
+      notifyOnNetworkStatusChange: true,
+    },
+  );
+
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
+  const [createNewReview] = useMutation(CREATE_NEW_REVIEW);
+  const [imagesUploader] = useMutation(IMAGES_UPLOADER);
+
+  /** DERIVED **/
+
+  const reviews: Review[] = getReviewsData?.getReviews?.list ?? [];
+  const reviewStats: ReviewStats | undefined =
+    getReviewsData?.getReviews?.stats;
+  // The product's own productReviews counter is seeded and can disagree with
+  // the review documents, so the panel counts what getReviews actually returns.
+  const reviewTotal =
+    getReviewsData?.getReviews?.metaCounter?.[0]?.total ??
+    reviewStats?.totalReviews ??
+    0;
+  const reviewPageCount = Math.ceil(reviewTotal / REVIEWS_PER_PAGE);
+  const reviewDistribution = (reviewStats?.ratingDistribution ?? []).map(
+    (entry, index) => ({
+      label: DISTRIBUTION_ROWS[index]?.label ?? `${entry.star} stars`,
+      tone: DISTRIBUTION_ROWS[index]?.tone ?? "cool",
+      percent: entry.percentage,
+    }),
+  );
+  const positivePercent = (reviewStats?.ratingDistribution ?? [])
+    .filter((entry) => entry.star >= 4)
+    .reduce((sum, entry) => sum + entry.percentage, 0);
 
   /** LIFECYCLES **/
 
@@ -176,11 +171,18 @@ const Detail = () => {
   /** HANDLERS **/
 
   const handleReviewImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
+    const files = Array.from(e.target.files ?? []).slice(
+      0,
+      MAX_REVIEW_IMAGES - reviewImages.length,
+    );
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (ev) => {
-        setReviewImages((prev) => [...prev, ev.target?.result as string]);
+        setReviewImages((prev) =>
+          prev.length >= MAX_REVIEW_IMAGES
+            ? prev
+            : [...prev, { file, preview: ev.target?.result as string }],
+        );
       };
       reader.readAsDataURL(file);
     });
@@ -191,9 +193,56 @@ const Detail = () => {
     setReviewImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleWriteReviewSubmit = () => {
-    if (!writeReviewRating) return;
-    setReviewSubmitted(true);
+  const handleWriteReviewSubmit = async () => {
+    if (!writeReviewRating || !productId) return;
+    if (!user?._id) {
+      await sweetMixinErrorAlert(Messages.error2);
+      return;
+    }
+
+    setReviewSubmitting(true);
+    try {
+      let uploadedImages: string[] = [];
+      if (reviewImages.length) {
+        try {
+          const { data } = await imagesUploader({
+            variables: {
+              files: reviewImages.map((image) => image.file),
+              target: "review",
+            },
+          });
+          uploadedImages = (data?.imagesUploader ?? []).filter(Boolean);
+        } catch (err: any) {
+          // A failed upload shouldn't lose the written review.
+          console.log("ERROR, review imagesUploader:", err.message);
+        }
+      }
+
+      await createNewReview({
+        variables: {
+          input: {
+            reviewGroup: ReviewGroup.PRODUCT,
+            reviewRefId: productId,
+            reviewRating: writeReviewRating,
+            ...(writeReviewText.trim()
+              ? { reviewMessage: writeReviewText.trim() }
+              : {}),
+            ...(uploadedImages.length ? { reviewImages: uploadedImages } : {}),
+          },
+        },
+      });
+
+      setReviewSubmitted(true);
+      setReviewPage(1);
+      await getReviewsRefetch();
+      // The product rating / review counter are recomputed server-side.
+      await getProductRefetch({ input: productId });
+    } catch (err: any) {
+      console.log("ERROR, handleWriteReviewSubmit:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    } finally {
+      setReviewSubmitting(false);
+    }
   };
 
   const likeProductHandler = async () => {
@@ -223,14 +272,6 @@ const Detail = () => {
   ) => {
     setReviewPage(page);
   };
-
-  const reviewPreviewLimit = 260;
-  const reviewsPerPage = 5;
-  const reviewPageCount = Math.ceil(reviewCards.length / reviewsPerPage);
-  const paginatedReviews = reviewCards.slice(
-    (reviewPage - 1) * reviewsPerPage,
-    reviewPage * reviewsPerPage,
-  );
 
   if (!product) {
     return (
@@ -523,9 +564,9 @@ const Detail = () => {
                           direction="row"
                           flexWrap="wrap"
                         >
-                          {reviewImages.map((src, i) => (
+                          {reviewImages.map((image, i) => (
                             <Box key={i} className="write-review-img-preview">
-                              <img src={src} alt={`upload-${i}`} />
+                              <img src={image.preview} alt={`upload-${i}`} />
                               <Box
                                 className="write-review-img-remove"
                                 onClick={() => removeReviewImage(i)}
@@ -534,12 +575,12 @@ const Detail = () => {
                               </Box>
                             </Box>
                           ))}
-                          {reviewImages.length < 4 && (
+                          {reviewImages.length < MAX_REVIEW_IMAGES && (
                             <label className="write-review-img-upload">
                               <input
                                 hidden
                                 type="file"
-                                accept="image/*"
+                                accept="image/png, image/jpeg"
                                 multiple
                                 onChange={handleReviewImageUpload}
                               />
@@ -554,10 +595,10 @@ const Detail = () => {
                         </Stack>
                         <Button
                           className="write-review-submit-btn"
-                          disabled={!writeReviewRating}
+                          disabled={!writeReviewRating || reviewSubmitting}
                           onClick={handleWriteReviewSubmit}
                         >
-                          Submit Review
+                          {reviewSubmitting ? "Submitting…" : "Submit Review"}
                         </Button>
                       </Stack>
                     </>
@@ -567,25 +608,27 @@ const Detail = () => {
 
               <Stack className="review-summary-panel">
                 <Typography className="review-summary-title">
-                  {reviewSummary.title}
+                  Product Review
                 </Typography>
 
                 <Stack className="review-score-row">
                   <Rating
                     className="review-rating-stars"
-                    value={product.productRating}
-                    precision={0.5}
+                    value={reviewStats?.averageRating ?? 0}
+                    precision={0.1}
                     readOnly
                   />
                   <Typography className="review-score-count">
-                    {product.productReviews}
+                    {(reviewStats?.averageRating ?? 0).toFixed(1)}
                   </Typography>
                 </Stack>
 
                 <Box className="review-satisfied-box">
                   <SentimentSatisfiedAltOutlinedIcon className="review-satisfied-icon" />
                   <Typography className="review-satisfied-text">
-                    {reviewSummary.satisfiedText}
+                    {reviewTotal > 0
+                      ? `${positivePercent}% of buyers rated this product 4 stars or higher`
+                      : "No reviews yet — be the first to share your experience"}
                   </Typography>
                 </Box>
 
@@ -610,88 +653,109 @@ const Detail = () => {
               </Stack>
 
               <Stack className="review-cards-panel">
-                {paginatedReviews.map((review) => {
-                  const reviewKey = `${review.userName}-${review.date}`;
-                  const isExpanded = expandedReviews[reviewKey];
-                  const shouldTruncate =
-                    review.content.length > reviewPreviewLimit;
-                  const reviewContent =
-                    shouldTruncate && !isExpanded
-                      ? `${review.content.slice(0, reviewPreviewLimit).trimEnd()}...`
-                      : review.content;
+                {reviews.length === 0 ? (
+                  <Typography className="review-empty-text">
+                    This product has no reviews yet.
+                  </Typography>
+                ) : (
+                  reviews.map((review) => {
+                    const reviewer = review.memberData;
+                    const reviewerName =
+                      reviewer?.memberFullName || reviewer?.memberUserName || "";
+                    const isExpanded = expandedReviews[review._id];
+                    const content = review.reviewMessage ?? "";
+                    const shouldTruncate = content.length > REVIEW_PREVIEW_LIMIT;
+                    const reviewContent =
+                      shouldTruncate && !isExpanded
+                        ? `${content.slice(0, REVIEW_PREVIEW_LIMIT).trimEnd()}...`
+                        : content;
+                    const photos = review.reviewImages ?? [];
 
-                  return (
-                    <Box key={reviewKey} className="review-card">
-                      <Stack className="review-card-user">
-                        <Box className="review-user-avatar">
-                          <img
-                            src="/img/profile/defaultUser.png"
-                            alt={`${review.userName} avatar`}
-                          />
-                        </Box>
-                        <Stack className="review-user-meta">
-                          <Typography className="review-user-name">
-                            {review.userName}
-                          </Typography>
-                          <Typography className="review-user-location">
-                            {review.location}
-                          </Typography>
-                          <Typography className="review-user-purchase">
-                            {review.purchaseInfo}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-
-                      <Stack className="review-card-body">
-                        <Stack className="review-card-top">
-                          <Rating
-                            className="review-card-stars"
-                            value={review.rating}
-                            precision={0.5}
-                            readOnly
-                          />
-                          <Typography className="review-card-date">
-                            {review.date}
-                          </Typography>
-                        </Stack>
-
-                        {review.photos.length > 0 && (
-                          <Stack className="review-photo-list">
-                            {review.photos.map((photo, index) => (
-                              <Box
-                                key={`${review.userName}-photo-${index}`}
-                                className="review-photo-item"
-                              >
-                                <img
-                                  src={photo}
-                                  alt={`${review.userName} review photo ${index + 1}`}
-                                />
-                              </Box>
-                            ))}
+                    return (
+                      <Box key={review._id} className="review-card">
+                        <Stack className="review-card-user">
+                          <Box className="review-user-avatar">
+                            <img
+                              src={imageUrl(
+                                reviewer?.memberImage,
+                                "/img/profile/defaultUser.png",
+                              )}
+                              alt={`${reviewerName} avatar`}
+                            />
+                          </Box>
+                          <Stack className="review-user-meta">
+                            <Typography className="review-user-name">
+                              {reviewerName}
+                            </Typography>
+                            {reviewer?.memberAddress && (
+                              <Typography className="review-user-location">
+                                {reviewer.memberAddress}
+                              </Typography>
+                            )}
+                            {reviewer?.createdAt && (
+                              // Reviews aren't purchase-gated server-side, so a
+                              // "verified buyer" caption would be fiction.
+                              <Typography className="review-user-purchase">
+                                Member since{" "}
+                                {moment(reviewer.createdAt).format("MMMM YYYY")}
+                              </Typography>
+                            )}
                           </Stack>
-                        )}
+                        </Stack>
 
-                        <Typography className="review-card-text">
-                          {reviewContent}
-                        </Typography>
+                        <Stack className="review-card-body">
+                          <Stack className="review-card-top">
+                            <Rating
+                              className="review-card-stars"
+                              value={review.reviewRating}
+                              precision={0.5}
+                              readOnly
+                            />
+                            <Typography className="review-card-date">
+                              {moment(review.createdAt).format("MMMM D, YYYY")}
+                            </Typography>
+                          </Stack>
 
-                        {shouldTruncate && (
-                          <Button
-                            className="review-card-toggle"
-                            onClick={() =>
-                              setExpandedReviews((prev) => ({
-                                ...prev,
-                                [reviewKey]: !prev[reviewKey],
-                              }))
-                            }
-                          >
-                            {isExpanded ? "Show less" : "Show more"}
-                          </Button>
-                        )}
-                      </Stack>
-                    </Box>
-                  );
-                })}
+                          {photos.length > 0 && (
+                            <Stack className="review-photo-list">
+                              {photos.map((photo, index) => (
+                                <Box
+                                  key={`${review._id}-photo-${index}`}
+                                  className="review-photo-item"
+                                >
+                                  <img
+                                    src={imageUrl(photo)}
+                                    alt={`${reviewerName} review photo ${index + 1}`}
+                                  />
+                                </Box>
+                              ))}
+                            </Stack>
+                          )}
+
+                          {reviewContent && (
+                            <Typography className="review-card-text">
+                              {reviewContent}
+                            </Typography>
+                          )}
+
+                          {shouldTruncate && (
+                            <Button
+                              className="review-card-toggle"
+                              onClick={() =>
+                                setExpandedReviews((prev) => ({
+                                  ...prev,
+                                  [review._id]: !prev[review._id],
+                                }))
+                              }
+                            >
+                              {isExpanded ? "Show less" : "Show more"}
+                            </Button>
+                          )}
+                        </Stack>
+                      </Box>
+                    );
+                  })
+                )}
 
                 {reviewPageCount > 1 && (
                   <Pagination
