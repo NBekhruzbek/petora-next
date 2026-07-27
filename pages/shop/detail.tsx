@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   ButtonBase,
+  CircularProgress,
   IconButton,
   Pagination,
   Paper,
@@ -15,6 +16,7 @@ import {
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import TextField from "@mui/material/TextField";
 import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
@@ -25,50 +27,25 @@ import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import RelatedProducts from "@/libs/components/shoppage/RelatedProducts";
+import { GET_PRODUCT } from "@/apollo/user/query";
+import { LIKE_TARGET_PRODUCT } from "@/apollo/user/mutation";
+import { Product } from "@/libs/types/product/product";
+import { userVar } from "@/apollo/store";
+import { REACT_APP_API_URL, Messages } from "@/libs/config";
+import { sweetMixinErrorAlert } from "@/libs/sweetAlert";
+
+const formatPrice = (value: number) =>
+  `₩${Math.round(value).toLocaleString("ko-KR")}`;
 
 const Detail = () => {
-  const product = {
-    name: "ROYAL CANIN - CARE DIGEST",
-    petType: "Dogs",
-    rating: 4.5,
-    reviewCount: 618,
-    discountedPrice: 39.99,
-    price: 49.99,
-    stockLeft: 7,
-    views: 382,
-    likes: 232,
-  };
-  const productInformation = [
-    { label: "Category", value: "Cat Food" },
-    { label: "Remaining Quantity", value: "12342" },
-    { label: "Brand", value: "Kit cat" },
-  ];
-  const productBenefits = [
-    {
-      title: "Supports Healthy Skin and Coat",
-      description:
-        "The Omega-3 and Omega-6 fatty acids promote shiny fur and healthy skin.",
-    },
-    {
-      title: "Boosts Vitality",
-      description:
-        "Taurine and prebiotic vitamins enhance your cat's energy, vision, and immune health.",
-    },
-    {
-      title: "Optimal Digestion",
-      description:
-        "The prebiotic content improves gut health for better digestion and nutrient absorption.",
-    },
-    {
-      title: "Irresistible Taste",
-      description:
-        "The savory flavor and dried fish flakes make mealtime a joy for picky eaters.",
-    },
-  ];
+  const router = useRouter();
+  const user = useReactiveVar(userVar);
+  const productId = router.query.id as string | undefined;
+
+  // Reviews are not yet exposed by the API, so this section keeps sample
+  // content until a review query exists.
   const reviewSummary = {
     title: "Product Review",
-    rating: 4,
-    totalReviews: 245,
     satisfiedText: "More than 200 customers are satisfied",
   };
   const reviewDistribution = [
@@ -144,17 +121,9 @@ const Detail = () => {
       photos: [],
     },
   ];
-  const images = [
-    "/img/services/training.jpg",
-    "/img/services/grooming.jpg",
-    "/img/services/walking.jpg",
-    "/img/services/boarding.png",
-  ];
-  const router = useRouter();
+
   const writeReviewRef = useRef<HTMLDivElement | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(312);
   const [quantity, setQuantity] = useState(1);
   const [value, setValue] = useState(0);
   const [writeReviewRating, setWriteReviewRating] = useState<number | null>(
@@ -163,6 +132,29 @@ const Detail = () => {
   const [writeReviewText, setWriteReviewText] = useState("");
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [reviewImages, setReviewImages] = useState<string[]>([]);
+  const [reviewPage, setReviewPage] = useState(1);
+  const [expandedReviews, setExpandedReviews] = useState<
+    Record<string, boolean>
+  >({});
+
+  /** APOLLO REQUESTS **/
+
+  const {
+    data: getProductData,
+    loading: getProductLoading,
+    refetch: getProductRefetch,
+  } = useQuery(GET_PRODUCT, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: productId },
+    skip: !productId,
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const product: Product | undefined = getProductData?.getProduct;
+
+  const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
+
+  /** LIFECYCLES **/
 
   useEffect(() => {
     if (router.query.writeReview === "true") {
@@ -175,6 +167,13 @@ const Detail = () => {
       }, 300);
     }
   }, [router.query.writeReview]);
+
+  // Reset the selected gallery image whenever a new product loads.
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [product?._id]);
+
+  /** HANDLERS **/
 
   const handleReviewImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
@@ -196,17 +195,19 @@ const Detail = () => {
     if (!writeReviewRating) return;
     setReviewSubmitted(true);
   };
-  const [reviewPage, setReviewPage] = useState(1);
-  const [expandedReviews, setExpandedReviews] = useState<
-    Record<string, boolean>
-  >({});
-  const reviewPreviewLimit = 260;
-  const reviewsPerPage = 5;
-  const reviewPageCount = Math.ceil(reviewCards.length / reviewsPerPage);
-  const paginatedReviews = reviewCards.slice(
-    (reviewPage - 1) * reviewsPerPage,
-    reviewPage * reviewsPerPage,
-  );
+
+  const likeProductHandler = async () => {
+    try {
+      if (!user?._id) throw new Error(Messages.error2);
+      if (!product?._id) return;
+
+      await likeTargetProduct({ variables: { input: product._id } });
+      await getProductRefetch({ input: productId });
+    } catch (err: any) {
+      console.log("ERROR, likeProductHandler:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
 
   const increase = () => setQuantity((prev) => prev + 1);
   const decrease = () => {
@@ -223,6 +224,54 @@ const Detail = () => {
     setReviewPage(page);
   };
 
+  const reviewPreviewLimit = 260;
+  const reviewsPerPage = 5;
+  const reviewPageCount = Math.ceil(reviewCards.length / reviewsPerPage);
+  const paginatedReviews = reviewCards.slice(
+    (reviewPage - 1) * reviewsPerPage,
+    reviewPage * reviewsPerPage,
+  );
+
+  if (!product) {
+    return (
+      <Stack className="product-detail-section">
+        <Box className={"detail-top"}></Box>
+        <Stack
+          className="container"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ minHeight: "40vh" }}
+        >
+          {getProductLoading ? (
+            <CircularProgress />
+          ) : (
+            <Typography>Product not found.</Typography>
+          )}
+        </Stack>
+      </Stack>
+    );
+  }
+
+  const hasDiscount = product.productDiscount > 0;
+  const currentPrice =
+    hasDiscount && product.productPriceAfterDiscount != null
+      ? product.productPriceAfterDiscount
+      : product.productPrice;
+  const savings = product.productPrice - currentPrice;
+  const myFavorite = Boolean(product?.meLiked?.[0]?.myFavorite);
+
+  const images = product.productImages?.length
+    ? product.productImages.map((image) => `${REACT_APP_API_URL}/${image}`)
+    : ["/img/products/royal-canin.png"];
+  const mainImage = images[selectedImage] ?? images[0];
+
+  const productInformation = [
+    { label: "Category", value: product.productType },
+    { label: "Pet Type", value: product.productPetType },
+    { label: "Brand", value: product.productBrand || "—" },
+    { label: "Remaining Quantity", value: String(product.productQuantity) },
+  ];
+
   return (
     <Stack className="product-detail-section">
       <Box className={"detail-top"}></Box>
@@ -232,16 +281,16 @@ const Detail = () => {
         <Stack className="product-detail-grid">
           <Stack className="gallery">
             <Box className="main-image">
-              <img src={images[selectedImage]} alt="Training service" />
+              <img src={mainImage} alt={product.productName} />
             </Box>
             <Stack className="thumbs">
               {images.map((src, index) => (
                 <ButtonBase
-                  key={src}
+                  key={`${src}-${index}`}
                   className={`thumb ${selectedImage === index ? "active" : ""}`}
                   onClick={() => setSelectedImage(index)}
                 >
-                  <img src={src} alt={`Thumbnail ${index + 1}`} />
+                  <img src={src} alt={`${product.productName} ${index + 1}`} />
                 </ButtonBase>
               ))}
             </Stack>
@@ -249,20 +298,20 @@ const Detail = () => {
 
           <Stack className="shopping-sidebar">
             <Paper className="shopping-card" elevation={0}>
-              <Typography className="title">{product.name}</Typography>
-              <Box className={"pet-type"}>{product.petType}</Box>
+              <Typography className="title">{product.productName}</Typography>
+              <Box className={"pet-type"}>{product.productPetType}</Box>
               <Stack className="rating-row" direction="row">
                 <Stack className="rating-info" direction="row">
                   <Rating
                     className="star-rating"
-                    value={product.rating}
+                    value={product.productRating}
                     precision={0.5}
                     readOnly
                   />
                   <Box className="rating-text">
-                    {product.rating.toFixed(1)}{" "}
+                    {product.productRating.toFixed(1)}{" "}
                     <span className="reviews">
-                      ({product.reviewCount.toLocaleString()} reviews)
+                      ({product.productReviews.toLocaleString()} reviews)
                     </span>
                   </Box>
                 </Stack>
@@ -270,21 +319,32 @@ const Detail = () => {
 
               <Stack className="price-section">
                 <Box className={"price-after-discount"}>
-                  ${product.discountedPrice.toFixed(2)}
+                  {formatPrice(currentPrice)}
                 </Box>
-                <Box className={"price-before-discount"}>
-                  ${product.price.toFixed(2)}
-                </Box>
-                <Box className={"saving-price"}>
-                  Save ${(product.price - product.discountedPrice).toFixed(2)}
-                </Box>
+                {hasDiscount ? (
+                  <>
+                    <Box className={"price-before-discount"}>
+                      {formatPrice(product.productPrice)}
+                    </Box>
+                    <Box className={"saving-price"}>
+                      Save {formatPrice(savings)}
+                    </Box>
+                  </>
+                ) : null}
               </Stack>
 
               <Box className={"stock-text"}>
-                <VerifiedOutlinedIcon /> In Stock{" "}
-                <span className="stock-left">
-                  (only {product.stockLeft} left!)
-                </span>
+                <VerifiedOutlinedIcon />{" "}
+                {product.productQuantity > 0 ? (
+                  <>
+                    In Stock{" "}
+                    <span className="stock-left">
+                      (only {product.productQuantity} left!)
+                    </span>
+                  </>
+                ) : (
+                  <span className="stock-left">Out of stock</span>
+                )}
               </Box>
 
               <Stack>
@@ -292,32 +352,25 @@ const Detail = () => {
                   Short description:
                 </Typography>
                 <Typography className="short-desc-text">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea,
-                  rem minus aliquam ullam illo excepturi nihil quas! Maiores
-                  provident perspiciatis vero, nesciunt labore tempore.
+                  {product.productShortDesc}
                 </Typography>
               </Stack>
 
               <Stack className="quantity-views-likes">
                 <Box className={"views-likes"}>
                   {" "}
-                  <VisibilityIcon className="view-icon" /> {product.views} views
+                  <VisibilityIcon className="view-icon" />{" "}
+                  {product.productViews} views
                 </Box>
                 <Box className={"views-likes"}>
                   {" "}
                   <IconButton
                     className="like-button"
                     aria-label="Add to favorites"
-                    aria-pressed={liked}
-                    onClick={() => {
-                      const nextLiked = !liked;
-                      setLiked(nextLiked);
-                      setLikeCount((count) =>
-                        Math.max(0, count + (nextLiked ? 1 : -1)),
-                      );
-                    }}
+                    aria-pressed={myFavorite}
+                    onClick={likeProductHandler}
                   >
-                    {liked ? (
+                    {myFavorite ? (
                       <FavoriteIcon
                         className="heart-icon liked-icon"
                         fontSize="small"
@@ -329,7 +382,7 @@ const Detail = () => {
                       />
                     )}
                   </IconButton>
-                  {likeCount} likes
+                  {product.productLikes} likes
                 </Box>
               </Stack>
 
@@ -406,34 +459,20 @@ const Detail = () => {
                     Product description
                   </Typography>
                   <Typography className="detail-description-text">
-                    Kit Cat Fillet O&apos; Flakes is a premium and complete cat
-                    food specially crafted for adult cats over 1 year old. This
-                    formula combines savory taste with top-quality dried fish
-                    flakes, ensuring a delectable and nutritious meal for your
-                    feline friend. Enriched with Omega-3, Omega-6, taurine,
-                    prebiotic vitamins, and free from pork or lard, it supports
-                    your cat&apos;s overall health and well-being. Each pack is
-                    designed for freshness with convenient 1kg bags.
+                    {product.productDesc}
                   </Typography>
                 </Stack>
 
-                <Stack className="detail-block">
-                  <Typography className="detail-block-title">
-                    Benefits
-                  </Typography>
-                  <Stack className="detail-benefits-list">
-                    {productBenefits.map((benefit) => (
-                      <Box key={benefit.title} className="detail-benefit-item">
-                        <Typography className="detail-benefit-title">
-                          {benefit.title}:
-                        </Typography>
-                        <Typography className="detail-benefit-text">
-                          {benefit.description}
-                        </Typography>
-                      </Box>
-                    ))}
+                {product.productBenefits ? (
+                  <Stack className="detail-block">
+                    <Typography className="detail-block-title">
+                      Benefits
+                    </Typography>
+                    <Typography className="detail-description-text">
+                      {product.productBenefits}
+                    </Typography>
                   </Stack>
-                </Stack>
+                ) : null}
               </Stack>
             </Stack>
           )}
@@ -534,12 +573,12 @@ const Detail = () => {
                 <Stack className="review-score-row">
                   <Rating
                     className="review-rating-stars"
-                    value={reviewSummary.rating}
+                    value={product.productRating}
                     precision={0.5}
                     readOnly
                   />
                   <Typography className="review-score-count">
-                    {reviewSummary.totalReviews}
+                    {product.productReviews}
                   </Typography>
                 </Stack>
 
