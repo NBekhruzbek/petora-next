@@ -5,7 +5,7 @@ import { Product } from "./types/product/product";
 const STORAGE_KEY = "petora-basket";
 
 /** Won, matching the product prices coming back from the API. */
-export const DELIVERY_FEE = 3000;
+export const DELIVERY_FEE = 4000;
 export const FREE_DELIVERY_THRESHOLD = 50000;
 
 export const formatPrice = (value: number) =>
@@ -92,7 +92,9 @@ export const decreaseBasketQuantity = (productId: string) =>
   persist(
     basketVar().flatMap((item) => {
       if (item.productId !== productId) return item;
-      return item.quantity === 1 ? [] : [{ ...item, quantity: item.quantity - 1 }];
+      return item.quantity === 1
+        ? []
+        : [{ ...item, quantity: item.quantity - 1 }];
     }),
   );
 
