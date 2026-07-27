@@ -72,9 +72,17 @@
       top: 8px;
       left: 8px;
     }
+    // Shared views/likes pill sits bottom-right; tighten it for the 2-up card.
     .like-meta {
-      top: 8px;
+      top: auto;
+      bottom: 8px;
       right: 8px;
+      gap: 8px;
+      padding: 4px 9px;
+
+      .views-icon {
+        font-size: 18px;
+      }
     }
   }
 

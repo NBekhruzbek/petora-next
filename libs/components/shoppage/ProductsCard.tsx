@@ -3,6 +3,7 @@ import { Box, Button, Rating, Stack } from "@mui/material";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
@@ -35,6 +36,8 @@ interface ProductsCardProps {
 
 const formatPrice = (value: number) =>
   `₩${Math.round(value).toLocaleString("ko-KR")}`;
+const formatCount = (value: number) =>
+  value >= 1000 ? `${(value / 1000).toFixed(1)}k` : `${value}`;
 const productDetailHref = "/shop/detail";
 
 const ProductsCard = ({
@@ -115,25 +118,33 @@ const ProductsCard = ({
       tabIndex={0}
     >
       <Box className="card-image-wrap">
-        <Stack className="like-meta">
-          <Box
-            component="button"
-            type="button"
-            className="like-toggle"
-            onClick={likeProductHandler}
-            aria-label={
-              myFavorite ? "Remove from favorites" : "Add to favorites"
-            }
-          >
-            {myFavorite ? (
-              <FavoriteRoundedIcon className="liked" />
-            ) : (
-              <FavoriteBorderRoundedIcon className="unliked" />
-            )}
-          </Box>
-          <Box className="like-count">
-            {product.productLikes.toLocaleString()}
-          </Box>
+        <Stack className="like-meta" direction="row">
+          <Stack className="meta-item" direction="row">
+            <VisibilityOutlinedIcon className="views-icon" />
+            <Box className="views-count">
+              {formatCount(product.productViews)}
+            </Box>
+          </Stack>
+          <Stack className="meta-item" direction="row">
+            <Box
+              component="button"
+              type="button"
+              className="like-toggle"
+              onClick={likeProductHandler}
+              aria-label={
+                myFavorite ? "Remove from favorites" : "Add to favorites"
+              }
+            >
+              {myFavorite ? (
+                <FavoriteRoundedIcon className="liked" />
+              ) : (
+                <FavoriteBorderRoundedIcon className="unliked" />
+              )}
+            </Box>
+            <Box className="like-count">
+              {formatCount(product.productLikes)}
+            </Box>
+          </Stack>
         </Stack>
         {product.productPetType ? (
           <Box className="pet-type-badge">{product.productPetType}</Box>

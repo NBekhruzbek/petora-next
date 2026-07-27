@@ -107,35 +107,7 @@
           pointer-events: none;
         }
 
-        .like-meta {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          z-index: 2;
-          align-items: center;
-          gap: 3px;
-
-          .like-toggle {
-            width: 26px;
-            height: 26px;
-            border: 0;
-            padding: 0;
-            background: transparent;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-          .like-count {
-            color: #666;
-            text-align: center;
-            font-family: $font;
-            font-size: 11px;
-            font-weight: 600;
-            line-height: 1;
-          }
-        }
+        // .like-meta (views + likes pill) comes from shared/shoppage-card.scss.
 
         .pet-type-badge {
           position: absolute;
