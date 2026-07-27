@@ -444,7 +444,6 @@
             gap: 10px;
           }
 
-
           .qna-tag-row {
             display: flex;
             flex-direction: row;
@@ -559,7 +558,6 @@
             }
           }
         }
-
       }
     }
   }
@@ -641,6 +639,12 @@
     opacity 0.35s ease,
     transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
+  // These images are click targets (open the gallery / the post). A native image
+  // drag starts on a few pixels of pointer drift and swallows the click, so the
+  // press reads as "nothing happened". Safari needs the property as well as the
+  // draggable={false} attribute.
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .qna-reveal-image.is-loaded {
@@ -678,7 +682,7 @@
     .qna-dialog-title {
       font-family: $font;
       font-size: 23px;
-      font-weight: 800;
+      font-weight: 700;
       line-height: 1.3;
       color: #1f2735;
     }
@@ -724,7 +728,7 @@
   .qna-section-title {
     font-family: $font;
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.2;
     color: #1f2735;
   }
@@ -767,6 +771,7 @@
         box-shadow: 0 6px 16px rgba(31, 41, 55, 0.06);
         flex: 0 0 auto;
         cursor: zoom-in;
+        cursor: pointer;
         transition:
           transform 0.2s ease,
           box-shadow 0.2s ease;
@@ -789,6 +794,8 @@
   .qna-detail-copy {
     font-size: 16px;
     color: #4f5d73;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
   .qna-question-meta {
@@ -876,6 +883,10 @@
         font-weight: 500;
         line-height: 1.65;
         color: #3b4455;
+        // Keep the author's paragraph breaks instead of collapsing the post
+        // into one block.
+        white-space: pre-wrap;
+        word-break: break-word;
       }
 
       .free-board-detail-meta {
@@ -1397,6 +1408,16 @@
           color: #a2abba;
         }
       }
+    }
+
+    // Keeps the submit button at its own width, right-aligned under the field,
+    // instead of stretching across the column.
+    .qna-answer-form-footer {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
     }
 
     .qna-post-answer-btn {

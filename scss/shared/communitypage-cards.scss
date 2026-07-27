@@ -32,6 +32,10 @@
       height: 100%;
       object-fit: cover;
       transition: transform 0.4s ease;
+      // The card itself is the click target — a native image drag would eat the
+      // click on the smallest pointer drift.
+      -webkit-user-drag: none;
+      user-select: none;
     }
 
     .free-board-news-date {
@@ -60,7 +64,7 @@
     .free-board-news-title {
       font-family: $font;
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 700;
       line-height: 1.35;
       color: #232938;
       display: -webkit-box;
@@ -183,8 +187,8 @@
 
     .qna-question-title {
       font-family: $font;
-      font-size: 24px;
-      font-weight: 800;
+      font-size: 23.5px;
+      font-weight: 700;
       line-height: 1.25;
       color: #1e2534;
     }
@@ -223,10 +227,14 @@
       }
     }
 
+    // The full question body, unlike the truncated teaser on the card. Members
+    // type real paragraphs, and HTML collapses their newlines into spaces
+    // unless asked not to — the same rule the answers already carry.
     .qna-detail-copy {
       font-size: 16px;
       color: #4f5d73;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
   }
 }
-
