@@ -534,9 +534,15 @@
           cursor: pointer;
         }
 
-        .important {
-          width: 112px;
-          padding: 5 12px;
+        // The badge text is the NoticeType, so it has to size to its content —
+        // "Announcement" does not fit a hardcoded pill width.
+        .important,
+        .update,
+        .event,
+        .announcement {
+          align-self: flex-start;
+          width: auto;
+          padding: 5px 12px;
           border-radius: 999px;
 
           font-family: $font;
@@ -544,21 +550,26 @@
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.08em;
+        }
+
+        .important {
           color: rgb(246, 0, 0);
           background: rgba(237, 91, 117, 0.12);
         }
-        .update {
-          width: 82px;
-          padding: 5 12px;
-          border-radius: 999px;
 
-          font-family: $font;
-          font-size: 13px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
+        .update {
           color: #6d5df6;
           background: #6d5df61c;
+        }
+
+        .event {
+          color: #b45309;
+          background: rgba(245, 158, 11, 0.14);
+        }
+
+        .announcement {
+          color: #0f766e;
+          background: rgba(20, 184, 166, 0.14);
         }
 
         .modal-title {

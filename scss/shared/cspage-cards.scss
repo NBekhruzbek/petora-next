@@ -89,6 +89,7 @@
   .faq-bullets {
     margin: 14px 0 0;
     padding-left: 18px;
+    list-style: disc; // the global reset strips markers off every ul
     color: #5e557d;
     font-family: $font;
     font-size: 14px;
@@ -183,9 +184,22 @@
     background: linear-gradient(180deg, #6d5df6, #897aff);
   }
 
+  // NoticeType has four values; the purple .notice-line above is the UPDATE default.
   &.important {
     .notice-line {
       background: rgb(246, 0, 0);
+    }
+  }
+
+  &.event {
+    .notice-line {
+      background: linear-gradient(180deg, #f59e0b, #fbbf24);
+    }
+  }
+
+  &.announcement {
+    .notice-line {
+      background: linear-gradient(180deg, #0d9488, #2dd4bf);
     }
   }
 
@@ -223,6 +237,16 @@
     &.update {
       background: rgba(109, 93, 246, 0.11);
       color: #5d4fe0;
+    }
+
+    &.event {
+      background: rgba(245, 158, 11, 0.14);
+      color: #b45309;
+    }
+
+    &.announcement {
+      background: rgba(20, 184, 166, 0.14);
+      color: #0f766e;
     }
   }
 

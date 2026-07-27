@@ -8,3 +8,9 @@ export interface View {
   createdAt: Date;
   updatedAt: Date;
 }
+
+/** Empty array means the signed-in member has not opened the target yet. */
+export interface MeViewed {
+  memberId: string;
+  viewRefId: string;
+}

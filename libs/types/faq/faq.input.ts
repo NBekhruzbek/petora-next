@@ -10,6 +10,7 @@ export interface FaqInput {
 }
 
 interface FaqISearch {
+  faqType?: FaqType;
   text?: string;
 }
 

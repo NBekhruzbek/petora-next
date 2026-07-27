@@ -870,6 +870,10 @@ export const GET_NOTICE_DETAIL = gql`
       memberId
       createdAt
       updatedAt
+      meViewed {
+        memberId
+        viewRefId
+      }
     }
   }
 `;
@@ -888,8 +892,15 @@ export const GET_NOTICES = gql`
         memberId
         createdAt
         updatedAt
+        meViewed {
+          memberId
+          viewRefId
+        }
       }
       metaCounter {
+        total
+      }
+      unviewedCounter {
         total
       }
     }

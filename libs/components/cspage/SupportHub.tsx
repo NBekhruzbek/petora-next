@@ -8,34 +8,23 @@ import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import LaunchRoundedIcon from "@mui/icons-material/LaunchRounded";
-import { ComponentType, useMemo, useState } from "react";
-import { useEffect, useRef } from "react";
+import { ComponentType, useEffect, useMemo, useRef, useState } from "react";
+import { useLazyQuery, useQuery, useReactiveVar } from "@apollo/client";
+import {
+  GET_FAQS,
+  GET_FAQ_DETAIL,
+  GET_NOTICES,
+  GET_NOTICE_DETAIL,
+} from "@/apollo/user/query";
+import { userVar } from "@/apollo/store";
+import { FaqDetail } from "@/libs/types/faq/faq";
+import { NoticeDetail } from "@/libs/types/notice/notice";
+import { FaqType } from "@/libs/enums/faq.enum";
+import { Direction } from "@/libs/enums/common.enum";
 
-type CategoryId =
-  | "orders"
-  | "delivery"
-  | "returns"
-  | "account"
-  | "services"
-  | "notices";
-
-interface FaqItem {
-  id: string;
-  category: Exclude<CategoryId, "notices">;
-  title: string;
-  description: string;
-  answer: string;
-  bullets: string[];
-}
-
-interface NoticeItem {
-  id: string;
-  title: string;
-  summary: string;
-  date: string;
-  badge: "Important" | "Update";
-  fullText: string[];
-}
+/** The notices tab is not a FaqType — it swaps the panel to a different collection. */
+const NOTICES_TAB = "NOTICES";
+type CategoryId = FaqType | typeof NOTICES_TAB;
 
 interface CategoryItem {
   id: CategoryId;
@@ -44,377 +33,334 @@ interface CategoryItem {
 }
 
 const categories: CategoryItem[] = [
-  { id: "orders", label: "Orders & Payments", icon: Inventory2OutlinedIcon },
   {
-    id: "delivery",
+    id: FaqType.ORDERS_PAYMENTS,
+    label: "Orders & Payments",
+    icon: Inventory2OutlinedIcon,
+  },
+  {
+    id: FaqType.DELIVERY_TRACKING,
     label: "Delivery & Tracking",
     icon: LocalShippingOutlinedIcon,
   },
-  { id: "returns", label: "Returns & Refunds", icon: ReplayOutlinedIcon },
-  { id: "account", label: "Account & Security", icon: ShieldOutlinedIcon },
-  { id: "services", label: "Pet Services", icon: PetsOutlinedIcon },
-  { id: "notices", label: "Notices", icon: NotificationsOutlinedIcon },
+  {
+    id: FaqType.RETURNS_REFUNDS,
+    label: "Returns & Refunds",
+    icon: ReplayOutlinedIcon,
+  },
+  {
+    id: FaqType.ACCOUNT_SECURITY,
+    label: "Account & Security",
+    icon: ShieldOutlinedIcon,
+  },
+  {
+    id: FaqType.PET_SERVICES,
+    label: "Pet Services",
+    icon: PetsOutlinedIcon,
+  },
+  { id: NOTICES_TAB, label: "Notices", icon: NotificationsOutlinedIcon },
 ];
 
-const faqs: FaqItem[] = [
-  {
-    id: "orders-1",
-    category: "orders",
-    title: "How do I confirm my payment went through?",
-    description:
-      "Check receipts, wallet activity, and order confirmation in one place.",
-    answer:
-      "Payments are confirmed as soon as the order timeline shows a completed status and a receipt is generated in your order details.",
-    bullets: [
-      "Open My Orders and select the latest order.",
-      "Look for the receipt line under Payment Summary.",
-      "If the charge is pending for more than 30 minutes, refresh the order page and check your email inbox.",
-    ],
-  },
-  {
-    id: "orders-2",
-    category: "orders",
-    title: "Can I split payment between points and card?",
-    description: "Combine rewards and card payment during checkout.",
-    answer:
-      "Yes. Petora supports mixed payments when reward points cover part of the order total and a saved card completes the rest.",
-    bullets: [
-      "Apply available points on the checkout panel.",
-      "Select a primary card for the remaining balance.",
-      "Review the split before placing the order.",
-    ],
-  },
-  {
-    id: "delivery-1",
-    category: "delivery",
-    title: "Where can I see live delivery updates?",
-    description:
-      "Find the courier stage, expected arrival window, and status notes.",
-    answer:
-      "Live delivery updates appear in your order timeline with each handoff, route update, and delivery confirmation.",
-    bullets: [
-      "Open the order detail screen.",
-      "Tap Tracking to view the latest courier checkpoint.",
-      "Enable text alerts if you want arrival updates sent automatically.",
-    ],
-  },
-  {
-    id: "delivery-2",
-    category: "delivery",
-    title: "What happens if my pet essentials arrive late?",
-    description:
-      "Learn what Petora does when priority deliveries miss the promised time.",
-    answer:
-      "If a priority order misses its promised delivery window, the support team reviews the shipment automatically and may issue store credit depending on the delay.",
-    bullets: [
-      "Keep the order open until the final delivery scan appears.",
-      "Use the Help with this Order action inside tracking.",
-      "Our team checks courier logs before issuing a resolution.",
-    ],
-  },
-  {
-    id: "returns-1",
-    category: "returns",
-    title: "How do refunds work for unopened products?",
-    description: "Start a return and understand timing for refunds.",
-    answer:
-      "Unopened products can usually be returned within the eligible window after inspection, and refunds are sent back to the original payment method.",
-    bullets: [
-      "Choose Return Item from the order detail page.",
-      "Upload a quick photo of the unopened packaging if requested.",
-      "Refunds usually post after warehouse inspection is completed.",
-    ],
-  },
-  {
-    id: "returns-2",
-    category: "returns",
-    title: "Can I reschedule a booked pet service instead of canceling?",
-    description: "Move a grooming or care session without losing your booking.",
-    answer:
-      "Most appointments can be rescheduled directly from the booking card if the provider still has availability in the next open slots.",
-    bullets: [
-      "Open Bookings from your account menu.",
-      "Select Manage Schedule on the appointment card.",
-      "Choose a new time and review any policy notes before confirming.",
-    ],
-  },
-  {
-    id: "account-1",
-    category: "account",
-    title: "How can I secure my Petora account?",
-    description: "Strengthen login protection and manage active sessions.",
-    answer:
-      "Security settings let you update your password, verify your email, and review recent devices that accessed your account.",
-    bullets: [
-      "Visit Account Settings and open Security.",
-      "Update your password and confirm your email address.",
-      "Sign out of devices you do not recognize.",
-    ],
-  },
-  {
-    id: "account-2",
-    category: "account",
-    title: "Why is my account temporarily limited?",
-    description: "Understand verification holds and next steps.",
-    answer:
-      "Temporary limits usually appear when Petora detects unusual login activity or needs to re-verify payment details for account safety.",
-    bullets: [
-      "Check your inbox for a verification email.",
-      "Complete the requested confirmation step.",
-      "If the limit remains after verification, contact support with the email tied to your account.",
-    ],
-  },
-  {
-    id: "services-1",
-    category: "services",
-    title: "How do I prepare my pet for a grooming visit?",
-    description:
-      "A quick checklist to make handoff smoother for you and your pet.",
-    answer:
-      "Before a grooming visit, make sure your pet profile is up to date and share any sensitivities, medications, or behavior notes with the groomer.",
-    bullets: [
-      "Confirm the pet profile and vaccination details are current.",
-      "Add notes about coat condition, skin sensitivity, or anxiety triggers.",
-      "Arrive a few minutes early for a calmer handoff.",
-    ],
-  },
-  {
-    id: "services-2",
-    category: "services",
-    title: "Can I request the same sitter or walker again?",
-    description: "Rebook favorite caregivers from past services.",
-    answer:
-      "Yes. If the provider is available, you can rebook them directly from your completed service history.",
-    bullets: [
-      "Open Past Services from your account.",
-      "Choose the provider you want to book again.",
-      "Select a new date and confirm the session details.",
-    ],
-  },
-];
-
-const notices: NoticeItem[] = [
-  {
-    id: "notice-1",
-    title: "Holiday delivery windows are slightly extended this week",
-    summary:
-      "High order volume may add 1 to 2 days to some pet essentials and food deliveries in select areas.",
-    date: "April 25, 2026",
-    badge: "Important",
-    fullText: [
-      "Petora is seeing a seasonal increase in orders for food, toys, and grooming supplies in select delivery zones.",
-      "Standard deliveries may take slightly longer than usual, especially for orders placed after 6 PM local time.",
-      "Priority deliveries are still being processed first, and tracking pages will continue to show real-time courier updates.",
-    ],
-  },
-  {
-    id: "notice-2",
-    title: "Booking reminders now include provider arrival windows",
-    summary:
-      "Service reminders have been refreshed to show clearer arrival estimates for walking and sitting sessions.",
-    date: "April 22, 2026",
-    badge: "Update",
-    fullText: [
-      "Reminder notifications now include a tighter arrival window so it is easier to plan your handoff.",
-      "You will also see a direct link to your booking detail page from the reminder message.",
-      "This update is rolling out gradually to all supported service categories.",
-    ],
-  },
-  {
-    id: "notice-3",
-    title: "Refund timeline improvements for canceled service bookings",
-    summary:
-      "Eligible service refunds are now processed faster after provider-approved cancellations.",
-    date: "April 18, 2026",
-    badge: "Update",
-    fullText: [
-      "Refund requests tied to provider-approved service cancellations now enter expedited review.",
-      "Most eligible refunds will be submitted to the original payment method sooner than before.",
-      "You can continue to monitor progress from the booking detail page while the request is in motion.",
-    ],
-  },
-  {
-    id: "notice-4",
-    title: "Expanded evening slots for dog walking in Seoul",
-    summary:
-      "New weekday evening booking slots are now available in select neighborhoods.",
-    date: "April 16, 2026",
-    badge: "Update",
-    fullText: [
-      "Petora has added additional evening walker availability in popular Seoul service areas.",
-      "You may see more flexible slots between 6 PM and 9 PM when booking repeat walks.",
-      "Availability still depends on your saved address and provider schedule.",
-    ],
-  },
-  {
-    id: "notice-5",
-    title: "Profile photo upload issue has been resolved",
-    summary:
-      "Customers who had trouble updating pet profile photos can now retry successfully.",
-    date: "April 14, 2026",
-    badge: "Update",
-    fullText: [
-      "A temporary upload issue affected some pet profile edits on desktop.",
-      "The issue has now been resolved and uploads should complete as expected.",
-      "If a previous upload failed, reopening the profile editor should let you retry normally.",
-    ],
-  },
-  {
-    id: "notice-6",
-    title: "Weekend grooming demand is higher than usual",
-    summary:
-      "Popular salons may book out earlier than normal for Saturday and Sunday appointments.",
-    date: "April 12, 2026",
-    badge: "Important",
-    fullText: [
-      "Weekend grooming demand has increased across several popular partner salons.",
-      "Early booking is recommended if you want a preferred stylist or time window.",
-      "Alternative weekday appointments may still be available in nearby locations.",
-    ],
-  },
-  {
-    id: "notice-7",
-    title: "Faster cancellation confirmations for service bookings",
-    summary:
-      "Canceled bookings now update in the dashboard more quickly after provider approval.",
-    date: "April 10, 2026",
-    badge: "Update",
-    fullText: [
-      "Cancellation confirmations for pet services are now reflected faster in your account.",
-      "This includes updated status labels and faster refund handoff when eligible.",
-      "You can review the latest state from the booking detail screen.",
-    ],
-  },
-  {
-    id: "notice-8",
-    title: "Late-night support replies may take slightly longer",
-    summary:
-      "Support remains available, but some complex requests may need extra overnight review time.",
-    date: "April 8, 2026",
-    badge: "Important",
-    fullText: [
-      "Our support team continues to monitor requests overnight.",
-      "Some account and payment issues may require specialist follow-up the next morning.",
-      "Urgent delivery and booking changes are still prioritized whenever possible.",
-    ],
-  },
-  {
-    id: "notice-9",
-    title: "Improved receipt formatting for mixed payments",
-    summary:
-      "Receipts now show points and card splits more clearly after checkout.",
-    date: "April 6, 2026",
-    badge: "Update",
-    fullText: [
-      "Mixed payment receipts now separate reward point usage from card charges more clearly.",
-      "This update applies to new transactions across supported checkout flows.",
-      "Older receipts will continue to display in their previous format.",
-    ],
-  },
-  {
-    id: "notice-10",
-    title: "Address edits are locked shortly before dispatch",
-    summary:
-      "Orders preparing for courier pickup may no longer support last-minute address changes.",
-    date: "April 4, 2026",
-    badge: "Important",
-    fullText: [
-      "Address edits remain available until an order reaches its courier preparation stage.",
-      "Once dispatch is underway, you may need to contact support for rerouting options.",
-      "Eligibility still depends on the courier and delivery area.",
-    ],
-  },
-  {
-    id: "notice-11",
-    title: "Pet sitter notes now support longer care instructions",
-    summary:
-      "You can add more detailed feeding, medication, and behavior notes before a visit.",
-    date: "April 2, 2026",
-    badge: "Update",
-    fullText: [
-      "Petora has expanded the sitter instruction field for more detailed care guidance.",
-      "This helps providers review routines, medication timing, and home access notes more easily.",
-      "Existing bookings can also be updated if the provider has not started the session yet.",
-    ],
-  },
-  {
-    id: "notice-12",
-    title: "Priority delivery labels refreshed in tracking view",
-    summary:
-      "Tracking pages now highlight priority shipment stages with clearer labels.",
-    date: "March 30, 2026",
-    badge: "Update",
-    fullText: [
-      "Priority shipments now use clearer visual labels throughout the tracking flow.",
-      "This change makes it easier to distinguish standard and priority updates at a glance.",
-      "The refresh is visual only and does not change delivery speed or eligibility.",
-    ],
-  },
-];
-
-const featuredNotice = notices[0];
+// The panel has no FAQ pager in the design, so one page holds every FAQ of a type.
+const FAQ_LIMIT = 30;
 const NOTICE_PAGE_LIMIT = 8;
 
+const BULLET_PREFIX = /^[-•*]\s+/;
+
+const toLines = (content?: string) =>
+  (content ?? "")
+    .split(/\r?\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+const toSentences = (text: string) =>
+  (text.match(/[^.!?]+[.!?]+|\S[^.!?]*$/g) ?? [])
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+interface FaqContent {
+  preview: string;
+  paragraphs: string[];
+  bullets: string[];
+}
+
+/**
+ * `faqContent` is a single free-text field, so the collapsed/expanded split has to
+ * be derived. Admins who write multi-line content get line-for-line paragraphs plus
+ * a real bullet list; a single unbroken blob falls back to sentence splitting so the
+ * card still has a short preview instead of dumping everything above the fold.
+ */
+const parseFaqContent = (content?: string): FaqContent => {
+  const lines = toLines(content);
+  const bullets = lines
+    .filter((line) => BULLET_PREFIX.test(line))
+    .map((line) => line.replace(BULLET_PREFIX, ""));
+  const prose = lines.filter((line) => !BULLET_PREFIX.test(line));
+
+  if (prose.length <= 1 && !bullets.length) {
+    const [first, ...rest] = toSentences(prose[0] ?? "");
+    return {
+      preview: first ?? "",
+      paragraphs: rest.length ? [rest.join(" ")] : [],
+      bullets,
+    };
+  }
+
+  return { preview: prose[0] ?? "", paragraphs: prose.slice(1), bullets };
+};
+
+const noticeParagraphs = (notice?: NoticeDetail) => {
+  const lines = toLines(notice?.noticeContent);
+  return lines.length ? lines : [notice?.noticeContent ?? ""].filter(Boolean);
+};
+
+const noticeBadgeLabel = (noticeType: string) =>
+  noticeType.charAt(0) + noticeType.slice(1).toLowerCase();
+
+/**
+ * Signed-in members get their read state from the server (`meViewed`, recorded by
+ * `getNoticeDetail`). Guests have no identity to store it against, so the badge
+ * would reset on every reload — localStorage keeps it stable per browser instead.
+ */
+const GUEST_VIEWED_KEY = "petora-viewed-notices";
+
+const readGuestViewedIds = (): string[] => {
+  if (typeof window === "undefined") return [];
+  try {
+    const parsed = JSON.parse(
+      window.localStorage.getItem(GUEST_VIEWED_KEY) ?? "[]",
+    );
+    return Array.isArray(parsed)
+      ? parsed.filter((id): id is string => typeof id === "string")
+      : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeGuestViewedIds = (ids: string[]) => {
+  try {
+    window.localStorage.setItem(GUEST_VIEWED_KEY, JSON.stringify(ids));
+  } catch {
+    // Private mode or a full quota — the badge falls back to session-only memory.
+  }
+};
+
+const formatNoticeDate = (value?: Date | string) => {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 const SupportHub = () => {
-  const [activeCategory, setActiveCategory] = useState<CategoryId>("orders");
+  const [activeCategory, setActiveCategory] = useState<CategoryId>(
+    FaqType.ORDERS_PAYMENTS,
+  );
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
-  const [selectedNotice, setSelectedNotice] = useState<NoticeItem | null>(null);
-  const [viewedNoticeIds, setViewedNoticeIds] = useState<string[]>([]);
+  const [selectedNotice, setSelectedNotice] = useState<NoticeDetail | null>(
+    null,
+  );
+  // Guest read state, hydrated from localStorage after mount so SSR markup matches.
+  const [guestViewedIds, setGuestViewedIds] = useState<string[]>([]);
+  // Covers the gap between opening a notice and the server confirming the view.
+  const [sessionViewedIds, setSessionViewedIds] = useState<string[]>([]);
   const [noticePage, setNoticePage] = useState(1);
   const noticeTopRef = useRef<HTMLDivElement | null>(null);
 
-  const filteredFaqs = useMemo(() => {
-    return activeCategory === "notices"
-      ? faqs
-      : faqs.filter((item) => item.category === activeCategory);
-  }, [activeCategory]);
+  const user = useReactiveVar(userVar);
+  const memberId = user?._id ?? "";
+  const isNoticeView = activeCategory === NOTICES_TAB;
 
-  const filteredNotices = notices;
+  /** APOLLO REQUESTS **/
+
+  const {
+    data: faqsData,
+    previousData: faqsPreviousData,
+    loading: faqsLoading,
+    error: faqsError,
+  } = useQuery(GET_FAQS, {
+    fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+    skip: isNoticeView,
+    variables: {
+      input: {
+        page: 1,
+        limit: FAQ_LIMIT,
+        sort: "createdAt",
+        direction: Direction.DESC,
+        search: { faqType: isNoticeView ? undefined : activeCategory },
+      },
+    },
+  });
+
+  // Drives the banner above the panel — always the newest notice, regardless of
+  // which page the notice list is parked on. `unviewedCounter` is scoped to the
+  // whole collection, so the badge does not depend on the visible page either.
+  const { data: latestNoticeData, refetch: refetchNoticeSummary } = useQuery(
+    GET_NOTICES,
+    {
+      fetchPolicy: "cache-and-network",
+      variables: {
+        input: {
+          page: 1,
+          limit: 1,
+          sort: "createdAt",
+          direction: Direction.DESC,
+          search: {},
+        },
+      },
+    },
+  );
+
+  const {
+    data: noticesData,
+    previousData: noticesPreviousData,
+    loading: noticesLoading,
+    error: noticesError,
+  } = useQuery(GET_NOTICES, {
+    fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+    skip: !isNoticeView,
+    variables: {
+      input: {
+        page: noticePage,
+        limit: NOTICE_PAGE_LIMIT,
+        sort: "createdAt",
+        direction: Direction.DESC,
+        search: {},
+      },
+    },
+  });
+
+  // Both detail queries exist to record a view for signed-in members; the payload
+  // is the same normalized entity the list already returned.
+  const [loadFaqDetail] = useLazyQuery(GET_FAQ_DETAIL, {
+    fetchPolicy: "network-only",
+  });
+  const [loadNoticeDetail, { data: noticeDetailData }] = useLazyQuery(
+    GET_NOTICE_DETAIL,
+    { fetchPolicy: "network-only" },
+  );
+
+  /** DERIVED DATA **/
+
+  // Keep the last good page on screen while a filter change is in flight, but drop
+  // it on error so the empty state can take over.
+  const faqsResult = faqsError ? undefined : (faqsData ?? faqsPreviousData);
+  const faqs: FaqDetail[] = faqsResult?.getFaqs?.list ?? [];
+
+  const noticesResult = noticesError
+    ? undefined
+    : (noticesData ?? noticesPreviousData);
+  const notices: NoticeDetail[] = noticesResult?.getNotices?.list ?? [];
+  const totalNotices: number =
+    latestNoticeData?.getNotices?.metaCounter?.[0]?.total ?? 0;
+  const pagedNoticeTotal: number =
+    noticesResult?.getNotices?.metaCounter?.[0]?.total ?? 0;
+
+  const latestNotice: NoticeDetail | undefined =
+    latestNoticeData?.getNotices?.list?.[0];
+
+  const faqContents = useMemo(() => {
+    const map = new Map<string, FaqContent>();
+    faqs.forEach((faq) => map.set(faq._id, parseFaqContent(faq.faqContent)));
+    return map;
+  }, [faqs]);
+
+  // Members read from the server; guests fall back to what this browser remembers.
+  const isNoticeRead = (notice: NoticeDetail) =>
+    memberId
+      ? Boolean(notice.meViewed?.length) || sessionViewedIds.includes(notice._id)
+      : guestViewedIds.includes(notice._id);
+
+  const serverUnviewedCount: number =
+    latestNoticeData?.getNotices?.unviewedCounter?.[0]?.total ?? 0;
+  const unviewedNoticeCount = memberId
+    ? serverUnviewedCount
+    : Math.max(0, totalNotices - guestViewedIds.length);
+  const totalNoticePages = Math.max(
+    1,
+    Math.ceil(pagedNoticeTotal / NOTICE_PAGE_LIMIT),
+  );
+  const currentNoticeStart = notices.length
+    ? (noticePage - 1) * NOTICE_PAGE_LIMIT + 1
+    : 0;
+  const currentNoticeEnd = notices.length
+    ? currentNoticeStart + notices.length - 1
+    : 0;
+
+  // A second click on another card can land before the first detail response, so
+  // only trust the payload when it still matches the open notice.
+  const detailNotice: NoticeDetail | undefined =
+    noticeDetailData?.getNoticeDetail;
+  const modalNotice =
+    selectedNotice && detailNotice?._id === selectedNotice._id
+      ? detailNotice
+      : selectedNotice;
+
+  const faqsPending = faqsLoading && !faqs.length;
+  const noticesPending = noticesLoading && !notices.length;
+
+  /** HANDLERS **/
 
   const handleCategorySelect = (categoryId: CategoryId) => {
     setActiveCategory(categoryId);
     setExpandedFaqId(null);
-    if (categoryId === "notices") {
-      setNoticePage(1);
-    }
+    if (categoryId === NOTICES_TAB) setNoticePage(1);
   };
 
   const handleFaqToggle = (faqId: string) => {
-    setExpandedFaqId((prev) => (prev === faqId ? null : faqId));
+    setExpandedFaqId((prev) => {
+      if (prev === faqId) return null;
+      loadFaqDetail({ variables: { input: faqId } }).catch(() => {});
+      return faqId;
+    });
   };
 
-  const openNoticeModal = (notice: NoticeItem) => {
+  const openNoticeModal = (notice: NoticeDetail) => {
     setSelectedNotice(notice);
-    setViewedNoticeIds((prev) =>
-      prev.includes(notice.id) ? prev : [...prev, notice.id],
+    setSessionViewedIds((prev) =>
+      prev.includes(notice._id) ? prev : [...prev, notice._id],
     );
+
+    if (!memberId) {
+      setGuestViewedIds((prev) => {
+        if (prev.includes(notice._id)) return prev;
+        const next = [...prev, notice._id];
+        writeGuestViewedIds(next);
+        return next;
+      });
+    }
+
+    // For a member this call IS the view record. Its payload carries `meViewed`
+    // and normalizes onto the list row, so the card marks itself read; the badge
+    // needs the summary recounted server-side.
+    loadNoticeDetail({ variables: { input: notice._id } })
+      .then(() => {
+        if (memberId) refetchNoticeSummary();
+      })
+      .catch(() => {});
   };
 
   const moveToNotices = () => {
-    setActiveCategory("notices");
+    setActiveCategory(NOTICES_TAB);
     setExpandedFaqId(null);
     setNoticePage(1);
   };
 
-  const unviewedNoticeCount = notices.length - viewedNoticeIds.length;
-  const isNoticeView = activeCategory === "notices";
-  const totalNoticePages = Math.max(
-    1,
-    Math.ceil(filteredNotices.length / NOTICE_PAGE_LIMIT),
-  );
-  const currentNoticePage = Math.min(noticePage, totalNoticePages);
-  const paginatedNotices = filteredNotices.slice(
-    (currentNoticePage - 1) * NOTICE_PAGE_LIMIT,
-    currentNoticePage * NOTICE_PAGE_LIMIT,
-  );
-  const currentNoticeStart =
-    filteredNotices.length === 0
-      ? 0
-      : (currentNoticePage - 1) * NOTICE_PAGE_LIMIT + 1;
-  const currentNoticeEnd =
-    filteredNotices.length === 0
-      ? 0
-      : Math.min(currentNoticePage * NOTICE_PAGE_LIMIT, filteredNotices.length);
+  /** LIFECYCLES **/
+
+  // Hydrated after mount, not in the initial state, so the server render and the
+  // first client render agree.
+  useEffect(() => {
+    setGuestViewedIds(readGuestViewedIds());
+  }, []);
 
   useEffect(() => {
     if (!isNoticeView) return;
@@ -423,7 +369,12 @@ const SupportHub = () => {
       behavior: "smooth",
       block: "start",
     });
-  }, [currentNoticePage, isNoticeView]);
+  }, [noticePage, isNoticeView]);
+
+  // Deleting notices can shrink the list under the page the user is parked on.
+  useEffect(() => {
+    if (noticePage > totalNoticePages) setNoticePage(totalNoticePages);
+  }, [noticePage, totalNoticePages]);
 
   return (
     <Stack className="support-hub-section">
@@ -441,9 +392,15 @@ const SupportHub = () => {
             <NotificationsOutlinedIcon className="notice-icon" />
           </Box>
           <Stack className="notice-copy">
-            <Box className="title">Important Notice</Box>
+            <Box className="title">
+              {latestNotice
+                ? noticeBadgeLabel(latestNotice.noticeType)
+                : "Notices"}
+            </Box>
             <Box className="summary">
-              Uploaded new Important Notices, click to read more.
+              {latestNotice
+                ? latestNotice.noticeTitle
+                : "Petora announcements will appear here."}
             </Box>
           </Stack>
           <Box className="notice-cta">
@@ -480,45 +437,68 @@ const SupportHub = () => {
                   <Box className="panel-title">Popular Questions</Box>
                 </Stack>
 
-                {filteredFaqs.length ? (
+                {faqsPending ? (
+                  <Stack className="empty-state">
+                    <Box className="empty-title">Loading help topics…</Box>
+                    <Box className="empty-copy">
+                      Fetching the latest answers for this category.
+                    </Box>
+                  </Stack>
+                ) : faqs.length ? (
                   <Box className="faq-grid">
-                    {filteredFaqs.map((faq) => {
-                      const isExpanded = expandedFaqId === faq.id;
+                    {faqs.map((faq) => {
+                      const isExpanded = expandedFaqId === faq._id;
                       const shouldFade = expandedFaqId && !isExpanded;
+                      const content =
+                        faqContents.get(faq._id) ?? parseFaqContent();
 
                       return (
                         <Box
-                          key={faq.id}
+                          key={faq._id}
                           className={`faq-card ${isExpanded ? "expanded" : ""} ${
                             shouldFade ? "faded" : ""
                           }`}
                           role="button"
                           tabIndex={0}
-                          onClick={() => handleFaqToggle(faq.id)}
+                          onClick={() => handleFaqToggle(faq._id)}
                           onKeyDown={(event) => {
                             if (event.key === "Enter" || event.key === " ") {
                               event.preventDefault();
-                              handleFaqToggle(faq.id);
+                              handleFaqToggle(faq._id);
                             }
                           }}
                         >
                           <Stack className="faq-card-inner">
                             <Stack className="faq-card-top" direction="row">
-                              <Box className="faq-title">{faq.title}</Box>
+                              <Box className="faq-title">{faq.faqTitle}</Box>
                               <KeyboardArrowRightRoundedIcon className="faq-arrow" />
                             </Stack>
 
-                            <Box className="faq-description">
-                              {faq.description}
-                            </Box>
+                            {content.preview ? (
+                              <Box className="faq-description">
+                                {content.preview}
+                              </Box>
+                            ) : null}
 
                             <Box className="faq-expanded-content">
-                              <Box className="faq-answer">{faq.answer}</Box>
-                              <ul className="faq-bullets">
-                                {faq.bullets.map((bullet) => (
-                                  <li key={bullet}>{bullet}</li>
-                                ))}
-                              </ul>
+                              {content.paragraphs.map((paragraph, index) => (
+                                <Box
+                                  className="faq-answer"
+                                  key={`${faq._id}-p-${index}`}
+                                >
+                                  {paragraph}
+                                </Box>
+                              ))}
+
+                              {content.bullets.length ? (
+                                <ul className="faq-bullets">
+                                  {content.bullets.map((bullet, index) => (
+                                    <li key={`${faq._id}-b-${index}`}>
+                                      {bullet}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
 
                               <Stack
                                 className="faq-feedback-row"
@@ -526,7 +506,7 @@ const SupportHub = () => {
                                 onClick={(event) => event.stopPropagation()}
                               >
                                 <Box className="feedback-label">
-                                  Was this helpful?
+                                  We home this was helpful!
                                 </Box>
                                 <button
                                   type="button"
@@ -545,12 +525,12 @@ const SupportHub = () => {
                 ) : (
                   <Stack className="empty-state">
                     <Box className="empty-title">
-                      No help topics matched that search.
+                      No help topics here just yet.
                     </Box>
                     <Box className="empty-copy">
-                      Try a simpler keyword like delivery, refund, or booking.
-                      If you still need help, the contact form is right below
-                      this section.
+                      We have not published answers for this category. Try
+                      another topic on the left, or reach us through the contact
+                      form right below this section.
                     </Box>
                   </Stack>
                 )}
@@ -561,61 +541,86 @@ const SupportHub = () => {
                   <Stack className="notice-head-copy" ref={noticeTopRef}>
                     <Box className="panel-title">Notices</Box>
                     <Box className="notice-results">
-                      Total {filteredNotices.length} notices, showing{" "}
-                      {paginatedNotices.length} on this page
+                      Total {pagedNoticeTotal} notices, showing {notices.length}{" "}
+                      on this page
                     </Box>
                   </Stack>
                 </Stack>
 
-                <Stack className="notice-list">
-                  {paginatedNotices.map((notice) => (
-                    <button
-                      type="button"
-                      key={notice.id}
-                      className={`notice-card ${
-                        notice.badge === "Important" ? "important" : "update"
-                      } ${viewedNoticeIds.includes(notice.id) ? "viewed" : ""}`}
-                      onClick={() => openNoticeModal(notice)}
-                    >
-                      <Box className="notice-line" />
-                      <Stack className="notice-body">
-                        <Stack className="notice-meta" direction="row">
-                          <Box className="notice-date">{notice.date}</Box>
-                          <Box
-                            className={`notice-badge ${notice.badge.toLowerCase()}`}
-                          >
-                            {notice.badge}
-                          </Box>
-                        </Stack>
-                        <Box className="notice-title">{notice.title}</Box>
-                        <Box className="notice-summary">{notice.summary}</Box>
-                      </Stack>
-                      <KeyboardArrowRightRoundedIcon className="notice-arrow" />
-                    </button>
-                  ))}
-                </Stack>
+                {noticesPending ? (
+                  <Stack className="empty-state">
+                    <Box className="empty-title">Loading notices…</Box>
+                    <Box className="empty-copy">
+                      Fetching the latest Petora announcements.
+                    </Box>
+                  </Stack>
+                ) : notices.length ? (
+                  <>
+                    <Stack className="notice-list">
+                      {notices.map((notice) => (
+                        <button
+                          type="button"
+                          key={notice._id}
+                          className={`notice-card ${notice.noticeType.toLowerCase()} ${
+                            isNoticeRead(notice) ? "viewed" : ""
+                          }`}
+                          onClick={() => openNoticeModal(notice)}
+                        >
+                          <Box className="notice-line" />
+                          <Stack className="notice-body">
+                            <Stack className="notice-meta" direction="row">
+                              <Box className="notice-date">
+                                {formatNoticeDate(notice.createdAt)}
+                              </Box>
+                              <Box
+                                className={`notice-badge ${notice.noticeType.toLowerCase()}`}
+                              >
+                                {noticeBadgeLabel(notice.noticeType)}
+                              </Box>
+                            </Stack>
+                            <Box className="notice-title">
+                              {notice.noticeTitle}
+                            </Box>
+                            <Box className="notice-summary">
+                              {notice.noticeSummary}
+                            </Box>
+                          </Stack>
+                          <KeyboardArrowRightRoundedIcon className="notice-arrow" />
+                        </button>
+                      ))}
+                    </Stack>
 
-                <Stack className="notice-pagination-wrap" direction="row">
-                  <Box className="notice-page-summary">
-                    {currentNoticeStart}-{currentNoticeEnd} of{" "}
-                    {filteredNotices.length} notices
-                  </Box>
-                  <Pagination
-                    className="notice-pagination"
-                    count={totalNoticePages}
-                    page={currentNoticePage}
-                    color="primary"
-                    shape="rounded"
-                    onChange={(_event, page) => setNoticePage(page)}
-                  />
-                </Stack>
+                    <Stack className="notice-pagination-wrap" direction="row">
+                      <Box className="notice-page-summary">
+                        {currentNoticeStart}-{currentNoticeEnd} of{" "}
+                        {pagedNoticeTotal} notices
+                      </Box>
+                      <Pagination
+                        className="notice-pagination"
+                        count={totalNoticePages}
+                        page={noticePage}
+                        color="primary"
+                        shape="rounded"
+                        onChange={(_event, page) => setNoticePage(page)}
+                      />
+                    </Stack>
+                  </>
+                ) : (
+                  <Stack className="empty-state">
+                    <Box className="empty-title">No notices published yet.</Box>
+                    <Box className="empty-copy">
+                      Service updates, delivery notices, and announcements will
+                      show up here as soon as the Petora team posts them.
+                    </Box>
+                  </Stack>
+                )}
               </>
             )}
           </Stack>
         </Stack>
       </Stack>
 
-      {selectedNotice ? (
+      {modalNotice ? (
         <Box
           className="support-modal-backdrop"
           onClick={() => setSelectedNotice(null)}
@@ -633,19 +638,17 @@ const SupportHub = () => {
               <CloseRoundedIcon />
             </button>
 
-            <Box
-              className={`${
-                selectedNotice.badge === "Important" ? "important" : "update"
-              }`}
-            >
-              {selectedNotice.badge}
+            <Box className={modalNotice.noticeType.toLowerCase()}>
+              {noticeBadgeLabel(modalNotice.noticeType)}
             </Box>
-            <Box className="modal-title">{selectedNotice.title}</Box>
-            <Box className="modal-date">{selectedNotice.date}</Box>
+            <Box className="modal-title">{modalNotice.noticeTitle}</Box>
+            <Box className="modal-date">
+              {formatNoticeDate(modalNotice.createdAt)}
+            </Box>
 
             <Stack className="modal-copy">
-              {selectedNotice.fullText.map((paragraph) => (
-                <Box key={paragraph}>{paragraph}</Box>
+              {noticeParagraphs(modalNotice).map((paragraph, index) => (
+                <Box key={`${modalNotice._id}-${index}`}>{paragraph}</Box>
               ))}
             </Stack>
           </Stack>

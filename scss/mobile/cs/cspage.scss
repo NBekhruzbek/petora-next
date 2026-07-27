@@ -373,7 +373,10 @@
       }
 
       .important,
-      .update {
+      .update,
+      .event,
+      .announcement {
+        align-self: flex-start;
         display: inline-block;
         width: auto;
         padding: 5px 12px;
@@ -393,6 +396,16 @@
       .update {
         color: #6d5df6;
         background: rgba(109, 93, 246, 0.11);
+      }
+
+      .event {
+        color: #b45309;
+        background: rgba(245, 158, 11, 0.14);
+      }
+
+      .announcement {
+        color: #0f766e;
+        background: rgba(20, 184, 166, 0.14);
       }
 
       .modal-title {
