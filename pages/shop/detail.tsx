@@ -44,6 +44,7 @@ import {
   sweetBottomSmallSuccessAlert,
 } from "@/libs/sweetAlert";
 import { addToBasket } from "@/libs/basket";
+import { flyToBasket } from "@/libs/flyToBasket";
 import moment from "moment";
 
 const REVIEWS_PER_PAGE = 5;
@@ -71,6 +72,7 @@ const Detail = () => {
   const productId = router.query.id as string | undefined;
 
   const writeReviewRef = useRef<HTMLDivElement | null>(null);
+  const mainImageRef = useRef<HTMLImageElement | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [value, setValue] = useState(0);
@@ -265,7 +267,9 @@ const Detail = () => {
   const addToBasketHandler = async () => {
     if (!product) return;
     addToBasket(product, quantity);
-    await sweetBottomSmallSuccessAlert("Added to basket!", 700);
+    if (!flyToBasket(mainImageRef.current)) {
+      await sweetBottomSmallSuccessAlert("Added to basket!", 700);
+    }
   };
 
   const increase = () => setQuantity((prev) => prev + 1);
@@ -332,7 +336,11 @@ const Detail = () => {
         <Stack className="product-detail-grid">
           <Stack className="gallery">
             <Box className="main-image">
-              <img src={mainImage} alt={product.productName} />
+              <img
+                ref={mainImageRef}
+                src={mainImage}
+                alt={product.productName}
+              />
             </Box>
             <Stack className="thumbs">
               {images.map((src, index) => (

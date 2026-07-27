@@ -1,0 +1,38 @@
+/* The tile that leaps into the basket — see libs/flyToBasket.ts for the motion.
+   Appended to <body>, so these selectors deliberately sit outside #pc-wrap /
+   #mobile-wrap. Only appearance lives here; every keyframe is driven from JS. */
+
+.basket-fly-ghost {
+  position: fixed;
+  /* Under the basket menu (12000) so an open basket still covers the flight. */
+  z-index: 11000;
+  pointer-events: none;
+  will-change: translate;
+
+  .ghost-lift {
+    width: 100%;
+    height: 100%;
+    will-change: translate;
+  }
+
+  .ghost-body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* The card's own image bed and border: the tile itself took flight. */
+    background: #f4f4f4;
+    border: 1.5px solid #e5c3ff;
+    border-radius: 14px;
+    box-shadow: 0 12px 28px rgba(65, 0, 117, 0.28);
+    overflow: hidden;
+    will-change: scale, rotate, opacity;
+
+    img {
+      width: 82%;
+      height: 82%;
+      object-fit: contain;
+    }
+  }
+}

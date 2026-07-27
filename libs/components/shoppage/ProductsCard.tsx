@@ -1,4 +1,4 @@
-import { KeyboardEvent, MouseEvent } from "react";
+import { KeyboardEvent, MouseEvent, useRef } from "react";
 import { Box, Button, Rating, Stack } from "@mui/material";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
@@ -20,6 +20,7 @@ import {
   sweetBottomSmallSuccessAlert,
 } from "@/libs/sweetAlert";
 import { addToBasket } from "@/libs/basket";
+import { flyToBasket } from "@/libs/flyToBasket";
 import { T } from "@/libs/types/common";
 
 interface ProductsCardProps {
@@ -43,6 +44,7 @@ const ProductsCard = ({
 }: ProductsCardProps) => {
   const router = useRouter();
   const user = useReactiveVar(userVar);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   const discountPercent = product.productDiscount;
   const hasDiscount = discountPercent > 0;
@@ -82,7 +84,9 @@ const ProductsCard = ({
   const addToBasketHandler = async (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     addToBasket(product);
-    await sweetBottomSmallSuccessAlert("Added to basket!", 700);
+    if (!flyToBasket(imageRef.current)) {
+      await sweetBottomSmallSuccessAlert("Added to basket!", 700);
+    }
   };
 
   const handleCardClick = () => {
@@ -135,6 +139,7 @@ const ProductsCard = ({
           <Box className="pet-type-badge">{product.productPetType}</Box>
         ) : null}
         <img
+          ref={imageRef}
           className="product-image"
           src={`${REACT_APP_API_URL}/${product?.productImages?.[0]}`}
           alt={product.productName}
