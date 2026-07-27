@@ -439,10 +439,12 @@ export const CREATE_NEW_ARTICLE = gql`
         memberServiceArea
         memberResponseTime
         memberArticles
+        memberQuestions
         memberPoints
         memberLikes
         memberViews
-        memberComments
+        memberReviews
+        memberRating
         memberRank
         memberWarnings
         memberBlocks
@@ -492,10 +494,12 @@ export const UPDATE_ARTICLE = gql`
         memberServiceArea
         memberResponseTime
         memberArticles
+        memberQuestions
         memberPoints
         memberLikes
         memberViews
-        memberComments
+        memberReviews
+        memberRating
         memberRank
         memberWarnings
         memberBlocks

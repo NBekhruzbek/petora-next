@@ -1,11 +1,11 @@
 import { Direction } from "@/libs/enums/common.enum";
 import { QnaStatus } from "@/libs/enums/qna.enum";
 
+/** `memberId` is set server-side from the auth token — sending it is a schema error. */
 export interface QnaInput {
   questionTitle: string;
   questionContent: string;
   questionImages?: string[];
-  memberId: string;
 }
 interface QnaISearch {
   text?: string;

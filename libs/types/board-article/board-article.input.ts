@@ -1,12 +1,12 @@
 import { ArticleCategory, ArticleStatus } from "@/libs/enums/boardArticle.enum";
 import { Direction } from "@/libs/enums/common.enum";
 
+/** `memberId` is set server-side from the auth token — sending it is a schema error. */
 export interface BoardArticleInput {
   articleCategory: ArticleCategory;
   articleTitle: string;
   articleContent: string;
   articleImage: string;
-  memberId?: string;
 }
 
 interface BAISearch {

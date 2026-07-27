@@ -1,11 +1,11 @@
 import { CommentGroup } from "@/libs/enums/comment.enum";
 import { Direction } from "@/libs/enums/common.enum";
 
+/** `memberId` is set server-side from the auth token — sending it is a schema error. */
 export interface CommentInput {
   commentGroup: CommentGroup;
   commentContent: string;
   commentRefId: string;
-  memberId?: string;
 }
 
 interface CISearch {
