@@ -17,18 +17,11 @@ import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import QNACard from "@/libs/components/community/QNACard";
 import BoardList from "@/libs/components/community/BoardList";
+import { ArticleCategory } from "@/libs/enums/boardArticle.enum";
 
-type CategoryKey = "FREE" | "NEWS" | "QNA";
-
-type CommunityPost = {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  image: string;
-  views: number;
-  likes: number;
-};
+// Free Board and News are ArticleCategory values; Q&A is a separate collection
+// on the API (getQuestions), so it only exists as a tab key here.
+type CategoryKey = ArticleCategory | "QNA";
 
 const categoryMeta: Record<
   CategoryKey,
@@ -38,13 +31,13 @@ const categoryMeta: Record<
     icon: ReactNode;
   }
 > = {
-  FREE: {
+  [ArticleCategory.FREE]: {
     label: "Free Board",
     description:
       "Share your thoughts, ideas, and experiences with the community",
     icon: <ChatBubbleOutlineRoundedIcon />,
   },
-  NEWS: {
+  [ArticleCategory.NEWS]: {
     label: "News",
     description: "Stay updated with the latest stories and announcements",
     icon: <FeedOutlinedIcon />,
@@ -56,116 +49,11 @@ const categoryMeta: Record<
   },
 };
 
-const communityPosts: Record<CategoryKey, CommunityPost[]> = {
-  FREE: [
-    {
-      id: "free-1",
-      title: "Building a Modern Tech Community: Best Practices",
-      description:
-        "Explore the essential strategies for creating an engaging and supportive tech community that keeps members participating over time.",
-      date: "Mar 28, 2026",
-      image: "/img/services/training.jpg",
-      views: 1248,
-      likes: 89,
-    },
-    {
-      id: "free-2",
-      title: "Effective Workspace Collaboration Techniques",
-      description:
-        "Learn how to maximize productivity and creativity through better team collaboration in modern hybrid workspaces.",
-      date: "Mar 27, 2026",
-      image: "/img/services/grooming.jpg",
-      views: 892,
-      likes: 64,
-    },
-    {
-      id: "free-3",
-      title: "Networking Strategies for Business Growth",
-      description:
-        "Discover proven networking strategies that help build meaningful business relationships and drive long-term growth.",
-      date: "Mar 25, 2026",
-      image: "/img/services/day-care.jpg",
-      views: 1567,
-      likes: 98,
-    },
-    {
-      id: "free-4",
-      title: "Remote Study Session Setup for Better Focus",
-      description:
-        "A practical guide for setting up a calm, efficient online study routine with friends and accountability partners.",
-      date: "Mar 21, 2026",
-      image: "/img/agents/topAgent8.jpeg",
-      views: 743,
-      likes: 51,
-    },
-  ],
-  NEWS: [
-    {
-      id: "news-1",
-      title: "Community Platform Update Released This Week",
-      description:
-        "We have rolled out a cleaner browsing experience, improved board categories, and better article discovery features.",
-      date: "Apr 01, 2026",
-      image: "/img/headers/community-header.png",
-      views: 954,
-      likes: 44,
-    },
-    {
-      id: "news-2",
-      title: "Spring Creator Meetup Announced for Seoul Members",
-      description:
-        "Our next in-person networking meetup is now open for signups, with sessions for creators, founders, and remote teams.",
-      date: "Mar 29, 2026",
-      image: "/img/services/day-care.jpg",
-      views: 1411,
-      likes: 73,
-    },
-    {
-      id: "news-3",
-      title: "Editorial Picks Feature Added to Recommendation Board",
-      description:
-        "A new curated recommendation label will help members discover standout posts more quickly.",
-      date: "Mar 24, 2026",
-      image: "/img/services/walking.jpg",
-      views: 801,
-      likes: 39,
-    },
-  ],
-  QNA: [
-    {
-      id: "qna-1",
-      title: "How do you structure a community post for better engagement?",
-      description:
-        "Members share examples of strong titles, better formatting, and ways to encourage more thoughtful replies.",
-      date: "Mar 30, 2026",
-      image: "/img/services/boarding.png",
-      views: 602,
-      likes: 27,
-    },
-    {
-      id: "qna-2",
-      title: "Best tools for collaborative writing with a small team?",
-      description:
-        "Looking for simple workflows that support comments, version history, and quick content reviews.",
-      date: "Mar 26, 2026",
-      image: "/img/services/grooming.jpg",
-      views: 847,
-      likes: 35,
-    },
-    {
-      id: "qna-3",
-      title: "How often should a recommendation board be moderated?",
-      description:
-        "Community managers discuss moderation cadence, quality control, and how to keep recommendations useful.",
-      date: "Mar 19, 2026",
-      image: "/img/services/training.jpg",
-      views: 519,
-      likes: 18,
-    },
-  ],
-};
-
-const categoryOrder: CategoryKey[] = ["FREE", "NEWS", "QNA"];
+const categoryOrder: CategoryKey[] = [
+  ArticleCategory.FREE,
+  ArticleCategory.NEWS,
+  "QNA",
+];
 
 const Community: NextPage = () => {
   const router = useRouter();
@@ -174,10 +62,9 @@ const Community: NextPage = () => {
     typeof rawCategory === "string" &&
     categoryOrder.includes(rawCategory as CategoryKey)
       ? (rawCategory as CategoryKey)
-      : "FREE";
+      : ArticleCategory.FREE;
 
   const activeMeta = categoryMeta[activeCategory];
-  const activePosts = communityPosts[activeCategory];
   const [isAskOpen, setIsAskOpen] = useState(false);
   const [isWriteOpen, setIsWriteOpen] = useState(false);
 
@@ -299,9 +186,7 @@ const Community: NextPage = () => {
               />
             ) : (
               <BoardList
-                key={activeCategory}
-                category={activeCategory as "FREE" | "NEWS"}
-                initialPosts={activePosts}
+                category={activeCategory}
                 isWriteOpen={isWriteOpen}
                 onWriteClose={() => setIsWriteOpen(false)}
               />

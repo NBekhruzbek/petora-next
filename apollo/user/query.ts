@@ -672,6 +672,11 @@ export const GET_BOARD_ARTICLES = gql`
           updatedAt
           accessToken
         }
+        meLiked {
+          memberId
+          likeRefId
+          myFavorite
+        }
       }
       metaCounter {
         total
