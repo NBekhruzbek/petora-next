@@ -561,14 +561,15 @@
         .request-status-actions {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
           justify-content: flex-end;
-          flex: 0 0 210px;
+          // Wide enough for the chip plus the accept / reject pair.
+          flex: 0 0 288px;
         }
 
         .request-status-chip {
           height: 30px;
-          min-width: 92px;
+          min-width: 84px;
           border-radius: 5px;
 
           background: #ffffff;
@@ -590,13 +591,12 @@
           }
         }
 
-        .request-accept-btn {
-          min-width: 86px;
+        .request-accept-btn,
+        .request-reject-btn {
+          min-width: 82px;
           height: 32px;
-          padding: 0 16px;
+          padding: 0 14px;
           border-radius: 5px;
-          color: #166534;
-          background: #ecfdf3;
           border: 1px solid #8f8f8f80 !important;
           font-family: $font;
           font-size: 13px;
@@ -608,11 +608,28 @@
             border-color 0.2s,
             background-color 0.2s,
             transform 0.2s;
+        }
+
+        .request-accept-btn {
+          color: #166534;
+          background: #ecfdf3;
 
           &:hover {
             color: #166534;
             background: #c3ffdd;
             border: 2px solid #166534;
+            transform: translateY(-1px);
+          }
+        }
+
+        .request-reject-btn {
+          color: #b42318;
+          background: #fef3f2;
+
+          &:hover {
+            color: #b42318;
+            background: #ffd9d5;
+            border: 2px solid #b42318;
             transform: translateY(-1px);
           }
         }
@@ -755,4 +772,3 @@
     }
   }
 }
-

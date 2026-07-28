@@ -1,0 +1,184 @@
+import { Button, Chip, Stack, Typography } from "@mui/material";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { userVar } from "@/apollo/store";
+import { GET_AGENT_BOOKINGS } from "@/apollo/user/query";
+import { UPDATE_BOOKING_BY_AGENT } from "@/apollo/user/mutation";
+import { BookedInfo } from "@/libs/types/booking/booking";
+import { BookingStatus } from "@/libs/enums/booking.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
+
+const BOOKINGS_LIMIT = 50;
+
+export interface BookingRowAction {
+  label: string;
+  nextStatus: BookingStatus;
+  className: string;
+}
+
+interface AgentBookingsListProps {
+  /** Wrapper class the tab styles hang off. */
+  className: string;
+  bookingStatus: BookingStatus;
+  chipLabel: string;
+  chipClassName: string;
+  emptyText: string;
+  actions?: BookingRowAction[];
+}
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+// bookingDate is stored as YYYY-MM-DD and bookingTime as HH:mm.
+export const formatBookingMoment = (date?: string, time?: string) => {
+  if (!date) return "—";
+  const [year, month, day] = date.split("-");
+  const label = `${MONTHS[Number(month) - 1] ?? month} ${Number(day)}, ${year}`;
+  if (!time) return label;
+
+  const [rawHour, minute] = time.split(":");
+  const hour = Number(rawHour);
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const clock = hour % 12 === 0 ? 12 : hour % 12;
+  return `${label} · ${clock}:${minute} ${suffix}`;
+};
+
+const AgentBookingsList = ({
+  className,
+  bookingStatus,
+  chipLabel,
+  chipClassName,
+  emptyText,
+  actions = [],
+}: AgentBookingsListProps) => {
+  const user = useReactiveVar(userVar);
+
+  /** APOLLO REQUESTS **/
+
+  const searchFilter = {
+    page: 1,
+    limit: BOOKINGS_LIMIT,
+    sort: "createdAt",
+    direction: Direction.DESC,
+    bookingStatus,
+  };
+
+  const { data: getAgentBookingsData, refetch: getAgentBookingsRefetch } =
+    useQuery(GET_AGENT_BOOKINGS, {
+      fetchPolicy: "cache-and-network",
+      variables: { input: searchFilter },
+      skip: !user?._id,
+      notifyOnNetworkStatusChange: true,
+    });
+
+  const [updateBookingByAgent] = useMutation(UPDATE_BOOKING_BY_AGENT);
+
+  /** DERIVED **/
+
+  const bookings: BookedInfo[] =
+    getAgentBookingsData?.getAgentBookings?.list ?? [];
+
+  /** HANDLERS **/
+
+  const handleAction = async (
+    booking: BookedInfo,
+    nextStatus: BookingStatus,
+  ) => {
+    try {
+      await updateBookingByAgent({
+        variables: {
+          input: { bookingId: booking._id, bookingStatus: nextStatus },
+        },
+      });
+      // The row leaves this tab and shows up in the one for its new status.
+      await getAgentBookingsRefetch({ input: searchFilter });
+      await sweetBottomSmallSuccessAlert("Booking updated!", 700);
+    } catch (err: any) {
+      console.log("ERROR, handleAction:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
+
+  return (
+    <Stack spacing={1.5} className={className}>
+      <Stack spacing={1.5} className="requests-list">
+        {bookings.length === 0 && (
+          <Typography className="request-note">{emptyText}</Typography>
+        )}
+
+        {bookings.map((booking) => (
+          <Stack
+            key={booking._id}
+            className="request-row"
+            direction="row"
+            alignItems="center"
+          >
+            <Stack className="request-main" spacing={0.5}>
+              <Typography className="request-label">Service Name</Typography>
+              <Typography className="request-service">
+                {booking.serviceData?.serviceTitle ?? "Service removed"}
+              </Typography>
+              <Typography className="request-note">
+                {booking.bookingPetName} · {booking.bookingPetType}
+              </Typography>
+            </Stack>
+
+            <Stack className="request-date-block" spacing={0.5}>
+              <Typography className="request-label">Date</Typography>
+              <Typography className="request-date">
+                {formatBookingMoment(booking.bookingDate, booking.bookingTime)}
+              </Typography>
+            </Stack>
+
+            <Stack className="request-note-block" spacing={0.5}>
+              <Typography className="request-label">
+                Customer Request
+              </Typography>
+              <Typography className="request-note">
+                {booking.bookingNote || "No additional request"}
+              </Typography>
+            </Stack>
+
+            <Stack
+              direction="row"
+              alignItems="center"
+              className="request-status-actions"
+            >
+              <Chip
+                label={chipLabel}
+                size="small"
+                className={`request-status-chip ${chipClassName}`}
+              />
+              {actions.map((action) => (
+                <Button
+                  key={action.nextStatus}
+                  className={action.className}
+                  onClick={() => void handleAction(booking, action.nextStatus)}
+                >
+                  {action.label}
+                </Button>
+              ))}
+            </Stack>
+          </Stack>
+        ))}
+      </Stack>
+    </Stack>
+  );
+};
+
+export default AgentBookingsList;

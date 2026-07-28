@@ -29,6 +29,7 @@ interface SISearch {
   serviceStatus?: ServiceStatus[];
   serviceLocation?: ServiceLocation[];
   text?: string;
+  memberId?: string;
 }
 
 export interface ServicesInquiry {

@@ -907,6 +907,25 @@
       }
     }
 
+    // Select menus portal to <body>, so they cannot be nested under
+    // .add-service-dialog above. The dialog reuses .qna-dialog, which the
+    // community stylesheet pins to z-index 1500; MUI's menus default to 1300
+    // and would otherwise open *behind* the dialog, swallowing every click.
+    @at-root .add-service-select-menu {
+      z-index: 1600 !important;
+
+      .MuiMenuItem-root {
+        color: #1c1722 !important;
+        font-family: $font;
+        font-size: 15px;
+        font-weight: 600;
+
+        &.Mui-selected {
+          background: rgba(65, 0, 117, 0.08);
+        }
+      }
+    }
+
     @at-root {
       @keyframes ctaBorderFlow {
         0% {

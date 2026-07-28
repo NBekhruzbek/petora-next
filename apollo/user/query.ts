@@ -497,6 +497,7 @@ export const GET_MY_BOOKINGS = gql`
           serviceLikes
           serviceViews
           serviceReviews
+          serviceRating
           memberId
           createdAt
           updatedAt
@@ -544,6 +545,7 @@ export const GET_AGENT_BOOKINGS = gql`
           serviceLikes
           serviceViews
           serviceReviews
+          serviceRating
           memberId
           createdAt
           updatedAt

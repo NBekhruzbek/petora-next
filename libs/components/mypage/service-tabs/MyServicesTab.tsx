@@ -19,158 +19,202 @@ import {
 import PetsIcon from "@mui/icons-material/Pets";
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { userVar } from "@/apollo/store";
+import { GET_ALL_SERVICES } from "@/apollo/user/query";
+import {
+  CREATE_SERVICE,
+  IMAGES_UPLOADER,
+  UPDATE_SERVICE,
+} from "@/apollo/user/mutation";
+import { Service } from "@/libs/types/service/service";
+import { ServicesInquiry } from "@/libs/types/service/service.input";
+import {
+  ServiceLocation,
+  ServiceStatus,
+  ServiceType,
+} from "@/libs/enums/service.enum";
+import { Direction, Message } from "@/libs/enums/common.enum";
+import { REACT_APP_API_URL } from "@/libs/config";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
 
-const CATEGORIES = [
-  "All",
-  "Grooming",
-  "Boarding",
-  "Walking",
-  "Training",
-  "Vet",
-  "Hotel",
-];
-const SORT_OPTIONS = ["Newest", "Popular", "Highest Rated"];
+const SERVICES_LIMIT = 20;
+const MAX_IMAGES = 4;
 
-const MOCK_SERVICES = [
-  {
-    id: 1,
-    name: "Premium Dog Grooming",
-    category: "Grooming",
-    price: "₩45,000",
-    duration: "1 hour",
-    rating: 4.8,
-    bookings: 128,
-    status: "active",
-    description:
-      "Full grooming service including bath, haircut, nail trim, and ear cleaning.",
-    tags: ["Dog", "Bath", "Haircut"],
-    image: "/img/services/grooming.jpg",
-  },
-  {
-    id: 2,
-    name: "Cat Boarding Suite",
-    category: "Boarding",
-    price: "₩65,000/night",
-    duration: "Overnight",
-    rating: 4.9,
-    bookings: 89,
-    status: "active",
-    description:
-      "Luxury cat boarding with private rooms, webcam monitoring, and playtime.",
-    tags: ["Cat", "Luxury", "Overnight"],
-    image: "/img/services/boarding.png",
-  },
-  {
-    id: 3,
-    name: "Daily Dog Walking",
-    category: "Walking",
-    price: "₩25,000",
-    duration: "1 hour",
-    rating: 4.7,
-    bookings: 256,
-    status: "active",
-    description:
-      "1-hour professional dog walking with GPS tracking and photo updates.",
-    tags: ["Dog", "Exercise", "Outdoor"],
-    image: "/img/services/walking.jpg",
-  },
-  {
-    id: 4,
-    name: "Puppy Training Course",
-    category: "Training",
-    price: "₩120,000",
-    duration: "8 weeks",
-    rating: 4.6,
-    bookings: 45,
-    status: "paused",
-    description: "8-week basic obedience training for puppies aged 3-6 months.",
-    tags: ["Puppy", "Obedience", "Course"],
-    image: "/img/services/training.jpg",
-  },
-  {
-    id: 5,
-    name: "Pet Health Checkup",
-    category: "Vet",
-    price: "₩80,000",
-    duration: "45 minutes",
-    rating: 4.9,
-    bookings: 167,
-    status: "active",
-    description:
-      "Comprehensive health examination with blood work and vaccination.",
-    tags: ["Health", "Checkup", "Vaccination"],
-    image: "/img/services/veterinary.png",
-  },
-  {
-    id: 6,
-    name: "Pet Hotel Deluxe",
-    category: "Hotel",
-    price: "₩95,000/night",
-    duration: "Overnight",
-    rating: 4.8,
-    bookings: 73,
-    status: "active",
-    description:
-      "5-star pet hotel with room service, grooming, and outdoor activities.",
-    tags: ["Luxury", "Hotel", "Activities"],
-    image: "/img/services/day-care.jpg",
-  },
+const SERVICE_TYPES = Object.values(ServiceType);
+const SERVICE_LOCATIONS = Object.values(ServiceLocation);
+
+const OWNED_STATUSES = [
+  ServiceStatus.ACTIVE,
+  ServiceStatus.PAUSE,
+  ServiceStatus.DELETE,
 ];
+
+interface ServiceForm {
+  serviceTitle: string;
+  serviceDescription: string;
+  serviceType: string;
+  serviceLocation: string;
+  serviceDurationMinutes: string;
+  servicePrice: string;
+}
+
+interface ImageSlot {
+  path?: string;
+  file?: File;
+  preview: string;
+  name: string;
+}
+
+const emptyForm: ServiceForm = {
+  serviceTitle: "",
+  serviceDescription: "",
+  serviceType: ServiceType.GROOMING,
+  serviceLocation: ServiceLocation.SEOUL,
+  serviceDurationMinutes: "",
+  servicePrice: "",
+};
+
+const prettifyEnum = (value?: string) =>
+  (value ?? "")
+    .split("_")
+    .filter(Boolean)
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ");
+
+const withThousands = (value: string) =>
+  value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+const formatDuration = (minutes: number) => {
+  if (!minutes) return "—";
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return rest
+    ? `${hours} h ${rest} min`
+    : `${hours} hour${hours > 1 ? "s" : ""}`;
+};
+
+// The row styling keys off the lowercase legacy status names.
+const statusClass: Record<string, string> = {
+  [ServiceStatus.ACTIVE]: "active",
+  [ServiceStatus.PAUSE]: "paused",
+  [ServiceStatus.DELETE]: "deleted",
+};
 
 const MyServicesTab = () => {
-  const [category, setCategory] = useState("All");
+  const user = useReactiveVar(userVar);
+  const [category, setCategory] = useState("ALL");
   const [showAddModal, setShowAddModal] = useState(false);
-  const [editingServiceId, setEditingServiceId] = useState<number | null>(null);
-  const [serviceStatuses, setServiceStatuses] = useState<
-    Record<number, string>
-  >({});
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Form state
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    duration: "",
-    price: "",
-  });
-  const [images, setImages] = useState<File[]>([]);
+  const [formData, setFormData] = useState<ServiceForm>(emptyForm);
+  const [images, setImages] = useState<ImageSlot[]>([]);
   const [imageError, setImageError] = useState("");
 
-  const filtered = MOCK_SERVICES.filter((s) => {
-    return category === "All" || s.category === category;
-  });
+  /** APOLLO REQUESTS **/
 
-  const getServiceStatus = (service: (typeof MOCK_SERVICES)[number]) => {
-    return serviceStatuses[service.id] || service.status;
+  const searchFilter: ServicesInquiry = {
+    page: 1,
+    limit: SERVICES_LIMIT,
+    sort: "createdAt",
+    direction: Direction.DESC,
+    search: {
+      onlyLiked: false,
+      memberId: user?._id,
+      serviceStatus: OWNED_STATUSES,
+      ...(category === "ALL" ? {} : { serviceType: [category as ServiceType] }),
+    },
   };
 
-  const formatPrice = (value: string) => {
-    const digitsOnly = value.replace(/\D/g, "");
-    return digitsOnly.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const {
+    data: getAllServicesData,
+    refetch: getAllServicesRefetch,
+    error: getAllServicesError,
+  } = useQuery(GET_ALL_SERVICES, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: searchFilter },
+    skip: !user?._id,
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const [createService] = useMutation(CREATE_SERVICE);
+  const [updateService] = useMutation(UPDATE_SERVICE);
+  const [imagesUploader] = useMutation(IMAGES_UPLOADER);
+
+  /** DERIVED **/
+
+  // The API throws "No data found!" instead of returning an empty list.
+  const isEmpty = Boolean(
+    getAllServicesError?.graphQLErrors?.some(
+      (e) => e.message === Message.NO_DATA_FOUND,
+    ),
+  );
+  const services: Service[] = isEmpty
+    ? []
+    : (getAllServicesData?.getAllServices?.list ?? []);
+
+  /** HANDLERS **/
+
+  // getAllServices rejects with "No data found!" once the catalogue is empty,
+  // so a refetch that empties the list must not read as a failed action — the
+  // hook's error state already renders the empty view.
+  const refreshServices = async () => {
+    try {
+      await getAllServicesRefetch({ input: searchFilter });
+    } catch {
+      /* handled through getAllServicesError */
+    }
   };
 
   const openAddModal = () => {
-    setEditingServiceId(null);
-    setFormData({ title: "", description: "", duration: "", price: "" });
+    setEditingService(null);
+    setFormData(emptyForm);
     setImages([]);
     setImageError("");
     setShowAddModal(true);
   };
 
-  const openEditModal = (service: (typeof MOCK_SERVICES)[number]) => {
-    setEditingServiceId(service.id);
+  const openEditModal = (service: Service) => {
+    setEditingService(service);
     setFormData({
-      title: service.name,
-      description: service.description,
-      duration: service.duration,
-      price: formatPrice(service.price),
+      serviceTitle: service.serviceTitle,
+      serviceDescription: service.serviceDescription,
+      serviceType: service.serviceType,
+      serviceLocation: service.serviceLocation,
+      serviceDurationMinutes: String(service.serviceDurationMinutes ?? ""),
+      servicePrice: withThousands(String(service.servicePrice ?? "")),
     });
-    setImages([]);
+    setImages(
+      (service.serviceImages ?? []).filter(Boolean).map((path) => ({
+        path,
+        preview: `${REACT_APP_API_URL}/${path}`,
+        name: path.split("/").pop() ?? "image",
+      })),
+    );
     setImageError("");
     setShowAddModal(true);
   };
 
-  const updateServiceStatus = (serviceId: number, status: string) => {
-    setServiceStatuses((prev) => ({ ...prev, [serviceId]: status }));
+  const updateServiceStatus = async (
+    service: Service,
+    serviceStatus: ServiceStatus,
+  ) => {
+    if (service.serviceStatus === serviceStatus) return;
+    try {
+      await updateService({
+        variables: { input: { serviceId: service._id, serviceStatus } },
+      });
+      await refreshServices();
+      await sweetBottomSmallSuccessAlert("Service updated!", 700);
+    } catch (err: any) {
+      console.log("ERROR, updateServiceStatus:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
   };
 
   const handleInputChange = (
@@ -179,24 +223,36 @@ const MyServicesTab = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "price" ? formatPrice(value) : value,
+      [name]:
+        name === "servicePrice"
+          ? withThousands(value)
+          : name === "serviceDurationMinutes"
+            ? value.replace(/\D/g, "")
+            : value,
     }));
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImageError("");
-    const files = e.target.files;
-    if (!files) return;
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
 
-    const newFiles = Array.from(files);
-    const totalImages = images.length + newFiles.length;
-
-    if (totalImages > 4) {
-      setImageError("Maximum 4 images allowed");
+    if (images.length + files.length > MAX_IMAGES) {
+      setImageError(`Maximum ${MAX_IMAGES} images allowed`);
+      e.target.value = "";
       return;
     }
 
-    setImages((prev) => [...prev, ...newFiles]);
+    setImages((prev) => [
+      ...prev,
+      ...files.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+        name: file.name,
+      })),
+    ]);
+    // Reset the input so re-picking the same file still fires a change.
+    e.target.value = "";
   };
 
   const removeImage = (index: number) => {
@@ -204,43 +260,91 @@ const MyServicesTab = () => {
     setImageError("");
   };
 
-  const handlePublish = () => {
-    if (!formData.title.trim()) {
-      alert("Please enter service title");
-      return;
-    }
-    if (!formData.description.trim()) {
-      alert("Please enter description");
-      return;
-    }
-    if (!formData.duration) {
-      alert("Please enter service duration");
-      return;
-    }
-    if (!formData.price) {
-      alert("Please enter price");
-      return;
-    }
-    if (!editingServiceId && images.length === 0) {
-      alert("Please upload at least 1 image");
-      return;
-    }
-
-    // TODO: Submit form data and images to backend
-    console.log(
-      editingServiceId ? "Updating service:" : "Publishing service:",
-      { serviceId: editingServiceId, ...formData },
-      images,
-    );
-    resetModal();
-  };
-
   const resetModal = () => {
     setShowAddModal(false);
-    setEditingServiceId(null);
-    setFormData({ title: "", description: "", duration: "", price: "" });
+    setEditingService(null);
+    setFormData(emptyForm);
     setImages([]);
     setImageError("");
+  };
+
+  const handlePublish = async () => {
+    if (isSubmitting) return;
+
+    const price = Number(formData.servicePrice.replace(/,/g, ""));
+    const duration = Number(formData.serviceDurationMinutes);
+
+    try {
+      if (!formData.serviceTitle.trim())
+        throw new Error("Please enter service title");
+      if (!formData.serviceDescription.trim())
+        throw new Error("Please enter description");
+      if (!duration) throw new Error("Please enter the duration in minutes");
+      if (!price) throw new Error("Please enter price");
+      if (!images.length) throw new Error("Please upload at least 1 image");
+
+      setIsSubmitting(true);
+
+      // Only newly picked files need uploading; already saved paths are reused.
+      const pending = images.filter((image) => image.file);
+      let uploaded: string[] = [];
+      if (pending.length) {
+        const { data } = await imagesUploader({
+          variables: {
+            files: pending.map((image) => image.file),
+            target: "service",
+          },
+        });
+        uploaded = (data?.imagesUploader ?? []).filter(Boolean);
+        if (uploaded.length !== pending.length) {
+          throw new Error("Image upload failed, please retry.");
+        }
+      }
+
+      let nextUpload = 0;
+      const serviceImages = images
+        .map((image) => (image.file ? uploaded[nextUpload++] : image.path))
+        .filter(Boolean) as string[];
+
+      const payload = {
+        serviceTitle: formData.serviceTitle.trim(),
+        serviceDescription: formData.serviceDescription.trim(),
+        serviceType: formData.serviceType,
+        serviceLocation: formData.serviceLocation,
+        serviceDurationMinutes: duration,
+        servicePrice: price,
+        serviceImages,
+      };
+
+      if (editingService) {
+        // No serviceStatus here — editing a paused offer must not silently
+        // republish it.
+        await updateService({
+          variables: { input: { serviceId: editingService._id, ...payload } },
+        });
+      } else {
+        // The Service schema defaults new rows to PAUSE, which would leave a
+        // just-"published" offer invisible on the public Service page until the
+        // agent flipped it on. Publish means live.
+        await createService({
+          variables: {
+            input: { ...payload, serviceStatus: ServiceStatus.ACTIVE },
+          },
+        });
+      }
+
+      await refreshServices();
+      resetModal();
+      await sweetBottomSmallSuccessAlert(
+        editingService ? "Service updated!" : "Service published!",
+        900,
+      );
+    } catch (err: any) {
+      console.log("ERROR, handlePublish:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -271,9 +375,12 @@ const MyServicesTab = () => {
             },
           }}
         >
-          {CATEGORIES.map((c) => (
-            <MenuItem key={c} value={c} sx={{ color: "#000 !important" }}>
-              {c}
+          <MenuItem value="ALL" sx={{ color: "#000 !important" }}>
+            All
+          </MenuItem>
+          {SERVICE_TYPES.map((type) => (
+            <MenuItem key={type} value={type} sx={{ color: "#000 !important" }}>
+              {prettifyEnum(type)}
             </MenuItem>
           ))}
         </TextField>
@@ -289,12 +396,20 @@ const MyServicesTab = () => {
 
       {/* Services List */}
       <Stack spacing={1.5} className="services-list">
-        {filtered.map((service) => {
-          const serviceStatus = getServiceStatus(service);
+        {services.length === 0 && (
+          <Typography className="service-description">
+            {category === "ALL"
+              ? "You have not published any service yet."
+              : "No services in this category."}
+          </Typography>
+        )}
+
+        {services.map((service) => {
+          const serviceStatus = statusClass[service.serviceStatus] ?? "active";
 
           return (
             <Stack
-              key={service.id}
+              key={service._id}
               direction="row"
               alignItems="center"
               className={`service-row ${serviceStatus}`}
@@ -302,8 +417,12 @@ const MyServicesTab = () => {
               <Box className="service-row-media">
                 <Box
                   component="img"
-                  src={service.image}
-                  alt={service.name}
+                  src={
+                    service.serviceImages?.[0]
+                      ? `${REACT_APP_API_URL}/${service.serviceImages[0]}`
+                      : "/img/services/grooming.jpg"
+                  }
+                  alt={service.serviceTitle}
                   className="thumb-img"
                 />
               </Box>
@@ -315,16 +434,19 @@ const MyServicesTab = () => {
                   spacing={1.25}
                   className="service-row-title-line"
                 >
-                  <Typography className="agent-name">{service.name}</Typography>
+                  <Typography className="agent-name">
+                    {service.serviceTitle}
+                  </Typography>
                   <Box className={`service-status ${serviceStatus}`}>
                     {serviceStatus}
                   </Box>
                 </Stack>
                 <Typography className="service-description">
-                  {service.description}
+                  {service.serviceDescription}
                 </Typography>
                 <Typography className="agent-service-type">
-                  {service.category}
+                  {prettifyEnum(service.serviceType)} ·{" "}
+                  {formatDuration(service.serviceDurationMinutes)}
                 </Typography>
               </Stack>
 
@@ -336,7 +458,7 @@ const MyServicesTab = () => {
                 <Stack className="metric-block">
                   <Typography className="metric-label">Price</Typography>
                   <Typography className="service-price">
-                    {service.price}
+                    ₩{service.servicePrice?.toLocaleString()}
                   </Typography>
                 </Stack>
                 <Stack className="metric-block">
@@ -348,20 +470,20 @@ const MyServicesTab = () => {
                     className="rating-row"
                   >
                     <Rating
-                      value={service.rating}
+                      value={service.serviceRating ?? 0}
                       precision={0.5}
                       readOnly
                       size="small"
                     />
                     <Typography className="rating-value">
-                      {service.rating}
+                      {(service.serviceRating ?? 0).toFixed(1)}
                     </Typography>
                   </Stack>
                 </Stack>
                 <Stack className="metric-block">
                   <Typography className="metric-label">Bookings</Typography>
                   <Typography className="bookings-row">
-                    {service.bookings}
+                    {service.serviceBookings ?? 0}
                   </Typography>
                 </Stack>
               </Stack>
@@ -374,15 +496,17 @@ const MyServicesTab = () => {
                   Edit
                 </Button>
                 <Stack direction="row" className="service-status-tabs">
-                  {["active", "paused", "deleted"].map((status) => (
+                  {OWNED_STATUSES.map((status) => (
                     <Button
                       key={status}
-                      className={`status-tab ${status} ${
-                        serviceStatus === status ? "selected" : ""
+                      className={`status-tab ${statusClass[status]} ${
+                        service.serviceStatus === status ? "selected" : ""
                       }`}
-                      onClick={() => updateServiceStatus(service.id, status)}
+                      onClick={() => void updateServiceStatus(service, status)}
                     >
-                      {status === "paused" ? "Pause" : status}
+                      {status === ServiceStatus.PAUSE
+                        ? "Pause"
+                        : statusClass[status]}
                     </Button>
                   ))}
                 </Stack>
@@ -416,10 +540,10 @@ const MyServicesTab = () => {
               </Box>
               <Stack spacing={0.25}>
                 <span>
-                  {editingServiceId ? "Edit Service" : "Create New Service"}
+                  {editingService ? "Edit Service" : "Create New Service"}
                 </span>
                 <Typography className="add-dialog-subtitle">
-                  {editingServiceId
+                  {editingService
                     ? "Update the selected offer details."
                     : "Publish a bookable offer for pet owners."}
                 </Typography>
@@ -441,8 +565,8 @@ const MyServicesTab = () => {
               <TextField
                 fullWidth
                 label="Service Title"
-                name="title"
-                value={formData.title}
+                name="serviceTitle"
+                value={formData.serviceTitle}
                 onChange={handleInputChange}
                 placeholder="Premium Dog Grooming"
                 variant="outlined"
@@ -450,23 +574,63 @@ const MyServicesTab = () => {
               />
 
               <TextField
+                select
                 fullWidth
-                label="Service Duration"
-                name="duration"
-                type="text"
-                value={formData.duration}
+                label="Service Type"
+                name="serviceType"
+                value={formData.serviceType}
                 onChange={handleInputChange}
-                placeholder="1 hour"
                 variant="outlined"
                 className="add-service-field"
+                SelectProps={{
+                  MenuProps: { className: "add-service-select-menu" },
+                }}
+              >
+                {SERVICE_TYPES.map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {prettifyEnum(type)}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <TextField
+                select
+                fullWidth
+                label="Location"
+                name="serviceLocation"
+                value={formData.serviceLocation}
+                onChange={handleInputChange}
+                variant="outlined"
+                className="add-service-field"
+                SelectProps={{
+                  MenuProps: { className: "add-service-select-menu" },
+                }}
+              >
+                {SERVICE_LOCATIONS.map((location) => (
+                  <MenuItem key={location} value={location}>
+                    {prettifyEnum(location)}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <TextField
+                fullWidth
+                label="Service Duration (minutes)"
+                name="serviceDurationMinutes"
+                value={formData.serviceDurationMinutes}
+                onChange={handleInputChange}
+                placeholder="60"
+                variant="outlined"
+                className="add-service-field"
+                inputProps={{ inputMode: "numeric" }}
               />
 
               <TextField
                 fullWidth
                 label="Price"
-                name="price"
+                name="servicePrice"
                 type="text"
-                value={formData.price}
+                value={formData.servicePrice}
                 onChange={handleInputChange}
                 placeholder="45000"
                 variant="outlined"
@@ -482,8 +646,8 @@ const MyServicesTab = () => {
               <TextField
                 fullWidth
                 label="Description"
-                name="description"
-                value={formData.description}
+                name="serviceDescription"
+                value={formData.serviceDescription}
                 onChange={handleInputChange}
                 placeholder="Bath, haircut, nail trim, and ear cleaning."
                 multiline
@@ -502,11 +666,7 @@ const MyServicesTab = () => {
               >
                 <Typography>Service Images</Typography>
                 <Chip
-                  label={
-                    editingServiceId
-                      ? `${images.length}/4 replacement`
-                      : `${images.length}/4 selected`
-                  }
+                  label={`${images.length}/${MAX_IMAGES} selected`}
                   className="image-count-chip"
                 />
               </Stack>
@@ -515,7 +675,7 @@ const MyServicesTab = () => {
 
               <Box
                 className={`upload-dropzone ${
-                  images.length >= 4 ? "disabled" : ""
+                  images.length >= MAX_IMAGES ? "disabled" : ""
                 }`}
               >
                 <input
@@ -525,7 +685,7 @@ const MyServicesTab = () => {
                   onChange={handleImageUpload}
                   style={{ display: "none" }}
                   id="image-upload"
-                  disabled={images.length >= 4}
+                  disabled={images.length >= MAX_IMAGES}
                 />
                 <label htmlFor="image-upload">
                   <Box className="upload-icon-wrap">
@@ -536,9 +696,7 @@ const MyServicesTab = () => {
                       Upload service photos
                     </Typography>
                     <Typography className="upload-note">
-                      {editingServiceId
-                        ? "JPG, PNG, or WEBP. Upload only if you want to replace photos."
-                        : "JPG, PNG, or WEBP. Add at least one image."}
+                      JPG, PNG, or WEBP. Add at least one image.
                     </Typography>
                   </Stack>
                 </label>
@@ -551,7 +709,7 @@ const MyServicesTab = () => {
                       <Box className="image-preview-card">
                         <Box
                           component="img"
-                          src={URL.createObjectURL(image)}
+                          src={image.preview}
                           alt={image.name}
                         />
                         <IconButton
@@ -581,8 +739,9 @@ const MyServicesTab = () => {
             variant="contained"
             onClick={handlePublish}
             className="btn-dialog-publish"
+            disabled={isSubmitting}
           >
-            {editingServiceId ? "Update Service" : "Publish Service"}
+            {editingService ? "Update Service" : "Publish Service"}
           </Button>
         </DialogActions>
       </Dialog>
