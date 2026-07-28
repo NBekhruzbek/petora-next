@@ -232,6 +232,39 @@
             background: #ecfdf3;
             border: 1px solid rgba(22, 101, 52, 0.22);
           }
+
+          &.cancelled,
+          &.rejected {
+            color: #b42318;
+            background: #fef3f2;
+            border: 1px solid rgba(180, 35, 24, 0.22);
+          }
+        }
+
+        .cancel-booking-btn {
+          height: 32px;
+          padding: 0 14px;
+          border-radius: 8px;
+          color: #b42318;
+          background: #fef3f2;
+          border: 1px solid rgba(180, 35, 24, 0.22) !important;
+          font-family: $font;
+          font-size: 12px;
+          font-weight: 800;
+          line-height: 1;
+          text-transform: none;
+          white-space: nowrap;
+          transition:
+            color 0.2s,
+            border-color 0.2s,
+            background-color 0.2s,
+            transform 0.2s;
+
+          &:hover {
+            background: #ffd9d5;
+            border-color: #b42318 !important;
+            transform: translateY(-1px);
+          }
         }
 
         .review-submitted-text {
@@ -284,7 +317,6 @@
     .MuiSvgIcon-root {
       font-size: 15px !important;
     }
-
   }
 
   // ── Orders list ──
@@ -493,6 +525,18 @@
           background: #ecfdf3;
           border: 1px solid rgba(22, 101, 52, 0.22);
         }
+
+        &.pending {
+          color: #4d4358;
+          background: #f5f3f7;
+          border: 1px solid rgba(77, 67, 88, 0.22);
+        }
+
+        &.cancelled {
+          color: #b42318;
+          background: #fef3f2;
+          border: 1px solid rgba(180, 35, 24, 0.22);
+        }
       }
     }
 
@@ -633,4 +677,3 @@
     }
   }
 }
-

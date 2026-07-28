@@ -16,141 +16,25 @@ import CheckIcon from "@mui/icons-material/Check";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { userVar } from "@/apollo/store";
+import { GET_MY_BOOKINGS, GET_MY_ORDERS } from "@/apollo/user/query";
+import { UPDATE_BOOKING_BY_USER } from "@/apollo/user/mutation";
+import { BookedInfo } from "@/libs/types/booking/booking";
+import { Order } from "@/libs/types/order/order";
+import { BookingStatus } from "@/libs/enums/booking.enum";
+import { OrderStatus } from "@/libs/enums/order.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import { REACT_APP_API_URL } from "@/libs/config";
+import { formatBookingMoment } from "./service-tabs/AgentBookingsList";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetConfirmAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
 
-const BOOKINGS = [
-  {
-    id: 1,
-    service: "Premium Grooming",
-    category: "Grooming",
-    image: "/img/services/grooming.jpg",
-    date: "May 12, 2026 · 10:00 AM",
-    price: "₩45,000",
-    rating: 4.8,
-    reservations: 128,
-    request: "Sensitive skin, use gentle shampoo.",
-    status: "pending",
-  },
-  {
-    id: 2,
-    service: "Dog Walking",
-    category: "Walking",
-    image: "/img/services/walking.jpg",
-    date: "May 12, 2026 · 2:00 PM",
-    price: "₩25,000",
-    rating: 4.7,
-    reservations: 256,
-    request: "Needs extra exercise, energetic dog.",
-    status: "pending",
-  },
-  {
-    id: 3,
-    service: "Cat Boarding",
-    category: "Boarding",
-    image: "/img/services/boarding.png",
-    date: "May 13 – 15, 2026",
-    price: "₩65,000/night",
-    rating: 4.9,
-    reservations: 89,
-    request: "Special diet required, medication at 8pm.",
-    status: "accepted",
-  },
-  {
-    id: 4,
-    service: "Premium Grooming",
-    category: "Grooming",
-    image: "/img/services/grooming.jpg",
-    date: "Apr 28, 2026 · 11:00 AM",
-    price: "₩45,000",
-    rating: 4.8,
-    reservations: 214,
-    request: "Full groom including nail trim.",
-    status: "completed",
-  },
-];
-
-const ORDERS = [
-  {
-    id: 1,
-    orderNo: "ORD-20260509-001",
-    status: "processing",
-    orderTimestamp: Date.now() - 30 * 3_600_000,
-    estimatedDeliveryHours: 240,
-    products: [
-      {
-        name: "FILLET 'O' LAKES - KIT CAT",
-        image: "/img/products/fillet.png",
-        categories: ["Foods"],
-        petType: "Cats",
-        quantity: 2,
-        unitPrice: 100,
-      },
-      {
-        name: "CAT TRAVEL FEEDER BOWL",
-        image: "/img/products/fillet.png",
-        categories: ["Accessories"],
-        petType: "Cats",
-        quantity: 1,
-        unitPrice: 98,
-      },
-    ],
-    deliveryPrice: 30,
-    orderDate: "May 9, 2026",
-  },
-  {
-    id: 2,
-    orderNo: "ORD-20260508-002",
-    status: "shipped",
-    orderTimestamp: Date.now() - 90 * 3_600_000,
-    estimatedDeliveryHours: 120,
-    products: [
-      {
-        name: "ENCORE - CAT FOOD",
-        image: "/img/products/encore.png",
-        categories: ["Foods", "Health"],
-        petType: "Cats",
-        quantity: 1,
-        unitPrice: 400,
-      },
-    ],
-    deliveryPrice: 20,
-    orderDate: "May 8, 2026",
-  },
-  {
-    id: 3,
-    orderNo: "ORD-20260506-003",
-    status: "delivered",
-    orderTimestamp: Date.now() - 200 * 3_600_000,
-    estimatedDeliveryHours: 168,
-    products: [
-      {
-        name: "PAW & COAT CARE BUNDLE",
-        image: "/img/products/dog-toys-to-mouth.png",
-        categories: ["Health", "Accessories"],
-        petType: "Dogs",
-        quantity: 1,
-        unitPrice: 260,
-      },
-      {
-        name: "PUPPY CHEW STARTER PACK",
-        image: "/img/products/basketball-ball.png",
-        categories: ["Toys", "Accessories"],
-        petType: "Dogs",
-        quantity: 2,
-        unitPrice: 150,
-      },
-      {
-        name: "WINTER WALK DOG JACKET",
-        image: "/img/products/wellness.png",
-        categories: ["Clothes", "Accessories"],
-        petType: "Dogs",
-        quantity: 1,
-        unitPrice: 210,
-      },
-    ],
-    deliveryPrice: 0,
-    orderDate: "May 6, 2026",
-  },
-];
+const BOOKINGS_LIMIT = 20;
+const ORDERS_LIMIT = 10;
 
 const TruckIcon = ({ className }: { className?: string }) => (
   <svg
@@ -228,18 +112,45 @@ const STAGES = [
   { label: ["Order", "Arrived"], Icon: HomeOutlinedIcon, pct: 100 },
 ];
 
-const DeliveryTracker = ({
-  orderTimestamp,
-  estimatedDeliveryHours,
-}: {
-  orderTimestamp: number;
-  estimatedDeliveryHours: number;
-}) => {
-  const totalMs = estimatedDeliveryHours * 3_600_000;
-  const pct = Math.min(
-    Math.max(((Date.now() - orderTimestamp) / totalMs) * 100, 0),
-    100,
-  );
+// There is no carrier ETA on the API, so the tracker advances one stage per
+// order status instead of interpolating over a delivery window.
+const STATUS_PROGRESS: Record<string, number> = {
+  [OrderStatus.PENDING]: 0,
+  [OrderStatus.PROCESSING]: 33,
+  [OrderStatus.SHIPPED]: 66,
+  [OrderStatus.DELIVERED]: 100,
+  [OrderStatus.CANCELLED]: 0,
+};
+
+// The row styling keys off the lowercase legacy status names.
+const bookingStatusClass: Record<string, string> = {
+  [BookingStatus.PENDING]: "pending",
+  [BookingStatus.CONFIRMED]: "accepted",
+  [BookingStatus.COMPLETED]: "completed",
+  [BookingStatus.CANCELLED]: "cancelled",
+  [BookingStatus.REJECTED]: "rejected",
+};
+
+const prettifyEnum = (value?: string) =>
+  (value ?? "")
+    .split("_")
+    .filter(Boolean)
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ");
+
+const formatWon = (value: number) => `₩${(value ?? 0).toLocaleString()}`;
+
+const formatDate = (value?: Date | string) =>
+  value
+    ? new Date(value).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : "";
+
+const DeliveryTracker = ({ orderStatus }: { orderStatus: OrderStatus }) => {
+  const pct = STATUS_PROGRESS[orderStatus] ?? 0;
 
   return (
     <Box className="delivery-tracker">
@@ -283,32 +194,82 @@ const DeliveryTracker = ({
 
 const BookingsOrders = () => {
   const router = useRouter();
+  const user = useReactiveVar(userVar);
   const initialTab = router.query.tab === "ORDERS" ? 1 : 0;
   const [activeTab, setActiveTab] = useState(initialTab);
-  const [bookingStatuses, setBookingStatuses] = useState<
-    Record<number, string>
-  >({});
+
+  /** APOLLO REQUESTS **/
+
+  const bookingsFilter = {
+    page: 1,
+    limit: BOOKINGS_LIMIT,
+    sort: "createdAt",
+    direction: Direction.DESC,
+  };
+
+  const { data: getMyBookingsData, refetch: getMyBookingsRefetch } = useQuery(
+    GET_MY_BOOKINGS,
+    {
+      fetchPolicy: "cache-and-network",
+      variables: { input: bookingsFilter },
+      skip: !user?._id,
+      notifyOnNetworkStatusChange: true,
+    },
+  );
+
+  const { data: getMyOrdersData } = useQuery(GET_MY_ORDERS, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: { page: 1, limit: ORDERS_LIMIT } },
+    skip: !user?._id,
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const [updateBookingByUser] = useMutation(UPDATE_BOOKING_BY_USER);
+
+  /** DERIVED **/
+
+  const bookings: BookedInfo[] = getMyBookingsData?.getMyBookings?.list ?? [];
+  const orders: Order[] = getMyOrdersData?.getMyOrders?.list ?? [];
+
+  /** HANDLERS **/
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
-  const getBookingStatus = (item: (typeof BOOKINGS)[number]) =>
-    bookingStatuses[item.id] || item.status;
+  // The API only lets a booking be cancelled while it is still PENDING.
+  const cancelBooking = async (booking: BookedInfo) => {
+    try {
+      const confirmed = await sweetConfirmAlert("Cancel this booking?");
+      if (!confirmed) return;
 
-  const goToWriteReview = () => {
-    router.push("/service/booking?writeReview=true");
+      await updateBookingByUser({
+        variables: {
+          input: {
+            bookingId: booking._id,
+            bookingStatus: BookingStatus.CANCELLED,
+          },
+        },
+      });
+      await getMyBookingsRefetch({ input: bookingsFilter });
+      await sweetBottomSmallSuccessAlert("Booking cancelled", 700);
+    } catch (err: any) {
+      console.log("ERROR, cancelBooking:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
   };
 
-  const goToWriteAgentReview = () => {
-    router.push("/agents/detail?writeReview=true");
+  const goToWriteReview = (serviceId: string) => {
+    void router.push(`/service/booking?id=${serviceId}&writeReview=true`);
   };
 
-  const goToWriteProductReview = () => {
-    router.push("/shop/detail?writeReview=true");
+  const goToWriteAgentReview = (agentId: string) => {
+    void router.push(`/agents/detail?id=${agentId}&writeReview=true`);
   };
 
-  const formatWon = (value: number) => `₩${value.toLocaleString()}`;
+  const goToWriteProductReview = (productId: string) => {
+    void router.push(`/shop/detail?id=${productId}&writeReview=true`);
+  };
 
   return (
     <Stack className="bookings-orders-container" spacing={3}>
@@ -318,138 +279,34 @@ const BookingsOrders = () => {
           onChange={handleTabChange}
           aria-label="bookings and orders tabs"
         >
-          <Tab label="Bookings" />
           <Tab label="Orders" />
+          <Tab label="Bookings" />
         </Tabs>
       </Stack>
 
       <Box className="bookings-orders-tab-content">
-        {/* ── BOOKINGS TAB ── */}
-        {activeTab === 0 && (
-          <Stack spacing={1.5} className="bo-bookings-tab">
-            {BOOKINGS.map((item) => {
-              const status = getBookingStatus(item);
-              return (
-                <Stack
-                  key={item.id}
-                  direction="row"
-                  alignItems="center"
-                  className={`service-row ${status}`}
-                >
-                  {/* Service image */}
-                  <Box className="service-row-media">
-                    <Box
-                      component="img"
-                      src={item.image}
-                      alt={item.service}
-                      className="service-thumb-img"
-                    />
-                  </Box>
-
-                  {/* Main info */}
-                  <Stack className="service-row-main" spacing={0.75}>
-                    <Typography className="agent-name">
-                      {item.service}
-                    </Typography>
-                    <Typography className="service-description">
-                      {item.request}
-                    </Typography>
-                    <Typography className="agent-service-type">
-                      {item.category}
-                    </Typography>
-                  </Stack>
-
-                  {/* Metrics: Price | Rating | Reservations */}
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    className="service-row-metrics"
-                  >
-                    <Stack className="metric-block">
-                      <Typography className="metric-label">Price</Typography>
-                      <Typography className="service-price">
-                        {item.price}
-                      </Typography>
-                    </Stack>
-                    <Stack className="metric-block">
-                      <Typography className="metric-label">Rating</Typography>
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        spacing={0.5}
-                        className="rating-row"
-                      >
-                        <Rating
-                          value={item.rating}
-                          precision={0.5}
-                          readOnly
-                          size="small"
-                        />
-                        <Typography className="rating-value">
-                          {item.rating}
-                        </Typography>
-                      </Stack>
-                    </Stack>
-                    <Stack className="metric-block">
-                      <Typography className="metric-label">
-                        Reservations
-                      </Typography>
-                      <Typography className="bookings-row">
-                        {item.reservations}
-                      </Typography>
-                    </Stack>
-                  </Stack>
-
-                  {/* End: Booked time + Status */}
-                  <Stack className="booking-end-block" spacing={1}>
-                    <Stack spacing={0.25}>
-                      <Typography className="metric-label">Booked</Typography>
-                      <Typography className="booking-date">
-                        {item.date}
-                      </Typography>
-                    </Stack>
-                    <Box className={`booking-status-badge ${status}`}>
-                      {status}
-                    </Box>
-                    {status === "completed" && (
-                      <Stack spacing={1}>
-                        <Button
-                          className="write-review-btn"
-                          startIcon={<RateReviewOutlinedIcon />}
-                          onClick={goToWriteReview}
-                        >
-                          Review Service
-                        </Button>
-                        <Button
-                          className="write-review-btn agent-review-btn"
-                          startIcon={<PersonOutlineIcon />}
-                          onClick={goToWriteAgentReview}
-                        >
-                          Review Agent
-                        </Button>
-                      </Stack>
-                    )}
-                  </Stack>
-                </Stack>
-              );
-            })}
-          </Stack>
-        )}
-
         {/* ── ORDERS TAB ── */}
-        {activeTab === 1 && (
+        {activeTab === 0 && (
           <Stack spacing={2} className="bo-orders-list">
-            {ORDERS.map((item) => {
-              const productsPrice = item.products.reduce(
-                (sum, p) => sum + p.unitPrice * p.quantity,
+            {orders.length === 0 && (
+              <Typography className="service-description">
+                You have no orders yet.
+              </Typography>
+            )}
+
+            {orders.map((order) => {
+              const items = order.orderItems ?? [];
+              const productsPrice = items.reduce(
+                (sum, item) => sum + item.itemPrice * item.itemQuantity,
                 0,
               );
-              const totalPrice = productsPrice + item.deliveryPrice;
+              const deliveryPrice = order.orderDelivery ?? 0;
+              const status = order.orderStatus.toLowerCase();
 
               return (
                 <Stack
-                  key={item.id}
-                  className={`order-card ${item.status}`}
+                  key={order._id}
+                  className={`order-card ${status}`}
                   spacing={0}
                 >
                   {/* Header */}
@@ -465,7 +322,7 @@ const BookingsOrders = () => {
                           Order Number
                         </Typography>
                         <Typography className="order-card-number">
-                          {item.orderNo}
+                          {order.orderNumber}
                         </Typography>
                       </Stack>
                       <Stack direction="row" alignItems="center" spacing={2}>
@@ -474,10 +331,10 @@ const BookingsOrders = () => {
                             Order Date
                           </Typography>
                           <Typography className="order-card-date">
-                            {item.orderDate}
+                            {formatDate(order.createdAt)}
                           </Typography>
                         </Stack>
-                        {item.status === "delivered" ? (
+                        {order.orderStatus === OrderStatus.DELIVERED ? (
                           <Stack
                             className="order-delivered-actions"
                             spacing={1}
@@ -489,78 +346,87 @@ const BookingsOrders = () => {
                             <Box className="order-status-badge delivered">
                               Delivered
                             </Box>
-                            <Button
-                              className="write-review-btn"
-                              startIcon={<RateReviewOutlinedIcon />}
-                              onClick={goToWriteProductReview}
-                            >
-                              Write Review
-                            </Button>
+                            {items[0]?.productId && (
+                              <Button
+                                className="write-review-btn"
+                                startIcon={<RateReviewOutlinedIcon />}
+                                onClick={() =>
+                                  goToWriteProductReview(items[0].productId)
+                                }
+                              >
+                                Write Review
+                              </Button>
+                            )}
                           </Stack>
                         ) : (
-                          <Box className={`order-status-badge ${item.status}`}>
-                            {item.status}
+                          <Box className={`order-status-badge ${status}`}>
+                            {status}
                           </Box>
                         )}
                       </Stack>
                     </Stack>
-                    <DeliveryTracker
-                      orderTimestamp={item.orderTimestamp}
-                      estimatedDeliveryHours={item.estimatedDeliveryHours}
-                    />
+                    <DeliveryTracker orderStatus={order.orderStatus} />
                   </Stack>
 
                   {/* Products */}
                   <Stack className="order-card-products" spacing={1.25}>
-                    {item.products.map((product) => (
-                      <Stack
-                        key={product.name}
-                        className="order-product-card"
-                        direction="row"
-                        spacing={1.5}
-                        alignItems="center"
-                      >
-                        <Box className="order-product-image">
-                          <Box
-                            component="img"
-                            src={product.image}
-                            alt={product.name}
-                          />
-                        </Box>
+                    {items.map((item) => {
+                      const product = item.productData;
 
-                        <Stack spacing={0.4} flex={1} minWidth={0}>
-                          <Typography className="order-product-title">
-                            {product.name}
-                          </Typography>
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            alignItems="center"
-                            className="order-product-meta"
-                          >
-                            <Typography className="product-meta-item">
-                              {product.petType}
+                      return (
+                        <Stack
+                          key={item._id}
+                          className="order-product-card"
+                          direction="row"
+                          spacing={1.5}
+                          alignItems="center"
+                        >
+                          <Box className="order-product-image">
+                            <Box
+                              component="img"
+                              src={
+                                product?.productImages?.[0]
+                                  ? `${REACT_APP_API_URL}/${product.productImages[0]}`
+                                  : "/img/products/fillet.png"
+                              }
+                              alt={product?.productName ?? "product"}
+                            />
+                          </Box>
+
+                          <Stack spacing={0.4} flex={1} minWidth={0}>
+                            <Typography className="order-product-title">
+                              {product?.productName ?? "Product removed"}
                             </Typography>
-                            <Typography className="product-meta-categories">
-                              {product.categories.join(" · ")}
+                            <Stack
+                              direction="row"
+                              spacing={1}
+                              alignItems="center"
+                              className="order-product-meta"
+                            >
+                              <Typography className="product-meta-item">
+                                {prettifyEnum(product?.productPetType)}
+                              </Typography>
+                              <Typography className="product-meta-categories">
+                                {prettifyEnum(product?.productType)}
+                              </Typography>
+                            </Stack>
+                          </Stack>
+
+                          <Stack
+                            spacing={0.25}
+                            alignItems="flex-end"
+                            className="order-product-info"
+                          >
+                            <Typography className="product-quantity">
+                              {item.itemQuantity} × {formatWon(item.itemPrice)}
+                            </Typography>
+                            <Typography className="product-line-total">
+                              {formatWon(item.itemPrice * item.itemQuantity)}
                             </Typography>
                           </Stack>
                         </Stack>
-
-                        <Stack
-                          spacing={0.25}
-                          alignItems="flex-end"
-                          className="order-product-info"
-                        >
-                          <Typography className="product-quantity">
-                            {product.quantity} × {formatWon(product.unitPrice)}
-                          </Typography>
-                          <Typography className="product-line-total">
-                            {formatWon(product.unitPrice * product.quantity)}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    ))}
+                      );
+                    })}
                   </Stack>
 
                   {/* Footer / Price summary */}
@@ -576,7 +442,7 @@ const BookingsOrders = () => {
                       </Typography>
                     </Stack>
 
-                    {item.deliveryPrice > 0 && (
+                    {deliveryPrice > 0 && (
                       <Stack
                         direction="row"
                         justifyContent="space-between"
@@ -586,7 +452,7 @@ const BookingsOrders = () => {
                           Delivery
                         </Typography>
                         <Typography className="price-value">
-                          {formatWon(item.deliveryPrice)}
+                          {formatWon(deliveryPrice)}
                         </Typography>
                       </Stack>
                     )}
@@ -600,9 +466,145 @@ const BookingsOrders = () => {
                         Total Price
                       </Typography>
                       <Typography className="price-value total-value">
-                        {formatWon(totalPrice)}
+                        {formatWon(order.orderTotal)}
                       </Typography>
                     </Stack>
+                  </Stack>
+                </Stack>
+              );
+            })}
+          </Stack>
+        )}
+
+        {/* ── BOOKINGS TAB ── */}
+        {activeTab === 1 && (
+          <Stack spacing={1.5} className="bo-bookings-tab">
+            {bookings.length === 0 && (
+              <Typography className="service-description">
+                You have no bookings yet.
+              </Typography>
+            )}
+
+            {bookings.map((booking) => {
+              const status = bookingStatusClass[booking.bookingStatus];
+              const service = booking.serviceData;
+
+              return (
+                <Stack
+                  key={booking._id}
+                  direction="row"
+                  alignItems="center"
+                  className={`service-row ${status}`}
+                >
+                  {/* Service image */}
+                  <Box className="service-row-media">
+                    <Box
+                      component="img"
+                      src={
+                        service?.serviceImages?.[0]
+                          ? `${REACT_APP_API_URL}/${service.serviceImages[0]}`
+                          : "/img/services/grooming.jpg"
+                      }
+                      alt={service?.serviceTitle ?? "service"}
+                      className="service-thumb-img"
+                    />
+                  </Box>
+
+                  {/* Main info */}
+                  <Stack className="service-row-main" spacing={0.75}>
+                    <Typography className="agent-name">
+                      {service?.serviceTitle ?? "Service removed"}
+                    </Typography>
+                    <Typography className="service-description">
+                      {booking.bookingNote || "No additional request"}
+                    </Typography>
+                    <Typography className="agent-service-type">
+                      {prettifyEnum(service?.serviceType)} ·{" "}
+                      {booking.bookingPetName}
+                    </Typography>
+                  </Stack>
+
+                  {/* Metrics: Price | Rating | Reservations */}
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    className="service-row-metrics"
+                  >
+                    <Stack className="metric-block">
+                      <Typography className="metric-label">Price</Typography>
+                      <Typography className="service-price">
+                        {formatWon(booking.bookingPrice)}
+                      </Typography>
+                    </Stack>
+                    <Stack className="metric-block">
+                      <Typography className="metric-label">Rating</Typography>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={0.5}
+                        className="rating-row"
+                      >
+                        <Rating
+                          value={service?.serviceRating ?? 0}
+                          precision={0.5}
+                          readOnly
+                          size="small"
+                        />
+                        <Typography className="rating-value">
+                          {(service?.serviceRating ?? 0).toFixed(1)}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                    <Stack className="metric-block">
+                      <Typography className="metric-label">
+                        Reservations
+                      </Typography>
+                      <Typography className="bookings-row">
+                        {service?.serviceBookings ?? 0}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+
+                  {/* End: Booked time + Status */}
+                  <Stack className="booking-end-block" spacing={1}>
+                    <Stack spacing={0.25}>
+                      <Typography className="metric-label">Booked</Typography>
+                      <Typography className="booking-date">
+                        {formatBookingMoment(
+                          booking.bookingDate,
+                          booking.bookingTime,
+                        )}
+                      </Typography>
+                    </Stack>
+                    <Box className={`booking-status-badge ${status}`}>
+                      {status}
+                    </Box>
+                    {booking.bookingStatus === BookingStatus.PENDING && (
+                      <Button
+                        className="cancel-booking-btn"
+                        onClick={() => void cancelBooking(booking)}
+                      >
+                        Cancel Booking
+                      </Button>
+                    )}
+                    {booking.bookingStatus === BookingStatus.COMPLETED && (
+                      <Stack spacing={1}>
+                        <Button
+                          className="write-review-btn"
+                          startIcon={<RateReviewOutlinedIcon />}
+                          onClick={() => goToWriteReview(booking.serviceId)}
+                        >
+                          Review Service
+                        </Button>
+                        <Button
+                          className="write-review-btn agent-review-btn"
+                          startIcon={<PersonOutlineIcon />}
+                          onClick={() => goToWriteAgentReview(booking.agentId)}
+                        >
+                          Review Agent
+                        </Button>
+                      </Stack>
+                    )}
                   </Stack>
                 </Stack>
               );
