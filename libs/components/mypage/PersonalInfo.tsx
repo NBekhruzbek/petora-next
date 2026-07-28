@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { MOCK_AGENT_PROFILE } from "@/libs/data/userProfile";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Stack,
   Typography,
@@ -31,110 +30,189 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { userVar } from "@/apollo/store";
+import { GET_MEMBER } from "@/apollo/user/query";
+import { IMAGES_UPLOADER, UPDATE_MEMBER } from "@/apollo/user/mutation";
+import { updateStorage, updateUserInfo } from "@/libs/auth";
+import { Member } from "@/libs/types/member/member";
+import { MemberUpdate } from "@/libs/types/member/member.update";
+import { MemberType } from "@/libs/enums/member.enum";
+import { ServiceLocation, ServiceType } from "@/libs/enums/service.enum";
+import { REACT_APP_API_URL } from "@/libs/config";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
 
 interface PersonalInfoProps {
   isEditable: boolean;
   cancelTrigger?: number;
+  saveTrigger?: number;
+  onSaveComplete?: (succeeded: boolean) => void;
 }
 
-const SERVICE_TYPE_OPTIONS = [
-  "Grooming",
-  "Training",
-  "Walking",
-  "Boarding",
-  "Day-care",
-  "Health",
-];
+interface CertificateSlot {
+  path?: string;
+  file?: File;
+  preview: string;
+}
 
-const SERVICE_AREA_OPTIONS = [
-  "Seoul",
-  "Busan",
-  "Incheon",
-  "Daegu",
-  "Suwon",
-  "Gyeongju",
-  "Gwangju",
-  "Chonju",
-  "Daejon",
-  "Jeju",
-];
+interface ProfileForm {
+  memberFullName: string;
+  memberUserName: string;
+  memberEmail: string;
+  memberPhone: string;
+  memberAddress: string;
+  memberDesc: string;
+  memberSpecialty: string;
+  memberExperience: string;
+  memberApproach: string;
+  memberLanguages: string;
+  memberResponseTime: string;
+  memberServiceTypes: string[];
+  memberServiceArea: string[];
+}
 
-const toArray = (val?: string) =>
-  val
-    ?.split(",")
-    .map((s) => s.trim())
-    .filter(Boolean) ?? [];
+const SERVICE_TYPE_OPTIONS = Object.values(ServiceType);
+const SERVICE_AREA_OPTIONS = Object.values(ServiceLocation);
 
-// Toggle between MOCK_PERSONAL_INFO and MOCK_AGENT_PROFILE to test both member types
-const ACTIVE_MOCK = MOCK_AGENT_PROFILE;
+const prettifyEnum = (value?: string) =>
+  (value ?? "")
+    .split("_")
+    .filter(Boolean)
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ");
 
-const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
-  const [originalProfile, setOriginalProfile] = useState(ACTIVE_MOCK);
-  const [profile, setProfile] = useState(originalProfile);
-  const [usernameStatus, setUsernameStatus] = useState<
-    "checking" | "available" | "taken" | null
-  >(null);
+const emptyForm: ProfileForm = {
+  memberFullName: "",
+  memberUserName: "",
+  memberEmail: "",
+  memberPhone: "",
+  memberAddress: "",
+  memberDesc: "",
+  memberSpecialty: "",
+  memberExperience: "",
+  memberApproach: "",
+  memberLanguages: "",
+  memberResponseTime: "",
+  memberServiceTypes: [],
+  memberServiceArea: [],
+};
 
-  const agentProfile = profile as typeof MOCK_AGENT_PROFILE;
-  const isAgent = profile.memberType === "Agent";
+const toForm = (member?: Member): ProfileForm => ({
+  memberFullName: member?.memberFullName ?? "",
+  memberUserName: member?.memberUserName ?? "",
+  memberEmail: member?.memberEmail ?? "",
+  memberPhone: member?.memberPhone ?? "",
+  memberAddress: member?.memberAddress ?? "",
+  memberDesc: member?.memberDesc ?? "",
+  memberSpecialty: member?.memberSpecialty ?? "",
+  // Seeded as "0" for members who never filled it in.
+  memberExperience:
+    member?.memberExperience && member.memberExperience !== "0"
+      ? member.memberExperience
+      : "",
+  memberApproach: member?.memberApproach ?? "",
+  memberLanguages: member?.memberLanguages ?? "",
+  memberResponseTime: member?.memberResponseTime ?? "",
+  memberServiceTypes: (member?.memberServiceTypes ?? []).filter(Boolean),
+  memberServiceArea: (member?.memberServiceArea ?? []).filter(Boolean),
+});
 
-  const [selectedServiceTypes, setSelectedServiceTypes] = useState<string[]>(
-    toArray((ACTIVE_MOCK as typeof MOCK_AGENT_PROFILE).serviceType),
+const imageSrc = (path?: string) =>
+  path ? `${REACT_APP_API_URL}/${path}` : "";
+
+const PersonalInfo = ({
+  isEditable,
+  cancelTrigger,
+  saveTrigger,
+  onSaveComplete,
+}: PersonalInfoProps) => {
+  const user = useReactiveVar(userVar);
+  const [form, setForm] = useState<ProfileForm>(emptyForm);
+  const [certificates, setCertificates] = useState<CertificateSlot[]>([]);
+  const [avatar, setAvatar] = useState<{ file: File; preview: string } | null>(
+    null,
   );
-  const [selectedServiceAreas, setSelectedServiceAreas] = useState<string[]>(
-    toArray((ACTIVE_MOCK as typeof MOCK_AGENT_PROFILE).serviceArea),
+  // Guards against the save effect firing on mount, when saveTrigger is 0.
+  const lastSaveTrigger = useRef(saveTrigger ?? 0);
+
+  /** APOLLO REQUESTS **/
+
+  const { data: getMemberData, refetch: getMemberRefetch } = useQuery(
+    GET_MEMBER,
+    {
+      fetchPolicy: "cache-and-network",
+      variables: { input: user?._id },
+      skip: !user?._id,
+      notifyOnNetworkStatusChange: true,
+    },
   );
 
-  React.useEffect(() => {
-    if (isEditable) {
-      setOriginalProfile(profile);
-    }
-  }, [isEditable]);
+  const [updateMember] = useMutation(UPDATE_MEMBER);
+  const [imagesUploader] = useMutation(IMAGES_UPLOADER);
 
-  React.useEffect(() => {
-    if (cancelTrigger && cancelTrigger > 0) {
-      setProfile(originalProfile);
-      setUsernameStatus(null);
-      setSelectedServiceTypes(
-        toArray((originalProfile as typeof MOCK_AGENT_PROFILE).serviceType),
-      );
-      setSelectedServiceAreas(
-        toArray((originalProfile as typeof MOCK_AGENT_PROFILE).serviceArea),
-      );
-    }
+  /** DERIVED **/
+
+  const member: Member | undefined = getMemberData?.getMember;
+  const isAgent = member?.memberType === MemberType.AGENT;
+  const memberSince = member?.createdAt
+    ? new Date(member.createdAt).getFullYear()
+    : "";
+  const avatarPreview =
+    avatar?.preview || imageSrc(member?.memberImage) || undefined;
+  const initials = useMemo(
+    () =>
+      (form.memberFullName || form.memberUserName)
+        .split(" ")
+        .filter(Boolean)
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase(),
+    [form.memberFullName, form.memberUserName],
+  );
+
+  /** LIFECYCLES **/
+
+  const applyMember = (source?: Member) => {
+    setForm(toForm(source));
+    setCertificates(
+      (source?.memberCertificates ?? [])
+        .filter(Boolean)
+        .map((path) => ({ path, preview: imageSrc(path) })),
+    );
+    setAvatar(null);
+  };
+
+  useEffect(() => {
+    if (!isEditable) applyMember(member);
+  }, [member]);
+
+  useEffect(() => {
+    if (cancelTrigger && cancelTrigger > 0) applyMember(member);
   }, [cancelTrigger]);
+
+  useEffect(() => {
+    if (!saveTrigger || saveTrigger === lastSaveTrigger.current) return;
+    lastSaveTrigger.current = saveTrigger;
+    void handleSave();
+  }, [saveTrigger]);
+
+  /** HANDLERS **/
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    if (name === "username") setUsernameStatus(null);
-    setProfile((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleServiceTypeChange = (values: string[]) => {
-    setSelectedServiceTypes(values);
-    setProfile((prev) => ({ ...prev, serviceType: values.join(", ") }));
-  };
-
-  const handleServiceAreaChange = (values: string[]) => {
-    setSelectedServiceAreas(values);
-    setProfile((prev) => ({ ...prev, serviceArea: values.join(", ") }));
-  };
-
-  const checkUsername = () => {
-    if (!profile.username || profile.username.trim() === "") return;
-    setUsernameStatus("checking");
-    setTimeout(() => {
-      if (
-        profile.username.toLowerCase() === "admin" ||
-        profile.username.toLowerCase() === "johndoe"
-      ) {
-        setUsernameStatus("taken");
-      } else {
-        setUsernameStatus("available");
-      }
-    }, 600);
+    setForm((prev) => ({
+      ...prev,
+      [name]:
+        name === "memberExperience"
+          ? value.replace(/\D/g, "").slice(0, 2)
+          : value,
+    }));
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,7 +222,15 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
     } else if (value.length > 7) {
       value = `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
     }
-    setProfile((prev) => ({ ...prev, phone: value }));
+    setForm((prev) => ({ ...prev, memberPhone: value }));
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (avatar) URL.revokeObjectURL(avatar.preview);
+    setAvatar({ file, preview: URL.createObjectURL(file) });
+    e.target.value = "";
   };
 
   const handleCertImageChange = (
@@ -153,23 +239,96 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const certs = [...(profile.certifications ?? [])];
-      certs[index] = { ...certs[index], image: ev.target?.result as string };
-      setProfile((prev) => ({ ...prev, certifications: certs }));
-    };
-    reader.readAsDataURL(file);
+    setCertificates((prev) =>
+      prev.map((cert, i) =>
+        i === index ? { file, preview: URL.createObjectURL(file) } : cert,
+      ),
+    );
+    e.target.value = "";
   };
 
   const removeCertification = (index: number) => {
-    const certs = (profile.certifications ?? []).filter((_, i) => i !== index);
-    setProfile((prev) => ({ ...prev, certifications: certs }));
+    setCertificates((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addCertification = () => {
-    const certs = [...(profile.certifications ?? []), { title: "", image: "" }];
-    setProfile((prev) => ({ ...prev, certifications: certs }));
+    setCertificates((prev) => [...prev, { preview: "" }]);
+  };
+
+  const handleSave = async () => {
+    try {
+      if (!user?._id) throw new Error("Please login first!");
+
+      let memberImage = member?.memberImage;
+      if (avatar) {
+        const { data } = await imagesUploader({
+          variables: { files: [avatar.file], target: "member" },
+        });
+        const uploaded = (data?.imagesUploader ?? []).filter(Boolean)[0];
+        if (!uploaded) throw new Error("Image upload failed, please retry.");
+        memberImage = uploaded;
+      }
+
+      const pendingCerts = certificates.filter((cert) => cert.file);
+      let uploadedCerts: string[] = [];
+      if (pendingCerts.length) {
+        const { data } = await imagesUploader({
+          variables: {
+            files: pendingCerts.map((cert) => cert.file),
+            target: "certificate",
+          },
+        });
+        uploadedCerts = (data?.imagesUploader ?? []).filter(Boolean);
+        if (uploadedCerts.length !== pendingCerts.length) {
+          throw new Error("Certificate upload failed, please retry.");
+        }
+      }
+
+      let nextUpload = 0;
+      const memberCertificates = certificates
+        .map((cert) => (cert.file ? uploadedCerts[nextUpload++] : cert.path))
+        .filter(Boolean) as string[];
+
+      const input: MemberUpdate = {
+        _id: user._id,
+        memberFullName: form.memberFullName.trim(),
+        memberUserName: form.memberUserName.trim(),
+        memberEmail: form.memberEmail.trim(),
+        memberPhone: form.memberPhone.trim(),
+        memberAddress: form.memberAddress.trim(),
+        memberDesc: form.memberDesc.trim(),
+        memberImage,
+      };
+
+      if (isAgent) {
+        input.memberSpecialty = form.memberSpecialty.trim();
+        input.memberExperience = form.memberExperience.trim();
+        input.memberApproach = form.memberApproach.trim();
+        input.memberLanguages = form.memberLanguages.trim();
+        input.memberResponseTime = form.memberResponseTime.trim();
+        input.memberServiceTypes = form.memberServiceTypes;
+        input.memberServiceArea = form.memberServiceArea;
+        input.memberCertificates = memberCertificates;
+      }
+
+      const { data } = await updateMember({ variables: { input } });
+
+      const accessToken = data?.updateMember?.accessToken;
+      if (accessToken) {
+        updateStorage({ jwtToken: accessToken });
+        updateUserInfo(accessToken);
+      }
+
+      const { data: refetched } = await getMemberRefetch({ input: user._id });
+      applyMember(refetched?.getMember);
+
+      await sweetBottomSmallSuccessAlert("Profile updated!", 900);
+      onSaveComplete?.(true);
+    } catch (err: any) {
+      console.log("ERROR, handleSave:", err.message);
+      await sweetMixinErrorAlert(err.message);
+      onSaveComplete?.(false);
+    }
   };
 
   const fieldBorderStyles = {
@@ -228,7 +387,9 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                 Select options...
               </Typography>
             ) : (
-              <Typography className="multi-select-value">{sel.join(", ")}</Typography>
+              <Typography className="multi-select-value">
+                {sel.map(prettifyEnum).join(", ")}
+              </Typography>
             )
           }
           MenuProps={{ PaperProps: { className: "multi-select-menu" } }}
@@ -239,7 +400,7 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                 checked={selected.includes(option)}
                 className="multi-select-checkbox"
               />
-              <Typography>{option}</Typography>
+              <Typography>{prettifyEnum(option)}</Typography>
             </MenuItem>
           ))}
         </Select>
@@ -248,7 +409,7 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
       <TextField
         fullWidth
         disabled
-        value={selected.join(", ") || "—"}
+        value={selected.map(prettifyEnum).join(", ") || "—"}
         sx={fieldBorderStyles}
       />
     );
@@ -265,13 +426,13 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
         <Box className="avatar-box">
           {isEditable ? (
             <label className="avatar-upload-label">
-              <Avatar src={profile.image}>
-                {profile.fullName
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </Avatar>
-              <input hidden accept="image/*" type="file" />
+              <Avatar src={avatarPreview}>{initials}</Avatar>
+              <input
+                hidden
+                accept="image/*"
+                type="file"
+                onChange={handleAvatarChange}
+              />
               <Box className="upload-btn-wrapper">
                 <IconButton component="span" className="upload-btn">
                   <PhotoCameraIcon />
@@ -279,31 +440,34 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
               </Box>
             </label>
           ) : (
-            <Avatar src={profile.image}>
-              {profile.fullName
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </Avatar>
+            <Avatar src={avatarPreview}>{initials}</Avatar>
           )}
         </Box>
         <Stack spacing={0.5}>
           <Stack direction="row" spacing={1} alignItems="center">
             <Typography variant="h5" className="profile-name">
-              {profile.fullName}
+              {form.memberFullName || form.memberUserName}
             </Typography>
-            <Box className="verified-badge">
-              <Typography>✓ Verified</Typography>
-            </Box>
+            {member?.memberStatus === "ACTIVE" && (
+              <Box className="verified-badge">
+                <Typography>✓ Verified</Typography>
+              </Box>
+            )}
             {isAgent && (
               <Chip label="Agent" size="small" className="agent-chip" />
             )}
           </Stack>
-          {isAgent && agentProfile.role && (
-            <Typography className="agent-role">{agentProfile.role}</Typography>
+          {isAgent && form.memberSpecialty && (
+            <Typography className="agent-role">
+              {form.memberSpecialty}
+            </Typography>
           )}
-          <Typography className="member-since">Member Since 2026</Typography>
-          <Typography className="profile-bio">{profile.bio}</Typography>
+          {memberSince && (
+            <Typography className="member-since">
+              Member Since {memberSince}
+            </Typography>
+          )}
+          <Typography className="profile-bio">{form.memberDesc}</Typography>
         </Stack>
       </Stack>
 
@@ -321,9 +485,9 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
               <FieldLabel icon={<BadgeIcon />} label="Full Name" />
               <TextField
                 fullWidth
-                name="fullName"
+                name="memberFullName"
                 disabled={!isEditable}
-                value={profile.fullName}
+                value={form.memberFullName}
                 onChange={handleChange}
                 placeholder="Enter your full name"
                 sx={fieldBorderStyles}
@@ -336,44 +500,13 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
               <Box className="username-field-wrapper">
                 <TextField
                   fullWidth
-                  name="username"
+                  name="memberUserName"
                   disabled={!isEditable}
-                  value={profile.username}
+                  value={form.memberUserName}
                   onChange={handleChange}
                   placeholder="Choose a username"
                   sx={fieldBorderStyles}
-                  InputProps={{
-                    endAdornment: isEditable ? (
-                      <Box mr={-0.5}>
-                        <Button
-                          variant="contained"
-                          className="check-username-btn"
-                          onClick={checkUsername}
-                          disabled={usernameStatus === "checking"}
-                        >
-                          Check
-                        </Button>
-                      </Box>
-                    ) : null,
-                  }}
                 />
-                {usernameStatus && (
-                  <Typography
-                    className={`username-status-text ${
-                      usernameStatus === "checking"
-                        ? "checking"
-                        : usernameStatus === "available"
-                          ? "available"
-                          : "taken"
-                    }`}
-                  >
-                    {usernameStatus === "checking"
-                      ? "Checking availability..."
-                      : usernameStatus === "available"
-                        ? "✓ This username is available"
-                        : "✗ Username is already taken"}
-                  </Typography>
-                )}
               </Box>
             </Stack>
           </Grid>
@@ -382,9 +515,9 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
               <FieldLabel icon={<EmailIcon />} label="Email Address" />
               <TextField
                 fullWidth
-                name="email"
+                name="memberEmail"
                 disabled={!isEditable}
-                value={profile.email}
+                value={form.memberEmail}
                 onChange={handleChange}
                 placeholder="your.email@example.com"
                 sx={fieldBorderStyles}
@@ -396,9 +529,9 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
               <FieldLabel icon={<PhoneIcon />} label="Phone Number" />
               <TextField
                 fullWidth
-                name="phone"
+                name="memberPhone"
                 disabled={!isEditable}
-                value={profile.phone}
+                value={form.memberPhone}
                 onChange={handlePhoneChange}
                 placeholder="010-0000-0000"
                 sx={fieldBorderStyles}
@@ -413,9 +546,9 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
               />
               <TextField
                 fullWidth
-                name="address"
+                name="memberAddress"
                 disabled={!isEditable}
-                value={profile.address}
+                value={form.memberAddress}
                 onChange={handleChange}
                 placeholder="Seoul, Gangnam-gu..."
                 sx={fieldBorderStyles}
@@ -429,10 +562,10 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                 fullWidth
                 multiline
                 rows={4}
-                name="bio"
+                name="memberDesc"
                 variant="outlined"
                 disabled={!isEditable}
-                value={profile.bio}
+                value={form.memberDesc}
                 onChange={handleChange}
                 placeholder="Tell us about yourself..."
                 sx={fieldBorderStyles}
@@ -459,9 +592,9 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                   <FieldLabel icon={<WorkIcon />} label="Role / Specialty" />
                   <TextField
                     fullWidth
-                    name="role"
+                    name="memberSpecialty"
                     disabled={!isEditable}
-                    value={agentProfile.role ?? ""}
+                    value={form.memberSpecialty}
                     onChange={handleChange}
                     placeholder="e.g. Pet Groomer • Skin Care Specialist"
                     sx={fieldBorderStyles}
@@ -473,8 +606,13 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                   <FieldLabel icon={<PetsIcon />} label="Service Type" />
                   <MultiSelectField
                     options={SERVICE_TYPE_OPTIONS}
-                    selected={selectedServiceTypes}
-                    onChange={handleServiceTypeChange}
+                    selected={form.memberServiceTypes}
+                    onChange={(values) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        memberServiceTypes: values,
+                      }))
+                    }
                   />
                 </Stack>
               </Grid>
@@ -483,11 +621,12 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                   <FieldLabel icon={<EmojiEventsIcon />} label="Experience" />
                   <TextField
                     fullWidth
-                    name="experience"
+                    name="memberExperience"
                     disabled={!isEditable}
-                    value={agentProfile.experience ?? ""}
+                    value={form.memberExperience}
                     onChange={handleChange}
-                    placeholder="e.g. 6+ years experience"
+                    placeholder="Years of experience, e.g. 6"
+                    inputProps={{ inputMode: "numeric" }}
                     sx={fieldBorderStyles}
                   />
                 </Stack>
@@ -497,9 +636,9 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                   <FieldLabel icon={<FavoriteIcon />} label="Approach" />
                   <TextField
                     fullWidth
-                    name="approach"
+                    name="memberApproach"
                     disabled={!isEditable}
-                    value={agentProfile.approach ?? ""}
+                    value={form.memberApproach}
                     onChange={handleChange}
                     placeholder="e.g. Gentle, patient, positive reinforcement"
                     sx={fieldBorderStyles}
@@ -523,9 +662,9 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                   <FieldLabel icon={<TranslateIcon />} label="Languages" />
                   <TextField
                     fullWidth
-                    name="languages"
+                    name="memberLanguages"
                     disabled={!isEditable}
-                    value={agentProfile.languages ?? ""}
+                    value={form.memberLanguages}
                     onChange={handleChange}
                     placeholder="e.g. Korean, English"
                     sx={fieldBorderStyles}
@@ -537,8 +676,13 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                   <FieldLabel icon={<LocationOnIcon />} label="Service Area" />
                   <MultiSelectField
                     options={SERVICE_AREA_OPTIONS}
-                    selected={selectedServiceAreas}
-                    onChange={handleServiceAreaChange}
+                    selected={form.memberServiceArea}
+                    onChange={(values) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        memberServiceArea: values,
+                      }))
+                    }
                   />
                 </Stack>
               </Grid>
@@ -547,9 +691,9 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                   <FieldLabel icon={<ScheduleIcon />} label="Response Time" />
                   <TextField
                     fullWidth
-                    name="responseTime"
+                    name="memberResponseTime"
                     disabled={!isEditable}
-                    value={agentProfile.responseTime ?? ""}
+                    value={form.memberResponseTime}
                     onChange={handleChange}
                     placeholder="e.g. Usually replies within 10 minutes"
                     sx={fieldBorderStyles}
@@ -591,15 +735,15 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
               )}
             </Stack>
 
-            {agentProfile.certifications?.length === 0 && (
+            {certificates.length === 0 && (
               <Typography className="no-certs-text">
                 No certifications added yet.
               </Typography>
             )}
 
             <Grid container spacing={3}>
-              {agentProfile.certifications?.map((cert, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
+              {certificates.map((cert, index) => (
+                <Grid item xs={12} sm={6} md={4} key={cert.path ?? index}>
                   <Box className={`cert-card ${isEditable ? "editable" : ""}`}>
                     {isEditable ? (
                       <label className="cert-upload-label">
@@ -609,11 +753,11 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                           type="file"
                           onChange={(e) => handleCertImageChange(index, e)}
                         />
-                        {cert.image ? (
+                        {cert.preview ? (
                           <Box
                             component="img"
-                            src={cert.image}
-                            alt={cert.title}
+                            src={cert.preview}
+                            alt="certificate"
                             className="cert-image"
                           />
                         ) : (
@@ -630,11 +774,11 @@ const PersonalInfo = ({ isEditable, cancelTrigger }: PersonalInfoProps) => {
                           </Stack>
                         </Box>
                       </label>
-                    ) : cert.image ? (
+                    ) : cert.preview ? (
                       <Box
                         component="img"
-                        src={cert.image}
-                        alt={cert.title}
+                        src={cert.preview}
+                        alt="certificate"
                         className="cert-image"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = "none";

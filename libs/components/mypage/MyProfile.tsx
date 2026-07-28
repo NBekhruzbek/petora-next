@@ -11,6 +11,8 @@ const MyProfile = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isEditable, setIsEditable] = useState(false);
   const [cancelTrigger, setCancelTrigger] = useState(0);
+  const [saveTrigger, setSaveTrigger] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -27,8 +29,14 @@ const MyProfile = () => {
   };
 
   const handleSave = () => {
-    // API call or save logic would go here
-    setIsEditable(false);
+    if (isSaving) return;
+    setIsSaving(true);
+    setSaveTrigger((prev) => prev + 1);
+  };
+
+  const handleSaveComplete = (succeeded: boolean) => {
+    setIsSaving(false);
+    if (succeeded) setIsEditable(false);
   };
 
   return (
@@ -57,6 +65,7 @@ const MyProfile = () => {
                 className="btn-cancel"
                 startIcon={<CloseIcon />}
                 onClick={handleCancel}
+                disabled={isSaving}
               >
                 Cancel
               </Button>
@@ -65,8 +74,9 @@ const MyProfile = () => {
                 className="btn-save"
                 startIcon={<SaveIcon />}
                 onClick={handleSave}
+                disabled={isSaving}
               >
-                Save Changes
+                {isSaving ? "Saving..." : "Save Changes"}
               </Button>
             </>
           ) : (
@@ -84,10 +94,20 @@ const MyProfile = () => {
 
       <Box className="tab-content">
         {activeTab === 0 && (
-          <PersonalInfo isEditable={isEditable} cancelTrigger={cancelTrigger} />
+          <PersonalInfo
+            isEditable={isEditable}
+            cancelTrigger={cancelTrigger}
+            saveTrigger={saveTrigger}
+            onSaveComplete={handleSaveComplete}
+          />
         )}
         {activeTab === 1 && (
-          <BillingInfo isEditable={isEditable} cancelTrigger={cancelTrigger} />
+          <BillingInfo
+            isEditable={isEditable}
+            cancelTrigger={cancelTrigger}
+            saveTrigger={saveTrigger}
+            onSaveComplete={handleSaveComplete}
+          />
         )}
       </Box>
     </Stack>

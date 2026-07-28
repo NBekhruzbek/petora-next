@@ -1,14 +1,10 @@
-import React, { useState } from "react";
-import { MOCK_BILLING_INFO } from "@/libs/data/userProfile";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Stack,
   Typography,
-  Grid,
-  TextField,
   Box,
+  TextField,
   Button,
-  IconButton,
-  InputAdornment,
   MenuItem,
 } from "@mui/material";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
@@ -16,22 +12,41 @@ import BusinessIcon from "@mui/icons-material/Business";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import PersonIcon from "@mui/icons-material/Person";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import LockIcon from "@mui/icons-material/Lock";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import PublicIcon from "@mui/icons-material/Public";
 import MarkunreadMailboxIcon from "@mui/icons-material/MarkunreadMailbox";
 import ReceiptIcon from "@mui/icons-material/Receipt";
-import DownloadIcon from "@mui/icons-material/Download";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { userVar } from "@/apollo/store";
+import { GET_MEMBER_BILLING_INFOS, GET_MY_ORDERS } from "@/apollo/user/query";
+import { UPDATE_MEMBER_BILLING_INFOS } from "@/apollo/user/mutation";
+import { MemberBillingInfos } from "@/libs/types/member/member";
+import { MemberBillingUpdate } from "@/libs/types/member/member.update";
+import { Order } from "@/libs/types/order/order";
+import { OrderStatus } from "@/libs/enums/order.enum";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
 
 interface BillingInfoProps {
   isEditable: boolean;
   cancelTrigger?: number;
+  saveTrigger?: number;
+  onSaveComplete?: (succeeded: boolean) => void;
 }
 
+interface BillingForm {
+  companyName: string;
+  vatNumber: string;
+  address: string;
+  city: string;
+  zipCode: string;
+  countryName: string;
+}
+
+// Mirrors availableCountries on the API, which rejects anything else.
 const COUNTRIES = [
   "South Korea",
   "United States",
@@ -44,49 +59,144 @@ const COUNTRIES = [
   "Uzbekistan",
 ];
 
-const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
-  const [showCvv, setShowCvv] = useState(false);
-  const [originalBilling, setOriginalBilling] = useState(MOCK_BILLING_INFO);
+const INVOICES_LIMIT = 6;
 
-  const [billing, setBilling] = useState(originalBilling);
+const emptyForm: BillingForm = {
+  companyName: "",
+  vatNumber: "",
+  address: "",
+  city: "",
+  zipCode: "",
+  countryName: "",
+};
 
-  React.useEffect(() => {
-    if (isEditable) {
-      setOriginalBilling(billing);
-    }
-  }, [isEditable]);
+const toForm = (billing?: MemberBillingInfos | null): BillingForm => ({
+  companyName: billing?.companyName ?? "",
+  vatNumber: billing?.vatNumber ?? "",
+  address: billing?.address ?? "",
+  city: billing?.city ?? "",
+  zipCode: billing?.zipCode ?? "",
+  countryName: billing?.countryName ?? "",
+});
 
-  React.useEffect(() => {
-    if (cancelTrigger && cancelTrigger > 0) {
-      setBilling(originalBilling);
-    }
+const formatWon = (value: number) => `₩${(value ?? 0).toLocaleString()}`;
+
+const formatDate = (value?: Date | string) =>
+  value
+    ? new Date(value).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : "";
+
+const BillingInfo = ({
+  isEditable,
+  cancelTrigger,
+  saveTrigger,
+  onSaveComplete,
+}: BillingInfoProps) => {
+  const user = useReactiveVar(userVar);
+  const [form, setForm] = useState<BillingForm>(emptyForm);
+  const lastSaveTrigger = useRef(saveTrigger ?? 0);
+
+  /** APOLLO REQUESTS **/
+
+  const { data: getBillingData, refetch: getBillingRefetch } = useQuery(
+    GET_MEMBER_BILLING_INFOS,
+    {
+      fetchPolicy: "cache-and-network",
+      skip: !user?._id,
+      notifyOnNetworkStatusChange: true,
+    },
+  );
+
+  const { data: getMyOrdersData } = useQuery(GET_MY_ORDERS, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: { page: 1, limit: INVOICES_LIMIT } },
+    skip: !user?._id,
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const [updateMemberBillingInfos] = useMutation(UPDATE_MEMBER_BILLING_INFOS);
+
+  /** DERIVED **/
+
+  const billing: MemberBillingInfos | null =
+    getBillingData?.getMemberBillingInfos ?? null;
+  const orders: Order[] = getMyOrdersData?.getMyOrders?.list ?? [];
+  const hasCard = Boolean(billing?.last4);
+  const cardNumber = hasCard
+    ? `•••• •••• •••• ${billing?.last4}`
+    : "•••• •••• •••• ••••";
+  const cardExpiry =
+    billing?.expiryMonth && billing?.expiryYear
+      ? `${billing.expiryMonth}/${billing.expiryYear.slice(-2)}`
+      : "MM/YY";
+
+  /** LIFECYCLES **/
+
+  const applyBilling = (source?: MemberBillingInfos | null) =>
+    setForm(toForm(source));
+
+  useEffect(() => {
+    if (!isEditable) applyBilling(billing);
+  }, [billing]);
+
+  useEffect(() => {
+    if (cancelTrigger && cancelTrigger > 0) applyBilling(billing);
   }, [cancelTrigger]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { name, value } = e.target;
+  useEffect(() => {
+    if (!saveTrigger || saveTrigger === lastSaveTrigger.current) return;
+    lastSaveTrigger.current = saveTrigger;
+    void handleSave();
+  }, [saveTrigger]);
 
-    if (name === "cardNumber") {
-      value = value.replace(/\D/g, ""); // Faqat raqam
-      if (value.length > 16) value = value.slice(0, 16);
-      // XXXX XXXX XXXX XXXX format
-      const parts = value.match(/[\s\S]{1,4}/g) || [];
-      value = parts.join(" ");
-    } else if (name === "cvv") {
-      value = value.replace(/\D/g, ""); // Faqat raqam
-      if (value.length > 3) value = value.slice(0, 3);
-    } else if (name === "zipCode") {
-      value = value.replace(/\D/g, ""); // Faqat raqam
-      if (value.length > 5) value = value.slice(0, 5);
-    } else if (name === "expiryDate") {
-      value = value.replace(/\D/g, ""); // Faqat raqam
-      if (value.length > 4) value = value.slice(0, 4);
-      // MM/YY format
-      if (value.length >= 3) {
-        value = `${value.slice(0, 2)}/${value.slice(2)}`;
-      }
+  /** HANDLERS **/
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name } = e.target;
+    let { value } = e.target;
+
+    if (name === "zipCode") {
+      value = value.replace(/\D/g, "").slice(0, 5);
     }
 
-    setBilling((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      if (!user?._id) throw new Error("Please login first!");
+
+      if (form.zipCode && form.zipCode.length < 5) {
+        throw new Error("Please enter a 5 digit ZIP code.");
+      }
+
+      const input: MemberBillingUpdate = {
+        memberId: user._id,
+        companyName: form.companyName.trim(),
+        vatNumber: form.vatNumber.trim(),
+        address: form.address.trim(),
+        city: form.city.trim(),
+      };
+
+      if (form.zipCode) input.zipCode = form.zipCode;
+      if (form.countryName) input.countryName = form.countryName;
+
+      await updateMemberBillingInfos({ variables: { input } });
+
+      const { data: refetched } = await getBillingRefetch();
+      applyBilling(refetched?.getMemberBillingInfos);
+
+      await sweetBottomSmallSuccessAlert("Billing info updated!", 900);
+      onSaveComplete?.(true);
+    } catch (err: any) {
+      console.log("ERROR, handleSave:", err.message);
+      await sweetMixinErrorAlert(err.message);
+      onSaveComplete?.(false);
+    }
   };
 
   const commonTextFieldStyles = {
@@ -96,33 +206,6 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
       },
     },
   };
-
-  const invoiceHistory = [
-    {
-      id: "INV-2024-001",
-      date: "Apr 1, 2026",
-      amount: "$49.00",
-      status: "Paid",
-    },
-    {
-      id: "INV-2024-002",
-      date: "Mar 1, 2026",
-      amount: "$49.00",
-      status: "Paid",
-    },
-    {
-      id: "INV-2024-003",
-      date: "Feb 1, 2026",
-      amount: "$49.00",
-      status: "Paid",
-    },
-    {
-      id: "INV-2024-004",
-      date: "Jan 1, 2026",
-      amount: "$49.00",
-      status: "Paid",
-    },
-  ];
 
   return (
     <Stack spacing={4} className="billing-info-wrapper">
@@ -140,11 +223,6 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
           <Typography variant="h6" sx={{ fontWeight: 800, color: "#000" }}>
             Payment Method
           </Typography>
-          {isEditable && (
-            <Button startIcon={<CreditCardIcon />} className="add-btn">
-              Add New Card
-            </Button>
-          )}
         </Stack>
 
         <Stack
@@ -166,23 +244,21 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
                 alignItems="center"
               >
                 <Box className="chip" />
-                <Typography className="type">VISA</Typography>
+                <Typography className="type">
+                  {billing?.cardBrand || "CARD"}
+                </Typography>
               </Stack>
-              <Typography className="card-number">
-                {billing.cardNumber || "•••• •••• •••• ••••"}
-              </Typography>
+              <Typography className="card-number">{cardNumber}</Typography>
               <Stack direction="row" spacing={4}>
                 <Stack spacing={0.5}>
                   <Typography className="label">Card Holder</Typography>
                   <Typography className="value">
-                    {billing.cardHolder || "NAME ON CARD"}
+                    {billing?.cardHolderName || "NAME ON CARD"}
                   </Typography>
                 </Stack>
                 <Stack spacing={0.5}>
                   <Typography className="label">Expires</Typography>
-                  <Typography className="value">
-                    {billing.expiryDate || "MM/YY"}
-                  </Typography>
+                  <Typography className="value">{cardExpiry}</Typography>
                 </Stack>
                 <Box className="logos">
                   <Box className="logo1" />
@@ -210,11 +286,8 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
                   </Stack>
                   <TextField
                     fullWidth
-                    name="cardHolder"
-                    disabled={!isEditable}
-                    value={billing.cardHolder}
-                    onChange={handleChange}
-                    placeholder="JOHN DOE"
+                    disabled
+                    value={billing?.cardHolderName || "—"}
                     sx={commonTextFieldStyles}
                   />
                 </Stack>
@@ -235,80 +308,12 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
                   </Stack>
                   <TextField
                     fullWidth
-                    name="cardNumber"
-                    disabled={!isEditable}
-                    value={billing.cardNumber}
-                    onChange={handleChange}
-                    placeholder="4242 4242 4242 4242"
+                    disabled
+                    value={hasCard ? cardNumber : "No card on file"}
                     sx={commonTextFieldStyles}
                   />
                 </Stack>
               </Box>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                <Box flex={1}>
-                  <Stack spacing={1}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <DateRangeIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
-                      <Typography
-                        sx={{
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          color: "#4b5563",
-                        }}
-                      >
-                        Expiry Date
-                      </Typography>
-                    </Stack>
-                    <TextField
-                      fullWidth
-                      name="expiryDate"
-                      disabled={!isEditable}
-                      value={billing.expiryDate}
-                      onChange={handleChange}
-                      placeholder="MM/YY"
-                      sx={commonTextFieldStyles}
-                    />
-                  </Stack>
-                </Box>
-                <Box flex={1}>
-                  <Stack spacing={1}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <LockIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
-                      <Typography
-                        sx={{
-                          fontSize: "14px",
-                          fontWeight: 600,
-                          color: "#4b5563",
-                        }}
-                      >
-                        CVV
-                      </Typography>
-                    </Stack>
-                    <TextField
-                      fullWidth
-                      name="cvv"
-                      type={showCvv ? "text" : "password"}
-                      disabled={!isEditable}
-                      value={billing.cvv}
-                      onChange={handleChange}
-                      placeholder="***"
-                      sx={commonTextFieldStyles}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowCvv(!showCvv)}
-                              edge="end"
-                            >
-                              {showCvv ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Stack>
-                </Box>
-              </Stack>
             </Stack>
           </Box>
         </Stack>
@@ -343,7 +348,7 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
                   fullWidth
                   name="companyName"
                   disabled={!isEditable}
-                  value={billing.companyName}
+                  value={form.companyName}
                   onChange={handleChange}
                   sx={commonTextFieldStyles}
                 />
@@ -363,7 +368,7 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
                   fullWidth
                   name="vatNumber"
                   disabled={!isEditable}
-                  value={billing.vatNumber}
+                  value={form.vatNumber}
                   onChange={handleChange}
                   sx={commonTextFieldStyles}
                 />
@@ -385,7 +390,7 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
                 fullWidth
                 name="address"
                 disabled={!isEditable}
-                value={billing.address}
+                value={form.address}
                 onChange={handleChange}
                 sx={commonTextFieldStyles}
               />
@@ -407,7 +412,7 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
                   fullWidth
                   name="city"
                   disabled={!isEditable}
-                  value={billing.city}
+                  value={form.city}
                   onChange={handleChange}
                   sx={commonTextFieldStyles}
                 />
@@ -429,7 +434,7 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
                   fullWidth
                   name="zipCode"
                   disabled={!isEditable}
-                  value={billing.zipCode}
+                  value={form.zipCode}
                   onChange={handleChange}
                   sx={commonTextFieldStyles}
                 />
@@ -448,9 +453,9 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
                 <TextField
                   select
                   fullWidth
-                  name="country"
+                  name="countryName"
                   disabled={!isEditable}
-                  value={billing.country}
+                  value={form.countryName}
                   onChange={handleChange}
                   sx={commonTextFieldStyles}
                   SelectProps={{
@@ -494,87 +499,104 @@ const BillingInfo = ({ isEditable, cancelTrigger }: BillingInfoProps) => {
           </Typography>
         </Stack>
 
-        <Stack className="invoice-list" spacing={1}>
-          {invoiceHistory.map((invoice) => (
-            <Stack
-              key={invoice.id}
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              className="invoice-item"
-              sx={{ p: 2, borderBottom: "1px solid #f3f4f6" }}
-            >
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Box
-                  className="icon-box"
-                  sx={{
-                    p: 1.5,
-                    backgroundColor: "#f9fafb",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <ReceiptLongIcon fontSize="small" sx={{ color: "#6b7280" }} />
-                </Box>
-                <Stack>
-                  <Typography
-                    className="id"
-                    sx={{ fontWeight: 600, color: "#111827", fontSize: "14px" }}
-                  >
-                    {invoice.id}
-                  </Typography>
-                  <Typography
-                    className="date"
-                    sx={{ color: "#6b7280", fontSize: "13px" }}
-                  >
-                    {invoice.date}
-                  </Typography>
-                </Stack>
-              </Stack>
-              <Stack direction="row" spacing={4} alignItems="center">
-                <Typography
-                  className="amount"
-                  sx={{ fontWeight: 600, color: "#111827" }}
-                >
-                  {invoice.amount}
-                </Typography>
+        {orders.length === 0 ? (
+          <Typography sx={{ color: "#6b7280", fontSize: "14px" }}>
+            No invoices yet.
+          </Typography>
+        ) : (
+          <Stack className="invoice-list" spacing={1}>
+            {orders.map((order) => {
+              const isPaid = order.orderStatus === OrderStatus.DELIVERED;
+              const isCancelled = order.orderStatus === OrderStatus.CANCELLED;
+              const statusLabel = isCancelled
+                ? "Cancelled"
+                : isPaid
+                  ? "Paid"
+                  : "Pending";
+
+              return (
                 <Stack
+                  key={order._id}
                   direction="row"
-                  spacing={0.5}
+                  justifyContent="space-between"
                   alignItems="center"
-                  className="status"
-                  sx={{
-                    backgroundColor: "#ecfdf5",
-                    px: 1,
-                    py: 0.5,
-                    borderRadius: "16px",
-                  }}
+                  className="invoice-item"
+                  sx={{ p: 2, borderBottom: "1px solid #f3f4f6" }}
                 >
-                  <VerifiedIcon sx={{ fontSize: 14, color: "#10b981" }} />
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "#10b981", fontWeight: 600 }}
-                  >
-                    {invoice.status}
-                  </Typography>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Box
+                      className="icon-box"
+                      sx={{
+                        p: 1.5,
+                        backgroundColor: "#f9fafb",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <ReceiptLongIcon
+                        fontSize="small"
+                        sx={{ color: "#6b7280" }}
+                      />
+                    </Box>
+                    <Stack>
+                      <Typography
+                        className="id"
+                        sx={{
+                          fontWeight: 600,
+                          color: "#111827",
+                          fontSize: "14px",
+                        }}
+                      >
+                        {order.orderNumber}
+                      </Typography>
+                      <Typography
+                        className="date"
+                        sx={{ color: "#6b7280", fontSize: "13px" }}
+                      >
+                        {formatDate(order.createdAt)}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                  <Stack direction="row" spacing={4} alignItems="center">
+                    <Typography
+                      className="amount"
+                      sx={{ fontWeight: 600, color: "#111827" }}
+                    >
+                      {formatWon(order.orderTotal)}
+                    </Typography>
+                    <Stack
+                      direction="row"
+                      spacing={0.5}
+                      alignItems="center"
+                      className="status"
+                      sx={{
+                        backgroundColor: isCancelled ? "#fef2f2" : "#ecfdf5",
+                        px: 1,
+                        py: 0.5,
+                        borderRadius: "16px",
+                      }}
+                    >
+                      <VerifiedIcon
+                        sx={{
+                          fontSize: 14,
+                          color: isCancelled ? "#ef4444" : "#10b981",
+                        }}
+                      />
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: isCancelled ? "#ef4444" : "#10b981",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {statusLabel}
+                      </Typography>
+                    </Stack>
+                  </Stack>
                 </Stack>
-                <Button
-                  variant="outlined"
-                  className="btn-download"
-                  size="small"
-                  startIcon={<DownloadIcon />}
-                  sx={{
-                    textTransform: "none",
-                    borderRadius: "6px",
-                    borderColor: "#e5e7eb",
-                    color: "#374151",
-                  }}
-                >
-                  Download
-                </Button>
-              </Stack>
-            </Stack>
-          ))}
-        </Stack>
+              );
+            })}
+          </Stack>
+        )}
       </Stack>
     </Stack>
   );
