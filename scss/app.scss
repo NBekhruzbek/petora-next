@@ -3,6 +3,17 @@
 @use "./reset";
 @use "./shared/main.scss";
 
+/** GLOBAL OVERLAYS **/
+// SweetAlert ships at z-index 1060, which sits under every MUI modal (1300) and
+// under the dialogs this app pins higher still (.qna-dialog is 1500,
+// .qna-image-dialog 2000). Alerts raised from inside a dialog — form validation,
+// and the global GraphQL errorLink — would render behind it and never be seen,
+// making the action look like it silently did nothing. Alerts are the top-most
+// feedback layer, so they outrank everything.
+.swal2-container {
+  z-index: 3000 !important;
+}
+
 /** VERSION: PC **/
 #pc-wrap {
   width: 100%;
