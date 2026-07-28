@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useEffect, useMemo } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -18,17 +18,21 @@ import ArticleIcon from "@mui/icons-material/Article";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import { useQuery, useReactiveVar } from "@apollo/client";
 import MyProfile from "@/libs/components/mypage/MyProfile";
 import ServiceManagement from "@/libs/components/mypage/ServiceManagement";
 import BookingsOrders from "@/libs/components/mypage/BookingsOrders";
 import MyFavorites from "@/libs/components/mypage/MyFavorites";
 import MyArticles from "@/libs/components/mypage/MyArticles";
 import Notifications from "@/libs/components/mypage/Notifications";
-
-type MemberType = "USER" | "SERVICE_AGENT";
+import { userVar } from "@/apollo/store";
+import { getJwtToken, logOut } from "@/libs/auth";
+import { GET_AGENT_BOOKINGS } from "@/apollo/user/query";
+import { MemberType } from "@/libs/enums/member.enum";
+import { BookingStatus } from "@/libs/enums/booking.enum";
 
 type CategoryKey =
-  | "BOOKINGS_ORDERS"
+  | "ORDERS_BOOKINGS"
   | "MY_FAVORITES"
   | "SERVICE_MANAGEMENT"
   | "MY_ARTICLES"
@@ -37,20 +41,26 @@ type CategoryKey =
 
 const userCategories: CategoryKey[] = [
   "MY_PROFILE",
-  "BOOKINGS_ORDERS",
+  "ORDERS_BOOKINGS",
   "MY_FAVORITES",
   "MY_ARTICLES",
   "NOTIFICATIONS",
 ];
 
-const serviceAgentCategories: CategoryKey[] = [
+const agentCategories: CategoryKey[] = [
   "MY_PROFILE",
   "SERVICE_MANAGEMENT",
-  "BOOKINGS_ORDERS",
+  "ORDERS_BOOKINGS",
   "MY_FAVORITES",
   "MY_ARTICLES",
   "NOTIFICATIONS",
 ];
+
+const memberTypeLabels: Record<string, string> = {
+  [MemberType.AGENT]: "Service Agent",
+  [MemberType.ADMIN]: "Admin",
+  [MemberType.USER]: "User",
+};
 
 const categoryMeta: Record<
   CategoryKey,
@@ -61,8 +71,8 @@ const categoryMeta: Record<
     description: "",
     icon: <PersonIcon />,
   },
-  BOOKINGS_ORDERS: {
-    label: "Bookings & Orders",
+  ORDERS_BOOKINGS: {
+    label: "Orders & Bookings",
     description: "",
     icon: <FactCheckIcon />,
   },
@@ -90,21 +100,35 @@ const categoryMeta: Record<
 
 const MyPage: NextPage = () => {
   const router = useRouter();
+  const user = useReactiveVar(userVar);
 
-  // TODO: Replace with actual member type from auth context/state
-  const memberType: MemberType = "SERVICE_AGENT"; // "USER" | "SERVICE_AGENT"
+  const isAgent = user?.memberType === MemberType.AGENT;
+  const isAdmin = user?.memberType === MemberType.ADMIN;
 
-  const categoryOrder = useMemo(() => {
-    if ((memberType as MemberType) === "SERVICE_AGENT") {
-      return serviceAgentCategories;
-    }
-    return userCategories;
-  }, [memberType]);
+  /** APOLLO REQUESTS **/
+  const { data: getAgentBookingsData } = useQuery(GET_AGENT_BOOKINGS, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      input: { page: 1, limit: 1, bookingStatus: BookingStatus.PENDING },
+    },
+    skip: !isAgent,
+    notifyOnNetworkStatusChange: true,
+  });
+
+  /** DERIVED **/
+
+  const pendingRequests: number =
+    getAgentBookingsData?.getAgentBookings?.metaCounter?.[0]?.total ?? 0;
+
+  const categoryOrder = useMemo(
+    () => (isAgent ? agentCategories : userCategories),
+    [isAgent],
+  );
 
   const rawCategory = router.query.articleCategory;
   const normalizedCategory =
-    rawCategory === "BOOKINGS" || rawCategory === "ORDERS"
-      ? "BOOKINGS_ORDERS"
+    rawCategory === "ORDERS" || rawCategory === "BOOKINGS"
+      ? "ORDERS_BOOKINGS"
       : rawCategory;
   const activeCategory: CategoryKey =
     typeof normalizedCategory === "string" &&
@@ -113,6 +137,17 @@ const MyPage: NextPage = () => {
       : categoryOrder[0];
 
   const activeMeta = categoryMeta[activeCategory];
+  const memberName = user?.memberFullName || user?.memberUserName || "My Page";
+  const memberImage = user?.memberImage || "/img/profile/defaultUser.png";
+  const memberTypeLabel = memberTypeLabels[user?.memberType] ?? "User";
+
+  /** LIFECYCLES **/
+
+  useEffect(() => {
+    if (!getJwtToken()) void router.push("/");
+  }, [router]);
+
+  /** HANDLERS **/
 
   const handleCategoryChange = (category: CategoryKey) => {
     void router.push(
@@ -130,16 +165,14 @@ const MyPage: NextPage = () => {
       <Stack className="container">
         <Stack className="my-page-sidebar">
           <Stack className="my-page-sidebar-brand">
-            <img
-              className="member-img"
-              src="/img/profile/defaultUser.png"
-              alt="member image"
-            />
+            <img className="member-img" src={memberImage} alt="member image" />
 
             <Stack className="my-page-brand-copy">
-              <Typography className="my-page-brand-title">My Page</Typography>
+              <Typography className="my-page-brand-title">
+                {memberName}
+              </Typography>
               <Typography className="my-page-brand-subtitle">
-                {memberType.replace("_", " ")}
+                {memberTypeLabel}
               </Typography>
             </Stack>
           </Stack>
@@ -148,10 +181,8 @@ const MyPage: NextPage = () => {
             {categoryOrder.map((category) => {
               const meta = categoryMeta[category];
               const isActive = activeCategory === category;
-              const hasBadge =
-                category === "NOTIFICATIONS" ||
-                category === "SERVICE_MANAGEMENT";
-              const badgeContent = 1;
+              const badgeContent =
+                category === "SERVICE_MANAGEMENT" ? pendingRequests : 0;
 
               return (
                 <Button
@@ -168,7 +199,7 @@ const MyPage: NextPage = () => {
                   <Stack direction="row" alignItems="center" flex={1}>
                     <span>{meta.label}</span>
                   </Stack>
-                  {hasBadge && (
+                  {badgeContent > 0 && (
                     <Badge
                       badgeContent={badgeContent}
                       color="error"
@@ -181,30 +212,32 @@ const MyPage: NextPage = () => {
           </Stack>
 
           <Stack className="my-page-sidebar-footer">
-            <Button
-              startIcon={<AdminPanelSettingsIcon />}
-              onClick={() => void router.push("/admin")}
-              sx={{
-                width: "100%",
-                justifyContent: "flex-start",
-                textTransform: "none",
-                fontWeight: 700,
-                fontSize: "14px",
-                color: "#6366F1",
-                background: "#EEF2FF",
-                borderRadius: "10px",
-                px: 2,
-                py: 1,
-                mb: 1,
-                "&:hover": { background: "#E0E7FF" },
-              }}
-            >
-              Admin Panel
-            </Button>
+            {isAdmin && (
+              <Button
+                startIcon={<AdminPanelSettingsIcon />}
+                onClick={() => void router.push("/admin")}
+                sx={{
+                  width: "100%",
+                  justifyContent: "flex-start",
+                  textTransform: "none",
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  color: "#6366F1",
+                  background: "#EEF2FF",
+                  borderRadius: "10px",
+                  px: 2,
+                  py: 1,
+                  mb: 1,
+                  "&:hover": { background: "#E0E7FF" },
+                }}
+              >
+                Admin Panel
+              </Button>
+            )}
             <Button
               className="btn-logout"
               startIcon={<LogoutIcon />}
-              onClick={() => void router.push("/")}
+              onClick={() => logOut()}
             >
               Logout
             </Button>
@@ -246,7 +279,7 @@ const MyPage: NextPage = () => {
           <Stack>
             {activeCategory === "MY_PROFILE" && <MyProfile />}
             {activeCategory === "SERVICE_MANAGEMENT" && <ServiceManagement />}
-            {activeCategory === "BOOKINGS_ORDERS" && <BookingsOrders />}
+            {activeCategory === "ORDERS_BOOKINGS" && <BookingsOrders />}
             {activeCategory === "MY_FAVORITES" && <MyFavorites />}
             {activeCategory === "MY_ARTICLES" && <MyArticles />}
             {activeCategory === "NOTIFICATIONS" && <Notifications />}
