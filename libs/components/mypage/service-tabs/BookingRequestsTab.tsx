@@ -2,8 +2,13 @@ import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutl
 import AgentBookingsList from "./AgentBookingsList";
 import { BookingStatus } from "@/libs/enums/booking.enum";
 
-const BookingRequestsTab = () => (
+interface Props {
+  onBookingMoved?: (status: BookingStatus) => void;
+}
+
+const BookingRequestsTab = ({ onBookingMoved }: Props) => (
   <AgentBookingsList
+    onBookingMoved={onBookingMoved}
     className="booking-requests-tab"
     bookingStatus={BookingStatus.PENDING}
     chipLabel="Pending"

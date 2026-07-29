@@ -2,8 +2,13 @@ import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlin
 import AgentBookingsList from "./AgentBookingsList";
 import { BookingStatus } from "@/libs/enums/booking.enum";
 
-const UpcomingServicesTab = () => (
+interface Props {
+  onBookingMoved?: (status: BookingStatus) => void;
+}
+
+const UpcomingServicesTab = ({ onBookingMoved }: Props) => (
   <AgentBookingsList
+    onBookingMoved={onBookingMoved}
     className="upcoming-services-tab"
     bookingStatus={BookingStatus.CONFIRMED}
     chipLabel="Upcoming"

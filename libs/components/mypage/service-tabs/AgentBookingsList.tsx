@@ -28,6 +28,7 @@ interface AgentBookingsListProps {
   chipClassName: string;
   empty: { icon: ReactNode; title: string; description: string };
   actions?: BookingRowAction[];
+  onBookingMoved?: (status: BookingStatus) => void;
 }
 
 const MONTHS = [
@@ -66,6 +67,7 @@ const AgentBookingsList = ({
   chipClassName,
   empty,
   actions = [],
+  onBookingMoved,
 }: AgentBookingsListProps) => {
   const user = useReactiveVar(userVar);
 
@@ -79,7 +81,11 @@ const AgentBookingsList = ({
     bookingStatus,
   };
 
-  const { data: getAgentBookingsData } = useQuery(GET_AGENT_BOOKINGS, {
+  const {
+    data: getAgentBookingsData,
+    previousData: getAgentBookingsPreviousData,
+    loading: getAgentBookingsLoading,
+  } = useQuery(GET_AGENT_BOOKINGS, {
     fetchPolicy: "cache-and-network",
     variables: { input: searchFilter },
     skip: !user?._id,
@@ -97,8 +103,11 @@ const AgentBookingsList = ({
 
   /** DERIVED **/
 
-  const bookings: BookedInfo[] =
-    getAgentBookingsData?.getAgentBookings?.list ?? [];
+  const result = getAgentBookingsData ?? getAgentBookingsPreviousData;
+  const bookings: BookedInfo[] = result?.getAgentBookings?.list ?? [];
+  // Landing on a tab straight after accepting must not flash "nothing here"
+  // before the row arrives — that is a loading state, not an empty one.
+  const isLoading = getAgentBookingsLoading && !result;
 
   /** HANDLERS **/
 
@@ -115,6 +124,7 @@ const AgentBookingsList = ({
       // The row leaves this tab and shows up in the one for its new status;
       // refetchQueries above has already reloaded both it and the badge.
       await sweetBottomSmallSuccessAlert("Booking updated!", 700);
+      onBookingMoved?.(nextStatus);
     } catch (err: any) {
       console.log("ERROR, handleAction:", err.message);
       await sweetMixinErrorAlert(err.message);
@@ -124,7 +134,7 @@ const AgentBookingsList = ({
   return (
     <Stack spacing={1.5} className={className}>
       <Stack spacing={1.5} className="requests-list">
-        {bookings.length === 0 && (
+        {bookings.length === 0 && !isLoading && (
           <EmptyState
             icon={empty.icon}
             title={empty.title}

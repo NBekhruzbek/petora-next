@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Stack, Tab, Tabs, Box } from "@mui/material";
 import { useRouter } from "next/router";
+import { BookingStatus } from "@/libs/enums/booking.enum";
 import MyServicesTab from "../mypage/service-tabs/MyServicesTab";
 import BookingRequestsTab from "../mypage/service-tabs/BookingRequestsTab";
 import UpcomingServicesTab from "../mypage/service-tabs/UpcomingServicesTab";
@@ -15,14 +16,19 @@ const TABS = [
   { key: "COMPLETED", label: "Completed" },
 ] as const;
 
-// Booking Requests is what the sidebar badge counts and the only tab with work
-// waiting on the agent, so it opens first — My Services keeps its place in the
-// strip, it just isn't the landing tab.
 const DEFAULT_TAB_KEY = "REQUESTS";
+
+export type ServiceTabKey = (typeof TABS)[number]["key"];
+export const SERVICE_TAB_FOR_BOOKING_STATUS: Partial<
+  Record<BookingStatus, ServiceTabKey>
+> = {
+  [BookingStatus.PENDING]: "REQUESTS",
+  [BookingStatus.CONFIRMED]: "UPCOMING",
+  [BookingStatus.COMPLETED]: "COMPLETED",
+};
 
 const ServiceManagement = () => {
   const router = useRouter();
-  // An explicit ?tab= wins; anything missing or unknown lands on the default.
   const requestedTab = TABS.findIndex((tab) => tab.key === router.query.tab);
   const initialTab =
     requestedTab >= 0
@@ -38,6 +44,13 @@ const ServiceManagement = () => {
   };
 
   const activeTabKey = TABS[activeTab]?.key ?? TABS[0].key;
+
+  const handleBookingMoved = (status: BookingStatus) => {
+    const key = SERVICE_TAB_FOR_BOOKING_STATUS[status];
+    if (!key) return;
+    const index = TABS.findIndex((tab) => tab.key === key);
+    if (index >= 0) setActiveTab(index);
+  };
 
   return (
     <Stack className="service-mgmt-container" spacing={3}>
@@ -57,8 +70,12 @@ const ServiceManagement = () => {
 
       <Box className="service-mgmt-tab-content">
         {activeTabKey === "SERVICES" && <MyServicesTab />}
-        {activeTabKey === "REQUESTS" && <BookingRequestsTab />}
-        {activeTabKey === "UPCOMING" && <UpcomingServicesTab />}
+        {activeTabKey === "REQUESTS" && (
+          <BookingRequestsTab onBookingMoved={handleBookingMoved} />
+        )}
+        {activeTabKey === "UPCOMING" && (
+          <UpcomingServicesTab onBookingMoved={handleBookingMoved} />
+        )}
         {activeTabKey === "COMPLETED" && <CompletedServicesTab />}
       </Box>
     </Stack>

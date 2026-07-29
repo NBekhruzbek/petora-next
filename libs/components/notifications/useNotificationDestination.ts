@@ -2,19 +2,13 @@ import { useApolloClient } from "@apollo/client";
 import { GET_AGENT_BOOKINGS } from "@/apollo/user/query";
 import { Notification } from "@/libs/types/notification/notification";
 import { BookedInfo } from "@/libs/types/booking/booking";
-import { BookingStatus } from "@/libs/enums/booking.enum";
 import { Direction } from "@/libs/enums/common.enum";
+import { SERVICE_TAB_FOR_BOOKING_STATUS } from "../mypage/ServiceManagement";
 import { BOOKING_REQUESTS, DESTINATIONS } from "./notificationPresentation";
 
 const LOOKUP_LIMIT = 100;
 
 const SERVICE_MANAGEMENT = "/mypage?articleCategory=SERVICE_MANAGEMENT&tab=";
-
-const AGENT_TAB_FOR_STATUS: Partial<Record<BookingStatus, string>> = {
-  [BookingStatus.PENDING]: `${SERVICE_MANAGEMENT}REQUESTS`,
-  [BookingStatus.CONFIRMED]: `${SERVICE_MANAGEMENT}UPCOMING`,
-  [BookingStatus.COMPLETED]: `${SERVICE_MANAGEMENT}COMPLETED`,
-};
 
 export const useNotificationDestination = () => {
   const client = useApolloClient();
@@ -51,7 +45,8 @@ export const useNotificationDestination = () => {
       );
 
       if (!booking) return destination.href;
-      return AGENT_TAB_FOR_STATUS[booking.bookingStatus] ?? destination.href;
+      const tab = SERVICE_TAB_FOR_BOOKING_STATUS[booking.bookingStatus];
+      return tab ? `${SERVICE_MANAGEMENT}${tab}` : destination.href;
     } catch (err: any) {
       console.log("ERROR, useNotificationDestination:", err.message);
       return destination.href;
