@@ -1,5 +1,7 @@
 export const REACT_APP_API_URL = `${process.env.NEXT_PUBLIC_API_URL}`;
 
+export const BADGE_POLL_MS = 10_000;
+
 export const Messages = {
   error1: "Something went wrong!",
   error2: "Please login first!",

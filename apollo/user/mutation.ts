@@ -798,3 +798,22 @@ export const IMAGES_UPLOADER = gql`
     imagesUploader(files: $files, target: $target)
   }
 `;
+
+/***********************************
+ *          NOTIFICATION           *
+ ***********************************/
+
+export const UPDATE_NOTIFICATION = gql`
+  mutation UpdateNotification($input: NotificationUpdate!) {
+    updateNotification(input: $input) {
+      _id
+      notificationStatus
+    }
+  }
+`;
+
+export const MARK_ALL_NOTIFICATIONS_READ = gql`
+  mutation MarkAllNotificationsRead {
+    markAllNotificationsRead
+  }
+`;

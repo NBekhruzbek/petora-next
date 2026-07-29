@@ -1040,3 +1040,39 @@ export const GET_REVIEWS = gql`
     }
   }
 `;
+
+/***********************************
+ *          NOTIFICATION           *
+ ***********************************/
+
+export const GET_NOTIFICATIONS = gql`
+  query GetNotifications($input: NotificationsInquiry!) {
+    getNotifications(input: $input) {
+      list {
+        _id
+        notificationType
+        notificationStatus
+        notificationGroup
+        notificationTitle
+        notificationContent
+        notificationRefId
+        authorId
+        receiverId
+        createdAt
+        updatedAt
+      }
+      metaCounter {
+        total
+      }
+      unreadCounter {
+        total
+      }
+    }
+  }
+`;
+
+export const GET_UNREAD_NOTIFICATIONS_COUNT = gql`
+  query GetUnreadNotificationsCount {
+    getUnreadNotificationsCount
+  }
+`;

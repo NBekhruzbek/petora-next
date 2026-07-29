@@ -78,15 +78,21 @@ const AgentBookingsList = ({
     bookingStatus,
   };
 
-  const { data: getAgentBookingsData, refetch: getAgentBookingsRefetch } =
-    useQuery(GET_AGENT_BOOKINGS, {
-      fetchPolicy: "cache-and-network",
-      variables: { input: searchFilter },
-      skip: !user?._id,
-      notifyOnNetworkStatusChange: true,
-    });
+  const { data: getAgentBookingsData } = useQuery(GET_AGENT_BOOKINGS, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: searchFilter },
+    skip: !user?._id,
+    notifyOnNetworkStatusChange: true,
+  });
 
-  const [updateBookingByAgent] = useMutation(UPDATE_BOOKING_BY_AGENT);
+  // The tab's list and MyPage's pending-requests badge are the same query with
+  // different variables, so they are separate cache entries. Refetching by
+  // operation name moves both; refetching this list alone would leave the badge
+  // stale until a reload.
+  const [updateBookingByAgent] = useMutation(UPDATE_BOOKING_BY_AGENT, {
+    refetchQueries: ["GetAgentBookings"],
+    awaitRefetchQueries: true,
+  });
 
   /** DERIVED **/
 
@@ -105,8 +111,8 @@ const AgentBookingsList = ({
           input: { bookingId: booking._id, bookingStatus: nextStatus },
         },
       });
-      // The row leaves this tab and shows up in the one for its new status.
-      await getAgentBookingsRefetch({ input: searchFilter });
+      // The row leaves this tab and shows up in the one for its new status;
+      // refetchQueries above has already reloaded both it and the badge.
       await sweetBottomSmallSuccessAlert("Booking updated!", 700);
     } catch (err: any) {
       console.log("ERROR, handleAction:", err.message);
