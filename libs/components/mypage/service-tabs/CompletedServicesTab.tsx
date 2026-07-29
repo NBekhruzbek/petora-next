@@ -1,3 +1,4 @@
+import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import AgentBookingsList from "./AgentBookingsList";
 import { BookingStatus } from "@/libs/enums/booking.enum";
 
@@ -7,7 +8,11 @@ const CompletedServicesTab = () => (
     bookingStatus={BookingStatus.COMPLETED}
     chipLabel="Completed"
     chipClassName="completed"
-    emptyText="No completed services yet."
+    empty={{
+      icon: <TaskAltOutlinedIcon />,
+      title: "Nothing completed yet",
+      description: "Appointments you mark complete are kept here.",
+    }}
   />
 );
 

@@ -17,6 +17,8 @@ import {
   Chip,
 } from "@mui/material";
 import PetsIcon from "@mui/icons-material/Pets";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
+import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
@@ -27,6 +29,7 @@ import {
   IMAGES_UPLOADER,
   UPDATE_SERVICE,
 } from "@/apollo/user/mutation";
+import EmptyState from "../../common/EmptyState";
 import { Service } from "@/libs/types/service/service";
 import { ServicesInquiry } from "@/libs/types/service/service.input";
 import {
@@ -396,13 +399,22 @@ const MyServicesTab = () => {
 
       {/* Services List */}
       <Stack spacing={1.5} className="services-list">
-        {services.length === 0 && (
-          <Typography className="service-description">
-            {category === "ALL"
-              ? "You have not published any service yet."
-              : "No services in this category."}
-          </Typography>
-        )}
+        {services.length === 0 &&
+          (category === "ALL" ? (
+            <EmptyState
+              icon={<StorefrontOutlinedIcon />}
+              title="No services published"
+              description="Publish an offer and pet owners can start booking you."
+              action={{ label: "Add new service", onClick: openAddModal }}
+            />
+          ) : (
+            <EmptyState
+              icon={<FilterAltOffOutlinedIcon />}
+              title="Nothing in this category"
+              description="You have no services filed under this type yet. Pick another category, or publish one here."
+              action={{ label: "Add new service", onClick: openAddModal }}
+            />
+          ))}
 
         {services.map((service) => {
           const serviceStatus = statusClass[service.serviceStatus] ?? "active";

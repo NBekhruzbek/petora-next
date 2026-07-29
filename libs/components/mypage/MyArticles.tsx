@@ -18,6 +18,7 @@ import { GET_BOARD_ARTICLES } from "@/apollo/user/query";
 import { BoardArticle } from "@/libs/types/board-article/board-article";
 import { BoardArticlesInquiry } from "@/libs/types/board-article/board-article.input";
 import { Direction } from "@/libs/enums/common.enum";
+import EmptyState from "../common/EmptyState";
 
 const ARTICLES_PER_PAGE = 6;
 
@@ -79,9 +80,7 @@ const MyArticles = () => {
   return (
     <Stack className="my-articles-container" ref={topRef}>
       <Stack className="my-articles-toolbar">
-        <Typography className="my-articles-count">
-          {total} Articles
-        </Typography>
+        <Typography className="my-articles-count">{total} Articles</Typography>
         <Button
           className="btn-write-article"
           variant="contained"
@@ -93,6 +92,19 @@ const MyArticles = () => {
           Write Article
         </Button>
       </Stack>
+
+      {articles.length === 0 && (
+        <EmptyState
+          icon={<DrawOutlinedIcon />}
+          title="No articles yet"
+          description="Share advice or a story and it appears here and on the community board."
+          action={{
+            label: "Write article",
+            onClick: () =>
+              void router.push("/community?articleCategory=FREE&write=true"),
+          }}
+        />
+      )}
 
       <Box className="my-articles-grid">
         {articles.map((article) => (

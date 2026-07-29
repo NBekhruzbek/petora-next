@@ -1,9 +1,11 @@
+import { ReactNode } from "react";
 import { Button, Chip, Stack, Typography } from "@mui/material";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { userVar } from "@/apollo/store";
 import { GET_AGENT_BOOKINGS } from "@/apollo/user/query";
 import { UPDATE_BOOKING_BY_AGENT } from "@/apollo/user/mutation";
 import { BookedInfo } from "@/libs/types/booking/booking";
+import EmptyState from "../../common/EmptyState";
 import { BookingStatus } from "@/libs/enums/booking.enum";
 import { Direction } from "@/libs/enums/common.enum";
 import {
@@ -20,12 +22,11 @@ export interface BookingRowAction {
 }
 
 interface AgentBookingsListProps {
-  /** Wrapper class the tab styles hang off. */
   className: string;
   bookingStatus: BookingStatus;
   chipLabel: string;
   chipClassName: string;
-  emptyText: string;
+  empty: { icon: ReactNode; title: string; description: string };
   actions?: BookingRowAction[];
 }
 
@@ -63,7 +64,7 @@ const AgentBookingsList = ({
   bookingStatus,
   chipLabel,
   chipClassName,
-  emptyText,
+  empty,
   actions = [],
 }: AgentBookingsListProps) => {
   const user = useReactiveVar(userVar);
@@ -124,7 +125,11 @@ const AgentBookingsList = ({
     <Stack spacing={1.5} className={className}>
       <Stack spacing={1.5} className="requests-list">
         {bookings.length === 0 && (
-          <Typography className="request-note">{emptyText}</Typography>
+          <EmptyState
+            icon={empty.icon}
+            title={empty.title}
+            description={empty.description}
+          />
         )}
 
         {bookings.map((booking) => (

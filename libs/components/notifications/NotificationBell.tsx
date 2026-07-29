@@ -25,6 +25,7 @@ import { Notification } from "@/libs/types/notification/notification";
 import { NotificationStatus } from "@/libs/enums/notification.enum";
 import { Direction } from "@/libs/enums/common.enum";
 import { useUnreadNotifications } from "@/libs/hooks/useUnreadNotifications";
+import EmptyState from "../common/EmptyState";
 import {
   ALL_NOTIFICATIONS,
   getNotificationIcon,
@@ -191,15 +192,11 @@ const NotificationBell = () => {
 
           <Stack className="notif-menu-list">
             {items.length === 0 ? (
-              <Stack className="notif-menu-empty">
-                <NotificationsNoneRoundedIcon className="notif-menu-empty-icon" />
-                <Typography className="notif-menu-empty-title">
-                  You&apos;re all caught up
-                </Typography>
-                <Typography className="notif-menu-empty-sub">
-                  Bookings and orders report back here.
-                </Typography>
-              </Stack>
+              <EmptyState
+                icon={<NotificationsNoneRoundedIcon />}
+                title="You're all caught up"
+                description="Bookings and orders report back here."
+              />
             ) : (
               items.map((notification) => {
                 const isRead =

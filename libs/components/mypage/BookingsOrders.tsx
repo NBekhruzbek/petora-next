@@ -16,6 +16,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { userVar } from "@/apollo/store";
 import { GET_MY_BOOKINGS, GET_MY_ORDERS } from "@/apollo/user/query";
@@ -27,6 +28,7 @@ import { OrderStatus } from "@/libs/enums/order.enum";
 import { Direction } from "@/libs/enums/common.enum";
 import { REACT_APP_API_URL } from "@/libs/config";
 import { formatBookingMoment } from "./service-tabs/AgentBookingsList";
+import EmptyState from "../common/EmptyState";
 import {
   sweetBottomSmallSuccessAlert,
   sweetConfirmAlert,
@@ -327,9 +329,15 @@ const BookingsOrders = () => {
         {activeTabKey === "ORDERS" && (
           <Stack spacing={2} className="bo-orders-list">
             {orders.length === 0 && (
-              <Typography className="service-description">
-                You have no orders yet.
-              </Typography>
+              <EmptyState
+                icon={<Inventory2OutlinedIcon />}
+                title="No orders yet"
+                description="Anything you buy in the shop lands here, with its delivery progress."
+                action={{
+                  label: "Browse the shop",
+                  onClick: () => void router.push("/shop"),
+                }}
+              />
             )}
 
             {orders.map((order) => {
@@ -518,9 +526,15 @@ const BookingsOrders = () => {
         {activeTabKey === "BOOKINGS" && (
           <Stack spacing={1.5} className="bo-bookings-tab">
             {bookings.length === 0 && (
-              <Typography className="service-description">
-                You have no bookings yet.
-              </Typography>
+              <EmptyState
+                icon={<CalendarMonthOutlinedIcon />}
+                title="No bookings yet"
+                description="Book a groomer, walker or sitter and you can follow it here."
+                action={{
+                  label: "Find a service",
+                  onClick: () => void router.push("/service"),
+                }}
+              />
             )}
 
             {bookings.map((booking) => {

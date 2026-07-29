@@ -218,32 +218,6 @@
     }
   }
 
-  .notifications-empty {
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 64px 0;
-
-    .empty-icon {
-      font-size: 52px;
-      color: #d1c4e9;
-    }
-
-    .empty-title {
-      font-family: $font;
-      font-size: 18px;
-      font-weight: 800;
-      color: #4b5563;
-    }
-
-    .empty-subtitle {
-      font-family: $font;
-      font-size: 14px;
-      font-weight: 500;
-      color: #9ca3af;
-      text-align: center;
-    }
-  }
 
   .pagination-section {
     width: 100%;

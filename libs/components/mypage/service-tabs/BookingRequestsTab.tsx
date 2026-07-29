@@ -1,3 +1,4 @@
+import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
 import AgentBookingsList from "./AgentBookingsList";
 import { BookingStatus } from "@/libs/enums/booking.enum";
 
@@ -7,7 +8,12 @@ const BookingRequestsTab = () => (
     bookingStatus={BookingStatus.PENDING}
     chipLabel="Pending"
     chipClassName="pending"
-    emptyText="No booking requests waiting on you."
+    empty={{
+      icon: <MarkEmailUnreadOutlinedIcon />,
+      title: "No requests waiting",
+      description:
+        "New booking requests arrive here for you to accept or decline.",
+    }}
     actions={[
       {
         label: "Accept",

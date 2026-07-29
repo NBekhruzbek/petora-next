@@ -3,20 +3,13 @@
 $notif-violet: #7c3aed;
 $notif-wash: #f3e8ff;
 $notif-ink: #1a1333;
-$notif-muted: #8268a6; // 4.7:1 on white — the inherited #a78bca was 2.9:1
+$notif-muted: #8268a6;
 $notif-hairline: rgba(65, 0, 117, 0.08);
-
-// Read rows are drained of the brand violet: colour marks what still wants
-// attention, grey marks what has already had it. Pushing read down keeps the
-// panel calm — the alternative, shouting louder on unread, makes every row loud.
-// All three text tones clear WCAG AA (4.5:1 on white). De-emphasised must not
-// mean unreadable — the separation from unread is carried by the icon chip,
-// the title weight and the rail, not by washing the words out.
-$notif-read-title: #6f6885; // 5.3:1
-$notif-read-text: #767089; // 4.7:1
-$notif-read-time: #7a7290; // 4.5:1
+$notif-read-title: #6f6885;
+$notif-read-text: #767089;
+$notif-read-time: #7a7290;
 $notif-read-chip: #f2f0f6;
-$notif-read-icon: #a49bb8; // decoration, not text
+$notif-read-icon: #a49bb8;
 
 .notif-bell-wrap {
   display: flex;
@@ -358,37 +351,6 @@ $notif-read-icon: #a49bb8; // decoration, not text
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-    }
-  }
-
-  .notif-menu-empty {
-    align-items: center;
-    gap: 6px;
-    padding: 38px 24px 42px;
-
-    .notif-menu-empty-icon {
-      font-size: 30px;
-      color: $notif-violet;
-      background: $notif-wash;
-      border-radius: 14px;
-      padding: 9px;
-      box-sizing: content-box;
-      margin-bottom: 4px;
-    }
-
-    .notif-menu-empty-title {
-      font-family: $font;
-      font-size: 14px;
-      font-weight: 800;
-      color: $notif-ink;
-    }
-
-    .notif-menu-empty-sub {
-      font-family: $font;
-      font-size: 12.5px;
-      font-weight: 500;
-      color: #7b7390;
-      text-align: center;
     }
   }
 

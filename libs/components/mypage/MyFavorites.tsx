@@ -1,5 +1,12 @@
 import React, { ChangeEvent, useRef, useState } from "react";
-import { Box, Pagination, PaginationItem, Stack, Tab, Tabs } from "@mui/material";
+import {
+  Box,
+  Pagination,
+  PaginationItem,
+  Stack,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useQuery } from "@apollo/client";
@@ -13,11 +20,15 @@ import { Product } from "@/libs/types/product/product";
 import { Service } from "@/libs/types/service/service";
 import { T } from "@/libs/types/common";
 import { Message } from "@/libs/enums/common.enum";
+import EmptyState from "../common/EmptyState";
+import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
+import { useRouter } from "next/router";
 
 const PRODUCT_LIMIT = 12;
 const SERVICE_LIMIT = 6;
 
 const MyFavorites = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState(0);
   const [productPage, setProductPage] = useState(1);
   const [servicePage, setServicePage] = useState(1);
@@ -75,7 +86,10 @@ const MyFavorites = () => {
     setActiveTab(newValue);
   };
 
-  const handleProductPageChange = (_event: ChangeEvent<unknown>, page: number) => {
+  const handleProductPageChange = (
+    _event: ChangeEvent<unknown>,
+    page: number,
+  ) => {
     setProductPage(page);
     if (!productsTopRef.current) return;
     const scrollTarget =
@@ -83,7 +97,10 @@ const MyFavorites = () => {
     window.scrollTo({ top: Math.max(0, scrollTarget), behavior: "smooth" });
   };
 
-  const handleServicePageChange = (_event: ChangeEvent<unknown>, page: number) => {
+  const handleServicePageChange = (
+    _event: ChangeEvent<unknown>,
+    page: number,
+  ) => {
     setServicePage(page);
     if (!servicesTopRef.current) return;
     const scrollTarget =
@@ -91,8 +108,14 @@ const MyFavorites = () => {
     window.scrollTo({ top: Math.max(0, scrollTarget), behavior: "smooth" });
   };
 
-  const productTotalPages = Math.max(1, Math.ceil(productTotal / PRODUCT_LIMIT));
-  const serviceTotalPages = Math.max(1, Math.ceil(serviceTotal / SERVICE_LIMIT));
+  const productTotalPages = Math.max(
+    1,
+    Math.ceil(productTotal / PRODUCT_LIMIT),
+  );
+  const serviceTotalPages = Math.max(
+    1,
+    Math.ceil(serviceTotal / SERVICE_LIMIT),
+  );
 
   return (
     <Stack className="my-favorites-container" spacing={3}>
@@ -110,6 +133,17 @@ const MyFavorites = () => {
       <Box className="my-favorites-tab-content">
         {activeTab === 0 && (
           <Stack className="fav-products-wrap" ref={productsTopRef}>
+            {favProducts.length === 0 && (
+              <EmptyState
+                icon={<FavoriteBorderRoundedIcon />}
+                title="No saved products"
+                description="Tap the heart on any product and it stays here for later."
+                action={{
+                  label: "Browse the shop",
+                  onClick: () => void router.push("/shop"),
+                }}
+              />
+            )}
             <Stack className="fav-products-grid">
               {favProducts.map((product) => (
                 <ProductsCard
@@ -127,7 +161,10 @@ const MyFavorites = () => {
                   page={productPage}
                   renderItem={(item) => (
                     <PaginationItem
-                      components={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                      components={{
+                        previous: ArrowBackIcon,
+                        next: ArrowForwardIcon,
+                      }}
                       {...item}
                       color="primary"
                     />
@@ -141,6 +178,17 @@ const MyFavorites = () => {
 
         {activeTab === 1 && (
           <Stack className="fav-services-wrap" ref={servicesTopRef}>
+            {favServices.length === 0 && (
+              <EmptyState
+                icon={<FavoriteBorderRoundedIcon />}
+                title="No saved services"
+                description="Tap the heart on any service and it stays here for later."
+                action={{
+                  label: "Find a service",
+                  onClick: () => void router.push("/service"),
+                }}
+              />
+            )}
             <Stack className="fav-agents-grid">
               {favServices.map((service) => (
                 <ServiceCard
@@ -158,7 +206,10 @@ const MyFavorites = () => {
                   page={servicePage}
                   renderItem={(item) => (
                     <PaginationItem
-                      components={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                      components={{
+                        previous: ArrowBackIcon,
+                        next: ArrowForwardIcon,
+                      }}
                       {...item}
                       color="primary"
                     />

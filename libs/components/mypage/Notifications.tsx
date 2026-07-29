@@ -36,6 +36,7 @@ import {
 } from "@/libs/enums/notification.enum";
 import { Direction } from "@/libs/enums/common.enum";
 import { sweetMixinErrorAlert } from "@/libs/sweetAlert";
+import EmptyState from "../common/EmptyState";
 import {
   DESTINATIONS,
   getNotificationIcon,
@@ -225,15 +226,17 @@ const Notifications = () => {
 
       <Stack className="notifications-list">
         {items.length === 0 ? (
-          <Stack className="notifications-empty">
-            <NotificationsOutlinedIcon className="empty-icon" />
-            <Typography className="empty-title">No notifications</Typography>
-            <Typography className="empty-subtitle">
-              {showUnreadOnly
-                ? "You're all caught up! No unread notifications."
-                : "Nothing here yet. Check back later."}
-            </Typography>
-          </Stack>
+          <EmptyState
+            icon={<NotificationsOutlinedIcon />}
+            title={
+              showUnreadOnly ? "You're all caught up" : "No notifications yet"
+            }
+            description={
+              showUnreadOnly
+                ? "Nothing unread. Clear the filter to see everything."
+                : "Bookings and orders report back here as they progress."
+            }
+          />
         ) : (
           items.map((notification) => {
             const isRead =
