@@ -33,6 +33,27 @@ import {
   sweetMixinErrorAlert,
 } from "@/libs/sweetAlert";
 
+// Mirrors updateBookingByUser on the API: a booking can be called off right up
+// to the appointment, whether or not the agent has accepted it yet.
+const CANCELLABLE_STATUSES: BookingStatus[] = [
+  BookingStatus.PENDING,
+  BookingStatus.CONFIRMED,
+];
+
+// The published policy is free cancellation until 24 hours before the session,
+// and a fee inside that window — so the confirm has to say which one this is.
+const FEE_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+const startsWithinFeeWindow = (booking: BookedInfo) => {
+  if (!booking.bookingDate) return false;
+  const start = new Date(
+    `${booking.bookingDate}T${booking.bookingTime || "00:00"}`,
+  ).getTime();
+  if (Number.isNaN(start)) return false;
+  const untilStart = start - Date.now();
+  return untilStart > 0 && untilStart < FEE_WINDOW_MS;
+};
+
 const BOOKINGS_LIMIT = 20;
 const ORDERS_LIMIT = 10;
 
@@ -250,10 +271,13 @@ const BookingsOrders = () => {
     setActiveTab(newValue);
   };
 
-  // The API only lets a booking be cancelled while it is still PENDING.
   const cancelBooking = async (booking: BookedInfo) => {
     try {
-      const confirmed = await sweetConfirmAlert("Cancel this booking?");
+      const confirmed = await sweetConfirmAlert(
+        startsWithinFeeWindow(booking)
+          ? "This booking starts in less than 24 hours, so cancelling it may incur a fee. Cancel it anyway?"
+          : "Cancel this booking?",
+      );
       if (!confirmed) return;
 
       await updateBookingByUser({
@@ -593,7 +617,7 @@ const BookingsOrders = () => {
                     <Box className={`booking-status-badge ${status}`}>
                       {status}
                     </Box>
-                    {booking.bookingStatus === BookingStatus.PENDING && (
+                    {CANCELLABLE_STATUSES.includes(booking.bookingStatus) && (
                       <Button
                         className="cancel-booking-btn"
                         onClick={() => void cancelBooking(booking)}
