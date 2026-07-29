@@ -515,6 +515,27 @@
           border-radius: 12px;
           padding: 14px 16px;
         }
+
+        .notif-dialog-action {
+          align-self: flex-start;
+          height: 38px;
+          padding: 0 18px;
+          border-radius: 10px;
+          color: #ffffff;
+          background: linear-gradient(#c390ed, #410075);
+          font-family: $font;
+          font-size: 13px;
+          font-weight: 800;
+          text-transform: none;
+          transition:
+            filter 0.2s,
+            transform 0.2s;
+
+          &:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+          }
+        }
       }
     }
 

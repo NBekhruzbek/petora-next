@@ -20,10 +20,10 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import React from "react";
 import Basket from "./Basket";
+import NotificationBell from "./notifications/NotificationBell";
 import LoginRegister from "./account/LoginRegister";
 import useDeviceDetect from "../hooks/useDeviceDetect";
 
@@ -39,6 +39,7 @@ const Top = () => {
         ? "Admin"
         : "User";
   const memberAvatar = user.memberImage || "/img/profile/defaultUser.png";
+
   const router = useRouter();
   const [colorChange, setColorChange] = useState<boolean>(false);
   const [bgColor, setBgColor] = useState<boolean>(false);
@@ -143,6 +144,7 @@ const Top = () => {
             className="mobile-topbar-actions"
           >
             <Basket />
+            <NotificationBell />
             <IconButton
               className="mobile-nav-toggle"
               aria-label="Open menu"
@@ -320,6 +322,7 @@ const Top = () => {
               <Box>
                 <Basket />
               </Box>
+              <NotificationBell />
             </Box>
 
             <Box component={"div"} className="user-box">
@@ -522,38 +525,6 @@ const Top = () => {
                       >
                         <PersonOutlineIcon className="menu-icon" />
                         My Page
-                      </MenuItem>
-
-                      <MenuItem
-                        onClick={() => {
-                          handleLogoutMenuClose();
-                          void router.push(
-                            "/mypage?articleCategory=NOTIFICATIONS",
-                          );
-                        }}
-                        sx={{
-                          minHeight: "42px",
-                          px: "12px",
-                          borderRadius: "12px",
-                          fontFamily: "Assistant",
-                          fontSize: "14px",
-                          fontWeight: 700,
-                          color: "#374151",
-                          gap: "10px",
-                          transition: "background 0.2s, color 0.2s",
-                          "&:hover": {
-                            background: "rgba(65, 0, 117, 0.07)",
-                            color: "#410075",
-                          },
-                          "& .menu-icon": {
-                            color: "#7c3aed",
-                            fontSize: "20px",
-                          },
-                          "&:hover .menu-icon": { color: "#410075" },
-                        }}
-                      >
-                        <NotificationsOutlinedIcon className="menu-icon" />
-                        Notifications
                       </MenuItem>
 
                       <Divider

@@ -120,12 +120,34 @@
       }
     }
 
+    // Drained of the brand violet, matching the navbar dropdown: colour marks
+    // what still wants attention, grey marks what has already had it.
     &.read {
       background: #ffffff;
       border-color: #f0f0f0;
 
       &:hover {
         background: #fafafa;
+      }
+
+      .notif-icon-wrap .notif-icon {
+        color: #a49bb8;
+        background: #f2f0f6;
+      }
+
+      .notif-body {
+        .notif-title {
+          font-weight: 700;
+          color: #6f6885;
+        }
+
+        .notif-message {
+          color: #767089;
+        }
+
+        .notif-time {
+          color: #7a7290;
+        }
       }
     }
 

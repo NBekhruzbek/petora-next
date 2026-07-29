@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect, useMemo } from "react";
+import { ReactNode, useEffect, useMemo, useRef } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -18,7 +18,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import { useQuery, useReactiveVar } from "@apollo/client";
+import { useReactiveVar } from "@apollo/client";
 import MyProfile from "@/libs/components/mypage/MyProfile";
 import ServiceManagement from "@/libs/components/mypage/ServiceManagement";
 import BookingsOrders from "@/libs/components/mypage/BookingsOrders";
@@ -27,9 +27,8 @@ import MyArticles from "@/libs/components/mypage/MyArticles";
 import Notifications from "@/libs/components/mypage/Notifications";
 import { userVar } from "@/apollo/store";
 import { getJwtToken, logOut } from "@/libs/auth";
-import { GET_AGENT_BOOKINGS } from "@/apollo/user/query";
+import { usePendingBookingRequests } from "@/libs/hooks/usePendingBookingRequests";
 import { MemberType } from "@/libs/enums/member.enum";
-import { BookingStatus } from "@/libs/enums/booking.enum";
 
 type CategoryKey =
   | "ORDERS_BOOKINGS"
@@ -44,7 +43,6 @@ const userCategories: CategoryKey[] = [
   "ORDERS_BOOKINGS",
   "MY_FAVORITES",
   "MY_ARTICLES",
-  "NOTIFICATIONS",
 ];
 
 const agentCategories: CategoryKey[] = [
@@ -53,8 +51,11 @@ const agentCategories: CategoryKey[] = [
   "ORDERS_BOOKINGS",
   "MY_FAVORITES",
   "MY_ARTICLES",
-  "NOTIFICATIONS",
 ];
+
+const linkedOnlyCategories: CategoryKey[] = ["NOTIFICATIONS"];
+
+const HEADER_OFFSET = 210;
 
 const memberTypeLabels: Record<string, string> = {
   [MemberType.AGENT]: "Service Agent",
@@ -101,24 +102,17 @@ const categoryMeta: Record<
 const MyPage: NextPage = () => {
   const router = useRouter();
   const user = useReactiveVar(userVar);
+  const contentRef = useRef<HTMLDivElement | null>(null);
 
   const isAgent = user?.memberType === MemberType.AGENT;
   const isAdmin = user?.memberType === MemberType.ADMIN;
 
   /** APOLLO REQUESTS **/
-  const { data: getAgentBookingsData } = useQuery(GET_AGENT_BOOKINGS, {
-    fetchPolicy: "cache-and-network",
-    variables: {
-      input: { page: 1, limit: 1, bookingStatus: BookingStatus.PENDING },
-    },
-    skip: !isAgent,
-    notifyOnNetworkStatusChange: true,
-  });
+
+  const { pendingCount: pendingRequests, refetchPendingCount } =
+    usePendingBookingRequests({ live: true });
 
   /** DERIVED **/
-
-  const pendingRequests: number =
-    getAgentBookingsData?.getAgentBookings?.metaCounter?.[0]?.total ?? 0;
 
   const categoryOrder = useMemo(
     () => (isAgent ? agentCategories : userCategories),
@@ -126,13 +120,17 @@ const MyPage: NextPage = () => {
   );
 
   const rawCategory = router.query.articleCategory;
+
   const normalizedCategory =
-    rawCategory === "ORDERS" || rawCategory === "BOOKINGS"
+    rawCategory === "ORDERS" ||
+    rawCategory === "BOOKINGS" ||
+    rawCategory === "BOOKINGS_ORDERS"
       ? "ORDERS_BOOKINGS"
       : rawCategory;
+  const routableCategories = [...categoryOrder, ...linkedOnlyCategories];
   const activeCategory: CategoryKey =
     typeof normalizedCategory === "string" &&
-    categoryOrder.includes(normalizedCategory as CategoryKey)
+    routableCategories.includes(normalizedCategory as CategoryKey)
       ? (normalizedCategory as CategoryKey)
       : categoryOrder[0];
 
@@ -147,6 +145,28 @@ const MyPage: NextPage = () => {
     if (!getJwtToken()) void router.push("/");
   }, [router]);
 
+  useEffect(() => {
+    if (!user?._id) return;
+    if (activeCategory === "SERVICE_MANAGEMENT" && isAgent) {
+      void refetchPendingCount();
+    }
+  }, [activeCategory, user?._id, isAgent]);
+
+  useEffect(() => {
+    if (!router.query.articleCategory) return;
+
+    const content = contentRef.current;
+    if (!content) return;
+
+    const top = content.getBoundingClientRect().top;
+    if (top <= HEADER_OFFSET) return;
+
+    window.scrollTo({
+      top: Math.max(0, window.scrollY + top - HEADER_OFFSET),
+      behavior: "smooth",
+    });
+  }, [activeCategory, router.query.articleCategory]);
+
   /** HANDLERS **/
 
   const handleCategoryChange = (category: CategoryKey) => {
@@ -156,7 +176,7 @@ const MyPage: NextPage = () => {
         query: { articleCategory: category },
       },
       undefined,
-      { shallow: true },
+      { shallow: true, scroll: false },
     );
   };
 
@@ -247,7 +267,7 @@ const MyPage: NextPage = () => {
           </Stack>
         </Stack>
 
-        <Stack className="my-page-content">
+        <Stack className="my-page-content" ref={contentRef}>
           <Stack className="my-page-content-top">
             <Stack className="my-page-content-heading">
               <Typography className="my-page-board-title">

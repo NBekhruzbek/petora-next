@@ -1,4 +1,5 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 import {
   Box,
   Button,
@@ -14,256 +15,129 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import RemoveShoppingCartOutlinedIcon from "@mui/icons-material/RemoveShoppingCartOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-
-export type NotificationType =
-  | "BOOKING_CONFIRMED"
-  | "BOOKING_CANCELLED"
-  | "BOOKING_REMINDER"
-  | "BOOKING_COMPLETED"
-  | "ORDER_CONFIRMED"
-  | "ORDER_SHIPPED"
-  | "ORDER_DELIVERED"
-  | "ORDER_CANCELLED"
-  | "SYSTEM_INFO";
-
-export type NotificationTab = "ALL" | "ORDERS" | "BOOKINGS" | "SYSTEM";
-
-export interface NotificationItem {
-  id: string;
-  type: NotificationType;
-  title: string;
-  message: string;
-  timeAgo: string;
-  read: boolean;
-  actionLabel?: string;
-  actionUrl?: string;
-}
-
-const NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: "n-1",
-    type: "BOOKING_CONFIRMED",
-    title: "Booking Confirmed",
-    message:
-      "Your booking for Premium Dog Grooming on May 15, 2026 at 10:00 AM has been confirmed by the service agent.",
-    timeAgo: "2 minutes ago",
-    read: false,
-    actionLabel: "View Booking",
-  },
-  {
-    id: "n-2",
-    type: "ORDER_CONFIRMED",
-    title: "Order Confirmed",
-    message:
-      "Your order #PO-2841 for Royal Canin Care Digest & Paw Care Bundle has been confirmed and is being prepared for shipment.",
-    timeAgo: "30 minutes ago",
-    read: false,
-    actionLabel: "View Order",
-  },
-  {
-    id: "n-3",
-    type: "BOOKING_REMINDER",
-    title: "Upcoming Appointment Reminder",
-    message:
-      "You have a Dog Walking session scheduled for tomorrow at 9:00 AM. Please be ready 5 minutes in advance.",
-    timeAgo: "1 hour ago",
-    read: false,
-    actionLabel: "View Details",
-  },
-  {
-    id: "n-4",
-    type: "ORDER_CANCELLED",
-    title: "Order Cancelled",
-    message:
-      "Your order #PO-2795 for Kitty Feather Play Set has been cancelled as requested. A full refund of ₩85,000 will be processed within 3–5 business days.",
-    timeAgo: "3 hours ago",
-    read: false,
-    actionLabel: "Reorder",
-  },
-  {
-    id: "n-5",
-    type: "ORDER_SHIPPED",
-    title: "Order Shipped",
-    message:
-      "Your order #PO-2801 is on its way! Estimated delivery: May 16, 2026. Track your package with code TRK-9284-KR.",
-    timeAgo: "5 hours ago",
-    read: true,
-    actionLabel: "Track Order",
-  },
-  {
-    id: "n-6",
-    type: "BOOKING_CANCELLED",
-    title: "Booking Cancelled",
-    message:
-      "Unfortunately, your booking for Basic Obedience Training on May 12 has been cancelled by the service agent. A full refund has been processed.",
-    timeAgo: "Yesterday",
-    read: true,
-    actionLabel: "Rebook",
-  },
-  {
-    id: "n-7",
-    type: "ORDER_DELIVERED",
-    title: "Order Delivered",
-    message:
-      "Your order #PO-2788 has been successfully delivered. We hope your pet loves their new FILLET 'O' LAKES – Kit Cat treats!",
-    timeAgo: "Yesterday",
-    read: true,
-  },
-  {
-    id: "n-8",
-    type: "BOOKING_COMPLETED",
-    title: "Service Completed",
-    message:
-      "Your Full Day Pet Day Care session on May 10 has been marked as completed. We hope your pet had a great time!",
-    timeAgo: "2 days ago",
-    read: true,
-  },
-  {
-    id: "n-9",
-    type: "SYSTEM_INFO",
-    title: "Profile Verification Approved",
-    message:
-      "Your account has been successfully verified. You now have access to premium service listings and priority booking.",
-    timeAgo: "3 days ago",
-    read: true,
-  },
-  {
-    id: "n-10",
-    type: "ORDER_CONFIRMED",
-    title: "Order Confirmed",
-    message:
-      "Your order #PO-2776 for Hamster Tunnel Play Kit & Pet Vitamin Daily Drops has been confirmed. Payment of ₩220,000 received.",
-    timeAgo: "4 days ago",
-    read: true,
-    actionLabel: "View Order",
-  },
-  {
-    id: "n-11",
-    type: "BOOKING_REMINDER",
-    title: "Don't Forget Your Appointment",
-    message:
-      "Reminder: You have a Vet Check-Up & Vaccines session on May 8 at 2:00 PM. Please arrive 10 minutes early.",
-    timeAgo: "5 days ago",
-    read: true,
-  },
-];
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { userVar } from "@/apollo/store";
+import {
+  GET_NOTIFICATIONS,
+  GET_UNREAD_NOTIFICATIONS_COUNT,
+} from "@/apollo/user/query";
+import {
+  MARK_ALL_NOTIFICATIONS_READ,
+  UPDATE_NOTIFICATION,
+} from "@/apollo/user/mutation";
+import { Notification } from "@/libs/types/notification/notification";
+import { NotificationsInquiry } from "@/libs/types/notification/notification.input";
+import {
+  NotificationGroup,
+  NotificationStatus,
+} from "@/libs/enums/notification.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import { sweetMixinErrorAlert } from "@/libs/sweetAlert";
+import {
+  DESTINATIONS,
+  getNotificationIcon,
+  groupLabel,
+  timeAgo,
+} from "../notifications/notificationPresentation";
+import { useNotificationDestination } from "../notifications/useNotificationDestination";
 
 const ITEMS_PER_PAGE = 8;
 
-const typeToTab: Record<NotificationType, NotificationTab> = {
-  ORDER_CONFIRMED: "ORDERS",
-  ORDER_SHIPPED: "ORDERS",
-  ORDER_DELIVERED: "ORDERS",
-  ORDER_CANCELLED: "ORDERS",
-  BOOKING_CONFIRMED: "BOOKINGS",
-  BOOKING_CANCELLED: "BOOKINGS",
-  BOOKING_REMINDER: "BOOKINGS",
-  BOOKING_COMPLETED: "BOOKINGS",
-  SYSTEM_INFO: "SYSTEM",
-};
-
-const tabIndexMap: NotificationTab[] = ["ALL", "ORDERS", "BOOKINGS", "SYSTEM"];
-
-const typeLabel: Record<NotificationType, string> = {
-  BOOKING_CONFIRMED: "Booking",
-  BOOKING_CANCELLED: "Booking",
-  BOOKING_REMINDER: "Booking",
-  BOOKING_COMPLETED: "Booking",
-  ORDER_CONFIRMED: "Order",
-  ORDER_SHIPPED: "Order",
-  ORDER_DELIVERED: "Order",
-  ORDER_CANCELLED: "Order",
-  SYSTEM_INFO: "System",
-};
-
-function getIcon(type: NotificationType, large = false) {
-  const cls = large ? "notif-icon-lg" : "notif-icon";
-  switch (type) {
-    case "BOOKING_CONFIRMED":
-      return <CheckCircleOutlineIcon className={`${cls} confirmed`} />;
-    case "BOOKING_CANCELLED":
-      return <CancelOutlinedIcon className={`${cls} cancelled`} />;
-    case "BOOKING_REMINDER":
-      return <CalendarTodayOutlinedIcon className={`${cls} reminder`} />;
-    case "BOOKING_COMPLETED":
-      return <CheckCircleOutlineIcon className={`${cls} completed`} />;
-    case "ORDER_CONFIRMED":
-      return <ShoppingBagOutlinedIcon className={`${cls} order-confirmed`} />;
-    case "ORDER_SHIPPED":
-      return <LocalShippingOutlinedIcon className={`${cls} order-shipped`} />;
-    case "ORDER_DELIVERED":
-      return <Inventory2OutlinedIcon className={`${cls} order-delivered`} />;
-    case "ORDER_CANCELLED":
-      return (
-        <RemoveShoppingCartOutlinedIcon className={`${cls} order-cancelled`} />
-      );
-    case "SYSTEM_INFO":
-      return <InfoOutlinedIcon className={`${cls} system-info`} />;
-  }
-}
+// Tab order maps onto NotificationGroup; "All" sends no group filter.
+const TABS: { label: string; group?: NotificationGroup }[] = [
+  { label: "All" },
+  { label: "Orders", group: NotificationGroup.ORDERS },
+  { label: "Bookings", group: NotificationGroup.BOOKINGS },
+  { label: "System", group: NotificationGroup.SYSTEM },
+];
 
 const Notifications = () => {
-  const [items, setItems] = useState<NotificationItem[]>(NOTIFICATIONS);
+  const router = useRouter();
+  const user = useReactiveVar(userVar);
+  const { resolveDestination } = useNotificationDestination();
   const [activeTab, setActiveTab] = useState(0);
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
   const [page, setPage] = useState(1);
-  const [selectedNotif, setSelectedNotif] = useState<NotificationItem | null>(
-    null,
-  );
+  const [selected, setSelected] = useState<Notification | null>(null);
   const topRef = useRef<HTMLDivElement | null>(null);
 
-  const activeTabKey = tabIndexMap[activeTab];
+  /** APOLLO REQUESTS **/
 
-  const filtered = items.filter((n) => {
-    const matchesTab =
-      activeTabKey === "ALL" || typeToTab[n.type] === activeTabKey;
-    const matchesFilter = !showUnreadOnly || !n.read;
-    return matchesTab && matchesFilter;
+  const searchFilter: NotificationsInquiry = {
+    page,
+    limit: ITEMS_PER_PAGE,
+    sort: "createdAt",
+    direction: Direction.DESC,
+    search: {
+      ...(TABS[activeTab].group
+        ? { notificationGroup: TABS[activeTab].group }
+        : {}),
+      ...(showUnreadOnly
+        ? { notificationStatus: NotificationStatus.UNREAD }
+        : {}),
+    },
+  };
+
+  const {
+    data: getNotificationsData,
+    previousData: getNotificationsPreviousData,
+    refetch: getNotificationsRefetch,
+  } = useQuery(GET_NOTIFICATIONS, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: searchFilter },
+    skip: !user?._id,
+    notifyOnNetworkStatusChange: true,
   });
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-  const start = (page - 1) * ITEMS_PER_PAGE;
-  const pagedItems = filtered.slice(start, start + ITEMS_PER_PAGE);
+  // The sidebar and header badges are a separate query, so marking anything
+  // read has to refresh them too — otherwise the count only settles on reload.
+  const badgeRefetch = {
+    refetchQueries: [{ query: GET_UNREAD_NOTIFICATIONS_COUNT }],
+  };
+  const [updateNotification] = useMutation(UPDATE_NOTIFICATION, badgeRefetch);
+  const [markAllNotificationsRead] = useMutation(
+    MARK_ALL_NOTIFICATIONS_READ,
+    badgeRefetch,
+  );
 
-  const unreadCount = items.filter((n) => !n.read).length;
+  /** DERIVED **/
 
-  const handleTabChange = (_: React.SyntheticEvent, val: number) => {
-    setActiveTab(val);
+  // Keep the current page on screen while the next one loads — Apollo empties
+  // `data` whenever the variables change, which would otherwise flash the empty
+  // state between pages.
+  const result = getNotificationsData ?? getNotificationsPreviousData;
+  const items: Notification[] = result?.getNotifications?.list ?? [];
+  const total: number = result?.getNotifications?.metaCounter?.[0]?.total ?? 0;
+  const unreadCount: number =
+    result?.getNotifications?.unreadCounter?.[0]?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+  const selectedDestination = selected
+    ? DESTINATIONS[selected.notificationType]
+    : undefined;
+
+  /** LIFECYCLES **/
+
+  // Signing in as somebody else must not keep the previous member's inbox.
+  useEffect(() => {
+    setPage(1);
+  }, [user?._id]);
+
+  /** HANDLERS **/
+
+  const handleTabChange = (_: React.SyntheticEvent, value: number) => {
+    setActiveTab(value);
     setPage(1);
   };
 
-  const handlePageChange = (_: ChangeEvent<unknown>, val: number) => {
-    setPage(val);
+  const handlePageChange = (_: ChangeEvent<unknown>, value: number) => {
+    setPage(value);
     if (!topRef.current) return;
     const scrollTarget =
       window.scrollY + topRef.current.getBoundingClientRect().top - 210;
     window.scrollTo({ top: Math.max(0, scrollTarget), behavior: "smooth" });
-  };
-
-  const handleCardClick = (notif: NotificationItem) => {
-    setSelectedNotif(notif);
-    if (!notif.read) {
-      setItems((prev) =>
-        prev.map((n) => (n.id === notif.id ? { ...n, read: true } : n)),
-      );
-    }
-  };
-
-  const handleCloseDialog = () => setSelectedNotif(null);
-
-  const handleMarkAllRead = () => {
-    setItems((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
   const handleToggleUnread = () => {
@@ -271,12 +145,50 @@ const Notifications = () => {
     setPage(1);
   };
 
+  const handleCardClick = async (notification: Notification) => {
+    setSelected(notification);
+    if (notification.notificationStatus === NotificationStatus.READ) return;
+
+    try {
+      await updateNotification({
+        variables: {
+          input: {
+            notificationId: notification._id,
+            notificationStatus: NotificationStatus.READ,
+          },
+        },
+      });
+      await getNotificationsRefetch({ input: searchFilter });
+    } catch (err: any) {
+      console.log("ERROR, handleCardClick:", err.message);
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      await markAllNotificationsRead();
+      await getNotificationsRefetch({ input: searchFilter });
+    } catch (err: any) {
+      console.log("ERROR, handleMarkAllRead:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
+
+  // Resolved rather than looked up: a booking that has been accepted since the
+  // notification was written now lives in a different Service Management tab.
+  const handleAction = async (notification: Notification) => {
+    setSelected(null);
+    const href = await resolveDestination(notification);
+    // scroll:false — MyPage brings the panel into view itself.
+    if (href) void router.push(href, undefined, { scroll: false });
+  };
+
   return (
     <Stack className="notifications-container" ref={topRef}>
       <Stack className="notifications-toolbar">
         <Stack direction="row" alignItems="center" gap="10px">
           <Typography className="notifications-count">
-            {filtered.length} Notifications
+            {total} Notifications
           </Typography>
           {unreadCount > 0 && (
             <Chip
@@ -292,7 +204,7 @@ const Notifications = () => {
           <Button
             className="btn-mark-all-read"
             startIcon={<DoneAllIcon />}
-            onClick={handleMarkAllRead}
+            onClick={() => void handleMarkAllRead()}
           >
             Mark all as read
           </Button>
@@ -305,15 +217,14 @@ const Notifications = () => {
           onChange={handleTabChange}
           aria-label="notification tabs"
         >
-          <Tab label="All" />
-          <Tab label="Orders" />
-          <Tab label="Bookings" />
-          <Tab label="System" />
+          {TABS.map((tab) => (
+            <Tab key={tab.label} label={tab.label} />
+          ))}
         </Tabs>
       </Box>
 
       <Stack className="notifications-list">
-        {pagedItems.length === 0 ? (
+        {items.length === 0 ? (
           <Stack className="notifications-empty">
             <NotificationsOutlinedIcon className="empty-icon" />
             <Typography className="empty-title">No notifications</Typography>
@@ -324,41 +235,52 @@ const Notifications = () => {
             </Typography>
           </Stack>
         ) : (
-          pagedItems.map((notif) => (
-            <Stack
-              key={notif.id}
-              className={`notification-item ${notif.read ? "read" : "unread"}`}
-              direction="row"
-              alignItems="flex-start"
-              gap="14px"
-              onClick={() => handleCardClick(notif)}
-            >
-              <Stack className="notif-icon-wrap">{getIcon(notif.type)}</Stack>
+          items.map((notification) => {
+            const isRead =
+              notification.notificationStatus === NotificationStatus.READ;
 
-              <Stack className="notif-body" flex={1}>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  gap="8px"
-                >
-                  <Typography className="notif-title">{notif.title}</Typography>
-                  <Stack direction="row" alignItems="center" gap="8px">
-                    {!notif.read && <span className="unread-dot" />}
-                    <Typography className="notif-time">
-                      {notif.timeAgo}
-                    </Typography>
-                  </Stack>
+            return (
+              <Stack
+                key={notification._id}
+                className={`notification-item ${isRead ? "read" : "unread"}`}
+                direction="row"
+                alignItems="flex-start"
+                gap="14px"
+                onClick={() => void handleCardClick(notification)}
+              >
+                <Stack className="notif-icon-wrap">
+                  {getNotificationIcon(notification.notificationType)}
                 </Stack>
 
-                <Typography className="notif-message">{notif.message}</Typography>
+                <Stack className="notif-body" flex={1}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    gap="8px"
+                  >
+                    <Typography className="notif-title">
+                      {notification.notificationTitle}
+                    </Typography>
+                    <Stack direction="row" alignItems="center" gap="8px">
+                      {!isRead && <span className="unread-dot" />}
+                      <Typography className="notif-time">
+                        {timeAgo(notification.createdAt)}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+
+                  <Typography className="notif-message">
+                    {notification.notificationContent}
+                  </Typography>
+                </Stack>
               </Stack>
-            </Stack>
-          ))
+            );
+          })
         )}
       </Stack>
 
-      {filtered.length > ITEMS_PER_PAGE && (
+      {total > ITEMS_PER_PAGE && (
         <Stack className="pagination-section">
           <Pagination
             count={totalPages}
@@ -376,22 +298,22 @@ const Notifications = () => {
       )}
 
       <Dialog
-        open={Boolean(selectedNotif)}
-        onClose={handleCloseDialog}
+        open={Boolean(selected)}
+        onClose={() => setSelected(null)}
         className="notif-dialog"
         PaperProps={{ className: "notif-dialog-paper" }}
       >
-        {selectedNotif && (
+        {selected && (
           <>
             <Stack className="notif-dialog-header">
               <Chip
-                label={typeLabel[selectedNotif.type]}
+                label={groupLabel[selected.notificationGroup]}
                 size="small"
                 className="notif-dialog-chip"
               />
               <IconButton
                 className="notif-dialog-close"
-                onClick={handleCloseDialog}
+                onClick={() => setSelected(null)}
               >
                 <CloseIcon />
               </IconButton>
@@ -400,22 +322,29 @@ const Notifications = () => {
             <Stack className="notif-dialog-body">
               <Stack direction="row" alignItems="flex-start" gap="14px">
                 <Stack className="notif-dialog-icon-wrap">
-                  {getIcon(selectedNotif.type, true)}
+                  {getNotificationIcon(selected.notificationType, true)}
                 </Stack>
                 <Stack gap="4px">
                   <Typography className="notif-dialog-title">
-                    {selectedNotif.title}
+                    {selected.notificationTitle}
                   </Typography>
                   <Typography className="notif-dialog-time">
-                    {selectedNotif.timeAgo}
+                    {timeAgo(selected.createdAt)}
                   </Typography>
                 </Stack>
               </Stack>
               <Typography className="notif-dialog-message">
-                {selectedNotif.message}
+                {selected.notificationContent}
               </Typography>
+              {selectedDestination && selected.notificationRefId && (
+                <Button
+                  className="notif-dialog-action"
+                  onClick={() => void handleAction(selected)}
+                >
+                  {selectedDestination.label}
+                </Button>
+              )}
             </Stack>
-
           </>
         )}
       </Dialog>
