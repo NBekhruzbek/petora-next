@@ -36,6 +36,14 @@ import {
 const BOOKINGS_LIMIT = 20;
 const ORDERS_LIMIT = 10;
 
+// One source of truth for the tab order, the labels and the ?tab= deep link.
+// Deriving the index from the key means reordering the tabs can never silently
+// invert which panel a link opens.
+const TABS = [
+  { key: "ORDERS", label: "Orders" },
+  { key: "BOOKINGS", label: "Bookings" },
+] as const;
+
 const TruckIcon = ({ className }: { className?: string }) => (
   <svg
     className={className}
@@ -195,7 +203,11 @@ const DeliveryTracker = ({ orderStatus }: { orderStatus: OrderStatus }) => {
 const BookingsOrders = () => {
   const router = useRouter();
   const user = useReactiveVar(userVar);
-  const initialTab = router.query.tab === "ORDERS" ? 1 : 0;
+  // An unknown or missing ?tab= falls back to the first tab.
+  const initialTab = Math.max(
+    0,
+    TABS.findIndex((tab) => tab.key === router.query.tab),
+  );
   const [activeTab, setActiveTab] = useState(initialTab);
 
   /** APOLLO REQUESTS **/
@@ -228,6 +240,7 @@ const BookingsOrders = () => {
 
   /** DERIVED **/
 
+  const activeTabKey = TABS[activeTab]?.key ?? TABS[0].key;
   const bookings: BookedInfo[] = getMyBookingsData?.getMyBookings?.list ?? [];
   const orders: Order[] = getMyOrdersData?.getMyOrders?.list ?? [];
 
@@ -279,14 +292,15 @@ const BookingsOrders = () => {
           onChange={handleTabChange}
           aria-label="bookings and orders tabs"
         >
-          <Tab label="Orders" />
-          <Tab label="Bookings" />
+          {TABS.map((tab) => (
+            <Tab key={tab.key} label={tab.label} />
+          ))}
         </Tabs>
       </Stack>
 
       <Box className="bookings-orders-tab-content">
         {/* ── ORDERS TAB ── */}
-        {activeTab === 0 && (
+        {activeTabKey === "ORDERS" && (
           <Stack spacing={2} className="bo-orders-list">
             {orders.length === 0 && (
               <Typography className="service-description">
@@ -477,7 +491,7 @@ const BookingsOrders = () => {
         )}
 
         {/* ── BOOKINGS TAB ── */}
-        {activeTab === 1 && (
+        {activeTabKey === "BOOKINGS" && (
           <Stack spacing={1.5} className="bo-bookings-tab">
             {bookings.length === 0 && (
               <Typography className="service-description">
