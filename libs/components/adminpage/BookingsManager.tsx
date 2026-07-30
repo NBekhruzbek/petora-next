@@ -575,7 +575,7 @@ const BookingsManager = () => {
                     <img
                       src={avatarUrl(member?.memberImage, memberName(member))}
                       alt=""
-                      className="admin-table-avatar"
+                      className="admin-drawer-avatar"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = avatarUrl(
                           undefined,

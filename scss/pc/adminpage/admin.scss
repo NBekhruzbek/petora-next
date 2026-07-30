@@ -1325,6 +1325,23 @@ $sidebar-width: 260px;
     margin-left: auto;
   }
 
+  /**
+   * The drawer twin of .admin-table-avatar, which is nested inside .admin-table
+   * and so constrains nothing outside one — an unstyled <img> there renders at
+   * the photo's natural size. Matches .admin-ord-customer-avatar at 40px so the
+   * two drawer treatments line up.
+   */
+  .admin-drawer-avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1.5px solid $card-border;
+    background: #eef2ff;
+  }
+
   // ─── Table cell text helpers ─────────────────────────────────────────
 
   .admin-cell-name {
