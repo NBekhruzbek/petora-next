@@ -184,6 +184,26 @@ export const REMOVE_SERVICE_BY_ADMIN = gql`
 `;
 
 /***********************************
+ *             BOOKING             *
+ ***********************************/
+
+// The admin override: unlike updateBookingByAgent it may also cancel, because
+// support acts for whichever side asked.
+export const UPDATE_BOOKING_BY_ADMIN = gql`
+  mutation UpdateBookingByAdmin($input: BookingUpdateInput!) {
+    updateBookingByAdmin(input: $input) {
+      _id
+      bookingNumber
+      bookingStatus
+      bookingPaymentStatus
+      bookingDate
+      bookingTime
+      bookingPrice
+    }
+  }
+`;
+
+/***********************************
  *             ARTICLE             *
  ***********************************/
 

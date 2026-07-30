@@ -4,6 +4,7 @@ import {
   BookingStatus,
 } from "@/libs/enums/booking.enum";
 import { Service } from "../service/service";
+import { Member } from "../member/member";
 
 export interface BookedInfo {
   _id: string;
@@ -22,6 +23,9 @@ export interface BookedInfo {
   serviceData?: Service;
   userId: string;
   agentId: string;
+  /** from aggregation — only getAllBookingsByAdmin joins the two members. */
+  userData?: Member;
+  agentData?: Member;
   createdAt: Date;
   updatedAt: Date;
 }

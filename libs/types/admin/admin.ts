@@ -4,6 +4,11 @@ export interface AdminDashboardStats {
   totalProducts: number;
   totalOrders: number;
   pendingOrders: number;
-  /** Sum of `orderTotal` over every order that was not cancelled. */
+  totalBookings: number;
+  pendingBookings: number;
+  /**
+   * Both halves of the marketplace: every order that was not cancelled, plus
+   * every booking the customer has actually paid for.
+   */
   totalRevenue: number;
 }

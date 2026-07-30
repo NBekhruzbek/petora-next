@@ -28,6 +28,14 @@ const CHIP_CLASS: Record<string, string> = {
   EN_ROUTE: "en-route",
   ARRIVED: "arrived",
   CANCELLED: "cancelled",
+  // Booking statuses. PENDING and CANCELLED are shared with the sets above.
+  CONFIRMED: "confirmed",
+  COMPLETED: "completed",
+  REJECTED: "rejected",
+  // Booking payment
+  PAID: "paid",
+  UNPAID: "unpaid",
+  REFUNDED: "refunded",
 };
 
 /** `PAUSE` → `status-chip status-paused`, matching the classes in admin.scss. */

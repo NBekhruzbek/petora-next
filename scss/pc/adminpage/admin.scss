@@ -672,6 +672,35 @@ $sidebar-width: 260px;
       color: #dc2626;
     }
 
+    // Booking statuses. PENDING and CANCELLED reuse the sets above; these are
+    // the three a booking adds.
+    &.status-confirmed {
+      background: #eef2ff;
+      color: #6366f1;
+    }
+    &.status-completed {
+      background: #ecfdf5;
+      color: #059669;
+    }
+    &.status-rejected {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    // Booking payment
+    &.status-paid {
+      background: #ecfdf5;
+      color: #059669;
+    }
+    &.status-unpaid {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    &.status-refunded {
+      background: #fffbeb;
+      color: #d97706;
+    }
+
     // Post statuses
     &.status-visible {
       background: #ecfdf5;
@@ -1889,6 +1918,117 @@ $sidebar-width: 260px;
 
   .admin-ord-search {
     width: 260px;
+  }
+
+  // ─── BookingsManager ─────────────────────────────────────────────────────
+
+  .admin-bkg-search {
+    width: 260px;
+  }
+
+  .admin-bkg-status-filter {
+    width: 160px;
+  }
+
+  .admin-bkg-no {
+    font-family: $font;
+    font-size: 12px;
+    font-weight: 700;
+    color: $accent;
+  }
+
+  .admin-bkg-pet {
+    margin-top: 2px;
+  }
+
+  .admin-bkg-price {
+    font-family: $font;
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-1;
+  }
+
+  .admin-bkg-pay-chip {
+    margin-top: 4px;
+    align-self: flex-start;
+  }
+
+  // An order is read by its number; a booking is read by when it happens, so
+  // the day is the loudest thing in the row.
+  .admin-bkg-when {
+    gap: 1px;
+
+    .admin-bkg-when-day {
+      font-family: $font;
+      font-size: 13px;
+      font-weight: 700;
+      color: $text-1;
+
+      // The appointment came and went unanswered — the one failure this table
+      // exists to surface.
+      &.unanswered {
+        color: #dc2626;
+      }
+    }
+
+    .admin-bkg-when-time {
+      font-family: $font;
+      font-size: 12px;
+      color: $text-2;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .admin-bkg-unanswered {
+      font-family: $font;
+      font-size: 10px;
+      font-weight: 700;
+      color: #dc2626;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+  }
+
+  // The drawer opens on the appointment for the same reason.
+  .admin-bkg-when-card {
+    padding: 18px 20px;
+    border-radius: 12px;
+    border: 1px solid #c7d2fe;
+    background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+
+    .admin-bkg-when-card-label {
+      font-family: $font;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: $accent;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .admin-bkg-when-card-day {
+      font-family: $font;
+      font-size: 22px;
+      font-weight: 800;
+      color: $text-1;
+      line-height: 1.2;
+      margin-top: 4px;
+    }
+
+    .admin-bkg-when-card-time {
+      font-family: $font;
+      font-size: 13px;
+      color: $text-2;
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
+    }
+
+    .admin-bkg-when-card-flag {
+      font-family: $font;
+      font-size: 12px;
+      font-weight: 600;
+      color: #dc2626;
+      margin-top: 10px;
+    }
   }
 
   // Without an explicit width the Select claims the full row and the wrapping

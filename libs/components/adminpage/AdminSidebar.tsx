@@ -5,6 +5,7 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import RoomServiceIcon from "@mui/icons-material/RoomService";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import ForumIcon from "@mui/icons-material/Forum";
 import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
 
@@ -26,6 +27,7 @@ const navItems: NavItem[] = [
   { label: "Products", icon: <InventoryIcon />, href: "/admin/products" },
   { label: "Services", icon: <RoomServiceIcon />, href: "/admin/services" },
   { label: "Orders", icon: <ShoppingCartIcon />, href: "/admin/orders" },
+  { label: "Bookings", icon: <EventAvailableIcon />, href: "/admin/bookings" },
   { label: "Community", icon: <ForumIcon />, href: "/admin/community" },
   { label: "CS Support", icon: <HeadsetMicIcon />, href: "/admin/cs" },
 ];

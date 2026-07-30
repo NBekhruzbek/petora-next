@@ -11,6 +11,7 @@ const pageNames: Record<string, string> = {
   "/admin/products": "Products",
   "/admin/services": "Services",
   "/admin/orders": "Orders",
+  "/admin/bookings": "Bookings",
   "/admin/community": "Community",
   "/admin/cs": "CS Support",
 };

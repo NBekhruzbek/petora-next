@@ -14,6 +14,8 @@ export const GET_ADMIN_DASHBOARD_STATS = gql`
       totalProducts
       totalOrders
       pendingOrders
+      totalBookings
+      pendingBookings
       totalRevenue
     }
   }
@@ -240,6 +242,68 @@ export const GET_ALL_ORDERS_BY_ADMIN = gql`
             createdAt
             updatedAt
           }
+        }
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+/***********************************
+ *             BOOKING             *
+ ***********************************/
+
+// The only booking query that is scoped to nobody, and the only one that joins
+// the customer and the agent — support needs both sides of the appointment.
+export const GET_ALL_BOOKINGS_BY_ADMIN = gql`
+  query GetAllBookingsByAdmin($input: BookingsInquiry!) {
+    getAllBookingsByAdmin(input: $input) {
+      list {
+        _id
+        bookingNumber
+        bookingStatus
+        bookingPaymentStatus
+        bookingDate
+        bookingTime
+        bookingPrice
+        bookingPetType
+        bookingPetName
+        bookingPetAge
+        bookingNote
+        bookingAddress
+        serviceId
+        userId
+        agentId
+        createdAt
+        updatedAt
+        serviceData {
+          _id
+          serviceType
+          serviceTitle
+          serviceStatus
+          serviceLocation
+          servicePrice
+          serviceImages
+          serviceDurationMinutes
+          memberId
+        }
+        userData {
+          _id
+          memberUserName
+          memberFullName
+          memberEmail
+          memberPhone
+          memberImage
+        }
+        agentData {
+          _id
+          memberUserName
+          memberFullName
+          memberEmail
+          memberPhone
+          memberImage
         }
       }
       metaCounter {

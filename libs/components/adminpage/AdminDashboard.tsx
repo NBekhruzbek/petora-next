@@ -13,6 +13,7 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
@@ -108,11 +109,18 @@ const AdminDashboard = () => {
           trendNeutral={`${stats?.pendingOrders ?? 0} awaiting shipment`}
         />
         <StatCard
+          title="Bookings"
+          value={stats?.totalBookings ?? 0}
+          icon={<EventAvailableIcon />}
+          color="#8B5CF6"
+          trendNeutral={`${stats?.pendingBookings ?? 0} awaiting reply`}
+        />
+        <StatCard
           title="Revenue"
           value={revenueLabel}
           icon={<AttachMoneyIcon />}
           color="#6366F1"
-          trendNeutral="excludes cancelled"
+          trendNeutral="orders + paid bookings"
         />
       </Stack>
 
