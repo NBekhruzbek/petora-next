@@ -1887,11 +1887,14 @@ $sidebar-width: 260px;
     color: #9ca3af;
   }
 
-  .admin-ord-total-count {
-    font-size: 12px;
-    color: #9ca3af;
-    // Sits beside the status filter in the card header — must not wrap to two lines.
-    white-space: nowrap;
+  .admin-ord-search {
+    width: 260px;
+  }
+
+  // Without an explicit width the Select claims the full row and the wrapping
+  // toolbar breaks the search box, filter and count onto separate lines.
+  .admin-ord-status-filter {
+    width: 160px;
   }
 
   .admin-ord-no-cell {

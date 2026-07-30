@@ -2,6 +2,7 @@ import { Fragment, useState } from "react";
 import {
   Stack,
   Typography,
+  TextField,
   Select,
   MenuItem,
   Table,
@@ -40,6 +41,7 @@ import {
   metaTotal,
   prettyEnum,
   statusChipClass,
+  useDebouncedValue,
   won,
 } from "./adminHelpers";
 
@@ -62,9 +64,11 @@ const customerName = (order: Order) =>
 
 const OrdersManager = () => {
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<"ALL" | OrderStatus>("ALL");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const debouncedSearch = useDebouncedValue(search);
 
   /** APOLLO REQUESTS **/
 
@@ -72,6 +76,9 @@ const OrdersManager = () => {
     page,
     limit: ORDERS_PER_PAGE,
     ...(filterStatus === "ALL" ? {} : { orderStatus: filterStatus }),
+    // Matched against orderNumber server-side, so it searches every order and
+    // not just the page on screen.
+    ...(debouncedSearch.trim() ? { text: debouncedSearch.trim() } : {}),
   };
 
   const {
@@ -84,7 +91,7 @@ const OrdersManager = () => {
     notifyOnNetworkStatusChange: true,
   });
 
-  // The pending badge counts the whole collection, not the current page.
+  // The awaiting-shipment badge counts the whole collection, not just this page.
   const { data: statsData, refetch: statsRefetch } = useQuery(
     GET_ADMIN_DASHBOARD_STATS,
     { fetchPolicy: "cache-and-network" },
@@ -130,39 +137,41 @@ const OrdersManager = () => {
       <Stack className="admin-page-header">
         <Typography className="admin-page-title">Orders</Typography>
         <Typography className="admin-ord-pending-count">
-          {pendingCount} pending
+          {pendingCount} awaiting shipment
         </Typography>
       </Stack>
 
       <Stack className="admin-card">
-        <Stack
-          className="admin-card-header"
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Typography className="admin-card-title">All Orders</Typography>
-          <Stack direction="row" alignItems="center" gap={1.5}>
-            <Select
-              size="small"
-              value={filterStatus}
-              onChange={(e) => {
-                setFilterStatus(e.target.value as "ALL" | OrderStatus);
-                setPage(1);
-              }}
-              className="admin-toolbar-select admin-ord-status-filter"
-            >
-              <MenuItem value="ALL">All Statuses</MenuItem>
-              {STATUS_OPTIONS.map((s) => (
-                <MenuItem key={s} value={s}>
-                  {prettyEnum(s)}
-                </MenuItem>
-              ))}
-            </Select>
-            <Typography className="admin-ord-total-count">
-              {total} total
-            </Typography>
-          </Stack>
+        <Stack className="admin-toolbar">
+          <TextField
+            size="small"
+            placeholder="Search order number…"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="admin-toolbar-search admin-ord-search"
+          />
+          <Select
+            size="small"
+            value={filterStatus}
+            onChange={(e) => {
+              setFilterStatus(e.target.value as "ALL" | OrderStatus);
+              setPage(1);
+            }}
+            className="admin-toolbar-select admin-ord-status-filter"
+          >
+            <MenuItem value="ALL">All Statuses</MenuItem>
+            {STATUS_OPTIONS.map((s) => (
+              <MenuItem key={s} value={s}>
+                {prettyEnum(s)}
+              </MenuItem>
+            ))}
+          </Select>
+          <Typography className="admin-meta-count">
+            {orders.length} of {total}
+          </Typography>
         </Stack>
 
         <TableContainer>

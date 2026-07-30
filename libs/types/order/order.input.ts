@@ -11,4 +11,6 @@ export interface OrdersInquiry {
   page: number;
   limit: number;
   orderStatus?: OrderStatus;
+  /** Partial, case-insensitive match on `orderNumber`. */
+  text?: string;
 }
