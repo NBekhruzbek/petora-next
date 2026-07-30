@@ -26,7 +26,11 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_ALL_PRODUCTS_BY_ADMIN } from "@/apollo/admin/query";
-import { CREATE_PRODUCT, UPDATE_PRODUCT } from "@/apollo/admin/mutation";
+import {
+  CREATE_PRODUCT,
+  REMOVE_PRODUCT_BY_ADMIN,
+  UPDATE_PRODUCT,
+} from "@/apollo/admin/mutation";
 import { IMAGES_UPLOADER } from "@/apollo/user/mutation";
 import { Product } from "@/libs/types/product/product";
 import { ProductsInquiry } from "@/libs/types/product/product.input";
@@ -124,6 +128,7 @@ const ProductsManager = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<Product | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /** APOLLO REQUESTS **/
@@ -134,8 +139,13 @@ const ProductsManager = () => {
     sort: "createdAt",
     direction: Direction.DESC,
     search: {
-      // Deleted products stay out of the table; everything else is listed.
-      productStatus: [ProductStatus.ACTIVE, ProductStatus.PAUSE],
+      // Retired products stay listed so an admin can either restore them or
+      // remove them for good — the shop already hides them from customers.
+      productStatus: [
+        ProductStatus.ACTIVE,
+        ProductStatus.PAUSE,
+        ProductStatus.DELETE,
+      ],
       ...(debouncedSearch.trim() ? { text: debouncedSearch.trim() } : {}),
       ...(filterType === "ALL" ? {} : { productType: [filterType] }),
     },
@@ -153,6 +163,7 @@ const ProductsManager = () => {
 
   const [createProduct] = useMutation(CREATE_PRODUCT);
   const [updateProduct] = useMutation(UPDATE_PRODUCT);
+  const [removeProductByAdmin] = useMutation(REMOVE_PRODUCT_BY_ADMIN);
   const [imagesUploader] = useMutation(IMAGES_UPLOADER);
 
   /** DERIVED **/
@@ -363,6 +374,20 @@ const ProductsManager = () => {
     }
   };
 
+  // Hard delete, offered only on rows already in DELETE. The row is gone from
+  // Mongo afterwards, so there is nothing left to restore.
+  const confirmRemove = async () => {
+    if (!removeTarget) return;
+    try {
+      await removeProductByAdmin({ variables: { input: removeTarget._id } });
+      setRemoveTarget(null);
+      await productsRefetch({ input: searchFilter });
+      await sweetBottomSmallSuccessAlert("Product deleted for good!", 900);
+    } catch (err: any) {
+      console.log("ERROR, confirmRemove:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
 
   const resetToFirstPage = () => setPage(1);
 
@@ -431,6 +456,8 @@ const ProductsManager = () => {
                 const finalPrice =
                   product.productPriceAfterDiscount ?? product.productPrice;
                 const isDiscounted = finalPrice !== product.productPrice;
+                const isRetired =
+                  product.productStatus === ProductStatus.DELETE;
                 return (
                   <TableRow key={product._id}>
                     <TableCell className="admin-prd-name-cell">
@@ -527,24 +554,47 @@ const ProductsManager = () => {
                             <span className={statusChipClass(s)}>{s}</span>
                           </MenuItem>
                         ))}
+                        {/* Only the current value of an already-retired row —
+                            picking Active or Pause above restores it. */}
+                        {isRetired && (
+                          <MenuItem value={ProductStatus.DELETE}>
+                            <span
+                              className={statusChipClass(ProductStatus.DELETE)}
+                            >
+                              {ProductStatus.DELETE}
+                            </span>
+                          </MenuItem>
+                        )}
                       </Select>
                     </TableCell>
                     <TableCell>
                       <Stack className="admin-action-row">
-                        <Button
-                          size="small"
-                          onClick={() => openEdit(product)}
-                          className="admin-btn-edit"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="small"
-                          onClick={() => setDeleteTarget(product)}
-                          className="admin-btn-delete"
-                        >
-                          Delete
-                        </Button>
+                        {isRetired ? (
+                          <Button
+                            size="small"
+                            onClick={() => setRemoveTarget(product)}
+                            className="admin-btn-delete"
+                          >
+                            Remove
+                          </Button>
+                        ) : (
+                          <>
+                            <Button
+                              size="small"
+                              onClick={() => openEdit(product)}
+                              className="admin-btn-edit"
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="small"
+                              onClick={() => setDeleteTarget(product)}
+                              className="admin-btn-delete"
+                            >
+                              Delete
+                            </Button>
+                          </>
+                        )}
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -1046,6 +1096,39 @@ const ProductsManager = () => {
         </DialogActions>
       </Dialog>
 
+      {/* Permanent Removal Confirmation */}
+      <Dialog
+        open={!!removeTarget}
+        onClose={() => setRemoveTarget(null)}
+        maxWidth="xs"
+        disablePortal
+      >
+        <DialogTitle className="admin-prd-dialog-title">
+          Remove permanently?
+        </DialogTitle>
+        <DialogContent>
+          <Typography className="admin-prd-dialog-body">
+            <strong>{removeTarget?.productName}</strong> will be erased from the
+            database. This cannot be undone — restore it instead if you only
+            want it back in the shop.
+          </Typography>
+        </DialogContent>
+        <DialogActions className="admin-prd-dialog-actions">
+          <Button
+            onClick={() => setRemoveTarget(null)}
+            className="admin-prd-dialog-cancel-btn"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={confirmRemove}
+            className="admin-prd-dialog-delete-btn"
+          >
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 };

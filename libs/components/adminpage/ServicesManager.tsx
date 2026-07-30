@@ -29,7 +29,10 @@ import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_ALL_SERVICES } from "@/apollo/user/query";
 import { GET_ALL_AGENTS_BY_ADMIN } from "@/apollo/admin/query";
-import { UPDATE_SERVICE_BY_ADMIN } from "@/apollo/admin/mutation";
+import {
+  REMOVE_SERVICE_BY_ADMIN,
+  UPDATE_SERVICE_BY_ADMIN,
+} from "@/apollo/admin/mutation";
 import { Service } from "@/libs/types/service/service";
 import { ServicesInquiry } from "@/libs/types/service/service.input";
 import { Member } from "@/libs/types/member/member";
@@ -173,6 +176,7 @@ const ServicesManager = () => {
   const [form, setForm] = useState<FormShape>(emptyForm);
   const [isSaving, setIsSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Service | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<Service | null>(null);
 
   /** APOLLO REQUESTS **/
 
@@ -223,6 +227,7 @@ const ServicesManager = () => {
   });
 
   const [updateServiceByAdmin] = useMutation(UPDATE_SERVICE_BY_ADMIN);
+  const [removeServiceByAdmin] = useMutation(REMOVE_SERVICE_BY_ADMIN);
 
   /** DERIVED **/
 
@@ -352,6 +357,20 @@ const ServicesManager = () => {
     }
   };
 
+  // Hard delete, offered only on rows already in DELETE. The row is gone from
+  // Mongo afterwards, so there is nothing left to restore.
+  const confirmRemove = async () => {
+    if (!removeTarget) return;
+    try {
+      await removeServiceByAdmin({ variables: { input: removeTarget._id } });
+      setRemoveTarget(null);
+      await refreshServices();
+      await sweetBottomSmallSuccessAlert("Service deleted for good!", 900);
+    } catch (err: any) {
+      console.log("ERROR, confirmRemove:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
 
   const resetToFirstPage = () => setPage(1);
   const sortProps = { sortBy, sortDir, onSort: handleSort };
@@ -413,6 +432,8 @@ const ServicesManager = () => {
             <TableBody>
               {services.map((service) => {
                 const agent = agentsById.get(service.memberId);
+                const isRetired =
+                  service.serviceStatus === ServiceStatus.DELETE;
                 return (
                   <TableRow key={service._id}>
                     <TableCell className="admin-svc-name-cell">
@@ -455,11 +476,7 @@ const ServicesManager = () => {
                     </TableCell>
                     <TableCell>
                       <Select
-                        value={
-                          service.serviceStatus === ServiceStatus.DELETE
-                            ? ServiceStatus.DELETE
-                            : service.serviceStatus
-                        }
+                        value={service.serviceStatus}
                         onChange={(e) =>
                           changeStatus(service, e.target.value as ServiceStatus)
                         }
@@ -476,10 +493,13 @@ const ServicesManager = () => {
                             <span className={statusChipClass(s)}>{s}</span>
                           </MenuItem>
                         ))}
-                        {/* Only reachable as the current value of a removed offer. */}
-                        {service.serviceStatus === ServiceStatus.DELETE && (
+                        {/* Only the current value of an already-retired row —
+                            picking Active or Pause above restores it. */}
+                        {isRetired && (
                           <MenuItem value={ServiceStatus.DELETE}>
-                            <span className={statusChipClass(ServiceStatus.DELETE)}>
+                            <span
+                              className={statusChipClass(ServiceStatus.DELETE)}
+                            >
                               {ServiceStatus.DELETE}
                             </span>
                           </MenuItem>
@@ -488,20 +508,32 @@ const ServicesManager = () => {
                     </TableCell>
                     <TableCell>
                       <Stack className="admin-action-row">
-                        <Button
-                          size="small"
-                          onClick={() => openEdit(service)}
-                          className="admin-btn-edit"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="small"
-                          onClick={() => setDeleteTarget(service)}
-                          className="admin-btn-delete"
-                        >
-                          Delete
-                        </Button>
+                        {isRetired ? (
+                          <Button
+                            size="small"
+                            onClick={() => setRemoveTarget(service)}
+                            className="admin-btn-delete"
+                          >
+                            Remove
+                          </Button>
+                        ) : (
+                          <>
+                            <Button
+                              size="small"
+                              onClick={() => openEdit(service)}
+                              className="admin-btn-edit"
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              size="small"
+                              onClick={() => setDeleteTarget(service)}
+                              className="admin-btn-delete"
+                            >
+                              Delete
+                            </Button>
+                          </>
+                        )}
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -568,6 +600,39 @@ const ServicesManager = () => {
         </DialogActions>
       </Dialog>
 
+      {/* Permanent Removal Confirmation */}
+      <Dialog
+        open={!!removeTarget}
+        onClose={() => setRemoveTarget(null)}
+        maxWidth="xs"
+        disablePortal
+      >
+        <DialogTitle className="admin-svc-dialog-title">
+          Remove permanently?
+        </DialogTitle>
+        <DialogContent>
+          <Typography className="admin-svc-dialog-body">
+            <strong>{removeTarget?.serviceTitle}</strong> will be erased from the
+            database. This cannot be undone — restore it instead if you only want
+            the agent listing back.
+          </Typography>
+        </DialogContent>
+        <DialogActions className="admin-svc-dialog-actions">
+          <Button
+            onClick={() => setRemoveTarget(null)}
+            className="admin-svc-dialog-cancel-btn"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={confirmRemove}
+            className="admin-svc-dialog-delete-btn"
+          >
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Edit Drawer */}
       <Drawer

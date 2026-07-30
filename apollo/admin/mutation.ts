@@ -107,6 +107,18 @@ export const UPDATE_PRODUCT = gql`
   }
 `;
 
+// Hard delete. Only matches products already in DELETE status, so the panel has
+// to retire a product before it can be removed for good.
+export const REMOVE_PRODUCT_BY_ADMIN = gql`
+  mutation RemoveProductByAdmin($input: String!) {
+    removeProductByAdmin(productId: $input) {
+      _id
+      productName
+      productStatus
+    }
+  }
+`;
+
 /***********************************
  *              ORDER              *
  ***********************************/
@@ -155,6 +167,18 @@ export const UPDATE_SERVICE_BY_ADMIN = gql`
       memberId
       createdAt
       updatedAt
+    }
+  }
+`;
+
+// Hard delete. Only matches services already in DELETE status, so an offer an
+// agent still depends on can never go in a single click.
+export const REMOVE_SERVICE_BY_ADMIN = gql`
+  mutation RemoveServiceByAdmin($input: String!) {
+    removeServiceByAdmin(serviceId: $input) {
+      _id
+      serviceTitle
+      serviceStatus
     }
   }
 `;
