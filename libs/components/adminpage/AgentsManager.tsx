@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   Stack,
   Typography,
@@ -15,33 +15,96 @@ import {
   Drawer,
   IconButton,
   Rating,
-  Switch,
-  FormControlLabel,
+  Pagination,
+  Chip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import VerifiedIcon from "@mui/icons-material/Verified";
 import PlaceIcon from "@mui/icons-material/Place";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
-import { mockAgents, AdminAgent, UserStatus } from "../../data/adminMockData";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_ALL_AGENTS_BY_ADMIN } from "@/apollo/admin/query";
+import { UPDATE_MEMBER_BY_ADMIN } from "@/apollo/admin/mutation";
+import { Member } from "@/libs/types/member/member";
+import { MembersInquiry } from "@/libs/types/member/member.input";
+import { MemberStatus } from "@/libs/enums/member.enum";
+import { ServiceLocation, ServiceType } from "@/libs/enums/service.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
+import {
+  avatarUrl,
+  formatDate,
+  imageUrl,
+  isNoDataError,
+  metaTotal,
+  prettyEnum,
+  statusChipClass,
+  useDebouncedValue,
+} from "./adminHelpers";
 
-const STATUS_OPTIONS: UserStatus[] = ["active", "paused", "blocked"];
-const SERVICE_TYPES = [
-  "Grooming",
-  "Training",
-  "Walking",
-  "Boarding",
-  "Day-care",
-  "Health",
+const AGENTS_PER_PAGE = 10;
+
+const STATUS_OPTIONS: MemberStatus[] = [
+  MemberStatus.ACTIVE,
+  MemberStatus.BLOCK,
+  MemberStatus.DELETE,
 ];
 
-// ─── Status color map ─────────────────────────────────────────────────────
-const STATUS_STYLE: Record<UserStatus, { bg: string; color: string }> = {
-  active: { bg: "#ECFDF5", color: "#059669" },
-  paused: { bg: "#FFFBEB", color: "#D97706" },
-  blocked: { bg: "#FEF2F2", color: "#DC2626" },
-  deleted: { bg: "#F3F4F6", color: "#6B7280" },
+const SERVICE_TYPES = Object.values(ServiceType);
+const SERVICE_AREAS = Object.values(ServiceLocation);
+
+const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
+  [MemberStatus.ACTIVE]: { bg: "#ECFDF5", color: "#059669" },
+  [MemberStatus.BLOCK]: { bg: "#FEF2F2", color: "#DC2626" },
+  [MemberStatus.DELETE]: { bg: "#F3F4F6", color: "#6B7280" },
 };
+
+interface AgentForm {
+  memberFullName: string;
+  memberUserName: string;
+  memberEmail: string;
+  memberPhone: string;
+  memberSpecialty: string;
+  memberStatus: MemberStatus;
+  memberExperience: string;
+  memberApproach: string;
+  memberLanguages: string;
+  memberResponseTime: string;
+  memberDesc: string;
+  memberServiceTypes: string[];
+  memberServiceArea: string[];
+}
+
+const emptyForm: AgentForm = {
+  memberFullName: "",
+  memberUserName: "",
+  memberEmail: "",
+  memberPhone: "",
+  memberSpecialty: "",
+  memberStatus: MemberStatus.ACTIVE,
+  memberExperience: "",
+  memberApproach: "",
+  memberLanguages: "",
+  memberResponseTime: "",
+  memberDesc: "",
+  memberServiceTypes: [],
+  memberServiceArea: [],
+};
+
+const TEXT_FIELDS: { label: string; field: keyof AgentForm }[] = [
+  { label: "Full Name", field: "memberFullName" },
+  { label: "Username", field: "memberUserName" },
+  { label: "Email", field: "memberEmail" },
+  { label: "Phone", field: "memberPhone" },
+  { label: "Specialty", field: "memberSpecialty" },
+  { label: "Experience", field: "memberExperience" },
+  { label: "Approach", field: "memberApproach" },
+  { label: "Languages", field: "memberLanguages" },
+  { label: "Response Time", field: "memberResponseTime" },
+];
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
   <Stack
@@ -59,107 +122,154 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
 );
 
 const AgentsManager = () => {
-  const [agents, setAgents] = useState<AdminAgent[]>(mockAgents);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"ALL" | UserStatus>("ALL");
+  const [filterStatus, setFilterStatus] = useState<"ALL" | MemberStatus>("ALL");
+  const debouncedSearch = useDebouncedValue(search);
 
-  // Edit drawer
   const [editOpen, setEditOpen] = useState(false);
-  const [editingAgent, setEditingAgent] = useState<AdminAgent | null>(null);
-  const [form, setForm] = useState<
-    Pick<
-      AdminAgent,
-      | "fullName"
-      | "username"
-      | "email"
-      | "phone"
-      | "serviceType"
-      | "role"
-      | "status"
-      | "verified"
-      | "serviceArea"
-      | "experience"
-      | "approach"
-      | "languages"
-      | "responseTime"
-    >
-  >({
-    fullName: "",
-    username: "",
-    email: "",
-    phone: "",
-    serviceType: "Grooming",
-    role: "",
-    status: "active",
-    verified: false,
-    serviceArea: "",
-    experience: "",
-    approach: "",
-    languages: "",
-    responseTime: "",
+  const [editingAgent, setEditingAgent] = useState<Member | null>(null);
+  const [form, setForm] = useState<AgentForm>(emptyForm);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailAgent, setDetailAgent] = useState<Member | null>(null);
+
+  /** APOLLO REQUESTS **/
+
+  const searchFilter: MembersInquiry = {
+    page,
+    limit: AGENTS_PER_PAGE,
+    sort: "createdAt",
+    direction: Direction.DESC,
+    search: {
+      ...(debouncedSearch.trim() ? { text: debouncedSearch.trim() } : {}),
+      ...(filterStatus === "ALL" ? {} : { memberStatus: filterStatus }),
+    },
+  };
+
+  const {
+    data: agentsData,
+    previousData: agentsPreviousData,
+    error: agentsError,
+    refetch: agentsRefetch,
+  } = useQuery(GET_ALL_AGENTS_BY_ADMIN, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: searchFilter },
+    notifyOnNetworkStatusChange: true,
   });
 
-  // Detail drawer
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [detailAgent, setDetailAgent] = useState<AdminAgent | null>(null);
+  const [updateMemberByAdmin] = useMutation(UPDATE_MEMBER_BY_ADMIN);
 
-  const filtered = useMemo(
-    () =>
-      agents.filter((a) => {
-        if (filterStatus !== "ALL" && a.status !== filterStatus) return false;
-        const q = search.toLowerCase();
-        return (
-          !q ||
-          a.fullName.toLowerCase().includes(q) ||
-          a.email.toLowerCase().includes(q) ||
-          a.serviceType.toLowerCase().includes(q)
-        );
-      }),
-    [agents, search, filterStatus],
-  );
+  /** DERIVED **/
 
-  const changeStatus = (id: string, status: UserStatus) =>
-    setAgents((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
+  const agentsResult = agentsData ?? agentsPreviousData;
+  const agents: Member[] = isNoDataError(agentsError)
+    ? []
+    : (agentsResult?.getAllAgentsByAdmin?.list ?? []);
+  const total = isNoDataError(agentsError)
+    ? 0
+    : metaTotal(agentsResult?.getAllAgentsByAdmin?.metaCounter);
+  const totalPages = Math.max(1, Math.ceil(total / AGENTS_PER_PAGE));
+  const blockedCount = agents.filter(
+    (a) => a.memberStatus === MemberStatus.BLOCK,
+  ).length;
 
-  const openEdit = (agent: AdminAgent) => {
+  /** HANDLERS **/
+
+  const refreshAgents = async () => {
+    try {
+      await agentsRefetch({ input: searchFilter });
+    } catch {
+      /* an emptied list surfaces through agentsError */
+    }
+  };
+
+  const changeStatus = async (agent: Member, memberStatus: MemberStatus) => {
+    if (agent.memberStatus === memberStatus) return;
+    try {
+      await updateMemberByAdmin({
+        variables: { input: { _id: agent._id, memberStatus } },
+      });
+      await refreshAgents();
+      await sweetBottomSmallSuccessAlert("Agent updated!", 700);
+    } catch (err: any) {
+      console.log("ERROR, changeStatus:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
+
+  const openEdit = (agent: Member) => {
     setEditingAgent(agent);
     setForm({
-      fullName: agent.fullName,
-      username: agent.username,
-      email: agent.email,
-      phone: agent.phone ?? "",
-      serviceType: agent.serviceType,
-      role: agent.role ?? "",
-      status: agent.status,
-      verified: agent.verified,
-      serviceArea: agent.serviceArea ?? "",
-      experience: agent.experience ?? "",
-      approach: agent.approach ?? "",
-      languages: agent.languages ?? "",
-      responseTime: agent.responseTime ?? "",
+      memberFullName: agent.memberFullName ?? "",
+      memberUserName: agent.memberUserName ?? "",
+      memberEmail: agent.memberEmail ?? "",
+      memberPhone: agent.memberPhone ?? "",
+      memberSpecialty: agent.memberSpecialty ?? "",
+      memberStatus: agent.memberStatus,
+      memberExperience: agent.memberExperience ?? "",
+      memberApproach: agent.memberApproach ?? "",
+      memberLanguages: agent.memberLanguages ?? "",
+      memberResponseTime: agent.memberResponseTime ?? "",
+      memberDesc: agent.memberDesc ?? "",
+      memberServiceTypes: agent.memberServiceTypes ?? [],
+      memberServiceArea: agent.memberServiceArea ?? [],
     });
+    setDetailOpen(false);
     setEditOpen(true);
   };
 
-  const saveEdit = () => {
-    if (!editingAgent) return;
-    setAgents((prev) =>
-      prev.map((a) => (a.id === editingAgent.id ? { ...a, ...form } : a)),
-    );
-    setEditOpen(false);
+  const saveEdit = async () => {
+    if (!editingAgent || isSaving) return;
+    try {
+      if (!form.memberUserName.trim()) throw new Error("Username is required");
+      setIsSaving(true);
+
+      await updateMemberByAdmin({
+        variables: {
+          input: {
+            _id: editingAgent._id,
+            memberFullName: form.memberFullName.trim(),
+            memberUserName: form.memberUserName.trim(),
+            memberEmail: form.memberEmail.trim(),
+            memberPhone: form.memberPhone.trim(),
+            memberSpecialty: form.memberSpecialty.trim(),
+            memberStatus: form.memberStatus,
+            memberExperience: form.memberExperience.trim(),
+            memberApproach: form.memberApproach.trim(),
+            memberLanguages: form.memberLanguages.trim(),
+            memberResponseTime: form.memberResponseTime.trim(),
+            memberDesc: form.memberDesc.trim(),
+            memberServiceTypes: form.memberServiceTypes,
+            memberServiceArea: form.memberServiceArea,
+          },
+        },
+      });
+      await refreshAgents();
+      setEditOpen(false);
+      await sweetBottomSmallSuccessAlert("Agent saved!", 700);
+    } catch (err: any) {
+      console.log("ERROR, saveEdit:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const openDetail = (agent: AdminAgent) => {
+  const openDetail = (agent: Member) => {
     setDetailAgent(agent);
     setDetailOpen(true);
   };
+
+  const resetToFirstPage = () => setPage(1);
 
   return (
     <Stack gap={0}>
       <Stack className="admin-page-header">
         <Typography className="admin-page-title">Agents</Typography>
         <Typography className="admin-agt-pending-count">
-          {agents.filter((a) => a.status === "paused").length} pending approval
+          {blockedCount} blocked on this page
         </Typography>
       </Stack>
 
@@ -167,26 +277,32 @@ const AgentsManager = () => {
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search name, email, service…"
+            placeholder="Search username…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              resetToFirstPage();
+            }}
             className="admin-toolbar-search admin-agt-search"
           />
           <Select
             size="small"
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as any)}
+            onChange={(e) => {
+              setFilterStatus(e.target.value as "ALL" | MemberStatus);
+              resetToFirstPage();
+            }}
             className="admin-toolbar-select admin-agt-status-filter"
           >
             <MenuItem value="ALL">All Statuses</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {s.charAt(0).toUpperCase() + s.slice(1)}
+                {prettyEnum(s)}
               </MenuItem>
             ))}
           </Select>
           <Typography className="admin-meta-count">
-            {filtered.length} of {agents.length}
+            {agents.length} of {total}
           </Typography>
         </Stack>
 
@@ -195,87 +311,91 @@ const AgentsManager = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Agent</TableCell>
-                <TableCell>Service</TableCell>
+                <TableCell>Service Types</TableCell>
                 <TableCell>Rating</TableCell>
-                <TableCell>Bookings</TableCell>
+                <TableCell>Services</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Joined</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filtered.map((agent) => (
-                <TableRow key={agent.id}>
+              {agents.map((agent) => (
+                <TableRow key={agent._id}>
                   <TableCell>
                     <Stack className="admin-name-cell">
                       <Stack className="admin-agt-avatar-wrap">
                         <img
-                          src={agent.avatar}
-                          alt={agent.fullName}
+                          src={avatarUrl(
+                            agent.memberImage,
+                            agent.memberFullName || agent.memberUserName,
+                          )}
+                          alt={agent.memberUserName}
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src =
-                              `https://ui-avatars.com/api/?name=${encodeURIComponent(agent.fullName)}&background=0ea5e9&color=fff`;
+                            (e.target as HTMLImageElement).src = avatarUrl(
+                              undefined,
+                              agent.memberFullName || agent.memberUserName,
+                            );
                           }}
                         />
                       </Stack>
                       <Stack>
-                        <Stack direction="row" alignItems="center" gap={0.5}>
-                          <Typography className="admin-agt-name">
-                            {agent.fullName}
-                          </Typography>
-                          {agent.verified && (
-                            <VerifiedIcon className="admin-icon-13-blue" />
-                          )}
-                        </Stack>
+                        <Typography className="admin-agt-name">
+                          {agent.memberFullName || agent.memberUserName}
+                        </Typography>
                         <Typography className="admin-agt-handle">
-                          @{agent.username}
+                          @{agent.memberUserName}
                         </Typography>
                       </Stack>
                     </Stack>
                   </TableCell>
                   <TableCell className="admin-agt-service-cell">
-                    {agent.serviceType}
+                    {(agent.memberServiceTypes ?? []).length
+                      ? (agent.memberServiceTypes ?? [])
+                          .map(prettyEnum)
+                          .join(", ")
+                      : "—"}
                   </TableCell>
                   <TableCell>
                     <Stack direction="row" alignItems="center" gap={0.5}>
                       <Rating
-                        value={agent.rating}
+                        value={agent.memberRating ?? 0}
                         precision={0.1}
                         readOnly
                         size="small"
                         className="admin-agt-rating-stars"
                       />
                       <Typography className="admin-agt-rating-value">
-                        {agent.rating}
+                        {(agent.memberRating ?? 0).toFixed(1)}
                       </Typography>
                     </Stack>
                   </TableCell>
                   <TableCell className="admin-agt-bookings-cell">
-                    {agent.totalBookings}
+                    {agent.memberServices ?? 0}
                   </TableCell>
                   <TableCell>
                     <Select
-                      value={agent.status}
+                      value={agent.memberStatus}
                       onChange={(e) =>
-                        changeStatus(agent.id, e.target.value as UserStatus)
+                        changeStatus(agent, e.target.value as MemberStatus)
                       }
                       size="small"
                       renderValue={(val) => (
-                        <span className={`status-chip status-${val}`}>
-                          {val}
+                        <span className={statusChipClass(val as string)}>
+                          {val as string}
                         </span>
                       )}
                       className="admin-status-select"
                     >
                       {STATUS_OPTIONS.map((s) => (
                         <MenuItem key={s} value={s}>
-                          <span className={`status-chip status-${s}`}>{s}</span>
+                          <span className={statusChipClass(s)}>{s}</span>
                         </MenuItem>
                       ))}
                     </Select>
                   </TableCell>
                   <TableCell className="admin-agt-joined-cell">
-                    {agent.joinDate}
+                    {formatDate(agent.createdAt)}
                   </TableCell>
                   <TableCell>
                     <Stack className="admin-action-row">
@@ -297,9 +417,30 @@ const AgentsManager = () => {
                   </TableCell>
                 </TableRow>
               ))}
+              {agents.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} align="center">
+                    <Typography className="admin-table-empty">
+                      No agents found
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
+
+        {totalPages > 1 && (
+          <Stack className="admin-pagination">
+            <Pagination
+              page={page}
+              count={totalPages}
+              onChange={(_, value) => setPage(value)}
+              shape="rounded"
+              color="primary"
+            />
+          </Stack>
+        )}
       </Stack>
 
       {/* ── Agent Detail Drawer ───────────────────────────── */}
@@ -312,7 +453,12 @@ const AgentsManager = () => {
       >
         {detailAgent &&
           (() => {
-            const ss = STATUS_STYLE[detailAgent.status] ?? STATUS_STYLE.active;
+            const ss =
+              STATUS_STYLE[detailAgent.memberStatus] ??
+              STATUS_STYLE[MemberStatus.ACTIVE];
+            const certificates = (detailAgent.memberCertificates ?? []).filter(
+              Boolean,
+            );
             return (
               <>
                 {/* Sticky Header */}
@@ -337,18 +483,23 @@ const AgentsManager = () => {
                 <Stack className="admin-agt-detail-body">
                   {/* Profile card */}
                   <Stack className="admin-agt-profile-card">
-                    {/* Cover strip */}
                     <Stack className="admin-agt-cover-strip" />
                     <Stack className="admin-agt-profile-body">
-                      {/* Avatar */}
                       <Stack className="admin-agt-avatar-outer">
                         <Stack className="admin-agt-avatar-lg">
                           <img
-                            src={detailAgent.avatar}
-                            alt={detailAgent.fullName}
+                            src={avatarUrl(
+                              detailAgent.memberImage,
+                              detailAgent.memberFullName ||
+                                detailAgent.memberUserName,
+                            )}
+                            alt={detailAgent.memberUserName}
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src =
-                                `https://ui-avatars.com/api/?name=${encodeURIComponent(detailAgent.fullName)}&background=6366f1&color=fff&size=72`;
+                              (e.target as HTMLImageElement).src = avatarUrl(
+                                undefined,
+                                detailAgent.memberFullName ||
+                                  detailAgent.memberUserName,
+                              );
                             }}
                           />
                         </Stack>
@@ -359,17 +510,13 @@ const AgentsManager = () => {
                         justifyContent="space-between"
                       >
                         <Stack>
-                          <Stack direction="row" alignItems="center" gap={0.8}>
-                            <Typography className="admin-agt-fullname">
-                              {detailAgent.fullName}
-                            </Typography>
-                            {detailAgent.verified && (
-                              <VerifiedIcon className="admin-icon-16-blue" />
-                            )}
-                          </Stack>
-                          {detailAgent.role && (
+                          <Typography className="admin-agt-fullname">
+                            {detailAgent.memberFullName ||
+                              detailAgent.memberUserName}
+                          </Typography>
+                          {detailAgent.memberSpecialty && (
                             <Typography className="admin-agt-role">
-                              {detailAgent.role}
+                              {detailAgent.memberSpecialty}
                             </Typography>
                           )}
                         </Stack>
@@ -385,7 +532,7 @@ const AgentsManager = () => {
                             letterSpacing: "0.05em",
                           }}
                         >
-                          {detailAgent.status}
+                          {detailAgent.memberStatus}
                         </span>
                       </Stack>
 
@@ -397,10 +544,10 @@ const AgentsManager = () => {
                       >
                         <Stack alignItems="center" flex={1}>
                           <Typography className="admin-agt-stat-value">
-                            {detailAgent.rating}
+                            {(detailAgent.memberRating ?? 0).toFixed(1)}
                           </Typography>
                           <Rating
-                            value={detailAgent.rating}
+                            value={detailAgent.memberRating ?? 0}
                             readOnly
                             size="small"
                             className="admin-agt-rating-sm"
@@ -412,16 +559,16 @@ const AgentsManager = () => {
                         <Stack className="admin-agt-divider-v" />
                         <Stack alignItems="center" flex={1}>
                           <Typography className="admin-agt-stat-value">
-                            {detailAgent.totalBookings}
+                            {detailAgent.memberServices ?? 0}
                           </Typography>
                           <Typography className="admin-agt-stat-label">
-                            Bookings
+                            Services
                           </Typography>
                         </Stack>
                         <Stack className="admin-agt-divider-v" />
                         <Stack alignItems="center" flex={1}>
                           <Typography className="admin-agt-stat-value">
-                            {(detailAgent.certifications ?? []).length}
+                            {certificates.length}
                           </Typography>
                           <Typography className="admin-agt-stat-label">
                             Certs
@@ -432,13 +579,13 @@ const AgentsManager = () => {
                   </Stack>
 
                   {/* Bio */}
-                  {detailAgent.bio && (
+                  {detailAgent.memberDesc && (
                     <Stack className="admin-agt-section-card">
                       <Typography className="admin-agt-section-heading">
                         About
                       </Typography>
                       <Typography className="admin-agt-bio-text">
-                        {detailAgent.bio}
+                        {detailAgent.memberDesc}
                       </Typography>
                     </Stack>
                   )}
@@ -451,13 +598,16 @@ const AgentsManager = () => {
                     <Stack gap={1}>
                       <InfoRow
                         label="Username"
-                        value={`@${detailAgent.username}`}
+                        value={`@${detailAgent.memberUserName}`}
                       />
-                      <InfoRow label="Email" value={detailAgent.email} />
-                      {detailAgent.phone && (
-                        <InfoRow label="Phone" value={detailAgent.phone} />
+                      <InfoRow
+                        label="Email"
+                        value={detailAgent.memberEmail || "—"}
+                      />
+                      {detailAgent.memberPhone && (
+                        <InfoRow label="Phone" value={detailAgent.memberPhone} />
                       )}
-                      {detailAgent.serviceArea && (
+                      {(detailAgent.memberServiceArea ?? []).length > 0 && (
                         <Stack
                           direction="row"
                           justifyContent="space-between"
@@ -472,11 +622,13 @@ const AgentsManager = () => {
                             </Typography>
                           </Stack>
                           <Typography className="admin-agt-info-value">
-                            {detailAgent.serviceArea}
+                            {(detailAgent.memberServiceArea ?? [])
+                              .map(prettyEnum)
+                              .join(", ")}
                           </Typography>
                         </Stack>
                       )}
-                      {detailAgent.responseTime && (
+                      {detailAgent.memberResponseTime && (
                         <Stack
                           direction="row"
                           justifyContent="space-between"
@@ -491,7 +643,7 @@ const AgentsManager = () => {
                             </Typography>
                           </Stack>
                           <Typography className="admin-agt-info-value">
-                            {detailAgent.responseTime}
+                            {detailAgent.memberResponseTime}
                           </Typography>
                         </Stack>
                       )}
@@ -505,33 +657,42 @@ const AgentsManager = () => {
                     </Typography>
                     <Stack gap={0}>
                       <InfoRow
-                        label="Service Type"
-                        value={detailAgent.serviceType}
+                        label="Service Types"
+                        value={
+                          (detailAgent.memberServiceTypes ?? []).length
+                            ? (detailAgent.memberServiceTypes ?? [])
+                                .map(prettyEnum)
+                                .join(", ")
+                            : "—"
+                        }
                       />
-                      {detailAgent.experience && (
+                      {detailAgent.memberExperience && (
                         <InfoRow
                           label="Experience"
-                          value={detailAgent.experience}
+                          value={detailAgent.memberExperience}
                         />
                       )}
-                      {detailAgent.approach && (
+                      {detailAgent.memberApproach && (
                         <InfoRow
                           label="Approach"
-                          value={detailAgent.approach}
+                          value={detailAgent.memberApproach}
                         />
                       )}
-                      {detailAgent.languages && (
+                      {detailAgent.memberLanguages && (
                         <InfoRow
                           label="Languages"
-                          value={detailAgent.languages}
+                          value={detailAgent.memberLanguages}
                         />
                       )}
-                      <InfoRow label="Joined" value={detailAgent.joinDate} />
+                      <InfoRow
+                        label="Joined"
+                        value={formatDate(detailAgent.createdAt)}
+                      />
                     </Stack>
                   </Stack>
 
                   {/* Certifications */}
-                  {(detailAgent.certifications ?? []).length > 0 && (
+                  {certificates.length > 0 && (
                     <Stack className="admin-agt-section-card">
                       <Stack direction="row" alignItems="center" gap={1} mb={2}>
                         <WorkspacePremiumIcon className="admin-icon-16-indigo" />
@@ -540,12 +701,12 @@ const AgentsManager = () => {
                         </Typography>
                       </Stack>
                       <Stack direction="row" flexWrap="wrap" gap={1.5}>
-                        {(detailAgent.certifications ?? []).map((cert, i) => (
+                        {certificates.map((cert, i) => (
                           <Stack key={i} className="admin-agt-cert-wrap">
                             <Stack className="admin-agt-cert-img-box">
                               <img
-                                src={cert.image}
-                                alt={cert.title}
+                                src={imageUrl(cert)}
+                                alt={`Certificate ${i + 1}`}
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).style.opacity =
                                     "0";
@@ -553,7 +714,7 @@ const AgentsManager = () => {
                               />
                             </Stack>
                             <Typography className="admin-agt-cert-title">
-                              {cert.title}
+                              Certificate {i + 1}
                             </Typography>
                           </Stack>
                         ))}
@@ -608,7 +769,7 @@ const AgentsManager = () => {
                   Edit Agent
                 </Typography>
                 <Typography className="admin-agt-edit-subtitle">
-                  {editingAgent.fullName}
+                  {editingAgent.memberFullName || editingAgent.memberUserName}
                 </Typography>
               </Stack>
               <IconButton onClick={() => setEditOpen(false)} size="small">
@@ -617,18 +778,7 @@ const AgentsManager = () => {
             </Stack>
 
             <Stack className="admin-agt-edit-body">
-              {[
-                { label: "Full Name", field: "fullName" },
-                { label: "Username", field: "username" },
-                { label: "Email", field: "email" },
-                { label: "Phone", field: "phone" },
-                { label: "Role / Specialty", field: "role" },
-                { label: "Experience", field: "experience" },
-                { label: "Service Area", field: "serviceArea" },
-                { label: "Approach", field: "approach" },
-                { label: "Languages", field: "languages" },
-                { label: "Response Time", field: "responseTime" },
-              ].map(({ label, field }) => (
+              {TEXT_FIELDS.map(({ label, field }) => (
                 <Stack key={field} gap={0.7}>
                   <Typography className="admin-agt-field-label">
                     {label}
@@ -636,7 +786,7 @@ const AgentsManager = () => {
                   <TextField
                     size="small"
                     fullWidth
-                    value={(form as any)[field]}
+                    value={form[field] as string}
                     onChange={(e) =>
                       setForm((p) => ({ ...p, [field]: e.target.value }))
                     }
@@ -647,20 +797,54 @@ const AgentsManager = () => {
               ))}
 
               <Stack gap={0.7}>
+                <Typography className="admin-agt-field-label">About</Typography>
+                <TextField
+                  size="small"
+                  fullWidth
+                  multiline
+                  rows={3}
+                  value={form.memberDesc}
+                  onChange={(e) =>
+                    setForm((p) => ({ ...p, memberDesc: e.target.value }))
+                  }
+                  inputProps={{ style: { color: "#111827" } }}
+                  InputProps={{
+                    style: {
+                      height: "auto",
+                      minHeight: "90px",
+                      alignItems: "flex-start",
+                    },
+                  }}
+                  className="admin-agt-input"
+                />
+              </Stack>
+
+              <Stack gap={0.7}>
                 <Typography className="admin-agt-field-label">
-                  Service Type
+                  Service Types
                 </Typography>
                 <Select
                   size="small"
-                  value={form.serviceType}
+                  multiple
+                  value={form.memberServiceTypes}
                   onChange={(e) =>
-                    setForm((p) => ({ ...p, serviceType: e.target.value }))
+                    setForm((p) => ({
+                      ...p,
+                      memberServiceTypes: e.target.value as string[],
+                    }))
                   }
+                  renderValue={(selected) => (
+                    <Stack className="admin-chip-row">
+                      {(selected as string[]).map((value) => (
+                        <Chip key={value} size="small" label={prettyEnum(value)} />
+                      ))}
+                    </Stack>
+                  )}
                   className="admin-agt-select"
                 >
                   {SERVICE_TYPES.map((t) => (
                     <MenuItem key={t} value={t}>
-                      {t}
+                      {prettyEnum(t)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -668,43 +852,55 @@ const AgentsManager = () => {
 
               <Stack gap={0.7}>
                 <Typography className="admin-agt-field-label">
-                  Status
+                  Service Area
                 </Typography>
                 <Select
                   size="small"
-                  value={form.status}
+                  multiple
+                  value={form.memberServiceArea}
                   onChange={(e) =>
                     setForm((p) => ({
                       ...p,
-                      status: e.target.value as UserStatus,
+                      memberServiceArea: e.target.value as string[],
+                    }))
+                  }
+                  renderValue={(selected) => (
+                    <Stack className="admin-chip-row">
+                      {(selected as string[]).map((value) => (
+                        <Chip key={value} size="small" label={prettyEnum(value)} />
+                      ))}
+                    </Stack>
+                  )}
+                  className="admin-agt-select"
+                >
+                  {SERVICE_AREAS.map((a) => (
+                    <MenuItem key={a} value={a}>
+                      {prettyEnum(a)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Stack>
+
+              <Stack gap={0.7}>
+                <Typography className="admin-agt-field-label">Status</Typography>
+                <Select
+                  size="small"
+                  value={form.memberStatus}
+                  onChange={(e) =>
+                    setForm((p) => ({
+                      ...p,
+                      memberStatus: e.target.value as MemberStatus,
                     }))
                   }
                   className="admin-agt-select"
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
-                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                      {prettyEnum(s)}
                     </MenuItem>
                   ))}
                 </Select>
               </Stack>
-
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={form.verified}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, verified: e.target.checked }))
-                    }
-                    className="admin-agt-verified-switch"
-                  />
-                }
-                label={
-                  <Typography className="admin-agt-verified-label">
-                    Verified Agent
-                  </Typography>
-                }
-              />
             </Stack>
 
             <Stack
@@ -722,9 +918,10 @@ const AgentsManager = () => {
               <Button
                 variant="contained"
                 onClick={saveEdit}
+                disabled={isSaving}
                 className="admin-agt-save-btn"
               >
-                Save Changes
+                {isSaving ? "Saving…" : "Save Changes"}
               </Button>
             </Stack>
           </>

@@ -1889,6 +1889,8 @@ $sidebar-width: 260px;
   .admin-ord-total-count {
     font-size: 12px;
     color: #9ca3af;
+    // Sits beside the status filter in the card header — must not wrap to two lines.
+    white-space: nowrap;
   }
 
   .admin-ord-no-cell {
@@ -4219,10 +4221,62 @@ $sidebar-width: 260px;
   .admin-icon-15       { font-size: 15px !important; }
   .admin-icon-12-white { font-size: 12px !important; color: #fff !important; }
 
-  // ─── AgentsManager: verified switch ──────────────────────────────────────
+  // ─── Pagination ──────────────────────────────────────────────────────────
 
-  .admin-agt-verified-switch {
-    & .MuiSwitch-switchBase.Mui-checked { color: #6366F1; }
-    & .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track { background-color: #6366F1; }
+  .admin-pagination {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 16px;
+    border-top: 1px solid $card-border;
+    background: #fafbfc;
+
+    .MuiPaginationItem-root {
+      font-family: $font;
+      font-size: 13px;
+      color: $text-2;
+      border-radius: 8px;
+
+      &.Mui-selected {
+        background: $accent;
+        color: #ffffff;
+        font-weight: 700;
+
+        &:hover {
+          background: $accent-hover;
+        }
+      }
+    }
+  }
+
+  // ─── Multi-select chip rows ──────────────────────────────────────────────
+
+  .admin-chip-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+
+    .MuiChip-root {
+      height: 22px;
+      font-family: $font;
+      font-size: 11px;
+      font-weight: 600;
+      background: $accent-bg;
+      color: $accent;
+    }
+  }
+
+  // ─── ServicesManager: read-only owner line ───────────────────────────────
+
+  .admin-svc-owner-text {
+    font-family: $font;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-1;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f9fafb;
+    border: 1px solid $card-border;
   }
 }

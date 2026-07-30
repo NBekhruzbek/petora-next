@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   Stack,
   Typography,
@@ -11,35 +11,110 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Pagination,
 } from "@mui/material";
-import { mockUsers, AdminUser, UserStatus } from "../../data/adminMockData";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_ALL_USERS_BY_ADMIN } from "@/apollo/admin/query";
+import { UPDATE_MEMBER_BY_ADMIN } from "@/apollo/admin/mutation";
+import { Member } from "@/libs/types/member/member";
+import { MembersInquiry } from "@/libs/types/member/member.input";
+import { MemberStatus } from "@/libs/enums/member.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
+import {
+  avatarUrl,
+  formatDate,
+  isNoDataError,
+  metaTotal,
+  prettyEnum,
+  statusChipClass,
+  useDebouncedValue,
+} from "./adminHelpers";
 
-const STATUS_OPTIONS: UserStatus[] = ["active", "paused", "blocked"];
+const USERS_PER_PAGE = 10;
+
+// Members have no "paused" state — the schema only knows these three.
+const STATUS_OPTIONS: MemberStatus[] = [
+  MemberStatus.ACTIVE,
+  MemberStatus.BLOCK,
+  MemberStatus.DELETE,
+];
 
 const UsersManager = () => {
-  const [users, setUsers] = useState<AdminUser[]>(
-    mockUsers.filter((u) => u.memberType === "USER"),
-  );
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"ALL" | UserStatus>("ALL");
+  const [filterStatus, setFilterStatus] = useState<"ALL" | MemberStatus>("ALL");
+  const debouncedSearch = useDebouncedValue(search);
 
-  const filtered = useMemo(
-    () =>
-      users.filter((u) => {
-        if (filterStatus !== "ALL" && u.status !== filterStatus) return false;
-        const q = search.toLowerCase();
-        return (
-          !q ||
-          u.fullName.toLowerCase().includes(q) ||
-          u.username.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q)
-        );
-      }),
-    [users, search, filterStatus],
-  );
+  /** APOLLO REQUESTS **/
 
-  const changeStatus = (id: string, status: UserStatus) =>
-    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status } : u)));
+  const searchFilter: MembersInquiry = {
+    page,
+    limit: USERS_PER_PAGE,
+    sort: "createdAt",
+    direction: Direction.DESC,
+    search: {
+      // The API regexes memberUserName for `text`.
+      ...(debouncedSearch.trim() ? { text: debouncedSearch.trim() } : {}),
+      ...(filterStatus === "ALL" ? {} : { memberStatus: filterStatus }),
+    },
+  };
+
+  const {
+    data: usersData,
+    previousData: usersPreviousData,
+    error: usersError,
+    refetch: usersRefetch,
+  } = useQuery(GET_ALL_USERS_BY_ADMIN, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: searchFilter },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const [updateMemberByAdmin] = useMutation(UPDATE_MEMBER_BY_ADMIN);
+
+  /** DERIVED **/
+
+  // Keep the previous page on screen while the next one loads — Apollo empties
+  // `data` when the variables change, which would otherwise flash the empty row.
+  const usersResult = usersData ?? usersPreviousData;
+  // getAllUsersByAdmin rejects with "No data found!" rather than returning [].
+  const users: Member[] = isNoDataError(usersError)
+    ? []
+    : (usersResult?.getAllUsersByAdmin?.list ?? []);
+  const total = isNoDataError(usersError)
+    ? 0
+    : metaTotal(usersResult?.getAllUsersByAdmin?.metaCounter);
+  const totalPages = Math.max(1, Math.ceil(total / USERS_PER_PAGE));
+
+  /** HANDLERS **/
+
+  const refreshUsers = async () => {
+    try {
+      await usersRefetch({ input: searchFilter });
+    } catch {
+      /* an emptied list surfaces through usersError */
+    }
+  };
+
+  const changeStatus = async (member: Member, memberStatus: MemberStatus) => {
+    if (member.memberStatus === memberStatus) return;
+    try {
+      await updateMemberByAdmin({
+        variables: { input: { _id: member._id, memberStatus } },
+      });
+      await refreshUsers();
+      await sweetBottomSmallSuccessAlert("User updated!", 700);
+    } catch (err: any) {
+      console.log("ERROR, changeStatus:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
+
+  const resetToFirstPage = () => setPage(1);
 
   return (
     <Stack gap={0}>
@@ -51,26 +126,32 @@ const UsersManager = () => {
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search name, username, email…"
+            placeholder="Search username…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              resetToFirstPage();
+            }}
             className="admin-toolbar-search admin-usr-search"
           />
           <Select
             size="small"
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as any)}
+            onChange={(e) => {
+              setFilterStatus(e.target.value as "ALL" | MemberStatus);
+              resetToFirstPage();
+            }}
             className="admin-toolbar-select admin-usr-status-filter"
           >
             <MenuItem value="ALL">All Statuses</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {s.charAt(0).toUpperCase() + s.slice(1)}
+                {prettyEnum(s)}
               </MenuItem>
             ))}
           </Select>
           <Typography className="admin-meta-count">
-            {filtered.length} of {users.length}
+            {users.length} of {total}
           </Typography>
         </Stack>
 
@@ -86,65 +167,74 @@ const UsersManager = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filtered.map((user) => (
-                <TableRow key={user.id}>
+              {users.map((user) => (
+                <TableRow key={user._id}>
                   <TableCell>
                     <Stack className="admin-name-cell">
                       <img
-                        src={user.avatar}
-                        alt={user.fullName}
+                        src={avatarUrl(
+                          user.memberImage,
+                          user.memberFullName || user.memberUserName,
+                        )}
+                        alt={user.memberUserName}
                         className="admin-table-avatar"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName)}&background=6366f1&color=fff`;
+                          (e.target as HTMLImageElement).src = avatarUrl(
+                            undefined,
+                            user.memberFullName || user.memberUserName,
+                          );
                         }}
                       />
                       <Typography className="admin-cell-name">
-                        {user.fullName}
+                        {user.memberFullName || user.memberUserName}
                       </Typography>
                     </Stack>
                   </TableCell>
                   <TableCell>
                     <Typography className="admin-cell-meta">
-                      @{user.username}
+                      @{user.memberUserName}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography className="admin-cell-meta">
-                      {user.email}
+                      {user.memberEmail || "—"}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Select
-                      value={user.status}
+                      value={user.memberStatus}
                       onChange={(e) =>
-                        changeStatus(user.id, e.target.value as UserStatus)
+                        changeStatus(user, e.target.value as MemberStatus)
                       }
                       size="small"
                       className="admin-status-select"
                       renderValue={(val) => (
-                        <span className={`status-chip status-${val}`}>
-                          {val}
+                        <span className={statusChipClass(val as string)}>
+                          {val as string}
                         </span>
                       )}
                     >
                       {STATUS_OPTIONS.map((s) => (
                         <MenuItem key={s} value={s}>
-                          <span className={`status-chip status-${s}`}>{s}</span>
+                          <span className={statusChipClass(s)}>{s}</span>
                         </MenuItem>
                       ))}
                     </Select>
                   </TableCell>
                   <TableCell>
                     <Typography className="admin-cell-date">
-                      {user.joinDate}
+                      {formatDate(user.createdAt)}
                     </Typography>
                   </TableCell>
                 </TableRow>
               ))}
-              {filtered.length === 0 && (
+              {users.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} align="center" className="admin-usr-empty-cell">
+                  <TableCell
+                    colSpan={5}
+                    align="center"
+                    className="admin-usr-empty-cell"
+                  >
                     <Typography className="admin-table-empty">
                       No users found
                     </Typography>
@@ -154,6 +244,18 @@ const UsersManager = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        {totalPages > 1 && (
+          <Stack className="admin-pagination">
+            <Pagination
+              page={page}
+              count={totalPages}
+              onChange={(_, value) => setPage(value)}
+              shape="rounded"
+              color="primary"
+            />
+          </Stack>
+        )}
       </Stack>
     </Stack>
   );

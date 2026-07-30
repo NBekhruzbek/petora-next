@@ -1,6 +1,8 @@
 import { Stack, Typography, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useRouter } from "next/router";
+import { useReactiveVar } from "@apollo/client";
+import { userVar } from "@/apollo/store";
 
 const pageNames: Record<string, string> = {
   "/admin": "Dashboard",
@@ -15,7 +17,10 @@ const pageNames: Record<string, string> = {
 
 const AdminHeader = () => {
   const router = useRouter();
+  const user = useReactiveVar(userVar);
   const pageName = pageNames[router.pathname] ?? "Admin";
+  const adminName =
+    user?.memberFullName || user?.memberUserName || "Admin";
 
   return (
     <Stack className="admin-header" direction="row" alignItems="center">
@@ -26,8 +31,10 @@ const AdminHeader = () => {
       </Stack>
 
       <Stack className="admin-header-right" direction="row" alignItems="center">
-        <Stack className="admin-header-avatar">A</Stack>
-        <Typography className="admin-header-name">Admin</Typography>
+        <Stack className="admin-header-avatar">
+          {adminName.charAt(0).toUpperCase()}
+        </Stack>
+        <Typography className="admin-header-name">{adminName}</Typography>
         <Button
           className="admin-header-logout"
           onClick={() => router.push("/")}

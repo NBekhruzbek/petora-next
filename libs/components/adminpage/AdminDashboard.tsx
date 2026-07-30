@@ -15,55 +15,104 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { useRouter } from "next/router";
+import { useQuery } from "@apollo/client";
 import StatCard from "./StatCard";
 import {
-  dashboardStats,
-  mockOrders,
-  mockUsers,
-} from "../../data/adminMockData";
+  GET_ADMIN_DASHBOARD_STATS,
+  GET_ALL_ORDERS_BY_ADMIN,
+  GET_ALL_USERS_BY_ADMIN,
+} from "@/apollo/admin/query";
+import { AdminDashboardStats } from "@/libs/types/admin/admin";
+import { Order } from "@/libs/types/order/order";
+import { Member } from "@/libs/types/member/member";
+import { Direction } from "@/libs/enums/common.enum";
+import { formatDate, statusChipClass, won } from "./adminHelpers";
+
+const RECENT_LIMIT = 5;
 
 const AdminDashboard = () => {
   const router = useRouter();
-  const recentOrders = mockOrders.slice(0, 5);
-  const recentUsers = [...mockUsers].reverse().slice(0, 5);
+
+  /** APOLLO REQUESTS **/
+
+  const { data: statsData } = useQuery(GET_ADMIN_DASHBOARD_STATS, {
+    fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const { data: recentOrdersData } = useQuery(GET_ALL_ORDERS_BY_ADMIN, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: { page: 1, limit: RECENT_LIMIT } },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  // getAllUsersByAdmin throws "No data found!" on an empty collection; the
+  // errorLink already swallows that message, and the ?? below covers the data.
+  const { data: recentUsersData } = useQuery(GET_ALL_USERS_BY_ADMIN, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      input: {
+        page: 1,
+        limit: RECENT_LIMIT,
+        sort: "createdAt",
+        direction: Direction.DESC,
+        search: {},
+      },
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  /** DERIVED **/
+
+  const stats: AdminDashboardStats | undefined =
+    statsData?.getAdminDashboardStats;
+  const recentOrders: Order[] =
+    recentOrdersData?.getAllOrdersByAdmin?.list ?? [];
+  const recentUsers: Member[] = recentUsersData?.getAllUsersByAdmin?.list ?? [];
+
+  const revenue = stats?.totalRevenue ?? 0;
+  const revenueLabel =
+    revenue >= 1_000_000
+      ? `₩${(revenue / 1_000_000).toFixed(1)}M`
+      : won(revenue);
 
   return (
     <Stack className="admin-dashboard">
       <Stack className="stat-cards-row">
         <StatCard
           title="Total Users"
-          value={dashboardStats.totalUsers}
+          value={stats?.totalUsers ?? 0}
           icon={<PeopleAltIcon />}
           color="#6366F1"
-          trend="+184 this month"
+          trendNeutral="registered members"
         />
         <StatCard
           title="Total Agents"
-          value={dashboardStats.totalAgents}
+          value={stats?.totalAgents ?? 0}
           icon={<SupportAgentIcon />}
           color="#0EA5E9"
-          trend="+18 this month"
+          trendNeutral="service providers"
         />
         <StatCard
           title="Products"
-          value={dashboardStats.totalProducts}
+          value={stats?.totalProducts ?? 0}
           icon={<InventoryIcon />}
           color="#10B981"
-          trendNeutral="342 active listings"
+          trendNeutral="listings in catalogue"
         />
         <StatCard
           title="Orders"
-          value={dashboardStats.totalOrders}
+          value={stats?.totalOrders ?? 0}
           icon={<ShoppingCartIcon />}
           color="#F59E0B"
-          trend="+681 this month"
+          trendNeutral={`${stats?.pendingOrders ?? 0} awaiting action`}
         />
         <StatCard
           title="Revenue"
-          value={`₩${(dashboardStats.totalRevenue / 1000000).toFixed(1)}M`}
+          value={revenueLabel}
           icon={<AttachMoneyIcon />}
           color="#6366F1"
-          trend="+12% vs last month"
+          trendNeutral="excludes cancelled"
         />
       </Stack>
 
@@ -97,21 +146,35 @@ const AdminDashboard = () => {
               </TableHead>
               <TableBody>
                 {recentOrders.map((order) => (
-                  <TableRow key={order.id}>
+                  <TableRow key={order._id}>
                     <TableCell className="admin-db-order-no-cell">
-                      {order.orderNo}
-                    </TableCell>
-                    <TableCell>{order.customerName}</TableCell>
-                    <TableCell className="admin-db-order-total-cell">
-                      ₩{order.total.toLocaleString()}
+                      {order.orderNumber}
                     </TableCell>
                     <TableCell>
-                      <span className={`status-chip status-${order.status}`}>
-                        {order.status}
+                      {order.receiverName ||
+                        order.memberData?.memberFullName ||
+                        order.memberData?.memberUserName ||
+                        "—"}
+                    </TableCell>
+                    <TableCell className="admin-db-order-total-cell">
+                      {won(order.orderTotal)}
+                    </TableCell>
+                    <TableCell>
+                      <span className={statusChipClass(order.orderStatus)}>
+                        {order.orderStatus}
                       </span>
                     </TableCell>
                   </TableRow>
                 ))}
+                {recentOrders.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={4} align="center">
+                      <Typography className="admin-table-empty">
+                        No orders yet
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -147,45 +210,45 @@ const AdminDashboard = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {recentUsers.map((user) => (
-                  <TableRow key={user.id}>
+                {recentUsers.map((member) => (
+                  <TableRow key={member._id}>
                     <TableCell>
                       <Stack>
                         <Typography className="admin-db-user-name">
-                          {user.fullName}
+                          {member.memberFullName || member.memberUserName}
                         </Typography>
                         <Typography className="admin-db-user-handle">
-                          @{user.username}
+                          @{member.memberUserName}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
                       <span
                         className="status-chip"
-                        style={{
-                          background:
-                            user.memberType === "SERVICE_AGENT"
-                              ? "#EFF6FF"
-                              : "#F0F0FF",
-                          color:
-                            user.memberType === "SERVICE_AGENT"
-                              ? "#3B82F6"
-                              : "#6366F1",
-                        }}
+                        style={{ background: "#F0F0FF", color: "#6366F1" }}
                       >
-                        {user.memberType === "SERVICE_AGENT" ? "Agent" : "User"}
+                        User
                       </span>
                     </TableCell>
                     <TableCell className="admin-db-user-joined">
-                      {user.joinDate}
+                      {formatDate(member.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <span className={`status-chip status-${user.status}`}>
-                        {user.status}
+                      <span className={statusChipClass(member.memberStatus)}>
+                        {member.memberStatus}
                       </span>
                     </TableCell>
                   </TableRow>
                 ))}
+                {recentUsers.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={4} align="center">
+                      <Typography className="admin-table-empty">
+                        No registrations yet
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -200,9 +263,7 @@ const AdminDashboard = () => {
         flexWrap="wrap"
         className="admin-db-quick-actions"
       >
-        <Typography className="admin-db-qa-label">
-          Quick Actions
-        </Typography>
+        <Typography className="admin-db-qa-label">Quick Actions</Typography>
         {[
           { label: "Add Product", href: "/admin/products", primary: true },
           { label: "Manage Orders", href: "/admin/orders", primary: false },

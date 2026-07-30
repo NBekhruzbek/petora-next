@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, ChangeEvent } from "react";
+import { useMemo, useRef, useState, ChangeEvent } from "react";
 import {
   Stack,
   Typography,
@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Pagination,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -22,27 +23,107 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import EditIcon from "@mui/icons-material/Edit";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { useMutation, useQuery } from "@apollo/client";
 import {
-  mockPosts,
-  AdminPost,
-  PostBoard,
-  PostStatus,
-} from "../../data/adminMockData";
+  GET_ALL_BOARD_ARTICLES_BY_ADMIN,
+  GET_ALL_QUESTIONS_BY_ADMIN,
+  GET_COMMUNITY_COUNTS_BY_ADMIN,
+} from "@/apollo/admin/query";
+import {
+  REMOVE_BOARD_ARTICLE_BY_ADMIN,
+  REMOVE_QNA_QUESTION_BY_ADMIN,
+  UPDATE_BOARD_ARTICLE_BY_ADMIN,
+  UPDATE_QNA_QUESTION_BY_ADMIN,
+} from "@/apollo/admin/mutation";
+import { CREATE_NEW_ARTICLE, IMAGES_UPLOADER } from "@/apollo/user/mutation";
+import { BoardArticle } from "@/libs/types/board-article/board-article";
+import { QnaQuestion } from "@/libs/types/qna/qna";
+import { ArticleCategory, ArticleStatus } from "@/libs/enums/boardArticle.enum";
+import { QnaStatus } from "@/libs/enums/qna.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import { Messages } from "@/libs/config";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
+import {
+  BLANK_IMAGE,
+  avatarUrl,
+  formatDate,
+  imageUrl,
+  metaTotal,
+} from "./adminHelpers";
 
-type StatusFilter = PostStatus | "ALL";
+const POSTS_PER_PAGE = 10;
 
-const BOARD_COLORS: Record<PostBoard, { bg: string; color: string }> = {
+type BoardKey = "FREE" | "NEWS" | "QNA";
+type TabKey = BoardKey | "ALL";
+/** ACTIVE and HIDE are the only states a listed post can be in. */
+type StatusFilter = "ALL" | "ACTIVE" | "HIDE";
+
+const BOARD_COLORS: Record<BoardKey, { bg: string; color: string }> = {
   FREE: { bg: "#F0F0FF", color: "#6366F1" },
   NEWS: { bg: "#EFF6FF", color: "#3B82F6" },
   QNA: { bg: "#ECFDF5", color: "#059669" },
 };
 
-const TABS: { label: string; value: PostBoard | "ALL" }[] = [
+const TABS: { label: string; value: TabKey }[] = [
   { label: "All", value: "ALL" },
   { label: "Free", value: "FREE" },
   { label: "News", value: "NEWS" },
   { label: "Q&A", value: "QNA" },
 ];
+
+/**
+ * Articles and Q&A live in separate collections with separate resolvers, but
+ * the panel moderates them as one feed. Both are mapped onto this shape so the
+ * list, the drawer and the actions only deal with one kind of row.
+ */
+interface Post {
+  id: string;
+  board: BoardKey;
+  title: string;
+  content: string;
+  image?: string;
+  author: string;
+  authorImage?: string;
+  createdAt: Date;
+  status: string;
+  views: number;
+  likes: number;
+  /** Comments for articles, answers for Q&A. */
+  replies: number;
+}
+
+const fromArticle = (article: BoardArticle): Post => ({
+  id: article._id,
+  board: article.articleCategory === ArticleCategory.NEWS ? "NEWS" : "FREE",
+  title: article.articleTitle,
+  content: article.articleContent,
+  image: article.articleImage,
+  author: article.memberData?.memberUserName ?? "unknown",
+  authorImage: article.memberData?.memberImage,
+  createdAt: new Date(article.createdAt),
+  status: article.articleStatus,
+  views: article.articleViews ?? 0,
+  likes: article.articleLikes ?? 0,
+  replies: article.articleComments ?? 0,
+});
+
+const fromQuestion = (question: QnaQuestion): Post => ({
+  id: question._id,
+  board: "QNA",
+  title: question.questionTitle,
+  content: question.questionContent,
+  image: question.questionImages?.[0],
+  author: question.memberData?.memberUserName ?? "unknown",
+  authorImage: question.memberData?.memberImage,
+  createdAt: new Date(question.createdAt),
+  status: question.qnaStatus,
+  views: question.questionViews ?? 0,
+  likes: question.questionLikes ?? 0,
+  replies: question.questionAnswers ?? 0,
+});
 
 const StatBadge = ({
   icon,
@@ -60,109 +141,286 @@ const StatBadge = ({
 );
 
 const CommunityModerator = () => {
-  const [posts, setPosts] = useState<AdminPost[]>(mockPosts);
-  const [postStatuses, setPostStatuses] = useState<Record<string, PostStatus>>(
-    {},
-  );
-  const [boardTab, setBoardTab] = useState<PostBoard | "ALL">("ALL");
+  const [boardTab, setBoardTab] = useState<TabKey>("ALL");
   const [filterStatus, setFilterStatus] = useState<StatusFilter>("ALL");
   const [search, setSearch] = useState("");
-  const [selectedPost, setSelectedPost] = useState<AdminPost | null>(null);
+  const [page, setPage] = useState(1);
+
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Post | null>(null);
 
   // ── Write Post ───────────────────────────────────────────
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [writeOpen, setWriteOpen] = useState(false);
   const [writeTitle, setWriteTitle] = useState("");
   const [writeContent, setWriteContent] = useState("");
-  const [, setWriteImageFile] = useState<File | null>(null);
-  const [writeImagePreview, setWriteImagePreview] = useState<string>("");
+  const [writeImage, setWriteImage] = useState<{
+    file: File;
+    preview: string;
+  } | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const canWrite = boardTab === "FREE" || boardTab === "NEWS";
-  const writeBoard = boardTab as "FREE" | "NEWS";
+  const writeBoard = (canWrite ? boardTab : "FREE") as "FREE" | "NEWS";
+
+  /** APOLLO REQUESTS **/
+
+  const articleSearch = {
+    ...(filterStatus === "ALL"
+      ? {}
+      : { articleStatus: filterStatus as ArticleStatus }),
+    ...(search.trim() ? { text: search.trim() } : {}),
+  };
+  const qnaSearch = {
+    ...(filterStatus === "ALL" ? {} : { qnaStatus: filterStatus as QnaStatus }),
+    ...(search.trim() ? { text: search.trim() } : {}),
+  };
+
+  const wantsArticles = boardTab !== "QNA";
+  const wantsQuestions = boardTab === "ALL" || boardTab === "QNA";
+
+  const {
+    data: articlesData,
+    previousData: articlesPreviousData,
+    refetch: articlesRefetch,
+  } = useQuery(GET_ALL_BOARD_ARTICLES_BY_ADMIN, {
+    fetchPolicy: "cache-and-network",
+    skip: !wantsArticles,
+    variables: {
+      input: {
+        // The merged "All" feed shows the newest of each board rather than
+        // paging, since two collections cannot share one page cursor.
+        page: boardTab === "ALL" ? 1 : page,
+        limit: POSTS_PER_PAGE,
+        sort: "createdAt",
+        direction: Direction.DESC,
+        search: {
+          ...articleSearch,
+          ...(boardTab === "FREE" || boardTab === "NEWS"
+            ? { articleCategory: boardTab as ArticleCategory }
+            : {}),
+        },
+      },
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const {
+    data: questionsData,
+    previousData: questionsPreviousData,
+    refetch: questionsRefetch,
+  } = useQuery(GET_ALL_QUESTIONS_BY_ADMIN, {
+    fetchPolicy: "cache-and-network",
+    skip: !wantsQuestions,
+    variables: {
+      input: {
+        page: boardTab === "ALL" ? 1 : page,
+        limit: POSTS_PER_PAGE,
+        sort: "createdAt",
+        direction: Direction.DESC,
+        search: qnaSearch,
+      },
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const { data: countsData, refetch: countsRefetch } = useQuery(
+    GET_COMMUNITY_COUNTS_BY_ADMIN,
+    {
+      fetchPolicy: "cache-and-network",
+      variables: {
+        free: {
+          page: 1,
+          limit: 1,
+          search: {
+            ...articleSearch,
+            articleCategory: ArticleCategory.FREE,
+          },
+        },
+        news: {
+          page: 1,
+          limit: 1,
+          search: {
+            ...articleSearch,
+            articleCategory: ArticleCategory.NEWS,
+          },
+        },
+        qna: { page: 1, limit: 1, search: qnaSearch },
+      },
+    },
+  );
+
+  const [updateArticle] = useMutation(UPDATE_BOARD_ARTICLE_BY_ADMIN);
+  const [removeArticle] = useMutation(REMOVE_BOARD_ARTICLE_BY_ADMIN);
+  const [updateQuestion] = useMutation(UPDATE_QNA_QUESTION_BY_ADMIN);
+  const [removeQuestion] = useMutation(REMOVE_QNA_QUESTION_BY_ADMIN);
+  const [createNewArticle] = useMutation(CREATE_NEW_ARTICLE);
+  const [imagesUploader] = useMutation(IMAGES_UPLOADER);
+
+  /** DERIVED **/
+
+  const articlesResult = articlesData ?? articlesPreviousData;
+  const questionsResult = questionsData ?? questionsPreviousData;
+
+  const posts: Post[] = useMemo(() => {
+    const articles: BoardArticle[] = wantsArticles
+      ? (articlesResult?.getAllBoardArticlesByAdmin?.list ?? [])
+      : [];
+    const questions: QnaQuestion[] = wantsQuestions
+      ? (questionsResult?.getAllQuestionsByAdmin?.list ?? [])
+      : [];
+
+    return [...articles.map(fromArticle), ...questions.map(fromQuestion)]
+      // A row still sitting in DELETE means a remove that never landed — it is
+      // gone as far as the public site is concerned, so keep it out of here too.
+      .filter((post) => post.status !== ArticleStatus.DELETE)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }, [articlesResult, questionsResult, wantsArticles, wantsQuestions]);
+
+  const counts = {
+    FREE: metaTotal(countsData?.free?.metaCounter),
+    NEWS: metaTotal(countsData?.news?.metaCounter),
+    QNA: metaTotal(countsData?.qna?.metaCounter),
+  };
+  const countFor = (board: TabKey) =>
+    board === "ALL" ? counts.FREE + counts.NEWS + counts.QNA : counts[board];
+
+  const tabTotal = countFor(boardTab);
+  // Only a single-collection tab can be paged correctly.
+  const totalPages =
+    boardTab === "ALL" ? 1 : Math.max(1, Math.ceil(tabTotal / POSTS_PER_PAGE));
+
+  const selectedPost = posts.find((post) => post.id === selectedId) ?? null;
+
+  /** HANDLERS **/
+
+  const refreshAll = async () => {
+    await Promise.allSettled([
+      wantsArticles ? articlesRefetch() : Promise.resolve(),
+      wantsQuestions ? questionsRefetch() : Promise.resolve(),
+      countsRefetch(),
+    ]);
+  };
+
+  const setStatus = async (post: Post, status: ArticleStatus | QnaStatus) => {
+    try {
+      if (post.board === "QNA") {
+        await updateQuestion({
+          variables: { input: { questionId: post.id, qnaStatus: status } },
+        });
+      } else {
+        await updateArticle({
+          variables: { input: { articleId: post.id, articleStatus: status } },
+        });
+      }
+      await refreshAll();
+      await sweetBottomSmallSuccessAlert("Post updated!", 700);
+    } catch (err: any) {
+      console.log("ERROR, setStatus:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
+
+  // The hard-delete resolvers only match rows already in DELETE status, so a
+  // real delete is two calls: flag it, then remove it.
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const post = deleteTarget;
+    try {
+      if (post.board === "QNA") {
+        await updateQuestion({
+          variables: {
+            input: { questionId: post.id, qnaStatus: QnaStatus.DELETE },
+          },
+        });
+        await removeQuestion({ variables: { input: post.id } });
+      } else {
+        await updateArticle({
+          variables: {
+            input: { articleId: post.id, articleStatus: ArticleStatus.DELETE },
+          },
+        });
+        await removeArticle({ variables: { input: post.id } });
+      }
+      setDeleteTarget(null);
+      if (selectedId === post.id) setDrawerOpen(false);
+      await refreshAll();
+      await sweetBottomSmallSuccessAlert("Post deleted!", 700);
+    } catch (err: any) {
+      console.log("ERROR, confirmDelete:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
+
+  const openDetail = (post: Post) => {
+    setSelectedId(post.id);
+    setDrawerOpen(true);
+  };
 
   const openWrite = () => {
+    if (writeImage) URL.revokeObjectURL(writeImage.preview);
     setWriteTitle("");
     setWriteContent("");
-    setWriteImageFile(null);
-    setWriteImagePreview("");
+    setWriteImage(null);
     setWriteOpen(true);
   };
 
   const handleImagePick = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (writeImagePreview) URL.revokeObjectURL(writeImagePreview);
-    setWriteImageFile(file);
-    setWriteImagePreview(URL.createObjectURL(file));
+    if (writeImage) URL.revokeObjectURL(writeImage.preview);
+    setWriteImage({ file, preview: URL.createObjectURL(file) });
+    // Reset the input so re-picking the same file still fires a change.
     e.target.value = "";
   };
 
   const removeWriteImage = () => {
-    if (writeImagePreview) URL.revokeObjectURL(writeImagePreview);
-    setWriteImageFile(null);
-    setWriteImagePreview("");
+    if (writeImage) URL.revokeObjectURL(writeImage.preview);
+    setWriteImage(null);
   };
 
-  const submitPost = () => {
-    const newPost: AdminPost = {
-      id: `post-${Date.now()}`,
-      title: writeTitle.trim(),
-      description: writeContent.trim(),
-      board: writeBoard,
-      author: "Admin",
-      date: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
-      status: "visible",
-      views: 0,
-      likes: 0,
-      commentsCount: 0,
-      image: writeImagePreview || undefined,
-    };
-    setPosts((prev) => [newPost, ...prev]);
-    if (writeImagePreview) URL.revokeObjectURL(writeImagePreview);
-    setWriteImagePreview("");
-    setWriteImageFile(null);
-    setWriteOpen(false);
+  const submitPost = async () => {
+    if (isPublishing || !writeImage) return;
+    try {
+      setIsPublishing(true);
+
+      // articleImage is required by the API, so a failed upload has to abort
+      // the write rather than post a picture-less article.
+      const { data: uploadData } = await imagesUploader({
+        variables: { files: [writeImage.file], target: "article" },
+      });
+      const articleImage: string | undefined = (
+        uploadData?.imagesUploader ?? []
+      ).filter(Boolean)[0];
+      if (!articleImage) throw new Error(Messages.error1);
+
+      await createNewArticle({
+        variables: {
+          input: {
+            articleCategory: writeBoard as ArticleCategory,
+            articleTitle: writeTitle.trim(),
+            articleContent: writeContent.trim(),
+            articleImage,
+          },
+        },
+      });
+
+      removeWriteImage();
+      setWriteOpen(false);
+      await refreshAll();
+      await sweetBottomSmallSuccessAlert("Post published!", 700);
+    } catch (err: any) {
+      console.log("ERROR, submitPost:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
-  const getStatus = (post: AdminPost): PostStatus =>
-    postStatuses[post.id] ?? post.status;
-
-  const filtered = useMemo(
-    () =>
-      posts.filter((p) => {
-        const st = getStatus(p);
-        if (st === "deleted") return false;
-        if (boardTab !== "ALL" && p.board !== boardTab) return false;
-        if (filterStatus !== "ALL" && st !== filterStatus) return false;
-        const q = search.toLowerCase();
-        return (
-          !q ||
-          p.title.toLowerCase().includes(q) ||
-          p.author.toLowerCase().includes(q)
-        );
-      }),
-    [posts, postStatuses, boardTab, filterStatus, search],
-  );
-
-  const countFor = (board: PostBoard | "ALL") =>
-    posts.filter((p) => {
-      const st = getStatus(p);
-      if (st === "deleted") return false;
-      return board === "ALL" || p.board === board;
-    }).length;
-
-  const setStatus = (id: string, status: PostStatus) =>
-    setPostStatuses((prev) => ({ ...prev, [id]: status }));
-
-  const openDetail = (post: AdminPost) => {
-    setSelectedPost(post);
-    setDrawerOpen(true);
+  const changeTab = (value: TabKey) => {
+    setBoardTab(value);
+    setPage(1);
   };
 
   return (
@@ -185,7 +443,7 @@ const CommunityModerator = () => {
         {/* Board Tabs */}
         <Tabs
           value={boardTab}
-          onChange={(_, v) => setBoardTab(v)}
+          onChange={(_, v) => changeTab(v)}
           className="admin-cm-tabs"
         >
           {TABS.map((t) => (
@@ -224,31 +482,39 @@ const CommunityModerator = () => {
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search title or author…"
+            placeholder="Search title…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             className="admin-toolbar-search admin-cm-search"
           />
           <Select
             size="small"
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as StatusFilter)}
+            onChange={(e) => {
+              setFilterStatus(e.target.value as StatusFilter);
+              setPage(1);
+            }}
             className="admin-toolbar-select admin-cm-status-filter"
           >
             <MenuItem value="ALL">All Statuses</MenuItem>
-            <MenuItem value="visible">Visible</MenuItem>
-            <MenuItem value="hidden">Hidden</MenuItem>
+            <MenuItem value="ACTIVE">Visible</MenuItem>
+            <MenuItem value="HIDE">Hidden</MenuItem>
           </Select>
           <Typography className="admin-meta-count">
-            {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+            {boardTab === "ALL"
+              ? `${posts.length} most recent of ${tabTotal}`
+              : `${posts.length} of ${tabTotal}`}
           </Typography>
         </Stack>
 
         {/* Card list */}
         <Stack className="admin-cm-card-list">
-          {filtered.map((post) => {
-            const status = getStatus(post);
+          {posts.map((post) => {
             const isQna = post.board === "QNA";
+            const isHidden = post.status === ArticleStatus.HIDE;
             const bc = BOARD_COLORS[post.board];
 
             return (
@@ -258,7 +524,7 @@ const CommunityModerator = () => {
                 alignItems="center"
                 gap={0}
                 width="100%"
-                className={`admin-cm-post-card${status === "hidden" ? " hidden-post" : ""}`}
+                className={`admin-cm-post-card${isHidden ? " hidden-post" : ""}`}
               >
                 {/* Board color strip — color is dynamic (bc.color) */}
                 <Stack
@@ -270,12 +536,11 @@ const CommunityModerator = () => {
                 {post.image && (
                   <Stack className="admin-cm-thumb">
                     <img
-                      src={post.image}
+                      src={imageUrl(post.image)}
                       alt=""
                       onError={(e) => {
                         const img = e.target as HTMLImageElement;
-                        img.src =
-                          "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+                        img.src = BLANK_IMAGE;
                         img.style.opacity = "0";
                       }}
                     />
@@ -306,9 +571,9 @@ const CommunityModerator = () => {
                         flexShrink: 0,
                       }}
                     >
-                      {post.board === "QNA" ? "Q&A" : post.board}
+                      {isQna ? "Q&A" : post.board}
                     </span>
-                    {status === "hidden" && (
+                    {isHidden && (
                       <span
                         className="status-chip status-hidden"
                         style={{ fontSize: "9.5px" }}
@@ -329,7 +594,7 @@ const CommunityModerator = () => {
                     className="admin-cm-meta-row"
                   >
                     <Typography className="admin-cm-post-desc">
-                      {post.description}
+                      {post.content}
                     </Typography>
                     <Stack
                       direction="row"
@@ -339,14 +604,13 @@ const CommunityModerator = () => {
                     >
                       <Stack direction="row" alignItems="center" gap={0.3}>
                         <img
-                          src={post.authorImage}
+                          src={avatarUrl(post.authorImage, post.author)}
                           alt=""
                           style={{
                             width: 16,
                             height: 16,
                             borderRadius: "50%",
                             objectFit: "cover",
-                            display: post.authorImage ? "block" : "none",
                           }}
                           onError={(e) => {
                             (e.target as HTMLImageElement).style.display =
@@ -366,24 +630,19 @@ const CommunityModerator = () => {
                         icon={<FavoriteIcon className="admin-icon-10-gray" />}
                         value={post.likes}
                       />
-                      {isQna ? (
-                        <StatBadge
-                          icon={
+                      <StatBadge
+                        icon={
+                          isQna ? (
                             <QuestionAnswerIcon className="admin-icon-11-gray" />
-                          }
-                          value={`${post.answersCount ?? 0}`}
-                        />
-                      ) : (
-                        <StatBadge
-                          icon={
+                          ) : (
                             <ChatBubbleOutlineIcon className="admin-icon-11-gray" />
-                          }
-                          value={post.commentsCount}
-                        />
-                      )}
+                          )
+                        }
+                        value={post.replies}
+                      />
                       <Typography className="admin-cm-dot">·</Typography>
                       <Typography className="admin-cm-date">
-                        {post.date}
+                        {formatDate(post.createdAt)}
                       </Typography>
                     </Stack>
                   </Stack>
@@ -403,26 +662,26 @@ const CommunityModerator = () => {
                   >
                     Details
                   </Button>
-                  {status === "visible" ? (
+                  {isHidden ? (
                     <Button
                       size="small"
-                      onClick={() => setStatus(post.id, "hidden")}
-                      className="admin-btn-sm admin-btn-sm-orange"
-                    >
-                      Hide
-                    </Button>
-                  ) : (
-                    <Button
-                      size="small"
-                      onClick={() => setStatus(post.id, "visible")}
+                      onClick={() => setStatus(post, ArticleStatus.ACTIVE)}
                       className="admin-btn-sm admin-btn-sm-green"
                     >
                       Show
                     </Button>
+                  ) : (
+                    <Button
+                      size="small"
+                      onClick={() => setStatus(post, ArticleStatus.HIDE)}
+                      className="admin-btn-sm admin-btn-sm-orange"
+                    >
+                      Hide
+                    </Button>
                   )}
                   <Button
                     size="small"
-                    onClick={() => setDeleteConfirmId(post.id)}
+                    onClick={() => setDeleteTarget(post)}
                     className="admin-btn-sm admin-btn-sm-red"
                   >
                     Delete
@@ -432,7 +691,7 @@ const CommunityModerator = () => {
             );
           })}
 
-          {filtered.length === 0 && (
+          {posts.length === 0 && (
             <Stack className="admin-cm-empty">
               <Typography style={{ fontSize: "32px", marginBottom: 8 }}>
                 📭
@@ -446,6 +705,18 @@ const CommunityModerator = () => {
             </Stack>
           )}
         </Stack>
+
+        {totalPages > 1 && (
+          <Stack className="admin-pagination">
+            <Pagination
+              page={page}
+              count={totalPages}
+              onChange={(_, value) => setPage(value)}
+              shape="rounded"
+              color="primary"
+            />
+          </Stack>
+        )}
       </Stack>
 
       {/* ── Write Post Drawer ─────────────────────────────────── */}
@@ -464,31 +735,24 @@ const CommunityModerator = () => {
           className="admin-cm-write-header"
         >
           <Stack direction="row" alignItems="center" gap={1.5}>
-            {/* bg is dynamic (canWrite ? BOARD_COLORS[writeBoard].bg : "#F3F4F6") */}
+            {/* bg is dynamic (the board's own colour) */}
             <Stack
               alignItems="center"
               justifyContent="center"
               className="admin-cm-write-icon-box"
-              sx={{
-                background: canWrite ? BOARD_COLORS[writeBoard].bg : "#F3F4F6",
-              }}
+              sx={{ background: BOARD_COLORS[writeBoard].bg }}
             >
               <EditIcon
-                sx={{
-                  fontSize: 18,
-                  color: canWrite ? BOARD_COLORS[writeBoard].color : "#9CA3AF",
-                }}
+                sx={{ fontSize: 18, color: BOARD_COLORS[writeBoard].color }}
               />
             </Stack>
             <Stack>
               <Typography className="admin-cm-write-title">
-                Write {canWrite && writeBoard === "NEWS" ? "News" : "Post"}
+                Write {writeBoard === "NEWS" ? "News" : "Post"}
               </Typography>
               <Typography className="admin-cm-write-subtitle">
-                {canWrite && writeBoard === "NEWS"
-                  ? "News Board"
-                  : "Free Board"}{" "}
-                · Published as Admin
+                {writeBoard === "NEWS" ? "News Board" : "Free Board"} ·
+                Published as Admin
               </Typography>
             </Stack>
           </Stack>
@@ -550,18 +814,18 @@ const CommunityModerator = () => {
             </Stack>
           </Stack>
 
-          {/* Image Upload */}
+          {/* Image Upload — required by the API */}
           <Stack className="admin-cm-write-section">
             <Stack className="admin-cm-write-section-header">
               <Typography className="admin-cm-write-section-title">
-                Image (Optional)
+                Cover Image
               </Typography>
             </Stack>
             <Stack style={{ padding: "20px" }}>
-              {writeImagePreview ? (
+              {writeImage ? (
                 <Stack className="admin-cm-img-preview-wrap">
                   <img
-                    src={writeImagePreview}
+                    src={writeImage.preview}
                     alt=""
                     style={{
                       width: "100%",
@@ -604,7 +868,7 @@ const CommunityModerator = () => {
                     Click to add a cover image
                   </Typography>
                   <Typography className="admin-cm-img-upload-hint">
-                    PNG, JPG, WEBP — optional
+                    PNG, JPG, WEBP — required
                   </Typography>
                 </Stack>
               )}
@@ -635,10 +899,15 @@ const CommunityModerator = () => {
           <Button
             variant="contained"
             onClick={submitPost}
-            disabled={!writeTitle.trim() || !writeContent.trim()}
+            disabled={
+              !writeTitle.trim() ||
+              !writeContent.trim() ||
+              !writeImage ||
+              isPublishing
+            }
             className="admin-cm-write-publish-btn"
           >
-            Publish Post
+            {isPublishing ? "Publishing…" : "Publish Post"}
           </Button>
         </Stack>
       </Drawer>
@@ -654,7 +923,7 @@ const CommunityModerator = () => {
         {selectedPost &&
           (() => {
             const bc = BOARD_COLORS[selectedPost.board];
-            const status = getStatus(selectedPost);
+            const isHidden = selectedPost.status === ArticleStatus.HIDE;
             const isQna = selectedPost.board === "QNA";
             return (
               <>
@@ -679,12 +948,12 @@ const CommunityModerator = () => {
                         letterSpacing: "0.06em",
                       }}
                     >
-                      {selectedPost.board === "QNA"
-                        ? "Q&A"
-                        : selectedPost.board}
+                      {isQna ? "Q&A" : selectedPost.board}
                     </span>
-                    <span className={`status-chip status-${status}`}>
-                      {status}
+                    <span
+                      className={`status-chip status-${isHidden ? "hidden" : "visible"}`}
+                    >
+                      {isHidden ? "hidden" : "visible"}
                     </span>
                   </Stack>
                   <IconButton
@@ -701,7 +970,7 @@ const CommunityModerator = () => {
                   {selectedPost.image && (
                     <Stack className="admin-cm-hero-img">
                       <img
-                        src={selectedPost.image}
+                        src={imageUrl(selectedPost.image)}
                         alt=""
                         style={{
                           width: "100%",
@@ -732,46 +1001,31 @@ const CommunityModerator = () => {
 
                       {/* Author row */}
                       <Stack direction="row" alignItems="center" gap={1.5}>
-                        {selectedPost.authorImage ? (
-                          <img
-                            src={selectedPost.authorImage}
-                            alt=""
-                            style={{
-                              width: 36,
-                              height: 36,
-                              borderRadius: "50%",
-                              objectFit: "cover",
-                              // border is dynamic: `2px solid ${bc.bg}`
-                              border: `2px solid ${bc.bg}`,
-                            }}
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display =
-                                "none";
-                            }}
-                          />
-                        ) : (
-                          // bg and border are dynamic (bc.bg, bc.color)
-                          <Stack
-                            className="admin-cm-author-avatar-fallback"
-                            sx={{
-                              background: bc.bg,
-                              border: `2px solid ${bc.color}22`,
-                            }}
-                          >
-                            <Typography
-                              className="admin-cm-author-initial"
-                              sx={{ color: bc.color }}
-                            >
-                              {selectedPost.author.charAt(0).toUpperCase()}
-                            </Typography>
-                          </Stack>
-                        )}
+                        <img
+                          src={avatarUrl(
+                            selectedPost.authorImage,
+                            selectedPost.author,
+                          )}
+                          alt=""
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                            // border is dynamic: `2px solid ${bc.bg}`
+                            border: `2px solid ${bc.bg}`,
+                          }}
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display =
+                              "none";
+                          }}
+                        />
                         <Stack>
                           <Typography className="admin-cm-author-name">
                             @{selectedPost.author}
                           </Typography>
                           <Typography className="admin-cm-author-date">
-                            Posted · {selectedPost.date}
+                            Posted · {formatDate(selectedPost.createdAt)}
                           </Typography>
                         </Stack>
                       </Stack>
@@ -779,7 +1033,7 @@ const CommunityModerator = () => {
                       {/* Full description */}
                       <Stack className="admin-cm-desc-box">
                         <Typography className="admin-cm-desc-text">
-                          {selectedPost.description}
+                          {selectedPost.content}
                         </Typography>
                       </Stack>
                     </Stack>
@@ -794,19 +1048,20 @@ const CommunityModerator = () => {
                       {[
                         {
                           label: "Board",
-                          value:
-                            selectedPost.board === "QNA"
-                              ? "Q&A"
-                              : selectedPost.board,
+                          value: isQna ? "Q&A" : selectedPost.board,
                         },
-                        { label: "Status", value: status },
+                        {
+                          label: "Status",
+                          value: isHidden ? "hidden" : "visible",
+                        },
                         { label: "Author", value: `@${selectedPost.author}` },
-                        { label: "Published", value: selectedPost.date },
+                        {
+                          label: "Published",
+                          value: formatDate(selectedPost.createdAt),
+                        },
                         {
                           label: isQna ? "Answers" : "Comments",
-                          value: isQna
-                            ? (selectedPost.answersCount ?? 0)
-                            : selectedPost.commentsCount,
+                          value: selectedPost.replies,
                         },
                       ].map(({ label, value }) => (
                         <Stack
@@ -848,14 +1103,14 @@ const CommunityModerator = () => {
                               <QuestionAnswerIcon className="admin-icon-18-green" />
                             ),
                             label: "Answers",
-                            value: selectedPost.answersCount ?? 0,
+                            value: selectedPost.replies,
                           }
                         : {
                             icon: (
                               <ChatBubbleOutlineIcon className="admin-icon-17-amber" />
                             ),
                             label: "Comments",
-                            value: selectedPost.commentsCount,
+                            value: selectedPost.replies,
                           },
                     ].map(({ icon, label, value }, i, arr) => (
                       <Stack
@@ -879,29 +1134,33 @@ const CommunityModerator = () => {
                       Moderation
                     </Typography>
                     <Stack direction="row" gap={1}>
-                      {status === "visible" ? (
+                      {isHidden ? (
                         <Button
                           fullWidth
                           variant="outlined"
-                          onClick={() => setStatus(selectedPost.id, "hidden")}
-                          className="admin-cm-hide-btn"
+                          onClick={() =>
+                            setStatus(selectedPost, ArticleStatus.ACTIVE)
+                          }
+                          className="admin-cm-show-btn"
                         >
-                          Hide Post
+                          Make Visible
                         </Button>
                       ) : (
                         <Button
                           fullWidth
                           variant="outlined"
-                          onClick={() => setStatus(selectedPost.id, "visible")}
-                          className="admin-cm-show-btn"
+                          onClick={() =>
+                            setStatus(selectedPost, ArticleStatus.HIDE)
+                          }
+                          className="admin-cm-hide-btn"
                         >
-                          Make Visible
+                          Hide Post
                         </Button>
                       )}
                       <Button
                         fullWidth
                         variant="outlined"
-                        onClick={() => setDeleteConfirmId(selectedPost.id)}
+                        onClick={() => setDeleteTarget(selectedPost)}
                         className="admin-cm-delete-post-btn"
                       >
                         Delete Post
@@ -930,8 +1189,8 @@ const CommunityModerator = () => {
 
       {/* Delete Confirmation */}
       <Dialog
-        open={!!deleteConfirmId}
-        onClose={() => setDeleteConfirmId(null)}
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
         maxWidth="xs"
         disablePortal
       >
@@ -947,7 +1206,7 @@ const CommunityModerator = () => {
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
           <Button
-            onClick={() => setDeleteConfirmId(null)}
+            onClick={() => setDeleteTarget(null)}
             sx={{
               textTransform: "none",
               color: "#6B7280",
@@ -959,13 +1218,7 @@ const CommunityModerator = () => {
           </Button>
           <Button
             variant="contained"
-            onClick={() => {
-              if (deleteConfirmId) {
-                setStatus(deleteConfirmId, "deleted");
-                if (selectedPost?.id === deleteConfirmId) setDrawerOpen(false);
-                setDeleteConfirmId(null);
-              }
-            }}
+            onClick={confirmDelete}
             sx={{
               textTransform: "none",
               fontWeight: 700,

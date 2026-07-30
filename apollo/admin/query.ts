@@ -1,6 +1,25 @@
 import { gql } from "@apollo/client";
 
 /***********************************
+ *            DASHBOARD            *
+ ***********************************/
+
+// Collection-wide totals. The paged getAll*ByAdmin queries can only report the
+// slice they returned, so the dashboard cards need their own aggregate.
+export const GET_ADMIN_DASHBOARD_STATS = gql`
+  query GetAdminDashboardStats {
+    getAdminDashboardStats {
+      totalUsers
+      totalAgents
+      totalProducts
+      totalOrders
+      pendingOrders
+      totalRevenue
+    }
+  }
+`;
+
+/***********************************
  *             MEMBER             *
  ***********************************/
 
@@ -223,6 +242,9 @@ export const GET_ALL_ORDERS_BY_ADMIN = gql`
           }
         }
       }
+      metaCounter {
+        total
+      }
     }
   }
 `;
@@ -352,6 +374,37 @@ export const GET_ALL_QUESTIONS_BY_ADMIN = gql`
           accessToken
         }
       }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;
+
+/***********************************
+ *        COMMUNITY COUNTS         *
+ ***********************************/
+
+// The moderation tabs each show a count, but a board's total is only in that
+// board's own metaCounter. Three aliased root fields fetch all of them in one
+// round trip instead of mounting three separate queries.
+export const GET_COMMUNITY_COUNTS_BY_ADMIN = gql`
+  query GetCommunityCountsByAdmin(
+    $free: AllBoardArticlesInquiry!
+    $news: AllBoardArticlesInquiry!
+    $qna: AllQnaQuestionsInquiry!
+  ) {
+    free: getAllBoardArticlesByAdmin(input: $free) {
+      metaCounter {
+        total
+      }
+    }
+    news: getAllBoardArticlesByAdmin(input: $news) {
+      metaCounter {
+        total
+      }
+    }
+    qna: getAllQuestionsByAdmin(input: $qna) {
       metaCounter {
         total
       }

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   Stack,
   Typography,
@@ -21,30 +21,123 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { useMutation, useQuery } from "@apollo/client";
 import {
-  mockFaqs,
-  mockNotices,
-  AdminFaq,
-  AdminNotice,
-  FaqCategory,
-  NoticeBadge,
-} from "../../data/adminMockData";
+  GET_ALL_FAQS_BY_ADMIN,
+  GET_ALL_NOTICES_BY_ADMIN,
+} from "@/apollo/admin/query";
+import {
+  CREATE_NEW_FAQ,
+  CREATE_NEW_NOTICE,
+  REMOVE_FAQ_BY_ADMIN,
+  REMOVE_NOTICE_BY_ADMIN,
+  UPDATE_FAQ,
+  UPDATE_NOTICE_BY_ADMIN,
+} from "@/apollo/admin/mutation";
+import { FaqDetail } from "@/libs/types/faq/faq";
+import { NoticeDetail } from "@/libs/types/notice/notice";
+import { FaqStatus, FaqType } from "@/libs/enums/faq.enum";
+import { NoticeStatus, NoticeType } from "@/libs/enums/notice.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
+import { formatDate, metaTotal, prettyEnum } from "./adminHelpers";
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// One page holds every FAQ / notice — the CS page has no pager either.
+const CS_LIMIT = 50;
 
-const FAQ_CATEGORIES: { value: FaqCategory; label: string }[] = [
-  { value: "orders", label: "Orders & Payments" },
-  { value: "delivery", label: "Delivery & Tracking" },
-  { value: "returns", label: "Returns & Refunds" },
-  { value: "account", label: "Account & Security" },
-  { value: "services", label: "Pet Services" },
+const FAQ_CATEGORIES: { value: FaqType; label: string }[] = [
+  { value: FaqType.ORDERS_PAYMENTS, label: "Orders & Payments" },
+  { value: FaqType.DELIVERY_TRACKING, label: "Delivery & Tracking" },
+  { value: FaqType.RETURNS_REFUNDS, label: "Returns & Refunds" },
+  { value: FaqType.ACCOUNT_SECURITY, label: "Account & Security" },
+  { value: FaqType.PET_SERVICES, label: "Pet Services" },
 ];
 
-const BADGE_OPTIONS: NoticeBadge[] = ["Important", "Update"];
+const NOTICE_TYPES = Object.values(NoticeType);
 
-const BADGE_STYLE: Record<NoticeBadge, { bg: string; color: string }> = {
-  Important: { bg: "#FEF2F2", color: "#EF4444" },
-  Update: { bg: "#EFF6FF", color: "#3B82F6" },
+const NOTICE_STYLE: Record<string, { bg: string; color: string }> = {
+  [NoticeType.IMPORTANT]: { bg: "#FEF2F2", color: "#EF4444" },
+  [NoticeType.UPDATE]: { bg: "#EFF6FF", color: "#3B82F6" },
+  [NoticeType.EVENT]: { bg: "#F5F3FF", color: "#8B5CF6" },
+  [NoticeType.ANNOUNCEMENT]: { bg: "#ECFDF5", color: "#059669" },
+};
+
+const BULLET_PREFIX = /^[-•*]\s+/;
+
+/**
+ * `faqContent` and `noticeContent` are single free-text fields, but the public
+ * CS page (`libs/components/cspage/SupportHub.tsx`) derives structure from
+ * them: the first line is the preview, later plain lines are paragraphs, and
+ * `- ` lines become a bullet list. These two pairs keep the editor's separate
+ * fields and that on-the-wire convention in sync, so whatever an admin types
+ * here is what /cs renders.
+ */
+const composeFaqContent = (
+  description: string,
+  answer: string,
+  bullets: string[],
+) =>
+  [
+    description.trim(),
+    ...answer
+      .split(/\r?\n+/)
+      .map((line) => line.trim())
+      .filter(Boolean),
+    ...bullets.map((b) => b.trim()).filter(Boolean).map((b) => `- ${b}`),
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+const toSentences = (text: string) =>
+  (text.match(/[^.!?]+[.!?]+|\S[^.!?]*$/g) ?? [])
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+
+const parseFaqContent = (content?: string) => {
+  const lines = (content ?? "")
+    .split(/\r?\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const bullets = lines
+    .filter((line) => BULLET_PREFIX.test(line))
+    .map((line) => line.replace(BULLET_PREFIX, ""));
+  const prose = lines.filter((line) => !BULLET_PREFIX.test(line));
+
+  // Same fallback the CS page applies: an FAQ written as one unbroken blob is
+  // split on sentences so the preview stays short. Mirroring it here means the
+  // editor shows the reader's split rather than dumping everything into the
+  // description field.
+  if (prose.length <= 1 && !bullets.length) {
+    const [first, ...rest] = toSentences(prose[0] ?? "");
+    return {
+      description: first ?? "",
+      answer: rest.join(" "),
+      bullets,
+    };
+  }
+
+  return {
+    description: prose[0] ?? "",
+    answer: prose.slice(1).join("\n"),
+    bullets,
+  };
+};
+
+const composeParagraphs = (paragraphs: string[]) =>
+  paragraphs
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .join("\n");
+
+const parseParagraphs = (content?: string) => {
+  const lines = (content ?? "")
+    .split(/\r?\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return lines.length ? lines : [""];
 };
 
 // ─── Drawer shell ─────────────────────────────────────────────────────────────
@@ -85,7 +178,9 @@ const DrawerShell = ({
       <Stack flex={1} minWidth={0}>
         <Typography className="admin-cs-drawer-title">{title}</Typography>
         {subtitle && (
-          <Typography className="admin-cs-drawer-subtitle">{subtitle}</Typography>
+          <Typography className="admin-cs-drawer-subtitle">
+            {subtitle}
+          </Typography>
         )}
       </Stack>
       <IconButton
@@ -127,34 +222,61 @@ const DrawerShell = ({
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const FaqTab = () => {
-  const [faqs, setFaqs] = useState<AdminFaq[]>(mockFaqs);
-  const [categoryFilter, setCategoryFilter] = useState<FaqCategory | "ALL">(
-    "ALL",
-  );
+  const [categoryFilter, setCategoryFilter] = useState<FaqType | "ALL">("ALL");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editingFaq, setEditingFaq] = useState<AdminFaq | null>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [editingFaq, setEditingFaq] = useState<FaqDetail | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<FaqDetail | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState({
-    category: "orders" as FaqCategory,
+    faqType: FaqType.ORDERS_PAYMENTS,
+    faqStatus: FaqStatus.ACTIVE,
     title: "",
     description: "",
     answer: "",
     bullets: ["", "", ""],
   });
 
-  const filtered = useMemo(
-    () =>
-      faqs.filter(
-        (f) => categoryFilter === "ALL" || f.category === categoryFilter,
-      ),
-    [faqs, categoryFilter],
+  /** APOLLO REQUESTS **/
+
+  const searchFilter = {
+    page: 1,
+    limit: CS_LIMIT,
+    sort: "createdAt",
+    direction: Direction.DESC,
+    search: categoryFilter === "ALL" ? {} : { faqType: categoryFilter },
+  };
+
+  const { data: faqsData, refetch: faqsRefetch } = useQuery(
+    GET_ALL_FAQS_BY_ADMIN,
+    {
+      fetchPolicy: "cache-and-network",
+      variables: { input: searchFilter },
+      notifyOnNetworkStatusChange: true,
+    },
   );
+
+  const [createNewFaq] = useMutation(CREATE_NEW_FAQ);
+  const [updateFaq] = useMutation(UPDATE_FAQ);
+  const [removeFaqByAdmin] = useMutation(REMOVE_FAQ_BY_ADMIN);
+
+  /** DERIVED **/
+
+  const faqs: FaqDetail[] = faqsData?.getAllFaqsByAdmin?.list ?? [];
+  const total = metaTotal(faqsData?.getAllFaqsByAdmin?.metaCounter);
+  const isSaveEnabled =
+    Boolean(form.title.trim()) &&
+    Boolean(form.description.trim() || form.answer.trim()) &&
+    !isSaving;
+
+  /** HANDLERS **/
 
   const openAdd = () => {
     setEditingFaq(null);
     setForm({
-      category: "orders",
+      faqType:
+        categoryFilter === "ALL" ? FaqType.ORDERS_PAYMENTS : categoryFilter,
+      faqStatus: FaqStatus.ACTIVE,
       title: "",
       description: "",
       answer: "",
@@ -163,35 +285,89 @@ const FaqTab = () => {
     setDrawerOpen(true);
   };
 
-  const openEdit = (faq: AdminFaq) => {
-    setEditingFaq(faq);
-    const bullets = [...faq.bullets];
+  const openEdit = (faq: FaqDetail) => {
+    const parsed = parseFaqContent(faq.faqContent);
+    const bullets = [...parsed.bullets];
     while (bullets.length < 3) bullets.push("");
+    setEditingFaq(faq);
     setForm({
-      category: faq.category,
-      title: faq.title,
-      description: faq.description,
-      answer: faq.answer,
+      faqType: faq.faqType,
+      faqStatus: faq.faqStatus,
+      title: faq.faqTitle,
+      description: parsed.description,
+      answer: parsed.answer,
       bullets,
     });
     setDrawerOpen(true);
   };
 
-  const save = () => {
-    const bullets = form.bullets.filter((b) => b.trim());
-    if (editingFaq) {
-      setFaqs((prev) =>
-        prev.map((f) =>
-          f.id === editingFaq.id ? { ...f, ...form, bullets } : f,
-        ),
+  const save = async () => {
+    if (isSaving) return;
+    try {
+      setIsSaving(true);
+      const faqContent = composeFaqContent(
+        form.description,
+        form.answer,
+        form.bullets,
       );
-    } else {
-      setFaqs((prev) => [
-        ...prev,
-        { id: `faq-${Date.now()}`, ...form, bullets },
-      ]);
+
+      if (editingFaq) {
+        await updateFaq({
+          variables: {
+            input: {
+              faqId: editingFaq._id,
+              faqType: form.faqType,
+              faqStatus: form.faqStatus,
+              faqTitle: form.title.trim(),
+              faqContent,
+            },
+          },
+        });
+      } else {
+        await createNewFaq({
+          variables: {
+            input: {
+              faqType: form.faqType,
+              faqStatus: form.faqStatus,
+              faqTitle: form.title.trim(),
+              faqContent,
+            },
+          },
+        });
+      }
+
+      await faqsRefetch({ input: searchFilter });
+      setDrawerOpen(false);
+      await sweetBottomSmallSuccessAlert(
+        editingFaq ? "FAQ saved!" : "FAQ added!",
+        700,
+      );
+    } catch (err: any) {
+      console.log("ERROR, save faq:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    } finally {
+      setIsSaving(false);
     }
-    setDrawerOpen(false);
+  };
+
+  // removeFaqByAdmin only matches rows already flagged DELETE, so deleting is
+  // a status write followed by the removal.
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await updateFaq({
+        variables: {
+          input: { faqId: deleteTarget._id, faqStatus: FaqStatus.DELETE },
+        },
+      });
+      await removeFaqByAdmin({ variables: { input: deleteTarget._id } });
+      setDeleteTarget(null);
+      await faqsRefetch({ input: searchFilter });
+      await sweetBottomSmallSuccessAlert("FAQ deleted!", 700);
+    } catch (err: any) {
+      console.log("ERROR, delete faq:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
   };
 
   const updateBullet = (i: number, val: string) =>
@@ -209,15 +385,13 @@ const FaqTab = () => {
       bullets: p.bullets.filter((_, idx) => idx !== i),
     }));
 
-  const isSaveEnabled = form.title.trim() && form.answer.trim();
-
   return (
     <Stack gap={0}>
       <Stack className="admin-toolbar">
         <Select
           size="small"
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value as any)}
+          onChange={(e) => setCategoryFilter(e.target.value as FaqType | "ALL")}
           className="admin-toolbar-select admin-cs-faq-filter"
         >
           <MenuItem value="ALL">All Categories</MenuItem>
@@ -228,7 +402,7 @@ const FaqTab = () => {
           ))}
         </Select>
         <Typography className="admin-meta-count">
-          {filtered.length} FAQ{filtered.length !== 1 ? "s" : ""}
+          {total} FAQ{total !== 1 ? "s" : ""}
         </Typography>
         <Button
           variant="contained"
@@ -243,7 +417,7 @@ const FaqTab = () => {
         {FAQ_CATEGORIES.filter(
           (c) => categoryFilter === "ALL" || c.value === categoryFilter,
         ).map((cat) => {
-          const items = filtered.filter((f) => f.category === cat.value);
+          const items = faqs.filter((f) => f.faqType === cat.value);
           if (!items.length) return null;
           return (
             <Stack key={cat.value}>
@@ -255,26 +429,35 @@ const FaqTab = () => {
               </Stack>
 
               {items.map((faq, idx) => {
-                const isExpanded = expandedId === faq.id;
+                const isExpanded = expandedId === faq._id;
+                const parsed = parseFaqContent(faq.faqContent);
                 return (
-                  <Stack key={faq.id} className="admin-cs-faq-item">
+                  <Stack key={faq._id} className="admin-cs-faq-item">
                     {/* Row */}
                     <Stack
                       direction="row"
                       alignItems="center"
                       gap={1.5}
                       className="admin-cs-faq-row"
-                      onClick={() => setExpandedId(isExpanded ? null : faq.id)}
+                      onClick={() => setExpandedId(isExpanded ? null : faq._id)}
                     >
                       <Stack flex={1} minWidth={0}>
                         <Stack direction="row" alignItems="center" gap={1}>
                           <Typography className="admin-cs-faq-title">
-                            Q{String(idx + 1).padStart(2, "0")}. {faq.title}
+                            Q{String(idx + 1).padStart(2, "0")}. {faq.faqTitle}
                           </Typography>
+                          {faq.faqStatus === FaqStatus.HIDE && (
+                            <span
+                              className="status-chip status-hidden"
+                              style={{ fontSize: "9.5px" }}
+                            >
+                              Hidden
+                            </span>
+                          )}
                         </Stack>
                         {!isExpanded && (
                           <Typography className="admin-cs-faq-desc">
-                            {faq.description}
+                            {parsed.description}
                           </Typography>
                         )}
                       </Stack>
@@ -295,7 +478,7 @@ const FaqTab = () => {
                           size="small"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setDeleteId(faq.id);
+                            setDeleteTarget(faq);
                           }}
                           className="admin-btn-sm admin-btn-sm-red"
                         >
@@ -307,7 +490,7 @@ const FaqTab = () => {
                         className="admin-cs-expand-btn"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setExpandedId(isExpanded ? null : faq.id);
+                          setExpandedId(isExpanded ? null : faq._id);
                         }}
                       >
                         {isExpanded ? (
@@ -323,11 +506,11 @@ const FaqTab = () => {
                       <Stack className="admin-cs-faq-expanded">
                         <Stack className="admin-cs-faq-answer-card">
                           <Typography className="admin-cs-faq-answer-text">
-                            {faq.answer}
+                            {parsed.answer || parsed.description}
                           </Typography>
-                          {faq.bullets.length > 0 && (
+                          {parsed.bullets.length > 0 && (
                             <Stack gap={0.6}>
-                              {faq.bullets.map((b, i) => (
+                              {parsed.bullets.map((b, i) => (
                                 <Stack
                                   key={i}
                                   direction="row"
@@ -352,7 +535,7 @@ const FaqTab = () => {
           );
         })}
 
-        {filtered.length === 0 && (
+        {faqs.length === 0 && (
           <Stack className="admin-cs-empty">
             <Typography className="admin-cs-empty-text">
               No FAQs found
@@ -362,7 +545,12 @@ const FaqTab = () => {
       </Stack>
 
       {/* FAQ Delete Confirmation */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs" disablePortal>
+      <Dialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        maxWidth="xs"
+        disablePortal
+      >
         <DialogTitle className="admin-cs-dialog-title">Delete FAQ?</DialogTitle>
         <DialogContent>
           <Typography className="admin-cs-dialog-body">
@@ -372,17 +560,14 @@ const FaqTab = () => {
         </DialogContent>
         <DialogActions className="admin-cs-dialog-actions">
           <Button
-            onClick={() => setDeleteId(null)}
+            onClick={() => setDeleteTarget(null)}
             className="admin-cs-dialog-cancel-btn"
           >
             Cancel
           </Button>
           <Button
             variant="contained"
-            onClick={() => {
-              setFaqs((prev) => prev.filter((f) => f.id !== deleteId));
-              setDeleteId(null);
-            }}
+            onClick={confirmDelete}
             className="admin-cs-dialog-delete-btn"
           >
             Delete
@@ -397,7 +582,9 @@ const FaqTab = () => {
         title={editingFaq ? "Edit FAQ" : "Add New FAQ"}
         subtitle="Visible to all users on the CS page"
         onSave={save}
-        saveLabel={editingFaq ? "Save Changes" : "Add FAQ"}
+        saveLabel={
+          isSaving ? "Saving…" : editingFaq ? "Save Changes" : "Add FAQ"
+        }
         saveDisabled={!isSaveEnabled}
       >
         <Stack className="admin-cs-form-section-card">
@@ -410,12 +597,9 @@ const FaqTab = () => {
             </Typography>
             <Select
               size="small"
-              value={form.category}
+              value={form.faqType}
               onChange={(e) =>
-                setForm((p) => ({
-                  ...p,
-                  category: e.target.value as FaqCategory,
-                }))
+                setForm((p) => ({ ...p, faqType: e.target.value as FaqType }))
               }
               className="admin-cs-cat-select"
             >
@@ -424,6 +608,25 @@ const FaqTab = () => {
                   {c.label}
                 </MenuItem>
               ))}
+            </Select>
+          </Stack>
+          <Stack gap={0.8}>
+            <Typography className="admin-cs-form-field-label">
+              Visibility
+            </Typography>
+            <Select
+              size="small"
+              value={form.faqStatus}
+              onChange={(e) =>
+                setForm((p) => ({
+                  ...p,
+                  faqStatus: e.target.value as FaqStatus,
+                }))
+              }
+              className="admin-cs-cat-select"
+            >
+              <MenuItem value={FaqStatus.ACTIVE}>Visible</MenuItem>
+              <MenuItem value={FaqStatus.HIDE}>Hidden</MenuItem>
             </Select>
           </Stack>
           <TextField
@@ -442,6 +645,7 @@ const FaqTab = () => {
             }
             size="small"
             fullWidth
+            helperText="First line of the answer — shown collapsed on the CS page"
             className="admin-cs-input"
           />
         </Stack>
@@ -529,69 +733,148 @@ const FaqTab = () => {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const NoticesTab = () => {
-  const [notices, setNotices] = useState<AdminNotice[]>(mockNotices);
-  const [badgeFilter, setBadgeFilter] = useState<NoticeBadge | "ALL">("ALL");
+  const [typeFilter, setTypeFilter] = useState<NoticeType | "ALL">("ALL");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editingNotice, setEditingNotice] = useState<AdminNotice | null>(null);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [editingNotice, setEditingNotice] = useState<NoticeDetail | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<NoticeDetail | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState({
     title: "",
     summary: "",
-    badge: "Update" as NoticeBadge,
-    date: "",
+    noticeType: NoticeType.UPDATE,
+    noticeStatus: NoticeStatus.ACTIVE,
     paragraphs: [""],
   });
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const filtered = useMemo(
-    () =>
-      notices.filter((n) => badgeFilter === "ALL" || n.badge === badgeFilter),
-    [notices, badgeFilter],
+  /** APOLLO REQUESTS **/
+
+  const searchFilter = {
+    page: 1,
+    limit: CS_LIMIT,
+    sort: "createdAt",
+    direction: Direction.DESC,
+    search: {},
+  };
+
+  const { data: noticesData, refetch: noticesRefetch } = useQuery(
+    GET_ALL_NOTICES_BY_ADMIN,
+    {
+      fetchPolicy: "cache-and-network",
+      variables: { input: searchFilter },
+      notifyOnNetworkStatusChange: true,
+    },
   );
+
+  const [createNewNotice] = useMutation(CREATE_NEW_NOTICE);
+  const [updateNoticeByAdmin] = useMutation(UPDATE_NOTICE_BY_ADMIN);
+  const [removeNoticeByAdmin] = useMutation(REMOVE_NOTICE_BY_ADMIN);
+
+  /** DERIVED **/
+
+  // NoticeInquiry has no type filter, so this one narrows client-side over the
+  // single page the CS page also loads.
+  const allNotices: NoticeDetail[] =
+    noticesData?.getAllNoticesByAdmin?.list ?? [];
+  const notices = allNotices.filter(
+    (n) => typeFilter === "ALL" || n.noticeType === typeFilter,
+  );
+  const isSaveEnabled =
+    Boolean(form.title.trim()) && Boolean(form.summary.trim()) && !isSaving;
+
+  /** HANDLERS **/
 
   const openAdd = () => {
     setEditingNotice(null);
     setForm({
       title: "",
       summary: "",
-      badge: "Update",
-      date: new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      }),
+      noticeType: NoticeType.UPDATE,
+      noticeStatus: NoticeStatus.ACTIVE,
       paragraphs: [""],
     });
     setDrawerOpen(true);
   };
 
-  const openEdit = (notice: AdminNotice) => {
+  const openEdit = (notice: NoticeDetail) => {
     setEditingNotice(notice);
     setForm({
-      title: notice.title,
-      summary: notice.summary,
-      badge: notice.badge,
-      date: notice.date,
-      paragraphs: [...notice.fullText],
+      title: notice.noticeTitle,
+      summary: notice.noticeSummary,
+      noticeType: notice.noticeType,
+      noticeStatus: notice.noticeStatus,
+      paragraphs: parseParagraphs(notice.noticeContent),
     });
     setDrawerOpen(true);
   };
 
-  const save = () => {
-    const fullText = form.paragraphs.filter((p) => p.trim());
-    if (editingNotice) {
-      setNotices((prev) =>
-        prev.map((n) =>
-          n.id === editingNotice.id ? { ...n, ...form, fullText } : n,
-        ),
+  const save = async () => {
+    if (isSaving) return;
+    try {
+      setIsSaving(true);
+      const noticeContent = composeParagraphs(form.paragraphs);
+      if (!noticeContent) throw new Error("Please add at least one paragraph");
+
+      if (editingNotice) {
+        await updateNoticeByAdmin({
+          variables: {
+            input: {
+              noticeId: editingNotice._id,
+              noticeType: form.noticeType,
+              noticeStatus: form.noticeStatus,
+              noticeTitle: form.title.trim(),
+              noticeSummary: form.summary.trim(),
+              noticeContent,
+            },
+          },
+        });
+      } else {
+        await createNewNotice({
+          variables: {
+            input: {
+              noticeType: form.noticeType,
+              noticeStatus: form.noticeStatus,
+              noticeTitle: form.title.trim(),
+              noticeSummary: form.summary.trim(),
+              noticeContent,
+            },
+          },
+        });
+      }
+
+      await noticesRefetch({ input: searchFilter });
+      setDrawerOpen(false);
+      await sweetBottomSmallSuccessAlert(
+        editingNotice ? "Notice saved!" : "Notice published!",
+        700,
       );
-    } else {
-      setNotices((prev) => [
-        { id: `notice-${Date.now()}`, ...form, fullText, featured: false },
-        ...prev,
-      ]);
+    } catch (err: any) {
+      console.log("ERROR, save notice:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    } finally {
+      setIsSaving(false);
     }
-    setDrawerOpen(false);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await updateNoticeByAdmin({
+        variables: {
+          input: {
+            noticeId: deleteTarget._id,
+            noticeStatus: NoticeStatus.DELETE,
+          },
+        },
+      });
+      await removeNoticeByAdmin({ variables: { input: deleteTarget._id } });
+      setDeleteTarget(null);
+      await noticesRefetch({ input: searchFilter });
+      await sweetBottomSmallSuccessAlert("Notice deleted!", 700);
+    } catch (err: any) {
+      console.log("ERROR, delete notice:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
   };
 
   const updateParagraph = (i: number, val: string) =>
@@ -601,24 +884,24 @@ const NoticesTab = () => {
       return { ...p, paragraphs: arr };
     });
 
-  const isSaveEnabled =
-    form.title.trim() && form.summary.trim() && form.date.trim();
-
   return (
     <Stack gap={0}>
       <Stack className="admin-toolbar">
         <Select
           size="small"
-          value={badgeFilter}
-          onChange={(e) => setBadgeFilter(e.target.value as any)}
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value as NoticeType | "ALL")}
           className="admin-toolbar-select admin-cs-cs-filter"
         >
           <MenuItem value="ALL">All Types</MenuItem>
-          <MenuItem value="Important">Important</MenuItem>
-          <MenuItem value="Update">Update</MenuItem>
+          {NOTICE_TYPES.map((t) => (
+            <MenuItem key={t} value={t}>
+              {prettyEnum(t)}
+            </MenuItem>
+          ))}
         </Select>
         <Typography className="admin-meta-count">
-          {filtered.length} notice{filtered.length !== 1 ? "s" : ""}
+          {notices.length} notice{notices.length !== 1 ? "s" : ""}
         </Typography>
         <Button
           variant="contained"
@@ -630,17 +913,18 @@ const NoticesTab = () => {
       </Stack>
 
       <Stack>
-        {filtered.map((notice) => {
-          const bs = BADGE_STYLE[notice.badge];
-          const isExpanded = expandedId === notice.id;
+        {notices.map((notice) => {
+          const bs = NOTICE_STYLE[notice.noticeType] ?? NOTICE_STYLE.UPDATE;
+          const isExpanded = expandedId === notice._id;
+          const paragraphs = parseParagraphs(notice.noticeContent);
           return (
-            <Stack key={notice.id} className="admin-cs-notice-item">
+            <Stack key={notice._id} className="admin-cs-notice-item">
               <Stack
                 direction="row"
                 alignItems="center"
                 gap={1.5}
                 className="admin-cs-notice-row"
-                onClick={() => setExpandedId(isExpanded ? null : notice.id)}
+                onClick={() => setExpandedId(isExpanded ? null : notice._id)}
               >
                 <Stack flex={1} minWidth={0}>
                   <Stack direction="row" alignItems="center" gap={1} mb={0.3}>
@@ -658,21 +942,29 @@ const NoticesTab = () => {
                         flexShrink: 0,
                       }}
                     >
-                      {notice.badge}
+                      {prettyEnum(notice.noticeType)}
                     </span>
+                    {notice.noticeStatus === NoticeStatus.HIDE && (
+                      <span
+                        className="status-chip status-hidden"
+                        style={{ fontSize: "9.5px" }}
+                      >
+                        Hidden
+                      </span>
+                    )}
                     <Typography className="admin-cs-notice-title">
-                      {notice.title}
+                      {notice.noticeTitle}
                     </Typography>
                   </Stack>
                   {!isExpanded && (
                     <Typography className="admin-cs-notice-summary">
-                      {notice.summary}
+                      {notice.noticeSummary}
                     </Typography>
                   )}
                 </Stack>
 
                 <Typography className="admin-cs-notice-date">
-                  {notice.date}
+                  {formatDate(notice.createdAt)}
                 </Typography>
 
                 <Stack
@@ -692,7 +984,7 @@ const NoticesTab = () => {
                     size="small"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setDeleteId(notice.id);
+                      setDeleteTarget(notice);
                     }}
                     className="admin-btn-sm admin-btn-sm-red"
                   >
@@ -704,7 +996,7 @@ const NoticesTab = () => {
                   className="admin-cs-expand-btn"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setExpandedId(isExpanded ? null : notice.id);
+                    setExpandedId(isExpanded ? null : notice._id);
                   }}
                 >
                   {isExpanded ? (
@@ -720,10 +1012,10 @@ const NoticesTab = () => {
                 <Stack className="admin-cs-notice-expanded">
                   <Stack className="admin-cs-notice-expanded-card">
                     <Typography className="admin-cs-notice-summary-text">
-                      {notice.summary}
+                      {notice.noticeSummary}
                     </Typography>
                     <Divider className="admin-cs-notice-divider" />
-                    {notice.fullText.map((para, i) => (
+                    {paragraphs.map((para, i) => (
                       <Typography key={i} className="admin-cs-notice-para">
                         {para}
                       </Typography>
@@ -735,7 +1027,7 @@ const NoticesTab = () => {
           );
         })}
 
-        {filtered.length === 0 && (
+        {notices.length === 0 && (
           <Stack className="admin-cs-empty">
             <Typography className="admin-cs-empty-text">
               No notices found
@@ -745,7 +1037,12 @@ const NoticesTab = () => {
       </Stack>
 
       {/* Notice Delete Confirmation */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs" disablePortal>
+      <Dialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        maxWidth="xs"
+        disablePortal
+      >
         <DialogTitle className="admin-cs-dialog-title">
           Delete Notice?
         </DialogTitle>
@@ -757,17 +1054,14 @@ const NoticesTab = () => {
         </DialogContent>
         <DialogActions className="admin-cs-dialog-actions">
           <Button
-            onClick={() => setDeleteId(null)}
+            onClick={() => setDeleteTarget(null)}
             className="admin-cs-dialog-cancel-btn"
           >
             Cancel
           </Button>
           <Button
             variant="contained"
-            onClick={() => {
-              setNotices((prev) => prev.filter((n) => n.id !== deleteId));
-              setDeleteId(null);
-            }}
+            onClick={confirmDelete}
             className="admin-cs-dialog-delete-btn"
           >
             Delete
@@ -782,7 +1076,13 @@ const NoticesTab = () => {
         title={editingNotice ? "Edit Notice" : "Add New Notice"}
         subtitle="Shown to users on the CS support page"
         onSave={save}
-        saveLabel={editingNotice ? "Save Changes" : "Publish Notice"}
+        saveLabel={
+          isSaving
+            ? "Saving…"
+            : editingNotice
+              ? "Save Changes"
+              : "Publish Notice"
+        }
         saveDisabled={!isSaveEnabled}
       >
         <Stack className="admin-cs-form-section-card">
@@ -795,15 +1095,15 @@ const NoticesTab = () => {
             <Typography className="admin-cs-form-field-label-dark">
               Type
             </Typography>
-            <Stack direction="row" gap={1}>
-              {BADGE_OPTIONS.map((b) => {
-                const bs = BADGE_STYLE[b];
-                const active = form.badge === b;
+            <Stack direction="row" gap={1} flexWrap="wrap">
+              {NOTICE_TYPES.map((t) => {
+                const bs = NOTICE_STYLE[t];
+                const active = form.noticeType === t;
                 return (
                   // border, background are dynamic (active state)
                   <Stack
-                    key={b}
-                    onClick={() => setForm((p) => ({ ...p, badge: b }))}
+                    key={t}
+                    onClick={() => setForm((p) => ({ ...p, noticeType: t }))}
                     direction="row"
                     alignItems="center"
                     gap={1}
@@ -817,9 +1117,7 @@ const NoticesTab = () => {
                   >
                     <Stack
                       className="admin-cs-badge-dot"
-                      sx={{
-                        background: active ? bs.color : "#D1D5DB",
-                      }}
+                      sx={{ background: active ? bs.color : "#D1D5DB" }}
                     />
                     <Typography
                       sx={{
@@ -828,12 +1126,33 @@ const NoticesTab = () => {
                         color: active ? bs.color : "#9CA3AF",
                       }}
                     >
-                      {b}
+                      {prettyEnum(t)}
                     </Typography>
                   </Stack>
                 );
               })}
             </Stack>
+          </Stack>
+
+          {/* Visibility */}
+          <Stack gap={0.8}>
+            <Typography className="admin-cs-form-field-label-dark">
+              Visibility
+            </Typography>
+            <Select
+              size="small"
+              value={form.noticeStatus}
+              onChange={(e) =>
+                setForm((p) => ({
+                  ...p,
+                  noticeStatus: e.target.value as NoticeStatus,
+                }))
+              }
+              className="admin-cs-cat-select"
+            >
+              <MenuItem value={NoticeStatus.ACTIVE}>Visible</MenuItem>
+              <MenuItem value={NoticeStatus.HIDE}>Hidden</MenuItem>
+            </Select>
           </Stack>
 
           {/* Title */}
@@ -848,7 +1167,7 @@ const NoticesTab = () => {
               }
               size="small"
               fullWidth
-              placeholder="e.g. Scheduled Maintenance — May 20, 2026"
+              placeholder="e.g. Scheduled Maintenance"
               inputProps={{ style: { color: "#111827" } }}
               className="admin-cs-input-h42"
             />
@@ -878,22 +1197,6 @@ const NoticesTab = () => {
               size="small"
               fullWidth
               placeholder="Brief one-sentence description…"
-              inputProps={{ style: { color: "#111827" } }}
-              className="admin-cs-input-h42"
-            />
-          </Stack>
-
-          {/* Date */}
-          <Stack gap={0.8}>
-            <Typography className="admin-cs-form-field-label-dark">
-              Date
-            </Typography>
-            <TextField
-              value={form.date}
-              onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
-              size="small"
-              fullWidth
-              placeholder="e.g. May 20, 2026"
               inputProps={{ style: { color: "#111827" } }}
               className="admin-cs-input-h42"
             />

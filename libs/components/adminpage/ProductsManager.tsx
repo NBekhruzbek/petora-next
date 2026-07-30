@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback, ChangeEvent } from "react";
+import { useState, useRef, useCallback, ChangeEvent } from "react";
 import {
   Stack,
   Typography,
@@ -19,50 +19,82 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Pagination,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_ALL_PRODUCTS_BY_ADMIN } from "@/apollo/admin/query";
+import { CREATE_PRODUCT, UPDATE_PRODUCT } from "@/apollo/admin/mutation";
+import { IMAGES_UPLOADER } from "@/apollo/user/mutation";
+import { Product } from "@/libs/types/product/product";
+import { ProductsInquiry } from "@/libs/types/product/product.input";
 import {
-  mockProducts,
-  AdminProduct,
+  ProductPetType,
   ProductStatus,
-} from "../../data/adminMockData";
+  ProductType,
+} from "@/libs/enums/product.enum";
+import { Direction } from "@/libs/enums/common.enum";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
+import {
+  BLANK_IMAGE,
+  imageUrl,
+  metaTotal,
+  prettyEnum,
+  statusChipClass,
+  useDebouncedValue,
+  won,
+} from "./adminHelpers";
 
-const STATUS_OPTIONS: ProductStatus[] = ["active", "paused"];
-const CATEGORIES = [
-  "Foods",
-  "Accessories",
-  "Toys",
-  "Health",
-  "Clothes",
-  "Others",
+const PRODUCTS_PER_PAGE = 10;
+const MAX_IMAGES = 5;
+
+// DELETE is reachable through the Delete button, not the inline status select.
+const STATUS_OPTIONS: ProductStatus[] = [
+  ProductStatus.ACTIVE,
+  ProductStatus.PAUSE,
 ];
-const PET_TYPES = ["Dogs", "Cats", "All"];
+const PRODUCT_TYPES = Object.values(ProductType);
+const PET_TYPES = Object.values(ProductPetType);
 
 interface FormShape {
-  name: string;
-  category: string;
-  petType: string;
-  price: number;
-  discountPercent: number;
-  stock: number;
-  status: ProductStatus;
-  description: string;
-  benefitsInput: string;
+  productName: string;
+  productType: ProductType;
+  productPetType: ProductPetType;
+  productBrand: string;
+  productPrice: number;
+  productDiscount: number;
+  productQuantity: number;
+  productStatus: ProductStatus;
+  productShortDesc: string;
+  productDesc: string;
+  productBenefits: string;
 }
 
 const emptyForm: FormShape = {
-  name: "",
-  category: "Foods",
-  petType: "All",
-  price: 0,
-  discountPercent: 0,
-  stock: 0,
-  status: "active",
-  description: "",
-  benefitsInput: "",
+  productName: "",
+  productType: ProductType.FOOD,
+  productPetType: ProductPetType.DOG,
+  productBrand: "",
+  productPrice: 0,
+  productDiscount: 0,
+  productQuantity: 0,
+  productStatus: ProductStatus.ACTIVE,
+  productShortDesc: "",
+  productDesc: "",
+  productBenefits: "",
 };
+
+/** A picked file waiting to be uploaded, or a path the product already stores. */
+interface ImageSlot {
+  path?: string;
+  file?: File;
+  preview: string;
+}
 
 const Section = ({
   title,
@@ -80,161 +112,259 @@ const Section = ({
 );
 
 const ProductsManager = () => {
-  const [products, setProducts] = useState<AdminProduct[]>(mockProducts);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [filterCat, setFilterCat] = useState("ALL");
+  const [filterType, setFilterType] = useState<"ALL" | ProductType>("ALL");
+  const debouncedSearch = useDebouncedValue(search);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(
-    null,
-  );
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [form, setForm] = useState<FormShape>(emptyForm);
-  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
-  const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
-  const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
+  const [images, setImages] = useState<ImageSlot[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const allPreviewUrls = [...existingImageUrls, ...newImagePreviews];
-  const canUploadMore = allPreviewUrls.length < 5;
-  const afterDiscount =
-    form.discountPercent > 0
-      ? Math.round(form.price * (1 - form.discountPercent / 100))
-      : form.price;
-  const savings = form.price - afterDiscount;
-  const isSaveEnabled = form.name.trim() && allPreviewUrls.length >= 1;
+  /** APOLLO REQUESTS **/
 
-  const filtered = useMemo(
-    () =>
-      products.filter((p) => {
-        if (filterCat !== "ALL" && p.category !== filterCat) return false;
-        const q = search.toLowerCase();
-        return !q || p.name.toLowerCase().includes(q);
-      }),
-    [products, search, filterCat],
-  );
+  const searchFilter: ProductsInquiry = {
+    page,
+    limit: PRODUCTS_PER_PAGE,
+    sort: "createdAt",
+    direction: Direction.DESC,
+    search: {
+      // Deleted products stay out of the table; everything else is listed.
+      productStatus: [ProductStatus.ACTIVE, ProductStatus.PAUSE],
+      ...(debouncedSearch.trim() ? { text: debouncedSearch.trim() } : {}),
+      ...(filterType === "ALL" ? {} : { productType: [filterType] }),
+    },
+  };
+
+  const {
+    data: productsData,
+    previousData: productsPreviousData,
+    refetch: productsRefetch,
+  } = useQuery(GET_ALL_PRODUCTS_BY_ADMIN, {
+    fetchPolicy: "cache-and-network",
+    variables: { input: searchFilter },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const [createProduct] = useMutation(CREATE_PRODUCT);
+  const [updateProduct] = useMutation(UPDATE_PRODUCT);
+  const [imagesUploader] = useMutation(IMAGES_UPLOADER);
+
+  /** DERIVED **/
+
+  const productsResult = productsData ?? productsPreviousData;
+  const products: Product[] =
+    productsResult?.getAllProductsByAdmin?.list ?? [];
+  const total = metaTotal(productsResult?.getAllProductsByAdmin?.metaCounter);
+  const totalPages = Math.max(1, Math.ceil(total / PRODUCTS_PER_PAGE));
+
+  const canUploadMore = images.length < MAX_IMAGES;
+  const afterDiscount =
+    form.productDiscount > 0
+      ? Math.round(form.productPrice * (1 - form.productDiscount / 100))
+      : form.productPrice;
+  const savings = form.productPrice - afterDiscount;
+  const isSaveEnabled =
+    form.productName.trim().length >= 3 &&
+    form.productShortDesc.trim().length >= 3 &&
+    Boolean(form.productDesc.trim()) &&
+    images.length >= 1 &&
+    !isSaving;
+
+  /** HANDLERS **/
 
   const handleChange = (field: keyof FormShape, value: string | number) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
   const addFiles = useCallback(
     (files: File[]) => {
-      const remaining = 5 - existingImageUrls.length - newImageFiles.length;
-      const toAdd = files
-        .filter((f) => f.type.startsWith("image/"))
-        .slice(0, remaining);
-      if (!toAdd.length) return;
-      const previews = toAdd.map((f) => URL.createObjectURL(f));
-      setNewImageFiles((prev) => [...prev, ...toAdd]);
-      setNewImagePreviews((prev) => [...prev, ...previews]);
+      setImages((prev) => {
+        const toAdd = files
+          .filter((f) => f.type.startsWith("image/"))
+          .slice(0, MAX_IMAGES - prev.length);
+        if (!toAdd.length) return prev;
+        return [
+          ...prev,
+          ...toAdd.map((file) => ({
+            file,
+            preview: URL.createObjectURL(file),
+          })),
+        ];
+      });
     },
-    [existingImageUrls.length, newImageFiles.length],
+    [],
   );
 
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
     addFiles(Array.from(e.target.files ?? []));
+    // Reset the input so re-picking the same file still fires a change.
     e.target.value = "";
   };
 
-  const removeExisting = (idx: number) =>
-    setExistingImageUrls((prev) => prev.filter((_, i) => i !== idx));
+  const removeImage = (idx: number) =>
+    setImages((prev) => {
+      const target = prev[idx];
+      if (target?.file) URL.revokeObjectURL(target.preview);
+      return prev.filter((_, i) => i !== idx);
+    });
 
-  const removeNew = (idx: number) => {
-    URL.revokeObjectURL(newImagePreviews[idx]);
-    setNewImageFiles((prev) => prev.filter((_, i) => i !== idx));
-    setNewImagePreviews((prev) => prev.filter((_, i) => i !== idx));
-  };
+  const releasePreviews = () =>
+    images.forEach((image) => {
+      if (image.file) URL.revokeObjectURL(image.preview);
+    });
 
   const openAdd = () => {
+    releasePreviews();
     setEditingProduct(null);
     setForm(emptyForm);
-    setExistingImageUrls([]);
-    setNewImageFiles([]);
-    setNewImagePreviews([]);
+    setImages([]);
     setDrawerOpen(true);
   };
 
-  const openEdit = (product: AdminProduct) => {
+  const openEdit = (product: Product) => {
+    releasePreviews();
     setEditingProduct(product);
     setForm({
-      name: product.name,
-      category: product.category,
-      petType: product.petType,
-      price: product.price,
-      discountPercent:
-        product.price > 0 && product.price !== product.discountedPrice
-          ? Math.round(
-              ((product.price - product.discountedPrice) / product.price) * 100,
-            )
-          : 0,
-      stock: product.stock,
-      status: product.status,
-      description: product.description,
-      benefitsInput: product.benefits.join(", "),
+      productName: product.productName,
+      productType: product.productType,
+      productPetType: product.productPetType,
+      productBrand: product.productBrand ?? "",
+      productPrice: product.productPrice,
+      productDiscount: product.productDiscount ?? 0,
+      productQuantity: product.productQuantity,
+      productStatus:
+        product.productStatus === ProductStatus.DELETE
+          ? ProductStatus.PAUSE
+          : product.productStatus,
+      productShortDesc: product.productShortDesc ?? "",
+      productDesc: product.productDesc ?? "",
+      productBenefits: product.productBenefits ?? "",
     });
-    setExistingImageUrls([...product.images]);
-    setNewImageFiles([]);
-    setNewImagePreviews([]);
+    setImages(
+      (product.productImages ?? []).filter(Boolean).map((path) => ({
+        path,
+        preview: imageUrl(path),
+      })),
+    );
     setDrawerOpen(true);
   };
 
   const closeDrawer = () => {
-    newImagePreviews.forEach((url) => URL.revokeObjectURL(url));
+    releasePreviews();
+    setImages([]);
     setDrawerOpen(false);
   };
 
-  const save = () => {
-    const images = [...existingImageUrls, ...newImagePreviews];
-    const benefits = form.benefitsInput
-      .split(",")
-      .map((b) => b.trim())
-      .filter(Boolean);
-    const discountedPrice =
-      form.discountPercent > 0
-        ? Math.round(form.price * (1 - form.discountPercent / 100))
-        : form.price;
-    if (editingProduct) {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.id === editingProduct.id
-            ? {
-                ...p,
-                name: form.name,
-                category: form.category,
-                petType: form.petType,
-                price: form.price,
-                discountedPrice,
-                stock: form.stock,
-                status: form.status,
-                description: form.description,
-                benefits,
-                images,
-              }
-            : p,
-        ),
+  const save = async () => {
+    if (isSaving) return;
+    try {
+      setIsSaving(true);
+
+      // Only newly picked files need uploading; saved paths are reused as-is.
+      const pending = images.filter((image) => image.file);
+      let uploaded: string[] = [];
+      if (pending.length) {
+        const { data } = await imagesUploader({
+          variables: {
+            files: pending.map((image) => image.file),
+            target: "product",
+          },
+        });
+        uploaded = (data?.imagesUploader ?? []).filter(Boolean);
+        if (uploaded.length !== pending.length) {
+          throw new Error("Image upload failed, please retry.");
+        }
+      }
+
+      let nextUpload = 0;
+      const productImages = images
+        .map((image) => (image.file ? uploaded[nextUpload++] : image.path))
+        .filter(Boolean) as string[];
+
+      // productPriceAfterDiscount is derived server-side from price + discount.
+      const payload = {
+        productName: form.productName.trim(),
+        productType: form.productType,
+        productPetType: form.productPetType,
+        productStatus: form.productStatus,
+        productBrand: form.productBrand.trim(),
+        productShortDesc: form.productShortDesc.trim(),
+        productDesc: form.productDesc.trim(),
+        productBenefits: form.productBenefits.trim(),
+        productPrice: form.productPrice,
+        productDiscount: form.productDiscount,
+        productQuantity: form.productQuantity,
+        productImages,
+      };
+
+      if (editingProduct) {
+        await updateProduct({
+          variables: { input: { productId: editingProduct._id, ...payload } },
+        });
+      } else {
+        await createProduct({ variables: { input: payload } });
+      }
+
+      await productsRefetch({ input: searchFilter });
+      closeDrawer();
+      await sweetBottomSmallSuccessAlert(
+        editingProduct ? "Product saved!" : "Product added!",
+        700,
       );
-    } else {
-      setProducts((prev) => [
-        {
-          id: `p${Date.now()}`,
-          name: form.name,
-          category: form.category,
-          petType: form.petType,
-          price: form.price,
-          discountedPrice,
-          stock: form.stock,
-          status: form.status,
-          description: form.description,
-          benefits,
-          images,
-          sold: 0,
-          createdAt: "May 15, 2026",
-        },
-        ...prev,
-      ]);
+    } catch (err: any) {
+      console.log("ERROR, save product:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    } finally {
+      setIsSaving(false);
     }
-    closeDrawer();
   };
+
+  const changeStatus = async (
+    product: Product,
+    productStatus: ProductStatus,
+  ) => {
+    if (product.productStatus === productStatus) return;
+    try {
+      await updateProduct({
+        variables: { input: { productId: product._id, productStatus } },
+      });
+      await productsRefetch({ input: searchFilter });
+      await sweetBottomSmallSuccessAlert("Product updated!", 700);
+    } catch (err: any) {
+      console.log("ERROR, changeStatus:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
+
+  // The API has no remove mutation for products, so this is a soft delete:
+  // DELETE takes it out of both the shop and this table.
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await updateProduct({
+        variables: {
+          input: {
+            productId: deleteTarget._id,
+            productStatus: ProductStatus.DELETE,
+          },
+        },
+      });
+      setDeleteTarget(null);
+      await productsRefetch({ input: searchFilter });
+      await sweetBottomSmallSuccessAlert("Product removed!", 700);
+    } catch (err: any) {
+      console.log("ERROR, confirmDelete:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
+
+
+  const resetToFirstPage = () => setPage(1);
 
   return (
     <Stack gap={0}>
@@ -255,24 +385,30 @@ const ProductsManager = () => {
             size="small"
             placeholder="Search products…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              resetToFirstPage();
+            }}
             className="admin-toolbar-search admin-prd-search"
           />
           <Select
             size="small"
-            value={filterCat}
-            onChange={(e) => setFilterCat(e.target.value)}
+            value={filterType}
+            onChange={(e) => {
+              setFilterType(e.target.value as "ALL" | ProductType);
+              resetToFirstPage();
+            }}
             className="admin-toolbar-select admin-prd-cat-filter"
           >
             <MenuItem value="ALL">All Categories</MenuItem>
-            {CATEGORIES.map((c) => (
+            {PRODUCT_TYPES.map((c) => (
               <MenuItem key={c} value={c}>
-                {c}
+                {prettyEnum(c)}
               </MenuItem>
             ))}
           </Select>
           <Typography className="admin-meta-count">
-            {filtered.length} products
+            {products.length} of {total}
           </Typography>
         </Stack>
 
@@ -291,131 +427,153 @@ const ProductsManager = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filtered.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="admin-prd-name-cell">
-                    <Stack className="admin-name-cell">
-                      <Stack className="admin-prd-thumb-box">
-                        {product.images[0] && (
-                          <img
-                            src={product.images[0]}
-                            alt=""
-                            onError={(e) => {
-                              const img = e.target as HTMLImageElement;
-                              img.src =
-                                "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-                              img.style.opacity = "0";
-                            }}
-                          />
+              {products.map((product) => {
+                const finalPrice =
+                  product.productPriceAfterDiscount ?? product.productPrice;
+                const isDiscounted = finalPrice !== product.productPrice;
+                return (
+                  <TableRow key={product._id}>
+                    <TableCell className="admin-prd-name-cell">
+                      <Stack className="admin-name-cell">
+                        <Stack className="admin-prd-thumb-box">
+                          {product.productImages?.[0] && (
+                            <img
+                              src={imageUrl(product.productImages[0])}
+                              alt=""
+                              onError={(e) => {
+                                const img = e.target as HTMLImageElement;
+                                img.src = BLANK_IMAGE;
+                                img.style.opacity = "0";
+                              }}
+                            />
+                          )}
+                        </Stack>
+                        <Typography className="admin-prd-name-text">
+                          {product.productName}
+                        </Typography>
+                      </Stack>
+                    </TableCell>
+                    <TableCell className="admin-prd-cat-cell">
+                      {prettyEnum(product.productType)}
+                    </TableCell>
+                    <TableCell className="admin-prd-pet-cell">
+                      {prettyEnum(product.productPetType)}
+                    </TableCell>
+                    <TableCell>
+                      <Stack gap={0.4}>
+                        {isDiscounted ? (
+                          <>
+                            <Typography className="admin-prd-old-price">
+                              {won(product.productPrice)}
+                            </Typography>
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              gap={0.8}
+                            >
+                              <Typography className="admin-prd-new-price">
+                                {won(finalPrice)}
+                              </Typography>
+                              <span className="admin-prd-discount-badge">
+                                -{product.productDiscount}%
+                              </span>
+                            </Stack>
+                          </>
+                        ) : (
+                          <Typography className="admin-prd-price-text">
+                            {won(product.productPrice)}
+                          </Typography>
                         )}
                       </Stack>
-                      <Typography className="admin-prd-name-text">
-                        {product.name}
+                    </TableCell>
+                    <TableCell>
+                      <Typography
+                        sx={{
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color:
+                            product.productQuantity === 0
+                              ? "#EF4444"
+                              : "#374151",
+                        }}
+                      >
+                        {product.productQuantity === 0
+                          ? "Out"
+                          : product.productQuantity}
                       </Typography>
-                    </Stack>
-                  </TableCell>
-                  <TableCell className="admin-prd-cat-cell">
-                    {product.category}
-                  </TableCell>
-                  <TableCell className="admin-prd-pet-cell">
-                    {product.petType}
-                  </TableCell>
-                  <TableCell>
-                    <Stack gap={0.4}>
-                      {product.price !== product.discountedPrice ? (
-                        <>
-                          <Typography className="admin-prd-old-price">
-                            ₩{product.price.toLocaleString()}
-                          </Typography>
-                          <Stack direction="row" alignItems="center" gap={0.8}>
-                            <Typography className="admin-prd-new-price">
-                              ₩{product.discountedPrice.toLocaleString()}
-                            </Typography>
-                            <span className="admin-prd-discount-badge">
-                              -
-                              {Math.round(
-                                ((product.price - product.discountedPrice) /
-                                  product.price) *
-                                  100,
-                              )}
-                              %
-                            </span>
-                          </Stack>
-                        </>
-                      ) : (
-                        <Typography className="admin-prd-price-text">
-                          ₩{product.price.toLocaleString()}
-                        </Typography>
-                      )}
-                    </Stack>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      sx={{
-                        fontSize: "12px",
-                        fontWeight: 600,
-                        color: product.stock === 0 ? "#EF4444" : "#374151",
-                      }}
-                    >
-                      {product.stock === 0 ? "Out" : product.stock}
+                    </TableCell>
+                    <TableCell className="admin-prd-sold-cell">
+                      {product.productSoldTimes ?? 0}
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={product.productStatus}
+                        onChange={(e) =>
+                          changeStatus(
+                            product,
+                            e.target.value as ProductStatus,
+                          )
+                        }
+                        size="small"
+                        renderValue={(val) => (
+                          <span className={statusChipClass(val as string)}>
+                            {val as string}
+                          </span>
+                        )}
+                        className="admin-status-select"
+                      >
+                        {STATUS_OPTIONS.map((s) => (
+                          <MenuItem key={s} value={s}>
+                            <span className={statusChipClass(s)}>{s}</span>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <Stack className="admin-action-row">
+                        <Button
+                          size="small"
+                          onClick={() => openEdit(product)}
+                          className="admin-btn-edit"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="small"
+                          onClick={() => setDeleteTarget(product)}
+                          className="admin-btn-delete"
+                        >
+                          Delete
+                        </Button>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+              {products.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    <Typography className="admin-table-empty">
+                      No products found
                     </Typography>
                   </TableCell>
-                  <TableCell className="admin-prd-sold-cell">
-                    {product.sold}
-                  </TableCell>
-                  <TableCell>
-                    <Select
-                      value={product.status}
-                      onChange={(e) =>
-                        setProducts((prev) =>
-                          prev.map((p) =>
-                            p.id === product.id
-                              ? {
-                                  ...p,
-                                  status: e.target.value as ProductStatus,
-                                }
-                              : p,
-                          ),
-                        )
-                      }
-                      size="small"
-                      renderValue={(val) => (
-                        <span className={`status-chip status-${val}`}>
-                          {val}
-                        </span>
-                      )}
-                      className="admin-status-select"
-                    >
-                      {STATUS_OPTIONS.map((s) => (
-                        <MenuItem key={s} value={s}>
-                          <span className={`status-chip status-${s}`}>{s}</span>
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    <Stack className="admin-action-row">
-                      <Button
-                        size="small"
-                        onClick={() => openEdit(product)}
-                        className="admin-btn-edit"
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="small"
-                        onClick={() => setDeleteId(product.id)}
-                        className="admin-btn-delete"
-                      >
-                        Delete
-                      </Button>
-                    </Stack>
-                  </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </TableContainer>
+
+        {totalPages > 1 && (
+          <Stack className="admin-pagination">
+            <Pagination
+              page={page}
+              count={totalPages}
+              onChange={(_, value) => setPage(value)}
+              shape="rounded"
+              color="primary"
+            />
+          </Stack>
+        )}
       </Stack>
 
       {/* ── Drawer ───────────────────────────────────────────────── */}
@@ -446,7 +604,7 @@ const ProductsManager = () => {
             </Typography>
             <Typography className="admin-prd-drawer-subtitle">
               {editingProduct
-                ? editingProduct.name
+                ? editingProduct.productName
                 : "Fill in the details below"}
             </Typography>
           </Stack>
@@ -468,10 +626,11 @@ const ProductsManager = () => {
                 Product Name
               </Typography>
               <TextField
-                value={form.name}
-                onChange={(e) => handleChange("name", e.target.value)}
+                value={form.productName}
+                onChange={(e) => handleChange("productName", e.target.value)}
                 size="small"
                 fullWidth
+                placeholder="At least 3 characters"
                 className="admin-prd-input-h42"
               />
             </Stack>
@@ -482,13 +641,13 @@ const ProductsManager = () => {
                 </Typography>
                 <Select
                   size="small"
-                  value={form.category}
-                  onChange={(e) => handleChange("category", e.target.value)}
+                  value={form.productType}
+                  onChange={(e) => handleChange("productType", e.target.value)}
                   className="admin-prd-select"
                 >
-                  {CATEGORIES.map((c) => (
+                  {PRODUCT_TYPES.map((c) => (
                     <MenuItem key={c} value={c}>
-                      {c}
+                      {prettyEnum(c)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -499,17 +658,30 @@ const ProductsManager = () => {
                 </Typography>
                 <Select
                   size="small"
-                  value={form.petType}
-                  onChange={(e) => handleChange("petType", e.target.value)}
+                  value={form.productPetType}
+                  onChange={(e) =>
+                    handleChange("productPetType", e.target.value)
+                  }
                   className="admin-prd-select"
                 >
                   {PET_TYPES.map((t) => (
                     <MenuItem key={t} value={t}>
-                      {t}
+                      {prettyEnum(t)}
                     </MenuItem>
                   ))}
                 </Select>
               </Stack>
+            </Stack>
+            <Stack>
+              <Typography className="admin-prd-field-label">Brand</Typography>
+              <TextField
+                value={form.productBrand}
+                onChange={(e) => handleChange("productBrand", e.target.value)}
+                size="small"
+                fullWidth
+                placeholder="Optional"
+                className="admin-prd-input-h42"
+              />
             </Stack>
           </Section>
 
@@ -522,11 +694,11 @@ const ProductsManager = () => {
                 </Typography>
                 <TextField
                   type="number"
-                  value={form.price === 0 ? "" : form.price}
+                  value={form.productPrice === 0 ? "" : form.productPrice}
                   placeholder="0"
                   onChange={(e) =>
                     handleChange(
-                      "price",
+                      "productPrice",
                       e.target.value === "" ? 0 : Number(e.target.value),
                     )
                   }
@@ -550,11 +722,11 @@ const ProductsManager = () => {
                 </Typography>
                 <TextField
                   type="number"
-                  value={form.discountPercent === 0 ? "" : form.discountPercent}
+                  value={form.productDiscount === 0 ? "" : form.productDiscount}
                   placeholder="0"
                   onChange={(e) =>
                     handleChange(
-                      "discountPercent",
+                      "productDiscount",
                       e.target.value === ""
                         ? 0
                         : Math.min(100, Math.max(0, Number(e.target.value))),
@@ -582,28 +754,28 @@ const ProductsManager = () => {
               sx={{
                 borderRadius: "12px",
                 border: "1px solid",
-                borderColor: form.discountPercent > 0 ? "#C7D2FE" : "#E8ECF0",
+                borderColor: form.productDiscount > 0 ? "#C7D2FE" : "#E8ECF0",
                 background:
-                  form.discountPercent > 0
+                  form.productDiscount > 0
                     ? "linear-gradient(135deg,#EEF2FF,#F5F3FF)"
                     : "#F9FAFB",
                 p: 2,
               }}
             >
-              {form.discountPercent > 0 ? (
+              {form.productDiscount > 0 ? (
                 <Stack direction="row" alignItems="center">
                   <Stack alignItems="center" flex={1}>
                     <Typography className="admin-prd-pb-orig-label">
                       Original
                     </Typography>
                     <Typography className="admin-prd-pb-orig-value">
-                      ₩{form.price.toLocaleString()}
+                      {won(form.productPrice)}
                     </Typography>
                   </Stack>
                   <Stack alignItems="center" className="admin-prd-pb-center">
                     <Stack className="admin-prd-pb-disc-badge">
                       <Typography className="admin-prd-pb-disc-text">
-                        -{form.discountPercent}%
+                        -{form.productDiscount}%
                       </Typography>
                     </Stack>
                     <Typography className="admin-prd-pb-arrow">→</Typography>
@@ -613,7 +785,7 @@ const ProductsManager = () => {
                       Final Price
                     </Typography>
                     <Typography className="admin-prd-pb-final-value">
-                      ₩{afterDiscount.toLocaleString()}
+                      {won(afterDiscount)}
                     </Typography>
                   </Stack>
                   <Stack className="admin-prd-pb-divider-v" />
@@ -622,7 +794,7 @@ const ProductsManager = () => {
                       Customer Saves
                     </Typography>
                     <Typography className="admin-prd-pb-saves-value">
-                      ₩{savings.toLocaleString()}
+                      {won(savings)}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -636,7 +808,7 @@ const ProductsManager = () => {
                     No discount applied
                   </Typography>
                   <Typography className="admin-prd-pb-no-disc-value">
-                    ₩{form.price.toLocaleString()}
+                    {won(form.productPrice)}
                   </Typography>
                 </Stack>
               )}
@@ -644,17 +816,17 @@ const ProductsManager = () => {
 
             <Stack direction="row" gap={1.5}>
               <Stack flex={1}>
-                <Typography className="admin-prd-field-label">
-                  Stock
-                </Typography>
+                <Typography className="admin-prd-field-label">Stock</Typography>
                 <TextField
                   type="number"
-                  value={form.stock === 0 ? "" : form.stock}
+                  value={form.productQuantity === 0 ? "" : form.productQuantity}
                   placeholder="0"
                   onChange={(e) =>
                     handleChange(
-                      "stock",
-                      e.target.value === "" ? 0 : Number(e.target.value),
+                      "productQuantity",
+                      e.target.value === ""
+                        ? 0
+                        : Math.max(0, Number(e.target.value)),
                     )
                   }
                   size="small"
@@ -668,15 +840,15 @@ const ProductsManager = () => {
                 </Typography>
                 <Select
                   size="small"
-                  value={form.status}
+                  value={form.productStatus}
                   onChange={(e) =>
-                    handleChange("status", e.target.value as ProductStatus)
+                    handleChange("productStatus", e.target.value)
                   }
                   className="admin-prd-select"
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
-                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                      {prettyEnum(s)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -687,9 +859,21 @@ const ProductsManager = () => {
           {/* Details */}
           <Section title="Product Details">
             <TextField
-              label="Description"
-              value={form.description}
-              onChange={(e) => handleChange("description", e.target.value)}
+              label="Short Description"
+              value={form.productShortDesc}
+              onChange={(e) =>
+                handleChange("productShortDesc", e.target.value)
+              }
+              size="small"
+              fullWidth
+              inputProps={{ maxLength: 250, style: { color: "#111827" } }}
+              helperText="Shown on the shop card · 3–250 characters"
+              className="admin-prd-input"
+            />
+            <TextField
+              label="Full Description"
+              value={form.productDesc}
+              onChange={(e) => handleChange("productDesc", e.target.value)}
               size="small"
               multiline
               rows={3}
@@ -706,8 +890,8 @@ const ProductsManager = () => {
             />
             <TextField
               label="Benefits"
-              value={form.benefitsInput}
-              onChange={(e) => handleChange("benefitsInput", e.target.value)}
+              value={form.productBenefits}
+              onChange={(e) => handleChange("productBenefits", e.target.value)}
               size="small"
               fullWidth
               className="admin-prd-input"
@@ -716,34 +900,18 @@ const ProductsManager = () => {
           </Section>
 
           {/* Images */}
-          <Section title={`Images (${allPreviewUrls.length}/5)`}>
-            {/* Previews FIRST */}
-            {allPreviewUrls.length > 0 && (
+          <Section title={`Images (${images.length}/${MAX_IMAGES})`}>
+            {images.length > 0 && (
               <Stack direction="row" flexWrap="wrap" gap={1.5}>
-                {existingImageUrls.map((url, i) => (
-                  <Stack key={`ex-${i}`} className="admin-prd-img-existing">
+                {images.map((image, i) => (
+                  <Stack
+                    key={`${image.path ?? image.preview}-${i}`}
+                    className={
+                      image.file ? "admin-prd-img-new" : "admin-prd-img-existing"
+                    }
+                  >
                     <img
-                      src={url}
-                      alt=""
-                      onError={(e) => {
-                        const img = e.target as HTMLImageElement;
-                        img.src =
-                          "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-                        img.style.opacity = "0";
-                      }}
-                    />
-                    <Stack
-                      className="rm admin-prd-img-remove-btn"
-                      onClick={() => removeExisting(i)}
-                    >
-                      <CloseIcon className="admin-icon-12-white" />
-                    </Stack>
-                  </Stack>
-                ))}
-                {newImagePreviews.map((url, i) => (
-                  <Stack key={`new-${i}`} className="admin-prd-img-new">
-                    <img
-                      src={url}
+                      src={image.preview}
                       alt=""
                       style={{
                         width: "100%",
@@ -751,10 +919,15 @@ const ProductsManager = () => {
                         objectFit: "cover",
                         display: "block",
                       }}
+                      onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.src = BLANK_IMAGE;
+                        img.style.opacity = "0";
+                      }}
                     />
                     <Stack
                       className="rm admin-prd-img-remove-btn"
-                      onClick={() => removeNew(i)}
+                      onClick={() => removeImage(i)}
                     >
                       <CloseIcon className="admin-icon-12-white" />
                     </Stack>
@@ -793,8 +966,8 @@ const ProductsManager = () => {
                   Click to upload or drag &amp; drop
                 </Typography>
                 <Typography className="admin-prd-upload-hint">
-                  PNG, JPG, WEBP · {5 - allPreviewUrls.length} slot
-                  {5 - allPreviewUrls.length !== 1 ? "s" : ""} remaining
+                  PNG, JPG, WEBP · {MAX_IMAGES - images.length} slot
+                  {MAX_IMAGES - images.length !== 1 ? "s" : ""} remaining
                 </Typography>
                 <input
                   ref={fileInputRef}
@@ -807,7 +980,7 @@ const ProductsManager = () => {
               </Stack>
             )}
 
-            {allPreviewUrls.length < 1 && (
+            {images.length < 1 && (
               <Typography className="admin-prd-img-required-msg">
                 At least 1 image is required
               </Typography>
@@ -831,43 +1004,48 @@ const ProductsManager = () => {
             disabled={!isSaveEnabled}
             className="admin-prd-save-btn"
           >
-            {editingProduct ? "Save Changes" : "Add New Product"}
+            {isSaving
+              ? "Saving…"
+              : editingProduct
+                ? "Save Changes"
+                : "Add New Product"}
           </Button>
         </Stack>
       </Drawer>
 
       {/* Delete Confirmation */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} maxWidth="xs" disablePortal>
+      <Dialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        maxWidth="xs"
+        disablePortal
+      >
         <DialogTitle className="admin-prd-dialog-title">
           Delete Product?
         </DialogTitle>
         <DialogContent>
           <Typography className="admin-prd-dialog-body">
-            This product will be permanently removed. This action cannot be
-            undone.
+            This product will be taken off the shop and out of this list. Past
+            orders that contain it are not affected.
           </Typography>
         </DialogContent>
         <DialogActions className="admin-prd-dialog-actions">
           <Button
-            onClick={() => setDeleteId(null)}
+            onClick={() => setDeleteTarget(null)}
             className="admin-prd-dialog-cancel-btn"
           >
             Cancel
           </Button>
           <Button
             variant="contained"
-            onClick={() => {
-              if (deleteId) {
-                setProducts((prev) => prev.filter((p) => p.id !== deleteId));
-                setDeleteId(null);
-              }
-            }}
+            onClick={confirmDelete}
             className="admin-prd-dialog-delete-btn"
           >
             Delete
           </Button>
         </DialogActions>
       </Dialog>
+
     </Stack>
   );
 };

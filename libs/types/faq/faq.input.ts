@@ -1,12 +1,12 @@
 import { FaqStatus, FaqType } from "@/libs/enums/faq.enum";
 import { Direction } from "@/libs/enums/common.enum";
 
+/** `memberId` is set server-side from the auth token — sending it is a schema error. */
 export interface FaqInput {
   faqType: FaqType;
   faqStatus: FaqStatus;
   faqTitle: string;
   faqContent: string;
-  memberId: string;
 }
 
 interface FaqISearch {
