@@ -119,7 +119,10 @@ const MyPage: NextPage = () => {
     [isAgent],
   );
 
-  const rawCategory = router.query.articleCategory;
+  // The panel is selected by ?category=. ?articleCategory= is the older name
+  // this page inherited from /community — where it genuinely is the article
+  // category — and is still honoured so existing links keep working.
+  const rawCategory = router.query.category ?? router.query.articleCategory;
 
   const normalizedCategory =
     rawCategory === "ORDERS" ||
@@ -153,7 +156,7 @@ const MyPage: NextPage = () => {
   }, [activeCategory, user?._id, isAgent]);
 
   useEffect(() => {
-    if (!router.query.articleCategory) return;
+    if (!rawCategory) return;
 
     const content = contentRef.current;
     if (!content) return;
@@ -165,7 +168,7 @@ const MyPage: NextPage = () => {
       top: Math.max(0, window.scrollY + top - HEADER_OFFSET),
       behavior: "smooth",
     });
-  }, [activeCategory, router.query.articleCategory]);
+  }, [activeCategory, rawCategory]);
 
   /** HANDLERS **/
 
@@ -173,7 +176,7 @@ const MyPage: NextPage = () => {
     void router.push(
       {
         pathname: "/mypage",
-        query: { articleCategory: category },
+        query: { category },
       },
       undefined,
       { shallow: true, scroll: false },

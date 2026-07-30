@@ -13,12 +13,12 @@ import {
   NotificationType,
 } from "@/libs/enums/notification.enum";
 
-const MY_BOOKINGS = "/mypage?articleCategory=ORDERS_BOOKINGS&tab=BOOKINGS";
-const MY_ORDERS = "/mypage?articleCategory=ORDERS_BOOKINGS&tab=ORDERS";
+const MY_BOOKINGS = "/mypage?category=ORDERS_BOOKINGS&tab=BOOKINGS";
+const MY_ORDERS = "/mypage?category=ORDERS_BOOKINGS&tab=ORDERS";
 export const BOOKING_REQUESTS =
-  "/mypage?articleCategory=SERVICE_MANAGEMENT&tab=REQUESTS";
+  "/mypage?category=SERVICE_MANAGEMENT&tab=REQUESTS";
 
-export const ALL_NOTIFICATIONS = "/mypage?articleCategory=NOTIFICATIONS";
+export const ALL_NOTIFICATIONS = "/mypage?category=NOTIFICATIONS";
 
 export const DESTINATIONS: Partial<
   Record<NotificationType, { label: string; href: string }>

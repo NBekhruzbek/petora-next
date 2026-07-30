@@ -8,7 +8,7 @@ import { BOOKING_REQUESTS, DESTINATIONS } from "./notificationPresentation";
 
 const LOOKUP_LIMIT = 100;
 
-const SERVICE_MANAGEMENT = "/mypage?articleCategory=SERVICE_MANAGEMENT&tab=";
+const SERVICE_MANAGEMENT = "/mypage?category=SERVICE_MANAGEMENT&tab=";
 
 export const useNotificationDestination = () => {
   const client = useApolloClient();

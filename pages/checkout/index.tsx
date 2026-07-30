@@ -233,7 +233,7 @@ const CheckoutPage: NextPage = () => {
               className="btn-success-orders"
               onClick={() =>
                 void router.push(
-                  "/mypage?articleCategory=ORDERS_BOOKINGS&tab=ORDERS",
+                  "/mypage?category=ORDERS_BOOKINGS&tab=ORDERS",
                 )
               }
             >
