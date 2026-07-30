@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Box,
   Button,
+  Pagination,
+  PaginationItem,
   Rating,
   Stack,
   Tab,
   Tabs,
   Typography,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
@@ -56,8 +60,8 @@ const startsWithinFeeWindow = (booking: BookedInfo) => {
   return untilStart > 0 && untilStart < FEE_WINDOW_MS;
 };
 
-const BOOKINGS_LIMIT = 20;
-const ORDERS_LIMIT = 10;
+const BOOKINGS_LIMIT = 10;
+const ORDERS_LIMIT = 5;
 
 // One source of truth for the tab order, the labels and the ?tab= deep link.
 // Deriving the index from the key means reordering the tabs can never silently
@@ -234,11 +238,16 @@ const BookingsOrders = () => {
     TABS.findIndex((tab) => tab.key === router.query.tab),
   );
   const [activeTab, setActiveTab] = useState(initialTab);
+  const [ordersPage, setOrdersPage] = useState(1);
+  const [bookingsPage, setBookingsPage] = useState(1);
+
+  const ordersTopRef = useRef<HTMLDivElement | null>(null);
+  const bookingsTopRef = useRef<HTMLDivElement | null>(null);
 
   /** APOLLO REQUESTS **/
 
   const bookingsFilter = {
-    page: 1,
+    page: bookingsPage,
     limit: BOOKINGS_LIMIT,
     sort: "createdAt",
     direction: Direction.DESC,
@@ -256,7 +265,7 @@ const BookingsOrders = () => {
 
   const { data: getMyOrdersData } = useQuery(GET_MY_ORDERS, {
     fetchPolicy: "cache-and-network",
-    variables: { input: { page: 1, limit: ORDERS_LIMIT } },
+    variables: { input: { page: ordersPage, limit: ORDERS_LIMIT } },
     skip: !user?._id,
     notifyOnNetworkStatusChange: true,
   });
@@ -269,10 +278,46 @@ const BookingsOrders = () => {
   const bookings: BookedInfo[] = getMyBookingsData?.getMyBookings?.list ?? [];
   const orders: Order[] = getMyOrdersData?.getMyOrders?.list ?? [];
 
+  const bookingsTotal: number =
+    getMyBookingsData?.getMyBookings?.metaCounter?.[0]?.total ?? 0;
+  const ordersTotal: number =
+    getMyOrdersData?.getMyOrders?.metaCounter?.[0]?.total ?? 0;
+
+  const bookingsTotalPages = Math.max(
+    1,
+    Math.ceil(bookingsTotal / BOOKINGS_LIMIT),
+  );
+  const ordersTotalPages = Math.max(1, Math.ceil(ordersTotal / ORDERS_LIMIT));
+
   /** HANDLERS **/
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
+  };
+
+  // Both tabs scroll back to the head of their own list, so paging never leaves
+  // the user parked halfway down the next page.
+  const scrollToListTop = (ref: React.RefObject<HTMLDivElement | null>) => {
+    if (!ref.current) return;
+    const scrollTarget =
+      window.scrollY + ref.current.getBoundingClientRect().top - 210;
+    window.scrollTo({ top: Math.max(0, scrollTarget), behavior: "smooth" });
+  };
+
+  const handleOrdersPageChange = (
+    _event: ChangeEvent<unknown>,
+    page: number,
+  ) => {
+    setOrdersPage(page);
+    scrollToListTop(ordersTopRef);
+  };
+
+  const handleBookingsPageChange = (
+    _event: ChangeEvent<unknown>,
+    page: number,
+  ) => {
+    setBookingsPage(page);
+    scrollToListTop(bookingsTopRef);
   };
 
   const cancelBooking = async (booking: BookedInfo) => {
@@ -329,7 +374,7 @@ const BookingsOrders = () => {
       <Box className="bookings-orders-tab-content">
         {/* ── ORDERS TAB ── */}
         {activeTabKey === "ORDERS" && (
-          <Stack spacing={2} className="bo-orders-list">
+          <Stack spacing={2} className="bo-orders-list" ref={ordersTopRef}>
             {orders.length === 0 && (
               <EmptyState
                 icon={<Inventory2OutlinedIcon />}
@@ -526,12 +571,32 @@ const BookingsOrders = () => {
                 </Stack>
               );
             })}
+
+            {ordersTotal > ORDERS_LIMIT && (
+              <Stack className="pagination-section">
+                <Pagination
+                  count={ordersTotalPages}
+                  page={ordersPage}
+                  renderItem={(item) => (
+                    <PaginationItem
+                      components={{
+                        previous: ArrowBackIcon,
+                        next: ArrowForwardIcon,
+                      }}
+                      {...item}
+                      color="primary"
+                    />
+                  )}
+                  onChange={handleOrdersPageChange}
+                />
+              </Stack>
+            )}
           </Stack>
         )}
 
         {/* ── BOOKINGS TAB ── */}
         {activeTabKey === "BOOKINGS" && (
-          <Stack spacing={1.5} className="bo-bookings-tab">
+          <Stack spacing={1.5} className="bo-bookings-tab" ref={bookingsTopRef}>
             {bookings.length === 0 && (
               <EmptyState
                 icon={<CalendarMonthOutlinedIcon />}
@@ -668,6 +733,26 @@ const BookingsOrders = () => {
                 </Stack>
               );
             })}
+
+            {bookingsTotal > BOOKINGS_LIMIT && (
+              <Stack className="pagination-section">
+                <Pagination
+                  count={bookingsTotalPages}
+                  page={bookingsPage}
+                  renderItem={(item) => (
+                    <PaginationItem
+                      components={{
+                        previous: ArrowBackIcon,
+                        next: ArrowForwardIcon,
+                      }}
+                      {...item}
+                      color="primary"
+                    />
+                  )}
+                  onChange={handleBookingsPageChange}
+                />
+              </Stack>
+            )}
           </Stack>
         )}
       </Box>

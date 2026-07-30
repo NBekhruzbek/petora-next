@@ -677,4 +677,30 @@
       }
     }
   }
+
+  // ── Shared pagination (orders + bookings) ──
+  .pagination-section {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 12px;
+
+    .MuiPagination-ul {
+      gap: 6px;
+    }
+
+    .MuiPaginationItem-root {
+      border-radius: 10px;
+      font-family: $font;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4b158d;
+    }
+
+    .Mui-selected {
+      background: #4b158d;
+      color: #fff;
+    }
+  }
 }
