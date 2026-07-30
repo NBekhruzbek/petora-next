@@ -506,7 +506,8 @@ const BillingInfo = ({
         ) : (
           <Stack className="invoice-list" spacing={1}>
             {orders.map((order) => {
-              const isPaid = order.orderStatus === OrderStatus.DELIVERED;
+              // An order only counts as settled once it has actually arrived.
+              const isPaid = order.orderStatus === OrderStatus.ARRIVED;
               const isCancelled = order.orderStatus === OrderStatus.CANCELLED;
               const statusLabel = isCancelled
                 ? "Cancelled"

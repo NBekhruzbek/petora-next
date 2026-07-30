@@ -22,11 +22,11 @@ const CHIP_CLASS: Record<string, string> = {
   BLOCK: "blocked",
   DELETE: "deleted",
   HIDE: "hidden",
-  // Order statuses
-  PENDING: "pending",
-  PROCESSING: "processing",
+  // Order statuses, in delivery-tracker order
+  PROCESSED: "processed",
   SHIPPED: "shipped",
-  DELIVERED: "delivered",
+  EN_ROUTE: "en-route",
+  ARRIVED: "arrived",
   CANCELLED: "cancelled",
 };
 

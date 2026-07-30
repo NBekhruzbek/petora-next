@@ -649,20 +649,21 @@ $sidebar-width: 260px;
       color: #6b7280;
     }
 
-    // Order statuses
-    &.status-pending {
+    // Order statuses — warm while the order still needs work, cooling to blue
+    // once it is moving, green on arrival. Mirrors the tracker's progression.
+    &.status-processed {
       background: #fffbeb;
       color: #d97706;
-    }
-    &.status-processing {
-      background: #eff6ff;
-      color: #3b82f6;
     }
     &.status-shipped {
       background: #eff6ff;
       color: #3b82f6;
     }
-    &.status-delivered {
+    &.status-en-route {
+      background: #eef2ff;
+      color: #6366f1;
+    }
+    &.status-arrived {
       background: #ecfdf5;
       color: #059669;
     }

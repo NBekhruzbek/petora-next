@@ -508,10 +508,11 @@
         white-space: nowrap;
         letter-spacing: 0.2px;
 
-        &.processing {
-          color: #1d4ed8;
-          background: #eff6ff;
-          border: 1px solid rgba(29, 78, 216, 0.22);
+        // One per OrderStatus, in delivery-tracker order.
+        &.processed {
+          color: #4d4358;
+          background: #f5f3f7;
+          border: 1px solid rgba(77, 67, 88, 0.22);
         }
 
         &.shipped {
@@ -520,16 +521,16 @@
           border: 1px solid rgba(146, 64, 14, 0.22);
         }
 
-        &.delivered {
+        &.en-route {
+          color: #1d4ed8;
+          background: #eff6ff;
+          border: 1px solid rgba(29, 78, 216, 0.22);
+        }
+
+        &.arrived {
           color: #166534;
           background: #ecfdf3;
           border: 1px solid rgba(22, 101, 52, 0.22);
-        }
-
-        &.pending {
-          color: #4d4358;
-          background: #f5f3f7;
-          border: 1px solid rgba(77, 67, 88, 0.22);
         }
 
         &.cancelled {

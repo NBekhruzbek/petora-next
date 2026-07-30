@@ -105,7 +105,7 @@ const AdminDashboard = () => {
           value={stats?.totalOrders ?? 0}
           icon={<ShoppingCartIcon />}
           color="#F59E0B"
-          trendNeutral={`${stats?.pendingOrders ?? 0} awaiting action`}
+          trendNeutral={`${stats?.pendingOrders ?? 0} awaiting shipment`}
         />
         <StatCard
           title="Revenue"

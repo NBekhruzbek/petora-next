@@ -45,11 +45,12 @@ import {
 
 const ORDERS_PER_PAGE = 10;
 
+// Listed in tracker order, so advancing an order is a walk down the menu.
 const STATUS_OPTIONS: OrderStatus[] = [
-  OrderStatus.PENDING,
-  OrderStatus.PROCESSING,
+  OrderStatus.PROCESSED,
   OrderStatus.SHIPPED,
-  OrderStatus.DELIVERED,
+  OrderStatus.EN_ROUTE,
+  OrderStatus.ARRIVED,
   OrderStatus.CANCELLED,
 ];
 
@@ -212,14 +213,16 @@ const OrdersManager = () => {
                         size="small"
                         renderValue={(val) => (
                           <span className={statusChipClass(val as string)}>
-                            {val as string}
+                            {prettyEnum(val as string)}
                           </span>
                         )}
                         className="admin-status-select"
                       >
                         {STATUS_OPTIONS.map((s) => (
                           <MenuItem key={s} value={s}>
-                            <span className={statusChipClass(s)}>{s}</span>
+                            <span className={statusChipClass(s)}>
+                              {prettyEnum(s)}
+                            </span>
                           </MenuItem>
                         ))}
                       </Select>
@@ -327,14 +330,14 @@ const OrdersManager = () => {
                   size="small"
                   renderValue={(val) => (
                     <span className={statusChipClass(val as string)}>
-                      {val as string}
+                      {prettyEnum(val as string)}
                     </span>
                   )}
                   className="admin-ord-status-select"
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
-                      <span className={statusChipClass(s)}>{s}</span>
+                      <span className={statusChipClass(s)}>{prettyEnum(s)}</span>
                     </MenuItem>
                   ))}
                 </Select>

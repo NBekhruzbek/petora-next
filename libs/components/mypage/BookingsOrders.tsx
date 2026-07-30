@@ -144,12 +144,14 @@ const STAGES = [
 ];
 
 // There is no carrier ETA on the API, so the tracker advances one stage per
-// order status instead of interpolating over a delivery window.
+// order status instead of interpolating over a delivery window. OrderStatus has
+// one value per stage, so this is a straight 1:1 with STAGES above — keep it
+// that way, an offset here is what made SHIPPED light up "En Route".
 const STATUS_PROGRESS: Record<string, number> = {
-  [OrderStatus.PENDING]: 0,
-  [OrderStatus.PROCESSING]: 33,
-  [OrderStatus.SHIPPED]: 66,
-  [OrderStatus.DELIVERED]: 100,
+  [OrderStatus.PROCESSED]: 0,
+  [OrderStatus.SHIPPED]: 33,
+  [OrderStatus.EN_ROUTE]: 66,
+  [OrderStatus.ARRIVED]: 100,
   [OrderStatus.CANCELLED]: 0,
 };
 
@@ -347,12 +349,17 @@ const BookingsOrders = () => {
                 0,
               );
               const deliveryPrice = order.orderDelivery ?? 0;
-              const status = order.orderStatus.toLowerCase();
+              // EN_ROUTE has to become "en-route" for the class and "En route"
+              // for the label — the raw lowercase value would read "En_route".
+              const statusClass = order.orderStatus
+                .toLowerCase()
+                .replace(/_/g, "-");
+              const statusLabel = prettifyEnum(order.orderStatus);
 
               return (
                 <Stack
                   key={order._id}
-                  className={`order-card ${status}`}
+                  className={`order-card ${statusClass}`}
                   spacing={0}
                 >
                   {/* Header */}
@@ -380,7 +387,7 @@ const BookingsOrders = () => {
                             {formatDate(order.createdAt)}
                           </Typography>
                         </Stack>
-                        {order.orderStatus === OrderStatus.DELIVERED ? (
+                        {order.orderStatus === OrderStatus.ARRIVED ? (
                           <Stack
                             className="order-delivered-actions"
                             spacing={1}
@@ -389,8 +396,8 @@ const BookingsOrders = () => {
                             justifyContent={"space-between"}
                             alignItems="flex-end"
                           >
-                            <Box className="order-status-badge delivered">
-                              Delivered
+                            <Box className="order-status-badge arrived">
+                              Arrived
                             </Box>
                             {items[0]?.productId && (
                               <Button
@@ -405,8 +412,8 @@ const BookingsOrders = () => {
                             )}
                           </Stack>
                         ) : (
-                          <Box className={`order-status-badge ${status}`}>
-                            {status}
+                          <Box className={`order-status-badge ${statusClass}`}>
+                            {statusLabel}
                           </Box>
                         )}
                       </Stack>
