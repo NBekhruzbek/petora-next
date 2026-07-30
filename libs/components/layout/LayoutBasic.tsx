@@ -10,6 +10,7 @@ import CsHeader from "../headers/CsHeader";
 import Top from "../Top";
 import Footer from "../Footer";
 import ContactUs from "../ContactUs";
+import BackToTop from "../common/BackToTop";
 import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 
 const withLayoutBasic = (Component: any) => {
@@ -81,6 +82,8 @@ const withLayoutBasic = (Component: any) => {
           <Stack id={"footer"}>
             <Footer />
           </Stack>
+
+          <BackToTop />
         </Stack>
       </>
     );

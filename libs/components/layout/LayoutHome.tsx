@@ -4,6 +4,7 @@ import Top from "../Top";
 import MainHeader from "../headers/MainHeader";
 import Footer from "../Footer";
 import ContactUs from "../ContactUs";
+import BackToTop from "../common/BackToTop";
 import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 
 const withLayoutMain = (Component: any) => {
@@ -37,6 +38,8 @@ const withLayoutMain = (Component: any) => {
             <Stack id={"footer"}>
               <Footer />
             </Stack>
+
+            <BackToTop />
           </Stack>
         </>
       );
@@ -67,6 +70,8 @@ const withLayoutMain = (Component: any) => {
             <Stack id={"footer"}>
               <Footer />
             </Stack>
+
+            <BackToTop />
           </Stack>
         </>
       );

@@ -1,0 +1,212 @@
+@use "../variables.scss" as *;
+
+$btt-ink: #410075;
+$btt-lavender: #b56cff;
+$btt-ring-track: rgba(65, 0, 117, 0.13);
+$btt-shadow: rgba(41, 12, 72, 0.2);
+
+.back-to-top {
+  // One size token drives the paw, the window and the walk distance, so the
+  // mobile variant only has to override this line.
+  --btt-paw: 21px;
+
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  // Above page content, below the MUI drawer (1200) and every modal (1300):
+  // the button must never float over a sheet that has taken the screen.
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 10px 26px $btt-shadow,
+    0 2px 6px rgba(41, 12, 72, 0.08);
+  cursor: pointer;
+
+  // Stays out of the tab order and the a11y tree until it is worth pressing.
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.94);
+  transition:
+    opacity 0.26s ease,
+    transform 0.26s cubic-bezier(0.2, 0.8, 0.3, 1),
+    box-shadow 0.26s ease,
+    visibility 0.26s;
+
+  &.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  &.is-visible:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 16px 32px rgba(41, 12, 72, 0.26),
+      0 2px 6px rgba(41, 12, 72, 0.08);
+  }
+
+  &.is-visible:active {
+    transform: translateY(-1px) scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $btt-ink;
+    outline-offset: 3px;
+  }
+}
+
+// ─── Scroll depth ───────────────────────────────────────────────────────────
+// Doubles as the button's edge, so there is no separate border ring competing
+// with it.
+.back-to-top-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); // start the arc at 12 o'clock
+  pointer-events: none;
+
+  circle {
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .back-to-top-ring-track {
+    stroke: $btt-ring-track;
+  }
+
+  .back-to-top-ring-fill {
+    stroke: $btt-lavender;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.12s linear;
+  }
+}
+
+// ─── Walking paw ────────────────────────────────────────────────────────────
+.back-to-top-window {
+  position: relative;
+  display: block;
+  width: var(--btt-paw);
+  height: var(--btt-paw);
+  overflow: hidden;
+}
+
+.back-to-top-track {
+  display: block;
+}
+
+.back-to-top-paw {
+  display: block;
+  width: var(--btt-paw);
+  height: var(--btt-paw);
+  fill: $btt-ink;
+
+  // Alternating feet — the tilt is what makes the loop read as a walk rather
+  // than a strip sliding past.
+  &.paw-left {
+    transform: rotate(-13deg);
+  }
+
+  &.paw-right {
+    transform: rotate(13deg);
+  }
+}
+
+@keyframes bttPawWalk {
+  0% {
+    transform: translateY(0);
+  }
+  35%,
+  50% {
+    transform: translateY(calc(var(--btt-paw) * -1));
+  }
+  85%,
+  100% {
+    transform: translateY(calc(var(--btt-paw) * -2));
+  }
+}
+
+.back-to-top:hover .back-to-top-track,
+.back-to-top:focus-visible .back-to-top-track {
+  // Step, settle, step — the hold between moves is the gait.
+  animation: bttPawWalk 1.15s cubic-bezier(0.5, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+// ─── Label ──────────────────────────────────────────────────────────────────
+// A paw alone does not say which direction it goes, so the words carry the
+// meaning for anyone who does not wait for the animation.
+.back-to-top-label {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(41, 12, 72, 0.16);
+  color: $btt-ink;
+  font-family: $font;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(6px, -50%);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.back-to-top:hover .back-to-top-label,
+.back-to-top:focus-visible .back-to-top-label {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+// Nothing hovers on touch, so the label would only ever flash on tap.
+@media (hover: none) {
+  .back-to-top-label {
+    display: none;
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .back-to-top {
+    --btt-paw: 17px;
+
+    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    width: $touch-target-min;
+    height: $touch-target-min;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top,
+  .back-to-top-label,
+  .back-to-top-ring .back-to-top-ring-fill {
+    transition: none;
+  }
+
+  .back-to-top:hover .back-to-top-track,
+  .back-to-top:focus-visible .back-to-top-track {
+    animation: none;
+  }
+
+  .back-to-top.is-visible:hover,
+  .back-to-top.is-visible:active {
+    transform: none;
+  }
+}
