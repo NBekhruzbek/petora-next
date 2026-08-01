@@ -304,36 +304,31 @@
         margin-top: 205px;
         gap: 20px;
         .text1 {
-          width: 386px;
-
-          /* Web/24px-Display/Regular */
+          max-width: 420px;
           font-family: $font;
           font-size: 24px;
           font-style: normal;
           font-weight: 400;
-          line-height: 30px; /* 125% */
+          line-height: 1.45;
           color: var(--Neutral-700, #595959);
+          word-break: keep-all;
         }
-        .text2 {
-          text-align: center;
-
-          /* Web/36px-Display/Bold */
+        .text2,
+        .text3 {
           font-family: $font;
-          font-size: 36px;
+          font-size: 44px;
           font-style: normal;
           font-weight: 700;
-          line-height: 48px; /* 133.333% */
+          line-height: 1.1;
+          letter-spacing: -0.02em;
+          word-break: keep-all;
+        }
+        .text2 {
           color: var(--Primary-Purple3, #410075);
         }
         .text3 {
+          margin-top: -14px;
           color: var(--Secondary-Green5, #a1be97);
-
-          /* Web/36px-Display/Bold */
-          font-family: $font;
-          font-size: 36px;
-          font-style: normal;
-          font-weight: 700;
-          line-height: 48px; /* 133.333% */
         }
         .booking-button {
           display: flex;
@@ -961,7 +956,7 @@
           }
         }
         .footer-nav {
-          width: 280px;
+          width: 288px;
           height: auto;
           display: flex;
           margin-top: 100px;
