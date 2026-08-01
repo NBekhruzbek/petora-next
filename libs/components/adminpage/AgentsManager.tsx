@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Stack,
@@ -94,16 +96,16 @@ const emptyForm: AgentForm = {
   memberServiceArea: [],
 };
 
-const TEXT_FIELDS: { label: string; field: keyof AgentForm }[] = [
-  { label: "Full Name", field: "memberFullName" },
-  { label: "Username", field: "memberUserName" },
-  { label: "Email", field: "memberEmail" },
-  { label: "Phone", field: "memberPhone" },
-  { label: "Specialty", field: "memberSpecialty" },
-  { label: "Experience", field: "memberExperience" },
-  { label: "Approach", field: "memberApproach" },
-  { label: "Languages", field: "memberLanguages" },
-  { label: "Response Time", field: "memberResponseTime" },
+const TEXT_FIELDS: { labelKey: string; field: keyof AgentForm }[] = [
+  { labelKey: "admin.agents.fullName", field: "memberFullName" },
+  { labelKey: "admin.col.username", field: "memberUserName" },
+  { labelKey: "admin.col.email", field: "memberEmail" },
+  { labelKey: "admin.agents.phone", field: "memberPhone" },
+  { labelKey: "admin.agents.specialty", field: "memberSpecialty" },
+  { labelKey: "admin.agents.experience", field: "memberExperience" },
+  { labelKey: "admin.agents.approach", field: "memberApproach" },
+  { labelKey: "admin.agents.languages", field: "memberLanguages" },
+  { labelKey: "admin.agents.responseTime", field: "memberResponseTime" },
 ];
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
@@ -122,6 +124,8 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
 );
 
 const AgentsManager = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<"ALL" | MemberStatus>("ALL");
@@ -223,7 +227,8 @@ const AgentsManager = () => {
   const saveEdit = async () => {
     if (!editingAgent || isSaving) return;
     try {
-      if (!form.memberUserName.trim()) throw new Error("Username is required");
+      if (!form.memberUserName.trim())
+        throw new Error(t("admin.agents.usernameRequired"));
       setIsSaving(true);
 
       await updateMemberByAdmin({
@@ -267,9 +272,11 @@ const AgentsManager = () => {
   return (
     <Stack gap={0}>
       <Stack className="admin-page-header">
-        <Typography className="admin-page-title">Agents</Typography>
+        <Typography className="admin-page-title">
+          {t("admin.agents.title")}
+        </Typography>
         <Typography className="admin-agt-pending-count">
-          {blockedCount} blocked on this page
+          {t("admin.blockedOnPage", { count: blockedCount })}
         </Typography>
       </Stack>
 
@@ -277,7 +284,7 @@ const AgentsManager = () => {
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search username…"
+            placeholder={t("admin.agents.search")}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -294,7 +301,7 @@ const AgentsManager = () => {
             }}
             className="admin-toolbar-select admin-agt-status-filter"
           >
-            <MenuItem value="ALL">All Statuses</MenuItem>
+            <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
                 {prettyEnum(s)}
@@ -302,7 +309,7 @@ const AgentsManager = () => {
             ))}
           </Select>
           <Typography className="admin-meta-count">
-            {agents.length} of {total}
+            {t("admin.showingOf", { shown: agents.length, total })}
           </Typography>
         </Stack>
 
@@ -310,13 +317,13 @@ const AgentsManager = () => {
           <Table className="admin-table">
             <TableHead>
               <TableRow>
-                <TableCell>Agent</TableCell>
-                <TableCell>Service Types</TableCell>
-                <TableCell>Rating</TableCell>
-                <TableCell>Services</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Joined</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{t("admin.col.agent")}</TableCell>
+                <TableCell>{t("admin.col.serviceTypes")}</TableCell>
+                <TableCell>{t("admin.col.rating")}</TableCell>
+                <TableCell>{t("admin.nav.services")}</TableCell>
+                <TableCell>{t("admin.col.status")}</TableCell>
+                <TableCell>{t("admin.col.joined")}</TableCell>
+                <TableCell>{t("admin.col.actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -395,7 +402,7 @@ const AgentsManager = () => {
                     </Select>
                   </TableCell>
                   <TableCell className="admin-agt-joined-cell">
-                    {formatDate(agent.createdAt)}
+                    {formatDate(agent.createdAt, intlLocale)}
                   </TableCell>
                   <TableCell>
                     <Stack className="admin-action-row">
@@ -421,7 +428,7 @@ const AgentsManager = () => {
                 <TableRow>
                   <TableCell colSpan={7} align="center">
                     <Typography className="admin-table-empty">
-                      No agents found
+                      {t("admin.empty.agents")}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -597,15 +604,18 @@ const AgentsManager = () => {
                     </Typography>
                     <Stack gap={1}>
                       <InfoRow
-                        label="Username"
+                        label={t("admin.col.username")}
                         value={`@${detailAgent.memberUserName}`}
                       />
                       <InfoRow
-                        label="Email"
+                        label={t("admin.col.email")}
                         value={detailAgent.memberEmail || "—"}
                       />
                       {detailAgent.memberPhone && (
-                        <InfoRow label="Phone" value={detailAgent.memberPhone} />
+                        <InfoRow
+                          label={t("admin.agents.phone")}
+                          value={detailAgent.memberPhone}
+                        />
                       )}
                       {(detailAgent.memberServiceArea ?? []).length > 0 && (
                         <Stack
@@ -657,7 +667,7 @@ const AgentsManager = () => {
                     </Typography>
                     <Stack gap={0}>
                       <InfoRow
-                        label="Service Types"
+                        label={t("admin.col.serviceTypes")}
                         value={
                           (detailAgent.memberServiceTypes ?? []).length
                             ? (detailAgent.memberServiceTypes ?? [])
@@ -668,25 +678,25 @@ const AgentsManager = () => {
                       />
                       {detailAgent.memberExperience && (
                         <InfoRow
-                          label="Experience"
+                          label={t("admin.agents.experience")}
                           value={detailAgent.memberExperience}
                         />
                       )}
                       {detailAgent.memberApproach && (
                         <InfoRow
-                          label="Approach"
+                          label={t("admin.agents.approach")}
                           value={detailAgent.memberApproach}
                         />
                       )}
                       {detailAgent.memberLanguages && (
                         <InfoRow
-                          label="Languages"
+                          label={t("admin.agents.languages")}
                           value={detailAgent.memberLanguages}
                         />
                       )}
                       <InfoRow
-                        label="Joined"
-                        value={formatDate(detailAgent.createdAt)}
+                        label={t("admin.col.joined")}
+                        value={formatDate(detailAgent.createdAt, intlLocale)}
                       />
                     </Stack>
                   </Stack>
@@ -778,10 +788,10 @@ const AgentsManager = () => {
             </Stack>
 
             <Stack className="admin-agt-edit-body">
-              {TEXT_FIELDS.map(({ label, field }) => (
+              {TEXT_FIELDS.map(({ labelKey, field }) => (
                 <Stack key={field} gap={0.7}>
                   <Typography className="admin-agt-field-label">
-                    {label}
+                    {t(labelKey)}
                   </Typography>
                   <TextField
                     size="small"
@@ -797,7 +807,9 @@ const AgentsManager = () => {
               ))}
 
               <Stack gap={0.7}>
-                <Typography className="admin-agt-field-label">About</Typography>
+                <Typography className="admin-agt-field-label">
+                  {t("admin.col.about")}
+                </Typography>
                 <TextField
                   size="small"
                   fullWidth
@@ -836,7 +848,11 @@ const AgentsManager = () => {
                   renderValue={(selected) => (
                     <Stack className="admin-chip-row">
                       {(selected as string[]).map((value) => (
-                        <Chip key={value} size="small" label={prettyEnum(value)} />
+                        <Chip
+                          key={value}
+                          size="small"
+                          label={prettyEnum(value)}
+                        />
                       ))}
                     </Stack>
                   )}
@@ -867,7 +883,11 @@ const AgentsManager = () => {
                   renderValue={(selected) => (
                     <Stack className="admin-chip-row">
                       {(selected as string[]).map((value) => (
-                        <Chip key={value} size="small" label={prettyEnum(value)} />
+                        <Chip
+                          key={value}
+                          size="small"
+                          label={prettyEnum(value)}
+                        />
                       ))}
                     </Stack>
                   )}
@@ -882,7 +902,9 @@ const AgentsManager = () => {
               </Stack>
 
               <Stack gap={0.7}>
-                <Typography className="admin-agt-field-label">Status</Typography>
+                <Typography className="admin-agt-field-label">
+                  Status
+                </Typography>
                 <Select
                   size="small"
                   value={form.memberStatus}

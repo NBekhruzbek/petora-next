@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { useMemo, useRef, useState, ChangeEvent } from "react";
 import {
   Stack,
@@ -67,11 +69,11 @@ const BOARD_COLORS: Record<BoardKey, { bg: string; color: string }> = {
   QNA: { bg: "#ECFDF5", color: "#059669" },
 };
 
-const TABS: { label: string; value: TabKey }[] = [
-  { label: "All", value: "ALL" },
-  { label: "Free", value: "FREE" },
-  { label: "News", value: "NEWS" },
-  { label: "Q&A", value: "QNA" },
+const TABS: { labelKey: string; value: TabKey }[] = [
+  { labelKey: "admin.community.all", value: "ALL" },
+  { labelKey: "admin.community.free", value: "FREE" },
+  { labelKey: "admin.community.news", value: "NEWS" },
+  { labelKey: "admin.community.qna", value: "QNA" },
 ];
 
 /**
@@ -141,6 +143,8 @@ const StatBadge = ({
 );
 
 const CommunityModerator = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const [boardTab, setBoardTab] = useState<TabKey>("ALL");
   const [filterStatus, setFilterStatus] = useState<StatusFilter>("ALL");
   const [search, setSearch] = useState("");
@@ -271,11 +275,13 @@ const CommunityModerator = () => {
       ? (questionsResult?.getAllQuestionsByAdmin?.list ?? [])
       : [];
 
-    return [...articles.map(fromArticle), ...questions.map(fromQuestion)]
-      // A row still sitting in DELETE means a remove that never landed — it is
-      // gone as far as the public site is concerned, so keep it out of here too.
-      .filter((post) => post.status !== ArticleStatus.DELETE)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    return (
+      [...articles.map(fromArticle), ...questions.map(fromQuestion)]
+        // A row still sitting in DELETE means a remove that never landed — it is
+        // gone as far as the public site is concerned, so keep it out of here too.
+        .filter((post) => post.status !== ArticleStatus.DELETE)
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    );
   }, [articlesResult, questionsResult, wantsArticles, wantsQuestions]);
 
   const counts = {
@@ -426,7 +432,9 @@ const CommunityModerator = () => {
   return (
     <Stack gap={0}>
       <Stack className="admin-page-header">
-        <Typography className="admin-page-title">Community</Typography>
+        <Typography className="admin-page-title">
+          {t("admin.community.title")}
+        </Typography>
         {canWrite && (
           <Button
             variant="contained"
@@ -434,7 +442,10 @@ const CommunityModerator = () => {
             onClick={openWrite}
             className="admin-cm-write-btn"
           >
-            Write {writeBoard === "NEWS" ? "News" : "Post"}
+            Write{" "}
+            {writeBoard === "NEWS"
+              ? t("admin.community.newsItem")
+              : t("admin.community.post")}
           </Button>
         )}
       </Stack>
@@ -446,17 +457,18 @@ const CommunityModerator = () => {
           onChange={(_, v) => changeTab(v)}
           className="admin-cm-tabs"
         >
-          {TABS.map((t) => (
+          {TABS.map((tab) => (
             <Tab
-              key={t.value}
-              value={t.value}
+              key={tab.value}
+              value={tab.value}
               label={
                 <Stack direction="row" alignItems="center" gap={0.8}>
-                  {t.label}
-                  {/* bg and color are dynamic based on boardTab === t.value */}
+                  {t(tab.labelKey)}
+                  {/* bg and color are dynamic based on boardTab === tab.value */}
                   <Stack
                     sx={{
-                      background: boardTab === t.value ? "#EEF2FF" : "#F3F4F6",
+                      background:
+                        boardTab === tab.value ? "#EEF2FF" : "#F3F4F6",
                       borderRadius: "999px",
                       px: 0.9,
                       py: 0.1,
@@ -466,10 +478,10 @@ const CommunityModerator = () => {
                       sx={{
                         fontSize: "10px",
                         fontWeight: 700,
-                        color: boardTab === t.value ? "#6366F1" : "#9CA3AF",
+                        color: boardTab === tab.value ? "#6366F1" : "#9CA3AF",
                       }}
                     >
-                      {countFor(t.value)}
+                      {countFor(tab.value)}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -482,7 +494,7 @@ const CommunityModerator = () => {
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search title…"
+            placeholder={t("admin.community.phSearch")}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -499,13 +511,16 @@ const CommunityModerator = () => {
             }}
             className="admin-toolbar-select admin-cm-status-filter"
           >
-            <MenuItem value="ALL">All Statuses</MenuItem>
-            <MenuItem value="ACTIVE">Visible</MenuItem>
-            <MenuItem value="HIDE">Hidden</MenuItem>
+            <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
+            <MenuItem value="ACTIVE">{t("admin.state.visible")}</MenuItem>
+            <MenuItem value="HIDE">{t("admin.state.hidden")}</MenuItem>
           </Select>
           <Typography className="admin-meta-count">
             {boardTab === "ALL"
-              ? `${posts.length} most recent of ${tabTotal}`
+              ? t("admin.mostRecentOf", {
+                  shown: posts.length,
+                  total: tabTotal,
+                })
               : `${posts.length} of ${tabTotal}`}
           </Typography>
         </Stack>
@@ -642,7 +657,7 @@ const CommunityModerator = () => {
                       />
                       <Typography className="admin-cm-dot">·</Typography>
                       <Typography className="admin-cm-date">
-                        {formatDate(post.createdAt)}
+                        {formatDate(post.createdAt, intlLocale)}
                       </Typography>
                     </Stack>
                   </Stack>
@@ -697,10 +712,10 @@ const CommunityModerator = () => {
                 📭
               </Typography>
               <Typography className="admin-cm-empty-title">
-                No posts found
+                {t("admin.empty.posts")}
               </Typography>
               <Typography className="admin-cm-empty-sub">
-                Try changing the board tab or search filter
+                {t("admin.empty.tryOtherFilter")}
               </Typography>
             </Stack>
           )}
@@ -748,11 +763,16 @@ const CommunityModerator = () => {
             </Stack>
             <Stack>
               <Typography className="admin-cm-write-title">
-                Write {writeBoard === "NEWS" ? "News" : "Post"}
+                Write{" "}
+                {writeBoard === "NEWS"
+                  ? t("admin.community.newsItem")
+                  : t("admin.community.post")}
               </Typography>
               <Typography className="admin-cm-write-subtitle">
-                {writeBoard === "NEWS" ? "News Board" : "Free Board"} ·
-                Published as Admin
+                {writeBoard === "NEWS"
+                  ? t("admin.community.newsBoard")
+                  : t("admin.community.freeBoard")}{" "}
+                · Published as Admin
               </Typography>
             </Stack>
           </Stack>
@@ -782,7 +802,7 @@ const CommunityModerator = () => {
                 <TextField
                   value={writeTitle}
                   onChange={(e) => setWriteTitle(e.target.value)}
-                  placeholder="Enter a catchy title…"
+                  placeholder={t("admin.community.phTitle")}
                   size="small"
                   fullWidth
                   inputProps={{ style: { color: "#111827", fontWeight: 600 } }}
@@ -796,7 +816,7 @@ const CommunityModerator = () => {
                 <TextField
                   value={writeContent}
                   onChange={(e) => setWriteContent(e.target.value)}
-                  placeholder="Share your thoughts with the community…"
+                  placeholder={t("admin.community.phBody")}
                   multiline
                   rows={7}
                   fullWidth
@@ -907,7 +927,9 @@ const CommunityModerator = () => {
             }
             className="admin-cm-write-publish-btn"
           >
-            {isPublishing ? "Publishing…" : "Publish Post"}
+            {isPublishing
+              ? t("admin.community.publishing")
+              : t("admin.community.publish")}
           </Button>
         </Stack>
       </Drawer>
@@ -1025,7 +1047,8 @@ const CommunityModerator = () => {
                             @{selectedPost.author}
                           </Typography>
                           <Typography className="admin-cm-author-date">
-                            Posted · {formatDate(selectedPost.createdAt)}
+                            Posted ·{" "}
+                            {formatDate(selectedPost.createdAt, intlLocale)}
                           </Typography>
                         </Stack>
                       </Stack>
@@ -1047,20 +1070,25 @@ const CommunityModerator = () => {
                     <Stack gap={1}>
                       {[
                         {
-                          label: "Board",
+                          label: t("admin.col.board"),
                           value: isQna ? "Q&A" : selectedPost.board,
                         },
                         {
-                          label: "Status",
+                          label: t("admin.col.status"),
                           value: isHidden ? "hidden" : "visible",
                         },
-                        { label: "Author", value: `@${selectedPost.author}` },
                         {
-                          label: "Published",
-                          value: formatDate(selectedPost.createdAt),
+                          label: t("admin.col.author"),
+                          value: `@${selectedPost.author}`,
                         },
                         {
-                          label: isQna ? "Answers" : "Comments",
+                          label: t("admin.col.published"),
+                          value: formatDate(selectedPost.createdAt, intlLocale),
+                        },
+                        {
+                          label: isQna
+                            ? t("admin.col.answers")
+                            : t("admin.col.comments"),
                           value: selectedPost.replies,
                         },
                       ].map(({ label, value }) => (
@@ -1089,12 +1117,12 @@ const CommunityModerator = () => {
                         icon: (
                           <VisibilityIcon className="admin-icon-18-indigo" />
                         ),
-                        label: "Views",
+                        label: t("admin.col.views"),
                         value: selectedPost.views.toLocaleString(),
                       },
                       {
                         icon: <FavoriteIcon className="admin-icon-17-red" />,
-                        label: "Likes",
+                        label: t("admin.col.likes"),
                         value: selectedPost.likes,
                       },
                       isQna
@@ -1102,14 +1130,14 @@ const CommunityModerator = () => {
                             icon: (
                               <QuestionAnswerIcon className="admin-icon-18-green" />
                             ),
-                            label: "Answers",
+                            label: t("admin.col.answers"),
                             value: selectedPost.replies,
                           }
                         : {
                             icon: (
                               <ChatBubbleOutlineIcon className="admin-icon-17-amber" />
                             ),
-                            label: "Comments",
+                            label: t("admin.col.comments"),
                             value: selectedPost.replies,
                           },
                     ].map(({ icon, label, value }, i, arr) => (

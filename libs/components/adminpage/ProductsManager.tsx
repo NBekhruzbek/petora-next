@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useCallback, ChangeEvent } from "react";
 import {
   Stack,
@@ -116,6 +117,7 @@ const Section = ({
 );
 
 const ProductsManager = () => {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"ALL" | ProductType>("ALL");
@@ -169,8 +171,7 @@ const ProductsManager = () => {
   /** DERIVED **/
 
   const productsResult = productsData ?? productsPreviousData;
-  const products: Product[] =
-    productsResult?.getAllProductsByAdmin?.list ?? [];
+  const products: Product[] = productsResult?.getAllProductsByAdmin?.list ?? [];
   const total = metaTotal(productsResult?.getAllProductsByAdmin?.metaCounter);
   const totalPages = Math.max(1, Math.ceil(total / PRODUCTS_PER_PAGE));
 
@@ -192,24 +193,21 @@ const ProductsManager = () => {
   const handleChange = (field: keyof FormShape, value: string | number) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
-  const addFiles = useCallback(
-    (files: File[]) => {
-      setImages((prev) => {
-        const toAdd = files
-          .filter((f) => f.type.startsWith("image/"))
-          .slice(0, MAX_IMAGES - prev.length);
-        if (!toAdd.length) return prev;
-        return [
-          ...prev,
-          ...toAdd.map((file) => ({
-            file,
-            preview: URL.createObjectURL(file),
-          })),
-        ];
-      });
-    },
-    [],
-  );
+  const addFiles = useCallback((files: File[]) => {
+    setImages((prev) => {
+      const toAdd = files
+        .filter((f) => f.type.startsWith("image/"))
+        .slice(0, MAX_IMAGES - prev.length);
+      if (!toAdd.length) return prev;
+      return [
+        ...prev,
+        ...toAdd.map((file) => ({
+          file,
+          preview: URL.createObjectURL(file),
+        })),
+      ];
+    });
+  }, []);
 
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
     addFiles(Array.from(e.target.files ?? []));
@@ -288,7 +286,7 @@ const ProductsManager = () => {
         });
         uploaded = (data?.imagesUploader ?? []).filter(Boolean);
         if (uploaded.length !== pending.length) {
-          throw new Error("Image upload failed, please retry.");
+          throw new Error(t("admin.products.uploadFailed"));
         }
       }
 
@@ -324,7 +322,7 @@ const ProductsManager = () => {
       await productsRefetch({ input: searchFilter });
       closeDrawer();
       await sweetBottomSmallSuccessAlert(
-        editingProduct ? "Product saved!" : "Product added!",
+        editingProduct ? t("admin.products.saved") : t("admin.products.added"),
         700,
       );
     } catch (err: any) {
@@ -394,13 +392,15 @@ const ProductsManager = () => {
   return (
     <Stack gap={0}>
       <Stack className="admin-page-header">
-        <Typography className="admin-page-title">Products</Typography>
+        <Typography className="admin-page-title">
+          {t("admin.products.title")}
+        </Typography>
         <Button
           variant="contained"
           onClick={openAdd}
           className="admin-prd-add-btn"
         >
-          Add New Product
+          {t("admin.addNewProduct")}
         </Button>
       </Stack>
 
@@ -408,7 +408,7 @@ const ProductsManager = () => {
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search products…"
+            placeholder={t("admin.products.search")}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -425,7 +425,7 @@ const ProductsManager = () => {
             }}
             className="admin-toolbar-select admin-prd-cat-filter"
           >
-            <MenuItem value="ALL">All Categories</MenuItem>
+            <MenuItem value="ALL">{t("admin.filter.allCategories")}</MenuItem>
             {PRODUCT_TYPES.map((c) => (
               <MenuItem key={c} value={c}>
                 {prettyEnum(c)}
@@ -433,7 +433,7 @@ const ProductsManager = () => {
             ))}
           </Select>
           <Typography className="admin-meta-count">
-            {products.length} of {total}
+            {t("admin.showingOf", { shown: products.length, total })}
           </Typography>
         </Stack>
 
@@ -441,14 +441,14 @@ const ProductsManager = () => {
           <Table className="admin-table">
             <TableHead>
               <TableRow>
-                <TableCell>Product</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Pet</TableCell>
-                <TableCell>Price / Discount</TableCell>
-                <TableCell>Stock</TableCell>
-                <TableCell>Sold</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{t("admin.col.product")}</TableCell>
+                <TableCell>{t("admin.col.category")}</TableCell>
+                <TableCell>{t("admin.col.pet")}</TableCell>
+                <TableCell>{t("admin.col.priceDiscount")}</TableCell>
+                <TableCell>{t("admin.col.stock")}</TableCell>
+                <TableCell>{t("admin.col.sold")}</TableCell>
+                <TableCell>{t("admin.col.status")}</TableCell>
+                <TableCell>{t("admin.col.actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -536,10 +536,7 @@ const ProductsManager = () => {
                       <Select
                         value={product.productStatus}
                         onChange={(e) =>
-                          changeStatus(
-                            product,
-                            e.target.value as ProductStatus,
-                          )
+                          changeStatus(product, e.target.value as ProductStatus)
                         }
                         size="small"
                         renderValue={(val) => (
@@ -604,7 +601,7 @@ const ProductsManager = () => {
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     <Typography className="admin-table-empty">
-                      No products found
+                      {t("admin.empty.products")}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -650,7 +647,9 @@ const ProductsManager = () => {
           </Stack>
           <Stack flex={1} minWidth={0}>
             <Typography className="admin-prd-drawer-title">
-              {editingProduct ? "Edit Product" : "Add New Product"}
+              {editingProduct
+                ? t("admin.products.editTitle")
+                : t("admin.products.addTitle")}
             </Typography>
             <Typography className="admin-prd-drawer-subtitle">
               {editingProduct
@@ -670,7 +669,7 @@ const ProductsManager = () => {
         {/* Scrollable Sections */}
         <Stack className="admin-prd-drawer-body">
           {/* Basic Info */}
-          <Section title="Basic Info">
+          <Section title={t("admin.products.basicInfo")}>
             <Stack>
               <Typography className="admin-prd-field-label">
                 Product Name
@@ -680,7 +679,7 @@ const ProductsManager = () => {
                 onChange={(e) => handleChange("productName", e.target.value)}
                 size="small"
                 fullWidth
-                placeholder="At least 3 characters"
+                placeholder={t("admin.products.phMin3")}
                 className="admin-prd-input-h42"
               />
             </Stack>
@@ -723,20 +722,22 @@ const ProductsManager = () => {
               </Stack>
             </Stack>
             <Stack>
-              <Typography className="admin-prd-field-label">Brand</Typography>
+              <Typography className="admin-prd-field-label">
+                {t("admin.col.brand")}
+              </Typography>
               <TextField
                 value={form.productBrand}
                 onChange={(e) => handleChange("productBrand", e.target.value)}
                 size="small"
                 fullWidth
-                placeholder="Optional"
+                placeholder={t("admin.products.phOptional")}
                 className="admin-prd-input-h42"
               />
             </Stack>
           </Section>
 
           {/* Pricing */}
-          <Section title="Pricing & Stock">
+          <Section title={t("admin.products.pricingStock")}>
             <Stack direction="row" gap={1.5}>
               <Stack flex={1}>
                 <Typography className="admin-prd-field-label">
@@ -745,7 +746,7 @@ const ProductsManager = () => {
                 <TextField
                   type="number"
                   value={form.productPrice === 0 ? "" : form.productPrice}
-                  placeholder="0"
+                  placeholder={t("admin.products.phZero")}
                   onChange={(e) =>
                     handleChange(
                       "productPrice",
@@ -773,7 +774,7 @@ const ProductsManager = () => {
                 <TextField
                   type="number"
                   value={form.productDiscount === 0 ? "" : form.productDiscount}
-                  placeholder="0"
+                  placeholder={t("admin.products.phZero")}
                   onChange={(e) =>
                     handleChange(
                       "productDiscount",
@@ -866,11 +867,13 @@ const ProductsManager = () => {
 
             <Stack direction="row" gap={1.5}>
               <Stack flex={1}>
-                <Typography className="admin-prd-field-label">Stock</Typography>
+                <Typography className="admin-prd-field-label">
+                  {t("admin.col.stock")}
+                </Typography>
                 <TextField
                   type="number"
                   value={form.productQuantity === 0 ? "" : form.productQuantity}
-                  placeholder="0"
+                  placeholder={t("admin.products.phZero")}
                   onChange={(e) =>
                     handleChange(
                       "productQuantity",
@@ -907,13 +910,11 @@ const ProductsManager = () => {
           </Section>
 
           {/* Details */}
-          <Section title="Product Details">
+          <Section title={t("admin.products.details")}>
             <TextField
-              label="Short Description"
+              label={t("admin.products.shortDesc")}
               value={form.productShortDesc}
-              onChange={(e) =>
-                handleChange("productShortDesc", e.target.value)
-              }
+              onChange={(e) => handleChange("productShortDesc", e.target.value)}
               size="small"
               fullWidth
               inputProps={{ maxLength: 250, style: { color: "#111827" } }}
@@ -921,7 +922,7 @@ const ProductsManager = () => {
               className="admin-prd-input"
             />
             <TextField
-              label="Full Description"
+              label={t("admin.products.fullDesc")}
               value={form.productDesc}
               onChange={(e) => handleChange("productDesc", e.target.value)}
               size="small"
@@ -939,13 +940,13 @@ const ProductsManager = () => {
               className="admin-prd-input-auto"
             />
             <TextField
-              label="Benefits"
+              label={t("admin.products.benefits")}
               value={form.productBenefits}
               onChange={(e) => handleChange("productBenefits", e.target.value)}
               size="small"
               fullWidth
               className="admin-prd-input"
-              placeholder="e.g. High protein, Shiny coat"
+              placeholder={t("admin.products.phBenefits")}
             />
           </Section>
 
@@ -957,7 +958,9 @@ const ProductsManager = () => {
                   <Stack
                     key={`${image.path ?? image.preview}-${i}`}
                     className={
-                      image.file ? "admin-prd-img-new" : "admin-prd-img-existing"
+                      image.file
+                        ? "admin-prd-img-new"
+                        : "admin-prd-img-existing"
                     }
                   >
                     <img

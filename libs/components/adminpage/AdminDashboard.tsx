@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import {
   Stack,
   Typography,
@@ -32,6 +34,8 @@ import { formatDate, statusChipClass, won } from "./adminHelpers";
 const RECENT_LIMIT = 5;
 
 const AdminDashboard = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const router = useRouter();
 
   /** APOLLO REQUESTS **/
@@ -81,46 +85,50 @@ const AdminDashboard = () => {
     <Stack className="admin-dashboard">
       <Stack className="stat-cards-row">
         <StatCard
-          title="Total Users"
+          title={t("admin.dashboard.totalUsers")}
           value={stats?.totalUsers ?? 0}
           icon={<PeopleAltIcon />}
           color="#6366F1"
-          trendNeutral="registered members"
+          trendNeutral={t("admin.registeredMembers")}
         />
         <StatCard
-          title="Total Agents"
+          title={t("admin.dashboard.totalAgents")}
           value={stats?.totalAgents ?? 0}
           icon={<SupportAgentIcon />}
           color="#0EA5E9"
-          trendNeutral="service providers"
+          trendNeutral={t("admin.serviceProviders")}
         />
         <StatCard
-          title="Products"
+          title={t("admin.dashboard.products")}
           value={stats?.totalProducts ?? 0}
           icon={<InventoryIcon />}
           color="#10B981"
-          trendNeutral="listings in catalogue"
+          trendNeutral={t("admin.listingsInCatalogue")}
         />
         <StatCard
-          title="Orders"
+          title={t("admin.dashboard.orders")}
           value={stats?.totalOrders ?? 0}
           icon={<ShoppingCartIcon />}
           color="#F59E0B"
-          trendNeutral={`${stats?.pendingOrders ?? 0} awaiting shipment`}
+          trendNeutral={t("admin.awaitingShipment", {
+            count: stats?.pendingOrders ?? 0,
+          })}
         />
         <StatCard
-          title="Bookings"
+          title={t("admin.dashboard.bookings")}
           value={stats?.totalBookings ?? 0}
           icon={<EventAvailableIcon />}
           color="#8B5CF6"
-          trendNeutral={`${stats?.pendingBookings ?? 0} awaiting reply`}
+          trendNeutral={t("admin.awaitingReply", {
+            count: stats?.pendingBookings ?? 0,
+          })}
         />
         <StatCard
-          title="Revenue"
+          title={t("admin.dashboard.revenue")}
           value={revenueLabel}
           icon={<AttachMoneyIcon />}
           color="#6366F1"
-          trendNeutral="orders + paid bookings"
+          trendNeutral={t("admin.ordersPaidBookings")}
         />
       </Stack>
 
@@ -133,23 +141,25 @@ const AdminDashboard = () => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography className="admin-card-title">Recent Orders</Typography>
+            <Typography className="admin-card-title">
+              {t("admin.dashboard.recentOrders")}
+            </Typography>
             <Button
               size="small"
               onClick={() => router.push("/admin/orders")}
               className="admin-db-view-all-btn"
             >
-              View all →
+              {t("admin.viewAll")}
             </Button>
           </Stack>
           <TableContainer>
             <Table className="admin-table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Order</TableCell>
-                  <TableCell>Customer</TableCell>
-                  <TableCell>Total</TableCell>
-                  <TableCell>Status</TableCell>
+                  <TableCell>{t("admin.col.order")}</TableCell>
+                  <TableCell>{t("admin.col.customer")}</TableCell>
+                  <TableCell>{t("admin.col.total")}</TableCell>
+                  <TableCell>{t("admin.col.status")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -178,7 +188,7 @@ const AdminDashboard = () => {
                   <TableRow>
                     <TableCell colSpan={4} align="center">
                       <Typography className="admin-table-empty">
-                        No orders yet
+                        {t("admin.noOrdersYet")}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -197,24 +207,24 @@ const AdminDashboard = () => {
             justifyContent="space-between"
           >
             <Typography className="admin-card-title">
-              Recent Registrations
+              {t("admin.recentRegistrations")}
             </Typography>
             <Button
               size="small"
               onClick={() => router.push("/admin/users")}
               className="admin-db-view-all-btn"
             >
-              View all →
+              {t("admin.viewAll")}
             </Button>
           </Stack>
           <TableContainer>
             <Table className="admin-table">
               <TableHead>
                 <TableRow>
-                  <TableCell>User</TableCell>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Joined</TableCell>
-                  <TableCell>Status</TableCell>
+                  <TableCell>{t("admin.col.user")}</TableCell>
+                  <TableCell>{t("admin.col.type")}</TableCell>
+                  <TableCell>{t("admin.col.joined")}</TableCell>
+                  <TableCell>{t("admin.col.status")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -235,11 +245,11 @@ const AdminDashboard = () => {
                         className="status-chip"
                         style={{ background: "#F0F0FF", color: "#6366F1" }}
                       >
-                        User
+                        {t("admin.col.user")}
                       </span>
                     </TableCell>
                     <TableCell className="admin-db-user-joined">
-                      {formatDate(member.createdAt)}
+                      {formatDate(member.createdAt, intlLocale)}
                     </TableCell>
                     <TableCell>
                       <span className={statusChipClass(member.memberStatus)}>
@@ -252,7 +262,7 @@ const AdminDashboard = () => {
                   <TableRow>
                     <TableCell colSpan={4} align="center">
                       <Typography className="admin-table-empty">
-                        No registrations yet
+                        {t("admin.noRegistrationsYet")}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -271,13 +281,31 @@ const AdminDashboard = () => {
         flexWrap="wrap"
         className="admin-db-quick-actions"
       >
-        <Typography className="admin-db-qa-label">Quick Actions</Typography>
+        <Typography className="admin-db-qa-label">
+          {t("admin.dashboard.quickActions")}
+        </Typography>
         {[
-          { label: "Add Product", href: "/admin/products", primary: true },
-          { label: "Manage Orders", href: "/admin/orders", primary: false },
-          { label: "Review Agents", href: "/admin/agents", primary: false },
-          { label: "Community", href: "/admin/community", primary: false },
-        ].map(({ label, href, primary }) => (
+          {
+            labelKey: "admin.dashboard.addProduct",
+            href: "/admin/products",
+            primary: true,
+          },
+          {
+            labelKey: "admin.dashboard.manageOrders",
+            href: "/admin/orders",
+            primary: false,
+          },
+          {
+            labelKey: "admin.dashboard.reviewAgents",
+            href: "/admin/agents",
+            primary: false,
+          },
+          {
+            labelKey: "admin.dashboard.community",
+            href: "/admin/community",
+            primary: false,
+          },
+        ].map(({ labelKey, href, primary }) => (
           <Button
             key={href}
             onClick={() => router.push(href)}
@@ -285,7 +313,7 @@ const AdminDashboard = () => {
               primary ? "admin-db-btn-primary" : "admin-db-btn-secondary"
             }
           >
-            {label}
+            {t(labelKey)}
           </Button>
         ))}
       </Stack>

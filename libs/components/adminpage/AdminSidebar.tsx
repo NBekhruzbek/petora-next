@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Stack, Typography } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
@@ -15,24 +16,53 @@ import { useRouter } from "next/router";
 import { ReactNode } from "react";
 
 interface NavItem {
-  label: string;
+  labelKey: string;
   icon: ReactNode;
   href: string;
 }
 
 const navItems: NavItem[] = [
-  { label: "Dashboard", icon: <DashboardIcon />, href: "/admin" },
-  { label: "Users", icon: <PeopleAltIcon />, href: "/admin/users" },
-  { label: "Agents", icon: <SupportAgentIcon />, href: "/admin/agents" },
-  { label: "Products", icon: <InventoryIcon />, href: "/admin/products" },
-  { label: "Services", icon: <RoomServiceIcon />, href: "/admin/services" },
-  { label: "Orders", icon: <ShoppingCartIcon />, href: "/admin/orders" },
-  { label: "Bookings", icon: <EventAvailableIcon />, href: "/admin/bookings" },
-  { label: "Community", icon: <ForumIcon />, href: "/admin/community" },
-  { label: "CS Support", icon: <HeadsetMicIcon />, href: "/admin/cs" },
+  { labelKey: "admin.nav.dashboard", icon: <DashboardIcon />, href: "/admin" },
+  {
+    labelKey: "admin.nav.users",
+    icon: <PeopleAltIcon />,
+    href: "/admin/users",
+  },
+  {
+    labelKey: "admin.nav.agents",
+    icon: <SupportAgentIcon />,
+    href: "/admin/agents",
+  },
+  {
+    labelKey: "admin.nav.products",
+    icon: <InventoryIcon />,
+    href: "/admin/products",
+  },
+  {
+    labelKey: "admin.nav.services",
+    icon: <RoomServiceIcon />,
+    href: "/admin/services",
+  },
+  {
+    labelKey: "admin.nav.orders",
+    icon: <ShoppingCartIcon />,
+    href: "/admin/orders",
+  },
+  {
+    labelKey: "admin.nav.bookings",
+    icon: <EventAvailableIcon />,
+    href: "/admin/bookings",
+  },
+  {
+    labelKey: "admin.nav.community",
+    icon: <ForumIcon />,
+    href: "/admin/community",
+  },
+  { labelKey: "admin.nav.cs", icon: <HeadsetMicIcon />, href: "/admin/cs" },
 ];
 
 const AdminSidebar = () => {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const isActive = (href: string) =>
@@ -52,12 +82,14 @@ const AdminSidebar = () => {
         </Stack>
         <Stack className="brand-text-wrap">
           <span className="brand-name">Petora</span>
-          <span className="brand-badge">Admin Panel</span>
+          <span className="brand-badge">{t("admin.panel")}</span>
         </Stack>
       </Stack>
 
       <Stack className="admin-sidebar-nav">
-        <Typography className="admin-nav-section-label">Main</Typography>
+        <Typography className="admin-nav-section-label">
+          {t("admin.sectionMain")}
+        </Typography>
         {navItems.slice(0, 1).map((item) => (
           <Stack
             key={item.href}
@@ -67,11 +99,13 @@ const AdminSidebar = () => {
             onClick={() => router.push(item.href)}
           >
             {item.icon}
-            <span>{item.label}</span>
+            <span>{t(item.labelKey)}</span>
           </Stack>
         ))}
 
-        <Typography className="admin-nav-section-label">Management</Typography>
+        <Typography className="admin-nav-section-label">
+          {t("admin.sectionManagement")}
+        </Typography>
         {navItems.slice(1).map((item) => (
           <Stack
             key={item.href}
@@ -81,7 +115,7 @@ const AdminSidebar = () => {
             onClick={() => router.push(item.href)}
           >
             {item.icon}
-            <span>{item.label}</span>
+            <span>{t(item.labelKey)}</span>
           </Stack>
         ))}
       </Stack>
@@ -94,7 +128,7 @@ const AdminSidebar = () => {
           onClick={() => router.push("/")}
         >
           <LogoutIcon />
-          <span>Back to Site</span>
+          <span>{t("admin.backToSite")}</span>
         </Stack>
       </Stack>
     </Stack>

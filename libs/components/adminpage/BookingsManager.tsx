@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Stack,
@@ -74,13 +76,17 @@ const startOfDay = (d: Date) =>
  * are what an admin actually scans for, so they replace the date rather than
  * decorate it.
  */
-const whenLabel = (at: Date | null) => {
+const whenLabel = (at: Date | null, locale: string) => {
   if (!at) return "—";
   const days = Math.round((startOfDay(at) - startOfDay(new Date())) / 86400000);
-  if (days === 0) return "Today";
-  if (days === 1) return "Tomorrow";
-  if (days === -1) return "Yesterday";
-  return formatDate(at);
+  // numeric:"auto" gives "today" / "tomorrow" / "yesterday" — and their Korean
+  // equivalents — without hardcoding either language.
+  if (Math.abs(days) <= 1)
+    return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(
+      days,
+      "day",
+    );
+  return formatDate(at, locale);
 };
 
 const timeLabel = (booking: BookedInfo) => booking.bookingTime || "—";
@@ -95,10 +101,14 @@ const isUnanswered = (booking: BookedInfo) => {
   return Boolean(at && at.getTime() < Date.now());
 };
 
-const memberName = (member?: { memberFullName?: string; memberUserName: string }) =>
-  member?.memberFullName || member?.memberUserName || "—";
+const memberName = (member?: {
+  memberFullName?: string;
+  memberUserName: string;
+}) => member?.memberFullName || member?.memberUserName || "—";
 
 const BookingsManager = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<"ALL" | BookingStatus>(
@@ -202,9 +212,11 @@ const BookingsManager = () => {
   return (
     <Stack gap={0}>
       <Stack className="admin-page-header">
-        <Typography className="admin-page-title">Bookings</Typography>
+        <Typography className="admin-page-title">
+          {t("admin.bookings.title")}
+        </Typography>
         <Typography className="admin-ord-pending-count">
-          {pendingCount} awaiting reply
+          {t("admin.awaitingReply", { count: pendingCount })}
         </Typography>
       </Stack>
 
@@ -212,7 +224,7 @@ const BookingsManager = () => {
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search booking number…"
+            placeholder={t("admin.bookings.search")}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -229,7 +241,7 @@ const BookingsManager = () => {
             }}
             className="admin-toolbar-select admin-bkg-status-filter"
           >
-            <MenuItem value="ALL">All Statuses</MenuItem>
+            <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
                 {prettyEnum(s)}
@@ -237,7 +249,7 @@ const BookingsManager = () => {
             ))}
           </Select>
           <Typography className="admin-meta-count">
-            {bookings.length} of {total}
+            {t("admin.showingOf", { shown: bookings.length, total })}
           </Typography>
         </Stack>
 
@@ -245,14 +257,14 @@ const BookingsManager = () => {
           <Table className="admin-table">
             <TableHead>
               <TableRow>
-                <TableCell>Booking</TableCell>
-                <TableCell>Service</TableCell>
-                <TableCell>Customer</TableCell>
-                <TableCell>Agent</TableCell>
-                <TableCell>When</TableCell>
-                <TableCell>Price</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{t("admin.col.booking")}</TableCell>
+                <TableCell>{t("admin.col.service")}</TableCell>
+                <TableCell>{t("admin.col.customer")}</TableCell>
+                <TableCell>{t("admin.col.agent")}</TableCell>
+                <TableCell>{t("admin.col.when")}</TableCell>
+                <TableCell>{t("admin.col.price")}</TableCell>
+                <TableCell>{t("admin.col.status")}</TableCell>
+                <TableCell>{t("admin.col.actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -322,7 +334,7 @@ const BookingsManager = () => {
                         <Typography
                           className={`admin-bkg-when-day${unanswered ? " unanswered" : ""}`}
                         >
-                          {whenLabel(at)}
+                          {whenLabel(at, intlLocale)}
                         </Typography>
                         <Typography className="admin-bkg-when-time">
                           {timeLabel(booking)}
@@ -365,7 +377,7 @@ const BookingsManager = () => {
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     <Typography className="admin-table-empty">
-                      No bookings found
+                      {t("admin.empty.bookings")}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -417,7 +429,7 @@ const BookingsManager = () => {
                       {selected.bookingNumber}
                     </Typography>
                     <Typography className="admin-ord-header-date">
-                      Booked on {formatDate(selected.createdAt)}
+                      Booked on {formatDate(selected.createdAt, intlLocale)}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -439,7 +451,7 @@ const BookingsManager = () => {
                   Appointment
                 </Typography>
                 <Typography className="admin-bkg-when-card-day">
-                  {whenLabel(appointmentAt(selected))}
+                  {whenLabel(appointmentAt(selected), intlLocale)}
                 </Typography>
                 <Typography className="admin-bkg-when-card-time">
                   {selected.bookingDate} · {timeLabel(selected)}
@@ -472,23 +484,32 @@ const BookingsManager = () => {
                 </Stack>
                 <Stack gap={1}>
                   {[
-                    { label: "Name", value: selected.bookingPetName },
                     {
-                      label: "Type",
+                      labelKey: "admin.bookings.name",
+                      value: selected.bookingPetName,
+                    },
+                    {
+                      labelKey: "admin.bookings.typeField",
                       value: prettyEnum(selected.bookingPetType),
                     },
-                    { label: "Age", value: selected.bookingPetAge },
-                    { label: "Note", value: selected.bookingNote },
-                  ].map(({ label, value }) => (
+                    {
+                      labelKey: "admin.bookings.age",
+                      value: selected.bookingPetAge,
+                    },
+                    {
+                      labelKey: "admin.bookings.note",
+                      value: selected.bookingNote,
+                    },
+                  ].map(({ labelKey, value }) => (
                     <Stack
-                      key={label}
+                      key={t(labelKey)}
                       direction="row"
                       justifyContent="space-between"
                       alignItems="flex-start"
                       gap={2}
                     >
                       <Typography className="admin-cell-meta">
-                        {label}
+                        {t(labelKey)}
                       </Typography>
                       <Typography
                         className="admin-cell-name"
@@ -512,33 +533,39 @@ const BookingsManager = () => {
                 <Stack gap={1}>
                   {[
                     {
-                      label: "Title",
+                      labelKey: "admin.bookings.titleField",
                       value: selected.serviceData?.serviceTitle,
                     },
                     {
-                      label: "Type",
+                      labelKey: "admin.bookings.typeField",
                       value: prettyEnum(selected.serviceData?.serviceType),
                     },
                     {
-                      label: "Location",
+                      labelKey: "admin.col.location",
                       value: prettyEnum(selected.serviceData?.serviceLocation),
                     },
-                    { label: "Address", value: selected.bookingAddress },
-                    { label: "Price", value: won(selected.bookingPrice) },
                     {
-                      label: "Payment",
+                      labelKey: "admin.bookings.address",
+                      value: selected.bookingAddress,
+                    },
+                    {
+                      labelKey: "admin.col.price",
+                      value: won(selected.bookingPrice),
+                    },
+                    {
+                      labelKey: "admin.bookings.payment",
                       value: prettyEnum(selected.bookingPaymentStatus),
                     },
-                  ].map(({ label, value }) => (
+                  ].map(({ labelKey, value }) => (
                     <Stack
-                      key={label}
+                      key={t(labelKey)}
                       direction="row"
                       justifyContent="space-between"
                       alignItems="flex-start"
                       gap={2}
                     >
                       <Typography className="admin-cell-meta">
-                        {label}
+                        {t(labelKey)}
                       </Typography>
                       <Typography
                         className="admin-cell-name"

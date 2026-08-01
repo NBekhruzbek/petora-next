@@ -50,12 +50,15 @@ export const prettyEnum = (value?: string) =>
     .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
     .join(" ");
 
-/** `Jan 12, 2026` — the format the panel was designed around. */
-export const formatDate = (value?: Date | string | number) => {
+/** `Jan 12, 2026` in English, `2026. 1. 12.` in Korean. */
+export const formatDate = (
+  value: Date | string | number | undefined,
+  locale = "en-US",
+) => {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -67,7 +70,11 @@ export const won = (amount?: number) => `₩${(amount ?? 0).toLocaleString()}`;
 /** Uploaded files are stored as relative paths; absolute URLs pass through. */
 export const imageUrl = (path?: string, fallback: string = BLANK_IMAGE) => {
   if (!path) return fallback;
-  if (path.startsWith("http") || path.startsWith("data:") || path.startsWith("blob:")) {
+  if (
+    path.startsWith("http") ||
+    path.startsWith("data:") ||
+    path.startsWith("blob:")
+  ) {
     return path;
   }
   return `${REACT_APP_API_URL}/${path}`;
@@ -90,7 +97,7 @@ export const isNoDataError = (error?: ApolloError) =>
   );
 
 /** Keeps a search box from firing a query on every keystroke. */
-export const useDebouncedValue = <T,>(value: T, delay = 400): T => {
+export const useDebouncedValue = <T>(value: T, delay = 400): T => {
   const [debounced, setDebounced] = useState(value);
 
   useEffect(() => {

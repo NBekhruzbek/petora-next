@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import {
   Stack,
@@ -155,15 +157,22 @@ const SortCell = ({
   );
 };
 
-const formatDuration = (minutes?: number) => {
+const formatDuration = (
+  minutes: number | undefined,
+  t: (k: string, o?: Record<string, unknown>) => string,
+) => {
   if (!minutes) return "—";
-  if (minutes < 60) return `${minutes} min`;
+  if (minutes < 60) return t("admin.duration.min", { count: minutes });
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  return rest ? `${hours} h ${rest} min` : `${hours} hour${hours > 1 ? "s" : ""}`;
+  return rest
+    ? t("admin.duration.hourMin", { h: hours, m: rest })
+    : t("admin.duration.hour", { count: hours });
 };
 
 const ServicesManager = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"ALL" | ServiceType>("ALL");
@@ -257,9 +266,7 @@ const ServicesManager = () => {
 
   const handleSort = (col: SortKey) => {
     if (sortBy === col) {
-      setSortDir((d) =>
-        d === Direction.ASC ? Direction.DESC : Direction.ASC,
-      );
+      setSortDir((d) => (d === Direction.ASC ? Direction.DESC : Direction.ASC));
     } else {
       setSortBy(col);
       setSortDir(Direction.ASC);
@@ -290,7 +297,8 @@ const ServicesManager = () => {
   const save = async () => {
     if (!editingService || isSaving) return;
     try {
-      if (!form.serviceTitle.trim()) throw new Error("Service title is required");
+      if (!form.serviceTitle.trim())
+        throw new Error(t("admin.services.titleRequired"));
       setIsSaving(true);
 
       await updateServiceByAdmin({
@@ -378,14 +386,16 @@ const ServicesManager = () => {
   return (
     <Stack gap={0}>
       <Stack className="admin-page-header">
-        <Typography className="admin-page-title">Services</Typography>
+        <Typography className="admin-page-title">
+          {t("admin.services.title")}
+        </Typography>
       </Stack>
 
       <Stack className="admin-card">
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search service title…"
+            placeholder={t("admin.services.search")}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -402,15 +412,15 @@ const ServicesManager = () => {
             }}
             className="admin-toolbar-select admin-svc-cat-filter"
           >
-            <MenuItem value="ALL">All Categories</MenuItem>
+            <MenuItem value="ALL">{t("admin.filter.allCategories")}</MenuItem>
             {SERVICE_TYPES.map((c) => (
               <MenuItem key={c} value={c}>
-                {prettyEnum(c)}
+                {t(`enums.serviceType.${c}`)}
               </MenuItem>
             ))}
           </Select>
           <Typography className="admin-meta-count">
-            {services.length} of {total}
+            {t("admin.showingOf", { shown: services.length, total })}
           </Typography>
         </Stack>
 
@@ -418,15 +428,23 @@ const ServicesManager = () => {
           <Table className="admin-table">
             <TableHead>
               <TableRow>
-                <TableCell>Service</TableCell>
-                <TableCell>Agent</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>Duration</TableCell>
-                <SortCell label="Price" col="servicePrice" {...sortProps} />
-                <SortCell label="Created" col="createdAt" {...sortProps} />
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{t("admin.col.service")}</TableCell>
+                <TableCell>{t("admin.col.agent")}</TableCell>
+                <TableCell>{t("admin.col.category")}</TableCell>
+                <TableCell>{t("admin.col.location")}</TableCell>
+                <TableCell>{t("admin.col.duration")}</TableCell>
+                <SortCell
+                  label={t("admin.col.price")}
+                  col="servicePrice"
+                  {...sortProps}
+                />
+                <SortCell
+                  label={t("admin.services.created")}
+                  col="createdAt"
+                  {...sortProps}
+                />
+                <TableCell>{t("admin.col.status")}</TableCell>
+                <TableCell>{t("admin.col.actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -454,13 +472,13 @@ const ServicesManager = () => {
                       </Stack>
                     </TableCell>
                     <TableCell className="admin-svc-cat-cell">
-                      {prettyEnum(service.serviceType)}
+                      {t(`enums.serviceType.${service.serviceType}`)}
                     </TableCell>
                     <TableCell className="admin-svc-location-cell">
-                      {prettyEnum(service.serviceLocation)}
+                      {t(`enums.serviceLocation.${service.serviceLocation}`)}
                     </TableCell>
                     <TableCell className="admin-cell-meta">
-                      {formatDuration(service.serviceDurationMinutes)}
+                      {formatDuration(service.serviceDurationMinutes, t)}
                     </TableCell>
                     <TableCell>
                       <Typography className="admin-svc-price-text">
@@ -468,11 +486,14 @@ const ServicesManager = () => {
                       </Typography>
                     </TableCell>
                     <TableCell className="admin-cell-date">
-                      {new Date(service.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                      {new Date(service.createdAt).toLocaleDateString(
+                        intlLocale,
+                        {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        },
+                      )}
                     </TableCell>
                     <TableCell>
                       <Select
@@ -483,7 +504,7 @@ const ServicesManager = () => {
                         size="small"
                         renderValue={(val) => (
                           <span className={statusChipClass(val as string)}>
-                            {val as string}
+                            {t(`admin.status.${val}`)}
                           </span>
                         )}
                         className="admin-status-select"
@@ -530,7 +551,7 @@ const ServicesManager = () => {
                               onClick={() => setDeleteTarget(service)}
                               className="admin-btn-delete"
                             >
-                              Delete
+                              {t("admin.delete")}
                             </Button>
                           </>
                         )}
@@ -579,8 +600,8 @@ const ServicesManager = () => {
         </DialogTitle>
         <DialogContent>
           <Typography className="admin-svc-dialog-body">
-            This service will be taken off the public Service page and out of the
-            agent&apos;s listings. Existing bookings are not affected.
+            This service will be taken off the public Service page and out of
+            the agent&apos;s listings. Existing bookings are not affected.
           </Typography>
         </DialogContent>
         <DialogActions className="admin-svc-dialog-actions">
@@ -595,7 +616,7 @@ const ServicesManager = () => {
             onClick={confirmDelete}
             className="admin-svc-dialog-delete-btn"
           >
-            Delete
+            {t("admin.delete")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -612,9 +633,9 @@ const ServicesManager = () => {
         </DialogTitle>
         <DialogContent>
           <Typography className="admin-svc-dialog-body">
-            <strong>{removeTarget?.serviceTitle}</strong> will be erased from the
-            database. This cannot be undone — restore it instead if you only want
-            the agent listing back.
+            <strong>{removeTarget?.serviceTitle}</strong> will be erased from
+            the database. This cannot be undone — restore it instead if you only
+            want the agent listing back.
           </Typography>
         </DialogContent>
         <DialogActions className="admin-svc-dialog-actions">
@@ -676,20 +697,20 @@ const ServicesManager = () => {
         {/* Sections */}
         <Stack className="admin-svc-drawer-body">
           {/* Service Info */}
-          <Section title="Service Info">
+          <Section title={t("admin.services.info")}>
             <Stack>
-              <FieldLabel>Service Title</FieldLabel>
+              <FieldLabel>{t("admin.col.serviceTitle")}</FieldLabel>
               <TextField
                 value={form.serviceTitle}
                 onChange={(e) => handleChange("serviceTitle", e.target.value)}
                 size="small"
                 fullWidth
-                placeholder="e.g. Premium Dog Grooming"
+                placeholder={t("admin.services.phTitle")}
                 className="admin-svc-input"
               />
             </Stack>
             <Stack>
-              <FieldLabel>Category</FieldLabel>
+              <FieldLabel>{t("admin.col.category")}</FieldLabel>
               <Select
                 value={form.serviceType}
                 onChange={(e) => handleChange("serviceType", e.target.value)}
@@ -699,13 +720,13 @@ const ServicesManager = () => {
               >
                 {SERVICE_TYPES.map((c) => (
                   <MenuItem key={c} value={c}>
-                    {prettyEnum(c)}
+                    {t(`enums.serviceType.${c}`)}
                   </MenuItem>
                 ))}
               </Select>
             </Stack>
             <Stack>
-              <FieldLabel>Description</FieldLabel>
+              <FieldLabel>{t("admin.col.description")}</FieldLabel>
               <TextField
                 value={form.serviceDescription}
                 onChange={(e) =>
@@ -728,9 +749,9 @@ const ServicesManager = () => {
           </Section>
 
           {/* Owner (read-only — the agent owns the listing) */}
-          <Section title="Agent & Location">
+          <Section title={t("admin.services.agentLocation")}>
             <Stack>
-              <FieldLabel>Agent</FieldLabel>
+              <FieldLabel>{t("admin.col.agent")}</FieldLabel>
               <Typography className="admin-svc-owner-text">
                 {(() => {
                   const agent = editingService
@@ -743,17 +764,19 @@ const ServicesManager = () => {
               </Typography>
             </Stack>
             <Stack>
-              <FieldLabel>Location</FieldLabel>
+              <FieldLabel>{t("admin.col.location")}</FieldLabel>
               <Select
                 value={form.serviceLocation}
-                onChange={(e) => handleChange("serviceLocation", e.target.value)}
+                onChange={(e) =>
+                  handleChange("serviceLocation", e.target.value)
+                }
                 size="small"
                 fullWidth
                 className="admin-svc-select"
               >
                 {SERVICE_LOCATIONS.map((l) => (
                   <MenuItem key={l} value={l}>
-                    {prettyEnum(l)}
+                    {t(`enums.serviceLocation.${l}`)}
                   </MenuItem>
                 ))}
               </Select>
@@ -761,10 +784,10 @@ const ServicesManager = () => {
           </Section>
 
           {/* Pricing */}
-          <Section title="Pricing & Duration">
+          <Section title={t("admin.services.pricingDuration")}>
             <Stack direction="row" gap={1.5}>
               <Stack flex={1}>
-                <FieldLabel>Price</FieldLabel>
+                <FieldLabel>{t("admin.col.price")}</FieldLabel>
                 <TextField
                   type="number"
                   value={form.servicePrice === 0 ? "" : form.servicePrice}
@@ -775,7 +798,7 @@ const ServicesManager = () => {
                     )
                   }
                   size="small"
-                  placeholder="0"
+                  placeholder={t("admin.services.phZero")}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -789,7 +812,7 @@ const ServicesManager = () => {
                 />
               </Stack>
               <Stack flex={1}>
-                <FieldLabel>Duration (minutes)</FieldLabel>
+                <FieldLabel>{t("admin.services.durationMinutes")}</FieldLabel>
                 <TextField
                   type="number"
                   value={
@@ -804,7 +827,7 @@ const ServicesManager = () => {
                     )
                   }
                   size="small"
-                  placeholder="0"
+                  placeholder={t("admin.services.phZero")}
                   className="admin-svc-input"
                 />
               </Stack>
@@ -812,9 +835,9 @@ const ServicesManager = () => {
           </Section>
 
           {/* Status */}
-          <Section title="Status">
+          <Section title={t("admin.services.statusSection")}>
             <Stack>
-              <FieldLabel>Visibility</FieldLabel>
+              <FieldLabel>{t("admin.col.visibility")}</FieldLabel>
               <Select
                 value={form.serviceStatus}
                 onChange={(e) => handleChange("serviceStatus", e.target.value)}
@@ -822,14 +845,16 @@ const ServicesManager = () => {
                 fullWidth
                 renderValue={(val) => (
                   <span className={statusChipClass(val as string)}>
-                    {prettyEnum(val as string)}
+                    {t(`admin.status.${val}`)}
                   </span>
                 )}
                 className="admin-svc-select"
               >
                 {STATUS_OPTIONS.map((s) => (
                   <MenuItem key={s} value={s}>
-                    <span className={statusChipClass(s)}>{prettyEnum(s)}</span>
+                    <span className={statusChipClass(s)}>
+                      {t(`admin.status.${s}`)}
+                    </span>
                   </MenuItem>
                 ))}
               </Select>
@@ -856,7 +881,7 @@ const ServicesManager = () => {
             disabled={!form.serviceTitle.trim() || isSaving}
             className="admin-svc-save-btn"
           >
-            {isSaving ? "Saving…" : "Save Changes"}
+            {isSaving ? t("admin.action.saving") : t("admin.action.save")}
           </Button>
         </Stack>
       </Drawer>

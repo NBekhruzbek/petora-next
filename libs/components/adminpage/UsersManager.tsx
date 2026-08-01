@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Stack,
@@ -44,6 +46,8 @@ const STATUS_OPTIONS: MemberStatus[] = [
 ];
 
 const UsersManager = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<"ALL" | MemberStatus>("ALL");
@@ -119,14 +123,16 @@ const UsersManager = () => {
   return (
     <Stack gap={0}>
       <Stack className="admin-page-header">
-        <Typography className="admin-page-title">Users</Typography>
+        <Typography className="admin-page-title">
+          {t("admin.users.title")}
+        </Typography>
       </Stack>
 
       <Stack className="admin-card">
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search username…"
+            placeholder={t("admin.users.search")}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -143,7 +149,7 @@ const UsersManager = () => {
             }}
             className="admin-toolbar-select admin-usr-status-filter"
           >
-            <MenuItem value="ALL">All Statuses</MenuItem>
+            <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
                 {prettyEnum(s)}
@@ -151,7 +157,7 @@ const UsersManager = () => {
             ))}
           </Select>
           <Typography className="admin-meta-count">
-            {users.length} of {total}
+            {t("admin.showingOf", { shown: users.length, total })}
           </Typography>
         </Stack>
 
@@ -159,11 +165,11 @@ const UsersManager = () => {
           <Table className="admin-table">
             <TableHead>
               <TableRow>
-                <TableCell>User</TableCell>
-                <TableCell>Username</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Joined</TableCell>
+                <TableCell>{t("admin.col.user")}</TableCell>
+                <TableCell>{t("admin.col.username")}</TableCell>
+                <TableCell>{t("admin.col.email")}</TableCell>
+                <TableCell>{t("admin.col.status")}</TableCell>
+                <TableCell>{t("admin.col.joined")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -223,7 +229,7 @@ const UsersManager = () => {
                   </TableCell>
                   <TableCell>
                     <Typography className="admin-cell-date">
-                      {formatDate(user.createdAt)}
+                      {formatDate(user.createdAt, intlLocale)}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -236,7 +242,7 @@ const UsersManager = () => {
                     className="admin-usr-empty-cell"
                   >
                     <Typography className="admin-table-empty">
-                      No users found
+                      {t("admin.empty.users")}
                     </Typography>
                   </TableCell>
                 </TableRow>

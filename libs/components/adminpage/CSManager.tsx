@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Stack,
@@ -48,12 +50,12 @@ import { formatDate, metaTotal, prettyEnum } from "./adminHelpers";
 // One page holds every FAQ / notice — the CS page has no pager either.
 const CS_LIMIT = 50;
 
-const FAQ_CATEGORIES: { value: FaqType; label: string }[] = [
-  { value: FaqType.ORDERS_PAYMENTS, label: "Orders & Payments" },
-  { value: FaqType.DELIVERY_TRACKING, label: "Delivery & Tracking" },
-  { value: FaqType.RETURNS_REFUNDS, label: "Returns & Refunds" },
-  { value: FaqType.ACCOUNT_SECURITY, label: "Account & Security" },
-  { value: FaqType.PET_SERVICES, label: "Pet Services" },
+const FAQ_CATEGORIES: { value: FaqType; labelKey: string }[] = [
+  { value: FaqType.ORDERS_PAYMENTS, labelKey: "cs.cat.ORDERS_PAYMENTS" },
+  { value: FaqType.DELIVERY_TRACKING, labelKey: "cs.cat.DELIVERY_TRACKING" },
+  { value: FaqType.RETURNS_REFUNDS, labelKey: "cs.cat.RETURNS_REFUNDS" },
+  { value: FaqType.ACCOUNT_SECURITY, labelKey: "cs.cat.ACCOUNT_SECURITY" },
+  { value: FaqType.PET_SERVICES, labelKey: "cs.cat.PET_SERVICES" },
 ];
 
 const NOTICE_TYPES = Object.values(NoticeType);
@@ -86,7 +88,10 @@ const composeFaqContent = (
       .split(/\r?\n+/)
       .map((line) => line.trim())
       .filter(Boolean),
-    ...bullets.map((b) => b.trim()).filter(Boolean).map((b) => `- ${b}`),
+    ...bullets
+      .map((b) => b.trim())
+      .filter(Boolean)
+      .map((b) => `- ${b}`),
   ]
     .filter(Boolean)
     .join("\n");
@@ -222,6 +227,8 @@ const DrawerShell = ({
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const FaqTab = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const [categoryFilter, setCategoryFilter] = useState<FaqType | "ALL">("ALL");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -339,7 +346,7 @@ const FaqTab = () => {
       await faqsRefetch({ input: searchFilter });
       setDrawerOpen(false);
       await sweetBottomSmallSuccessAlert(
-        editingFaq ? "FAQ saved!" : "FAQ added!",
+        editingFaq ? t("admin.cs.faqSaved") : t("admin.cs.faqAdded"),
         700,
       );
     } catch (err: any) {
@@ -394,10 +401,10 @@ const FaqTab = () => {
           onChange={(e) => setCategoryFilter(e.target.value as FaqType | "ALL")}
           className="admin-toolbar-select admin-cs-faq-filter"
         >
-          <MenuItem value="ALL">All Categories</MenuItem>
+          <MenuItem value="ALL">{t("admin.filter.allCategories")}</MenuItem>
           {FAQ_CATEGORIES.map((c) => (
             <MenuItem key={c.value} value={c.value}>
-              {c.label}
+              {t(c.labelKey)}
             </MenuItem>
           ))}
         </Select>
@@ -409,7 +416,7 @@ const FaqTab = () => {
           onClick={openAdd}
           className="admin-cs-add-faq-btn"
         >
-          Add FAQ
+          {t("admin.addFaqBtn2")}
         </Button>
       </Stack>
 
@@ -424,7 +431,7 @@ const FaqTab = () => {
               {/* Category header */}
               <Stack className="admin-cs-category-header">
                 <Typography className="admin-cs-category-label">
-                  {cat.label} · {items.length}
+                  {t(cat.labelKey)} · {items.length}
                 </Typography>
               </Stack>
 
@@ -538,7 +545,7 @@ const FaqTab = () => {
         {faqs.length === 0 && (
           <Stack className="admin-cs-empty">
             <Typography className="admin-cs-empty-text">
-              No FAQs found
+              {t("admin.empty.faqs")}
             </Typography>
           </Stack>
         )}
@@ -551,7 +558,9 @@ const FaqTab = () => {
         maxWidth="xs"
         disablePortal
       >
-        <DialogTitle className="admin-cs-dialog-title">Delete FAQ?</DialogTitle>
+        <DialogTitle className="admin-cs-dialog-title">
+          {t("admin.cs.deleteFaqTitle")}
+        </DialogTitle>
         <DialogContent>
           <Typography className="admin-cs-dialog-body">
             This FAQ will be permanently removed from the CS page. This action
@@ -579,11 +588,15 @@ const FaqTab = () => {
       <DrawerShell
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title={editingFaq ? "Edit FAQ" : "Add New FAQ"}
-        subtitle="Visible to all users on the CS page"
+        title={editingFaq ? t("admin.cs.editFaq") : t("admin.cs.addFaq")}
+        subtitle={t("admin.cs.visibleOnCs")}
         onSave={save}
         saveLabel={
-          isSaving ? "Saving…" : editingFaq ? "Save Changes" : "Add FAQ"
+          isSaving
+            ? "Saving…"
+            : editingFaq
+              ? t("admin.cs.saveFaq")
+              : t("admin.cs.addFaqBtn")
         }
         saveDisabled={!isSaveEnabled}
       >
@@ -605,7 +618,7 @@ const FaqTab = () => {
             >
               {FAQ_CATEGORIES.map((c) => (
                 <MenuItem key={c.value} value={c.value}>
-                  {c.label}
+                  {t(c.labelKey)}
                 </MenuItem>
               ))}
             </Select>
@@ -625,12 +638,16 @@ const FaqTab = () => {
               }
               className="admin-cs-cat-select"
             >
-              <MenuItem value={FaqStatus.ACTIVE}>Visible</MenuItem>
-              <MenuItem value={FaqStatus.HIDE}>Hidden</MenuItem>
+              <MenuItem value={FaqStatus.ACTIVE}>
+                {t("admin.state.visible")}
+              </MenuItem>
+              <MenuItem value={FaqStatus.HIDE}>
+                {t("admin.state.hidden")}
+              </MenuItem>
             </Select>
           </Stack>
           <TextField
-            label="Question (Title)"
+            label={t("admin.cs.question")}
             value={form.title}
             onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
             size="small"
@@ -638,7 +655,7 @@ const FaqTab = () => {
             className="admin-cs-input"
           />
           <TextField
-            label="Short Description (preview)"
+            label={t("admin.cs.shortDesc")}
             value={form.description}
             onChange={(e) =>
               setForm((p) => ({ ...p, description: e.target.value }))
@@ -655,7 +672,7 @@ const FaqTab = () => {
             Answer
           </Typography>
           <TextField
-            label="Full Answer"
+            label={t("admin.cs.fullAnswer")}
             value={form.answer}
             onChange={(e) => setForm((p) => ({ ...p, answer: e.target.value }))}
             multiline
@@ -733,6 +750,8 @@ const FaqTab = () => {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const NoticesTab = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const [typeFilter, setTypeFilter] = useState<NoticeType | "ALL">("ALL");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingNotice, setEditingNotice] = useState<NoticeDetail | null>(null);
@@ -813,7 +832,7 @@ const NoticesTab = () => {
     try {
       setIsSaving(true);
       const noticeContent = composeParagraphs(form.paragraphs);
-      if (!noticeContent) throw new Error("Please add at least one paragraph");
+      if (!noticeContent) throw new Error(t("admin.cs.needParagraph"));
 
       if (editingNotice) {
         await updateNoticeByAdmin({
@@ -845,7 +864,9 @@ const NoticesTab = () => {
       await noticesRefetch({ input: searchFilter });
       setDrawerOpen(false);
       await sweetBottomSmallSuccessAlert(
-        editingNotice ? "Notice saved!" : "Notice published!",
+        editingNotice
+          ? t("admin.cs.noticeSaved")
+          : t("admin.cs.noticePublished"),
         700,
       );
     } catch (err: any) {
@@ -893,10 +914,10 @@ const NoticesTab = () => {
           onChange={(e) => setTypeFilter(e.target.value as NoticeType | "ALL")}
           className="admin-toolbar-select admin-cs-cs-filter"
         >
-          <MenuItem value="ALL">All Types</MenuItem>
-          {NOTICE_TYPES.map((t) => (
-            <MenuItem key={t} value={t}>
-              {prettyEnum(t)}
+          <MenuItem value="ALL">{t("admin.filter.allTypes")}</MenuItem>
+          {NOTICE_TYPES.map((type) => (
+            <MenuItem key={type} value={type}>
+              {t(`cs.noticeType.${type}`)}
             </MenuItem>
           ))}
         </Select>
@@ -942,7 +963,7 @@ const NoticesTab = () => {
                         flexShrink: 0,
                       }}
                     >
-                      {prettyEnum(notice.noticeType)}
+                      {t(`cs.noticeType.${notice.noticeType}`)}
                     </span>
                     {notice.noticeStatus === NoticeStatus.HIDE && (
                       <span
@@ -964,7 +985,7 @@ const NoticesTab = () => {
                 </Stack>
 
                 <Typography className="admin-cs-notice-date">
-                  {formatDate(notice.createdAt)}
+                  {formatDate(notice.createdAt, intlLocale)}
                 </Typography>
 
                 <Stack
@@ -1073,8 +1094,10 @@ const NoticesTab = () => {
       <DrawerShell
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title={editingNotice ? "Edit Notice" : "Add New Notice"}
-        subtitle="Shown to users on the CS support page"
+        title={
+          editingNotice ? t("admin.cs.editNotice") : t("admin.cs.addNotice")
+        }
+        subtitle={t("admin.cs.shownOnCs")}
         onSave={save}
         saveLabel={
           isSaving
@@ -1096,14 +1119,14 @@ const NoticesTab = () => {
               Type
             </Typography>
             <Stack direction="row" gap={1} flexWrap="wrap">
-              {NOTICE_TYPES.map((t) => {
-                const bs = NOTICE_STYLE[t];
-                const active = form.noticeType === t;
+              {NOTICE_TYPES.map((type) => {
+                const bs = NOTICE_STYLE[type];
+                const active = form.noticeType === type;
                 return (
                   // border, background are dynamic (active state)
                   <Stack
-                    key={t}
-                    onClick={() => setForm((p) => ({ ...p, noticeType: t }))}
+                    key={type}
+                    onClick={() => setForm((p) => ({ ...p, noticeType: type }))}
                     direction="row"
                     alignItems="center"
                     gap={1}
@@ -1126,7 +1149,7 @@ const NoticesTab = () => {
                         color: active ? bs.color : "#9CA3AF",
                       }}
                     >
-                      {prettyEnum(t)}
+                      {t(`cs.noticeType.${type}`)}
                     </Typography>
                   </Stack>
                 );
@@ -1150,8 +1173,12 @@ const NoticesTab = () => {
               }
               className="admin-cs-cat-select"
             >
-              <MenuItem value={NoticeStatus.ACTIVE}>Visible</MenuItem>
-              <MenuItem value={NoticeStatus.HIDE}>Hidden</MenuItem>
+              <MenuItem value={NoticeStatus.ACTIVE}>
+                {t("admin.state.visible")}
+              </MenuItem>
+              <MenuItem value={NoticeStatus.HIDE}>
+                {t("admin.state.hidden")}
+              </MenuItem>
             </Select>
           </Stack>
 
@@ -1167,7 +1194,7 @@ const NoticesTab = () => {
               }
               size="small"
               fullWidth
-              placeholder="e.g. Scheduled Maintenance"
+              placeholder={t("admin.cs.phNoticeTitle")}
               inputProps={{ style: { color: "#111827" } }}
               className="admin-cs-input-h42"
             />
@@ -1196,7 +1223,7 @@ const NoticesTab = () => {
               }
               size="small"
               fullWidth
-              placeholder="Brief one-sentence description…"
+              placeholder={t("admin.cs.phShortDesc")}
               inputProps={{ style: { color: "#111827" } }}
               className="admin-cs-input-h42"
             />
@@ -1273,12 +1300,15 @@ const NoticesTab = () => {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const CSManager = () => {
+  const { t } = useTranslation();
   const [tab, setTab] = useState(0);
 
   return (
     <Stack gap={0}>
       <Stack className="admin-page-header">
-        <Typography className="admin-page-title">Customer Support</Typography>
+        <Typography className="admin-page-title">
+          {t("admin.cs.title")}
+        </Typography>
       </Stack>
 
       <Stack className="admin-card">
@@ -1297,7 +1327,7 @@ const CSManager = () => {
           <Tab
             label={
               <Stack direction="row" alignItems="center" gap={0.8}>
-                <CampaignIcon className="admin-icon-15" /> Notices
+                <CampaignIcon className="admin-icon-15" /> {t("admin.notices")}
               </Stack>
             }
           />

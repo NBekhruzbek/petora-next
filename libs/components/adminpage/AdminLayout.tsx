@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { Stack } from "@mui/material";
 import Head from "next/head";

@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { Fragment, useState } from "react";
 import {
   Stack,
@@ -63,6 +65,8 @@ const customerName = (order: Order) =>
   "—";
 
 const OrdersManager = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<"ALL" | OrderStatus>("ALL");
@@ -109,7 +113,8 @@ const OrdersManager = () => {
 
   // Read the selection back out of the list so the drawer follows a refetch
   // instead of showing the status the row had when it was opened.
-  const selectedOrder = orders.find((order) => order._id === selectedId) ?? null;
+  const selectedOrder =
+    orders.find((order) => order._id === selectedId) ?? null;
 
   /** HANDLERS **/
 
@@ -119,7 +124,10 @@ const OrdersManager = () => {
       await updateOrderByAdmin({
         variables: { input: { orderId: order._id, orderStatus } },
       });
-      await Promise.all([ordersRefetch({ input: searchFilter }), statsRefetch()]);
+      await Promise.all([
+        ordersRefetch({ input: searchFilter }),
+        statsRefetch(),
+      ]);
       await sweetBottomSmallSuccessAlert("Order updated!", 700);
     } catch (err: any) {
       console.log("ERROR, updateStatus:", err.message);
@@ -135,9 +143,11 @@ const OrdersManager = () => {
   return (
     <Stack gap={0}>
       <Stack className="admin-page-header">
-        <Typography className="admin-page-title">Orders</Typography>
+        <Typography className="admin-page-title">
+          {t("admin.orders.title")}
+        </Typography>
         <Typography className="admin-ord-pending-count">
-          {pendingCount} awaiting shipment
+          {t("admin.awaitingShipment", { count: pendingCount })}
         </Typography>
       </Stack>
 
@@ -145,7 +155,7 @@ const OrdersManager = () => {
         <Stack className="admin-toolbar">
           <TextField
             size="small"
-            placeholder="Search order number…"
+            placeholder={t("admin.orders.search")}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -162,7 +172,7 @@ const OrdersManager = () => {
             }}
             className="admin-toolbar-select admin-ord-status-filter"
           >
-            <MenuItem value="ALL">All Statuses</MenuItem>
+            <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
                 {prettyEnum(s)}
@@ -170,7 +180,7 @@ const OrdersManager = () => {
             ))}
           </Select>
           <Typography className="admin-meta-count">
-            {orders.length} of {total}
+            {t("admin.showingOf", { shown: orders.length, total })}
           </Typography>
         </Stack>
 
@@ -178,13 +188,13 @@ const OrdersManager = () => {
           <Table className="admin-table">
             <TableHead>
               <TableRow>
-                <TableCell>Order</TableCell>
-                <TableCell>Customer</TableCell>
-                <TableCell>Items</TableCell>
-                <TableCell>Total</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>{t("admin.col.order")}</TableCell>
+                <TableCell>{t("admin.col.customer")}</TableCell>
+                <TableCell>{t("admin.col.items")}</TableCell>
+                <TableCell>{t("admin.col.total")}</TableCell>
+                <TableCell>{t("admin.col.status")}</TableCell>
+                <TableCell>{t("admin.col.date")}</TableCell>
+                <TableCell>{t("admin.col.actions")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -237,7 +247,7 @@ const OrdersManager = () => {
                       </Select>
                     </TableCell>
                     <TableCell className="admin-ord-date-cell">
-                      {formatDate(order.createdAt)}
+                      {formatDate(order.createdAt, intlLocale)}
                     </TableCell>
                     <TableCell>
                       <Button
@@ -255,7 +265,7 @@ const OrdersManager = () => {
                 <TableRow>
                   <TableCell colSpan={7} align="center">
                     <Typography className="admin-table-empty">
-                      No orders found
+                      {t("admin.empty.orders")}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -307,7 +317,8 @@ const OrdersManager = () => {
                       {selectedOrder.orderNumber}
                     </Typography>
                     <Typography className="admin-ord-header-date">
-                      Placed on {formatDate(selectedOrder.createdAt)}
+                      Placed on{" "}
+                      {formatDate(selectedOrder.createdAt, intlLocale)}
                     </Typography>
                   </Stack>
                 </Stack>
@@ -346,7 +357,9 @@ const OrdersManager = () => {
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
-                      <span className={statusChipClass(s)}>{prettyEnum(s)}</span>
+                      <span className={statusChipClass(s)}>
+                        {prettyEnum(s)}
+                      </span>
                     </MenuItem>
                   ))}
                 </Select>
@@ -391,29 +404,38 @@ const OrdersManager = () => {
                 </Stack>
                 <Stack gap={1}>
                   {[
-                    { label: "Receiver", value: selectedOrder.receiverName },
-                    { label: "Phone", value: selectedOrder.receiverPhone },
-                    { label: "Address", value: selectedOrder.deliveryAddress },
                     {
-                      label: "Payment",
+                      labelKey: "admin.orders.receiver",
+                      value: selectedOrder.receiverName,
+                    },
+                    {
+                      labelKey: "admin.orders.phone",
+                      value: selectedOrder.receiverPhone,
+                    },
+                    {
+                      labelKey: "admin.orders.address",
+                      value: selectedOrder.deliveryAddress,
+                    },
+                    {
+                      labelKey: "admin.orders.payment",
                       value: prettyEnum(selectedOrder.paymentMethod),
                     },
                     {
-                      label: "Delivery Fee",
+                      labelKey: "admin.orders.deliveryFee",
                       value: selectedOrder.orderDelivery
                         ? won(selectedOrder.orderDelivery)
                         : "Free",
                     },
-                  ].map(({ label, value }) => (
+                  ].map(({ labelKey, value }) => (
                     <Stack
-                      key={label}
+                      key={t(labelKey)}
                       direction="row"
                       justifyContent="space-between"
                       alignItems="flex-start"
                       gap={2}
                     >
                       <Typography className="admin-cell-meta">
-                        {label}
+                        {t(labelKey)}
                       </Typography>
                       <Typography
                         className="admin-cell-name"
