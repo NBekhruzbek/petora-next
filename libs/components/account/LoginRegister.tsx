@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   AlternateEmail,
   AdminPanelSettings,
@@ -31,26 +32,26 @@ type UserType = "ADMIN" | "AGENT" | "USER";
 
 const userTypes: {
   value: UserType;
-  label: string;
-  description: string;
+  labelKey: string;
+  descKey: string;
   Icon: typeof PersonOutline;
 }[] = [
   {
     value: "ADMIN",
-    label: "Admin",
-    description: "Manage platform operations",
+    labelKey: "auth2.typeAdmin",
+    descKey: "auth2.typeAdminDesc",
     Icon: AdminPanelSettings,
   },
   {
     value: "AGENT",
-    label: "Service Agent",
-    description: "Offer pet care services",
+    labelKey: "auth2.typeAgent",
+    descKey: "auth2.typeAgentDesc",
     Icon: SupportAgent,
   },
   {
     value: "USER",
-    label: "User",
-    description: "Book, shop and join Petora",
+    labelKey: "auth2.typeUser",
+    descKey: "auth2.typeUserDesc",
     Icon: PersonOutline,
   },
 ];
@@ -72,6 +73,7 @@ const maskId = (value: string) => {
 };
 
 const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<AuthMode>("login");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -106,28 +108,30 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     : "/img/pets/PetLogin.png";
 
   const title = useMemo(() => {
-    if (mode === "login") return "Welcome to";
-    if (mode === "register") return "Create Account";
-    if (mode === "forgot") return "Reset Password";
-    if (mode === "reset") return "Set New Password";
-    return "Check Your Email";
-  }, [mode]);
+    if (mode === "login") return t("auth2.titleLogin");
+    if (mode === "register") return t("auth2.titleRegister");
+    if (mode === "forgot") return t("auth2.titleForgot");
+    if (mode === "reset") return t("auth2.titleReset");
+    return t("auth2.titleVerify");
+  }, [mode, t]);
 
   const subtitle = useMemo(() => {
     if (mode === "login") {
-      return "Sign in with your ID and password, or continue with a connected account.";
+      return t("auth2.subLogin");
     }
     if (mode === "register") {
-      return "Join Petora to book trusted care, shop smarter, and protect pets together.";
+      return t("auth2.subRegister");
     }
     if (mode === "forgot") {
-      return "Enter your name and email to receive a verification code.";
+      return t("auth2.subForgot");
     }
     if (mode === "reset") {
-      return "Create a strong new password to keep your account secure.";
+      return t("auth2.subReset");
     }
-    return `We sent a 6-digit verification code to ${maskId(forgotForm.email || registerForm.email)}.`;
-  }, [mode, registerForm.email, forgotForm.email]);
+    return t("auth2.subVerify", {
+      target: maskId(forgotForm.email || registerForm.email),
+    });
+  }, [mode, registerForm.email, forgotForm.email, t]);
 
   useEffect(() => {
     if (open) {
@@ -202,14 +206,14 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     setLoginLoading(false);
 
     if (getJwtToken()) onClose();
-    else setLoginError("Please check your ID and password.");
+    else setLoginError(t("auth2.errLogin"));
   };
 
   const handleRegisterSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (registerForm.password !== registerForm.confirmPassword) {
-      setRegisterError("Passwords do not match. Please re-enter them.");
+      setRegisterError(t("auth2.errMismatchRetype"));
       return;
     }
 
@@ -225,7 +229,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     setRegisterLoading(false);
 
     if (getJwtToken()) onClose();
-    else setRegisterError("Registration failed. Please try again.");
+    else setRegisterError(t("auth2.errRegister"));
   };
 
   const handleForgotSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -238,7 +242,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
   const handleResetSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (resetForm.password !== resetForm.confirmPassword) {
-      setRegisterError("Passwords do not match.");
+      setRegisterError(t("auth2.errMismatch"));
       return;
     }
     setMode("login");
@@ -295,12 +299,8 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
   const renderSocialButtons = () => (
     <div className="auth-socials">
       <button type="button" className="auth-social-button">
-        <img
-          className="google"
-          src="./img/icons/google.png"
-          alt="google logo"
-        />
-        Continue with Gmail
+        <img className="google" src="/img/icons/google.png" alt="google logo" />
+        {t("auth2.gmail")}
       </button>
     </div>
   );
@@ -316,17 +316,19 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
       <IconButton
         className="auth-close-button"
         onClick={onClose}
-        aria-label="Close login dialog"
+        aria-label={t("auth2.closeDialog")}
       >
         <Close />
       </IconButton>
 
       <section className={`auth-shell auth-shell-${mode}`}>
         <div className="auth-form-panel">
-          <img src="./img/logo/Union.svg" className="auth-brand-logo" alt="" />
+          <img src="/img/logo/Union.svg" className="auth-brand-logo" alt="" />
           <div className="auth-heading">
             <p className="auth-kicker">
-              {mode === "login" ? "Petora Account" : "Petora Membership"}
+              {mode === "login"
+                ? t("auth2.kickerAccount")
+                : t("auth2.kickerMembership")}
             </p>
             <h2>
               {title}
@@ -355,7 +357,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                         : ""
                     }
                   >
-                    Name
+                    {t("auth2.name")}
                   </span>
                 </div>
               </label>
@@ -379,7 +381,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                         : ""
                     }
                   >
-                    Password
+                    {t("auth2.password")}
                   </span>
                   <button
                     type="button"
@@ -401,14 +403,14 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                     checked={rememberMe}
                     onChange={(event) => setRememberMe(event.target.checked)}
                   />
-                  <span>Remember me</span>
+                  <span>{t("auth2.rememberMe")}</span>
                 </label>
                 <button
                   type="button"
                   className="auth-link-button"
                   onClick={() => setMode("forgot")}
                 >
-                  Forgot password?
+                  {t("auth2.forgotPassword")}
                 </button>
               </div>
 
@@ -419,13 +421,13 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                 type="submit"
                 disabled={loginLoading}
               >
-                {loginLoading ? "Logging in..." : "Login"}
+                {loginLoading ? t("auth2.loggingIn") : t("auth.loginShort")}
               </button>
 
               <p className="auth-switch-copy">
-                Don't have an account?
+                {t("auth2.noAccount")}
                 <button type="button" onClick={handleSwitchToRegister}>
-                  Register here
+                  {t("auth2.registerHere")}
                 </button>
               </p>
 
@@ -458,7 +460,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                         : ""
                     }
                   >
-                    Name
+                    {t("auth2.name")}
                   </span>
                 </div>
               </label>
@@ -482,7 +484,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                         : ""
                     }
                   >
-                    Email
+                    {t("auth2.email")}
                   </span>
                 </div>
               </label>
@@ -506,7 +508,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                         : ""
                     }
                   >
-                    Phone Number
+                    {t("auth2.phone")}
                   </span>
                 </div>
               </label>
@@ -532,7 +534,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                           : ""
                       }
                     >
-                      Password
+                      {t("auth2.password")}
                     </span>
                     <button
                       type="button"
@@ -568,7 +570,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                           : ""
                       }
                     >
-                      Re-enter
+                      {t("auth2.reenter")}
                     </span>
                     <button
                       type="button"
@@ -587,9 +589,9 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
               <div
                 className="auth-role-group"
                 role="radiogroup"
-                aria-label="Choose user type"
+                aria-label={t("auth2.chooseUserType")}
               >
-                {userTypes.map(({ value, label, description, Icon }) => (
+                {userTypes.map(({ value, labelKey, descKey, Icon }) => (
                   <button
                     key={value}
                     type="button"
@@ -599,8 +601,8 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                     aria-checked={selectedUserType === value}
                   >
                     <Icon fontSize="small" />
-                    <span>{label}</span>
-                    <small>{description}</small>
+                    <span>{t(labelKey)}</span>
+                    <small>{t(descKey)}</small>
                   </button>
                 ))}
               </div>
@@ -614,13 +616,15 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                 type="submit"
                 disabled={registerLoading}
               >
-                {registerLoading ? "Creating account..." : "Create Account"}
+                {registerLoading
+                  ? t("auth2.creatingAccount")
+                  : t("auth2.titleRegister")}
               </button>
 
               <p className="auth-switch-copy">
-                Already have an account?
+                {t("auth2.haveAccount")}
                 <button type="button" onClick={handleSwitchToLogin}>
-                  Login Here
+                  {t("auth2.loginHere")}
                 </button>
               </p>
 
@@ -649,7 +653,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                         : ""
                     }
                   >
-                    Name
+                    {t("auth2.name")}
                   </span>
                 </div>
               </label>
@@ -673,19 +677,19 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                         : ""
                     }
                   >
-                    Email
+                    {t("auth2.email")}
                   </span>
                 </div>
               </label>
 
               <button className="auth-primary-button" type="submit">
-                Send Reset Code
+                {t("auth2.sendResetCode")}
               </button>
 
               <p className="auth-switch-copy">
-                Remember your password?
+                {t("auth2.rememberPassword")}
                 <button type="button" onClick={() => setMode("login")}>
-                  Back to Login
+                  {t("auth2.backToLogin")}
                 </button>
               </p>
             </form>
@@ -712,7 +716,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                         : ""
                     }
                   >
-                    New Password
+                    {t("auth2.newPassword")}
                   </span>
                   <button
                     type="button"
@@ -747,7 +751,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                         : ""
                     }
                   >
-                    Confirm Password
+                    {t("auth2.confirmPassword")}
                   </span>
                   <button
                     type="button"
@@ -763,7 +767,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
               </label>
 
               <button className="auth-primary-button" type="submit">
-                Reset Password
+                {t("auth2.resetPassword")}
               </button>
             </form>
           )}
@@ -797,9 +801,9 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                   OTP will expire in <strong>{formatTime(timeLeft)}</strong>
                 </p>
                 <p>
-                  Didn't receive the code?
+                  {t("auth2.noCode")}
                   <button type="button" onClick={handleResendOtp}>
-                    Resend
+                    {t("auth2.resend")}
                   </button>
                 </p>
               </div>
@@ -810,13 +814,13 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
               </div>
 
               <button className="auth-primary-button" type="submit">
-                Submit
+                {t("auth2.submit")}
               </button>
 
               <p className="auth-switch-copy">
-                Already have an account?
+                {t("auth2.haveAccount")}
                 <button type="button" onClick={handleSwitchToLogin}>
-                  Login Here
+                  {t("auth2.loginHere")}
                 </button>
               </p>
 
@@ -832,45 +836,34 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
           <div className="auth-visual-copy">
             <h3>
               {isResetFlow
-                ? "Secure your account and continue your journey with Petora."
+                ? t("auth2.panelReset")
                 : isRegister
-                  ? "Become a member today and help protect animals!"
-                  : "Healthy pets bring joy and enrich your life."}
+                  ? t("auth2.panelRegister")
+                  : t("auth2.panelLogin")}
             </h3>
           </div>
 
           <img
             src={sideImage}
-            alt={
-              isRegister ? "Cat and dog sitting together" : "Happy puppy waving"
-            }
+            alt={isRegister ? t("auth2.altRegister") : t("auth2.altLogin")}
           />
 
           {!isResetFlow && (
             <div className="auth-benefit-card">
               {isRegister ? (
                 <>
-                  <h4>Member Benefits: Exclusive Discounts, Rewards</h4>
-                  <p>
-                    Enjoy special pricing on pet food, toys, accessories, and
-                    care services.
-                  </p>
-                  <p>
-                    Get early access to new products, events, and protection
-                    programs.
-                  </p>
+                  <h4>{t("auth2.benefitsTitle")}</h4>
+                  <p>{t("auth2.benefits1")}</p>
+                  <p>{t("auth2.benefits2")}</p>
                 </>
               ) : (
                 <>
-                  <h4>Join Our Online Pet Care & Protection Community</h4>
-                  <p>
-                    Share knowledge, meet trusted caregivers, and help pets live
-                    better lives.
-                  </p>
+                  <h4>{t("auth2.communityTitle")}</h4>
+                  <p>{t("auth2.communityBody")}</p>
                   <div>
                     <span>
                       <CheckCircle fontSize="small" />
-                      Join with 100k+ pet people
+                      {t("auth2.communityBadge")}
                     </span>
                   </div>
                 </>
