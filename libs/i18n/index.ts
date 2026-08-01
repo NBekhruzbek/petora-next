@@ -8,6 +8,7 @@ import enShop from "./locales/en/shop.json";
 import enAgents from "./locales/en/agents.json";
 import enCommunity from "./locales/en/community.json";
 import enCs from "./locales/en/cs.json";
+import enMypage from "./locales/en/mypage.json";
 
 import koCommon from "./locales/ko/common.json";
 import koHome from "./locales/ko/home.json";
@@ -16,6 +17,7 @@ import koShop from "./locales/ko/shop.json";
 import koAgents from "./locales/ko/agents.json";
 import koCommunity from "./locales/ko/community.json";
 import koCs from "./locales/ko/cs.json";
+import koMypage from "./locales/ko/mypage.json";
 
 export const locales = ["en", "ko"] as const;
 export type AppLocale = (typeof locales)[number];
@@ -56,6 +58,7 @@ const resources = {
       enAgents,
       enCommunity,
       enCs,
+      enMypage,
     ),
   },
   ko: {
@@ -67,6 +70,7 @@ const resources = {
       koAgents,
       koCommunity,
       koCs,
+      koMypage,
     ),
   },
 };

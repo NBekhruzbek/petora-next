@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import {
   Stack,
@@ -109,6 +110,7 @@ const statusClass: Record<string, string> = {
 };
 
 const MyServicesTab = () => {
+  const { t } = useTranslation();
   const user = useReactiveVar(userVar);
   const [category, setCategory] = useState("ALL");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -279,12 +281,12 @@ const MyServicesTab = () => {
 
     try {
       if (!formData.serviceTitle.trim())
-        throw new Error("Please enter service title");
+        throw new Error(t("mypage.services.errTitle"));
       if (!formData.serviceDescription.trim())
-        throw new Error("Please enter description");
-      if (!duration) throw new Error("Please enter the duration in minutes");
-      if (!price) throw new Error("Please enter price");
-      if (!images.length) throw new Error("Please upload at least 1 image");
+        throw new Error(t("mypage.services.errDescription"));
+      if (!duration) throw new Error(t("mypage.services.errDuration"));
+      if (!price) throw new Error(t("mypage.services.errPrice"));
+      if (!images.length) throw new Error(t("mypage.services.errImages"));
 
       setIsSubmitting(true);
 
@@ -300,7 +302,7 @@ const MyServicesTab = () => {
         });
         uploaded = (data?.imagesUploader ?? []).filter(Boolean);
         if (uploaded.length !== pending.length) {
-          throw new Error("Image upload failed, please retry.");
+          throw new Error(t("mypage.services.errUpload"));
         }
       }
 
@@ -393,7 +395,7 @@ const MyServicesTab = () => {
           className="btn-add-service"
           onClick={openAddModal}
         >
-          Add New Service
+          {t("mypage.services.addNew")}
         </Button>
       </Stack>
 
@@ -403,16 +405,22 @@ const MyServicesTab = () => {
           (category === "ALL" ? (
             <EmptyState
               icon={<StorefrontOutlinedIcon />}
-              title="No services published"
-              description="Publish an offer and pet owners can start booking you."
-              action={{ label: "Add new service", onClick: openAddModal }}
+              title={t("mypage.services.noneTitle")}
+              description={t("mypage.services.noneDesc")}
+              action={{
+                label: t("mypage.services.addNewAction"),
+                onClick: openAddModal,
+              }}
             />
           ) : (
             <EmptyState
               icon={<FilterAltOffOutlinedIcon />}
-              title="Nothing in this category"
-              description="You have no services filed under this type yet. Pick another category, or publish one here."
-              action={{ label: "Add new service", onClick: openAddModal }}
+              title={t("mypage.services.emptyCategoryTitle")}
+              description={t("mypage.services.emptyCategoryDesc")}
+              action={{
+                label: t("mypage.services.addNewAction"),
+                onClick: openAddModal,
+              }}
             />
           ))}
 
@@ -468,13 +476,17 @@ const MyServicesTab = () => {
                 className="service-row-metrics"
               >
                 <Stack className="metric-block">
-                  <Typography className="metric-label">Price</Typography>
+                  <Typography className="metric-label">
+                    {t("mypage.services.price")}
+                  </Typography>
                   <Typography className="service-price">
                     ₩{service.servicePrice?.toLocaleString()}
                   </Typography>
                 </Stack>
                 <Stack className="metric-block">
-                  <Typography className="metric-label">Rating</Typography>
+                  <Typography className="metric-label">
+                    {t("mypage.services.rating")}
+                  </Typography>
                   <Stack
                     direction="row"
                     alignItems="center"
@@ -493,7 +505,9 @@ const MyServicesTab = () => {
                   </Stack>
                 </Stack>
                 <Stack className="metric-block">
-                  <Typography className="metric-label">Bookings</Typography>
+                  <Typography className="metric-label">
+                    {t("mypage.services.bookings")}
+                  </Typography>
                   <Typography className="bookings-row">
                     {service.serviceBookings ?? 0}
                   </Typography>
@@ -505,7 +519,7 @@ const MyServicesTab = () => {
                   className="service-action-tab edit"
                   onClick={() => openEditModal(service)}
                 >
-                  Edit
+                  {t("mypage.services.edit")}
                 </Button>
                 <Stack direction="row" className="service-status-tabs">
                   {OWNED_STATUSES.map((status) => (
@@ -552,12 +566,14 @@ const MyServicesTab = () => {
               </Box>
               <Stack spacing={0.25}>
                 <span>
-                  {editingService ? "Edit Service" : "Create New Service"}
+                  {editingService
+                    ? t("mypage.services.editTitle")
+                    : t("mypage.services.createTitle")}
                 </span>
                 <Typography className="add-dialog-subtitle">
                   {editingService
-                    ? "Update the selected offer details."
-                    : "Publish a bookable offer for pet owners."}
+                    ? t("mypage.services.editSubtitle")
+                    : t("mypage.services.createSubtitle")}
                 </Typography>
               </Stack>
             </Stack>
@@ -576,11 +592,11 @@ const MyServicesTab = () => {
             <Box className="form-grid">
               <TextField
                 fullWidth
-                label="Service Title"
+                label={t("mypage.services.fTitle")}
                 name="serviceTitle"
                 value={formData.serviceTitle}
                 onChange={handleInputChange}
-                placeholder="Premium Dog Grooming"
+                placeholder={t("mypage.services.phTitle")}
                 variant="outlined"
                 className="add-service-field wide"
               />
@@ -588,7 +604,7 @@ const MyServicesTab = () => {
               <TextField
                 select
                 fullWidth
-                label="Service Type"
+                label={t("mypage.services.fType")}
                 name="serviceType"
                 value={formData.serviceType}
                 onChange={handleInputChange}
@@ -608,7 +624,7 @@ const MyServicesTab = () => {
               <TextField
                 select
                 fullWidth
-                label="Location"
+                label={t("mypage.services.fLocation")}
                 name="serviceLocation"
                 value={formData.serviceLocation}
                 onChange={handleInputChange}
@@ -627,11 +643,11 @@ const MyServicesTab = () => {
 
               <TextField
                 fullWidth
-                label="Service Duration (minutes)"
+                label={t("mypage.services.fDuration")}
                 name="serviceDurationMinutes"
                 value={formData.serviceDurationMinutes}
                 onChange={handleInputChange}
-                placeholder="60"
+                placeholder={t("mypage.services.phDuration")}
                 variant="outlined"
                 className="add-service-field"
                 inputProps={{ inputMode: "numeric" }}
@@ -639,12 +655,12 @@ const MyServicesTab = () => {
 
               <TextField
                 fullWidth
-                label="Price"
+                label={t("mypage.services.fPrice")}
                 name="servicePrice"
                 type="text"
                 value={formData.servicePrice}
                 onChange={handleInputChange}
-                placeholder="45000"
+                placeholder={t("mypage.services.phPrice")}
                 variant="outlined"
                 className="add-service-field price-field"
                 inputProps={{
@@ -657,11 +673,11 @@ const MyServicesTab = () => {
 
               <TextField
                 fullWidth
-                label="Description"
+                label={t("mypage.services.fDescription")}
                 name="serviceDescription"
                 value={formData.serviceDescription}
                 onChange={handleInputChange}
-                placeholder="Bath, haircut, nail trim, and ear cleaning."
+                placeholder={t("mypage.services.phDescription")}
                 multiline
                 rows={4}
                 variant="outlined"
@@ -676,7 +692,7 @@ const MyServicesTab = () => {
                 justifyContent="space-between"
                 className="image-upload-heading"
               >
-                <Typography>Service Images</Typography>
+                <Typography>{t("mypage.services.images")}</Typography>
                 <Chip
                   label={`${images.length}/${MAX_IMAGES} selected`}
                   className="image-count-chip"
@@ -705,10 +721,10 @@ const MyServicesTab = () => {
                   </Box>
                   <Stack spacing={0.25} className="upload-copy">
                     <Typography className="upload-title">
-                      Upload service photos
+                      {t("mypage.services.uploadPhotos")}
                     </Typography>
                     <Typography className="upload-note">
-                      JPG, PNG, or WEBP. Add at least one image.
+                      {t("mypage.services.uploadHint")}
                     </Typography>
                   </Stack>
                 </label>
@@ -745,7 +761,7 @@ const MyServicesTab = () => {
 
         <DialogActions className="add-dialog-actions">
           <Button onClick={resetModal} className="btn-dialog-cancel">
-            Cancel
+            {t("mypage.services.cancel")}
           </Button>
           <Button
             variant="contained"
@@ -753,7 +769,9 @@ const MyServicesTab = () => {
             className="btn-dialog-publish"
             disabled={isSubmitting}
           >
-            {editingService ? "Update Service" : "Publish Service"}
+            {editingService
+              ? t("mypage.services.update")
+              : t("mypage.services.publish")}
           </Button>
         </DialogActions>
       </Dialog>

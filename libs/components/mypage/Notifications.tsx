@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
@@ -40,7 +42,7 @@ import EmptyState from "../common/EmptyState";
 import {
   DESTINATIONS,
   getNotificationIcon,
-  groupLabel,
+  groupLabelKey,
   timeAgo,
 } from "../notifications/notificationPresentation";
 import { useNotificationDestination } from "../notifications/useNotificationDestination";
@@ -48,14 +50,19 @@ import { useNotificationDestination } from "../notifications/useNotificationDest
 const ITEMS_PER_PAGE = 8;
 
 // Tab order maps onto NotificationGroup; "All" sends no group filter.
-const TABS: { label: string; group?: NotificationGroup }[] = [
-  { label: "All" },
-  { label: "Orders", group: NotificationGroup.ORDERS },
-  { label: "Bookings", group: NotificationGroup.BOOKINGS },
-  { label: "System", group: NotificationGroup.SYSTEM },
+const TABS: { labelKey: string; group?: NotificationGroup }[] = [
+  { labelKey: "mypage.notifications.all" },
+  { labelKey: "mypage.notifications.orders", group: NotificationGroup.ORDERS },
+  {
+    labelKey: "mypage.notifications.bookings",
+    group: NotificationGroup.BOOKINGS,
+  },
+  { labelKey: "mypage.notifications.system", group: NotificationGroup.SYSTEM },
 ];
 
 const Notifications = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const router = useRouter();
   const user = useReactiveVar(userVar);
   const { resolveDestination } = useNotificationDestination();
@@ -207,7 +214,7 @@ const Notifications = () => {
             startIcon={<DoneAllIcon />}
             onClick={() => void handleMarkAllRead()}
           >
-            Mark all as read
+            {t("mypage.notifications.markAllRead")}
           </Button>
         )}
       </Stack>
@@ -219,7 +226,7 @@ const Notifications = () => {
           aria-label="notification tabs"
         >
           {TABS.map((tab) => (
-            <Tab key={tab.label} label={tab.label} />
+            <Tab key={tab.labelKey} label={t(tab.labelKey)} />
           ))}
         </Tabs>
       </Box>
@@ -229,7 +236,9 @@ const Notifications = () => {
           <EmptyState
             icon={<NotificationsOutlinedIcon />}
             title={
-              showUnreadOnly ? "You're all caught up" : "No notifications yet"
+              showUnreadOnly
+                ? t("mypage.notifications.caughtUp")
+                : t("mypage.notifications.empty")
             }
             description={
               showUnreadOnly
@@ -268,7 +277,7 @@ const Notifications = () => {
                     <Stack direction="row" alignItems="center" gap="8px">
                       {!isRead && <span className="unread-dot" />}
                       <Typography className="notif-time">
-                        {timeAgo(notification.createdAt)}
+                        {timeAgo(notification.createdAt, intlLocale)}
                       </Typography>
                     </Stack>
                   </Stack>
@@ -310,7 +319,7 @@ const Notifications = () => {
           <>
             <Stack className="notif-dialog-header">
               <Chip
-                label={groupLabel[selected.notificationGroup]}
+                label={t(groupLabelKey[selected.notificationGroup])}
                 size="small"
                 className="notif-dialog-chip"
               />
@@ -332,7 +341,7 @@ const Notifications = () => {
                     {selected.notificationTitle}
                   </Typography>
                   <Typography className="notif-dialog-time">
-                    {timeAgo(selected.createdAt)}
+                    {timeAgo(selected.createdAt, intlLocale)}
                   </Typography>
                 </Stack>
               </Stack>
@@ -344,7 +353,7 @@ const Notifications = () => {
                   className="notif-dialog-action"
                   onClick={() => void handleAction(selected)}
                 >
-                  {selectedDestination.label}
+                  {t(selectedDestination.labelKey)}
                 </Button>
               )}
             </Stack>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ReactNode } from "react";
 import { Button, Chip, Stack, Typography } from "@mui/material";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
@@ -69,6 +70,7 @@ const AgentBookingsList = ({
   actions = [],
   onBookingMoved,
 }: AgentBookingsListProps) => {
+  const { t } = useTranslation();
   const user = useReactiveVar(userVar);
 
   /** APOLLO REQUESTS **/
@@ -123,7 +125,7 @@ const AgentBookingsList = ({
       });
       // The row leaves this tab and shows up in the one for its new status;
       // refetchQueries above has already reloaded both it and the badge.
-      await sweetBottomSmallSuccessAlert("Booking updated!", 700);
+      await sweetBottomSmallSuccessAlert(t("mypage.bookings.updated"), 700);
       onBookingMoved?.(nextStatus);
     } catch (err: any) {
       console.log("ERROR, handleAction:", err.message);
@@ -152,7 +154,8 @@ const AgentBookingsList = ({
             <Stack className="request-main" spacing={0.5}>
               <Typography className="request-label">Service Name</Typography>
               <Typography className="request-service">
-                {booking.serviceData?.serviceTitle ?? "Service removed"}
+                {booking.serviceData?.serviceTitle ??
+                  t("mypage.bookings.serviceRemoved")}
               </Typography>
               <Typography className="request-note">
                 {booking.bookingPetName} · {booking.bookingPetType}
@@ -168,10 +171,10 @@ const AgentBookingsList = ({
 
             <Stack className="request-note-block" spacing={0.5}>
               <Typography className="request-label">
-                Customer Request
+                {t("mypage.bookings.customerRequest")}
               </Typography>
               <Typography className="request-note">
-                {booking.bookingNote || "No additional request"}
+                {booking.bookingNote || t("mypage.bookings.noRequest")}
               </Typography>
             </Stack>
 

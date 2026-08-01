@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   Box,
@@ -23,6 +24,7 @@ import EmptyState from "../common/EmptyState";
 const ARTICLES_PER_PAGE = 6;
 
 const MyArticles = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const user = useReactiveVar(userVar);
   const [page, setPage] = useState(1);
@@ -89,17 +91,17 @@ const MyArticles = () => {
             void router.push("/community?articleCategory=FREE&write=true")
           }
         >
-          Write Article
+          {t("mypage.articles.write")}
         </Button>
       </Stack>
 
       {articles.length === 0 && (
         <EmptyState
           icon={<DrawOutlinedIcon />}
-          title="No articles yet"
-          description="Share advice or a story and it appears here and on the community board."
+          title={t("mypage.articles.emptyTitle")}
+          description={t("mypage.articles.emptyDesc")}
           action={{
-            label: "Write article",
+            label: t("mypage.articles.emptyAction"),
             onClick: () =>
               void router.push("/community?articleCategory=FREE&write=true"),
           }}

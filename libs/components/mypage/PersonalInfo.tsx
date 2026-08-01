@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Stack,
@@ -129,6 +130,7 @@ const PersonalInfo = ({
   saveTrigger,
   onSaveComplete,
 }: PersonalInfoProps) => {
+  const { t } = useTranslation();
   const user = useReactiveVar(userVar);
   const [form, setForm] = useState<ProfileForm>(emptyForm);
   const [certificates, setCertificates] = useState<CertificateSlot[]>([]);
@@ -257,7 +259,7 @@ const PersonalInfo = ({
 
   const handleSave = async () => {
     try {
-      if (!user?._id) throw new Error("Please login first!");
+      if (!user?._id) throw new Error(t("mypage.personal.loginFirst"));
 
       let memberImage = member?.memberImage;
       if (avatar) {
@@ -265,7 +267,7 @@ const PersonalInfo = ({
           variables: { files: [avatar.file], target: "member" },
         });
         const uploaded = (data?.imagesUploader ?? []).filter(Boolean)[0];
-        if (!uploaded) throw new Error("Image upload failed, please retry.");
+        if (!uploaded) throw new Error(t("mypage.personal.imageFailed"));
         memberImage = uploaded;
       }
 
@@ -280,7 +282,7 @@ const PersonalInfo = ({
         });
         uploadedCerts = (data?.imagesUploader ?? []).filter(Boolean);
         if (uploadedCerts.length !== pendingCerts.length) {
-          throw new Error("Certificate upload failed, please retry.");
+          throw new Error(t("mypage.personal.certFailed"));
         }
       }
 
@@ -322,7 +324,7 @@ const PersonalInfo = ({
       const { data: refetched } = await getMemberRefetch({ input: user._id });
       applyMember(refetched?.getMember);
 
-      await sweetBottomSmallSuccessAlert("Profile updated!", 900);
+      await sweetBottomSmallSuccessAlert(t("mypage.personal.updated"), 900);
       onSaveComplete?.(true);
     } catch (err: any) {
       console.log("ERROR, handleSave:", err.message);
@@ -384,7 +386,7 @@ const PersonalInfo = ({
           renderValue={(sel) =>
             sel.length === 0 ? (
               <Typography className="multi-select-placeholder">
-                Select options...
+                {t("mypage.personal.selectOptions")}
               </Typography>
             ) : (
               <Typography className="multi-select-value">
@@ -454,7 +456,11 @@ const PersonalInfo = ({
               </Box>
             )}
             {isAgent && (
-              <Chip label="Agent" size="small" className="agent-chip" />
+              <Chip
+                label={t("mypage.personal.agent")}
+                size="small"
+                className="agent-chip"
+              />
             )}
           </Stack>
           {isAgent && form.memberSpecialty && (
@@ -477,26 +483,32 @@ const PersonalInfo = ({
         className={`info-form-card ${isEditable ? "editable" : ""}`}
       >
         <Typography variant="h6" className="section-title">
-          Personal Information
+          {t("mypage.personal.sectionPersonal")}
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Stack spacing={1}>
-              <FieldLabel icon={<BadgeIcon />} label="Full Name" />
+              <FieldLabel
+                icon={<BadgeIcon />}
+                label={t("mypage.personal.fullName")}
+              />
               <TextField
                 fullWidth
                 name="memberFullName"
                 disabled={!isEditable}
                 value={form.memberFullName}
                 onChange={handleChange}
-                placeholder="Enter your full name"
+                placeholder={t("mypage.personal.phFullName")}
                 sx={fieldBorderStyles}
               />
             </Stack>
           </Grid>
           <Grid item xs={12} md={6}>
             <Stack spacing={1}>
-              <FieldLabel icon={<PersonIcon />} label="Username" />
+              <FieldLabel
+                icon={<PersonIcon />}
+                label={t("mypage.personal.username")}
+              />
               <Box className="username-field-wrapper">
                 <TextField
                   fullWidth
@@ -504,7 +516,7 @@ const PersonalInfo = ({
                   disabled={!isEditable}
                   value={form.memberUserName}
                   onChange={handleChange}
-                  placeholder="Choose a username"
+                  placeholder={t("mypage.personal.phUsername")}
                   sx={fieldBorderStyles}
                 />
               </Box>
@@ -512,28 +524,34 @@ const PersonalInfo = ({
           </Grid>
           <Grid item xs={12} md={6}>
             <Stack spacing={1}>
-              <FieldLabel icon={<EmailIcon />} label="Email Address" />
+              <FieldLabel
+                icon={<EmailIcon />}
+                label={t("mypage.personal.email")}
+              />
               <TextField
                 fullWidth
                 name="memberEmail"
                 disabled={!isEditable}
                 value={form.memberEmail}
                 onChange={handleChange}
-                placeholder="your.email@example.com"
+                placeholder={t("mypage.personal.phEmail")}
                 sx={fieldBorderStyles}
               />
             </Stack>
           </Grid>
           <Grid item xs={12} md={6}>
             <Stack spacing={1}>
-              <FieldLabel icon={<PhoneIcon />} label="Phone Number" />
+              <FieldLabel
+                icon={<PhoneIcon />}
+                label={t("mypage.personal.phone")}
+              />
               <TextField
                 fullWidth
                 name="memberPhone"
                 disabled={!isEditable}
                 value={form.memberPhone}
                 onChange={handlePhoneChange}
-                placeholder="010-0000-0000"
+                placeholder={t("mypage.personal.phPhone")}
                 sx={fieldBorderStyles}
               />
             </Stack>
@@ -542,7 +560,7 @@ const PersonalInfo = ({
             <Stack spacing={1}>
               <FieldLabel
                 icon={<LocationOnIcon />}
-                label="Delivery Address (배송지)"
+                label={t("mypage.personal.deliveryAddress")}
               />
               <TextField
                 fullWidth
@@ -550,14 +568,16 @@ const PersonalInfo = ({
                 disabled={!isEditable}
                 value={form.memberAddress}
                 onChange={handleChange}
-                placeholder="Seoul, Gangnam-gu..."
+                placeholder={t("mypage.personal.phAddress")}
                 sx={fieldBorderStyles}
               />
             </Stack>
           </Grid>
           <Grid item xs={12}>
             <Stack spacing={1}>
-              <Typography className="field-label">Bio</Typography>
+              <Typography className="field-label">
+                {t("mypage.personal.bio")}
+              </Typography>
               <TextField
                 fullWidth
                 multiline
@@ -567,7 +587,7 @@ const PersonalInfo = ({
                 disabled={!isEditable}
                 value={form.memberDesc}
                 onChange={handleChange}
-                placeholder="Tell us about yourself..."
+                placeholder={t("mypage.personal.phBio")}
                 sx={fieldBorderStyles}
               />
             </Stack>
@@ -584,26 +604,32 @@ const PersonalInfo = ({
             className={`info-form-card ${isEditable ? "editable" : ""}`}
           >
             <Typography variant="h6" className="section-title">
-              Professional Information
+              {t("mypage.personal.sectionProfessional")}
             </Typography>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <FieldLabel icon={<WorkIcon />} label="Role / Specialty" />
+                  <FieldLabel
+                    icon={<WorkIcon />}
+                    label={t("mypage.personal.role")}
+                  />
                   <TextField
                     fullWidth
                     name="memberSpecialty"
                     disabled={!isEditable}
                     value={form.memberSpecialty}
                     onChange={handleChange}
-                    placeholder="e.g. Pet Groomer • Skin Care Specialist"
+                    placeholder={t("mypage.personal.phRole")}
                     sx={fieldBorderStyles}
                   />
                 </Stack>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <FieldLabel icon={<PetsIcon />} label="Service Type" />
+                  <FieldLabel
+                    icon={<PetsIcon />}
+                    label={t("mypage.personal.serviceType")}
+                  />
                   <MultiSelectField
                     options={SERVICE_TYPE_OPTIONS}
                     selected={form.memberServiceTypes}
@@ -618,14 +644,17 @@ const PersonalInfo = ({
               </Grid>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <FieldLabel icon={<EmojiEventsIcon />} label="Experience" />
+                  <FieldLabel
+                    icon={<EmojiEventsIcon />}
+                    label={t("mypage.personal.experience")}
+                  />
                   <TextField
                     fullWidth
                     name="memberExperience"
                     disabled={!isEditable}
                     value={form.memberExperience}
                     onChange={handleChange}
-                    placeholder="Years of experience, e.g. 6"
+                    placeholder={t("mypage.personal.phExperience")}
                     inputProps={{ inputMode: "numeric" }}
                     sx={fieldBorderStyles}
                   />
@@ -633,14 +662,17 @@ const PersonalInfo = ({
               </Grid>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <FieldLabel icon={<FavoriteIcon />} label="Approach" />
+                  <FieldLabel
+                    icon={<FavoriteIcon />}
+                    label={t("mypage.personal.approach")}
+                  />
                   <TextField
                     fullWidth
                     name="memberApproach"
                     disabled={!isEditable}
                     value={form.memberApproach}
                     onChange={handleChange}
-                    placeholder="e.g. Gentle, patient, positive reinforcement"
+                    placeholder={t("mypage.personal.phApproach")}
                     sx={fieldBorderStyles}
                   />
                 </Stack>
@@ -654,26 +686,32 @@ const PersonalInfo = ({
             className={`info-form-card ${isEditable ? "editable" : ""}`}
           >
             <Typography variant="h6" className="section-title">
-              Service Details
+              {t("mypage.personal.sectionService")}
             </Typography>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <FieldLabel icon={<TranslateIcon />} label="Languages" />
+                  <FieldLabel
+                    icon={<TranslateIcon />}
+                    label={t("mypage.personal.languages")}
+                  />
                   <TextField
                     fullWidth
                     name="memberLanguages"
                     disabled={!isEditable}
                     value={form.memberLanguages}
                     onChange={handleChange}
-                    placeholder="e.g. Korean, English"
+                    placeholder={t("mypage.personal.phLanguages")}
                     sx={fieldBorderStyles}
                   />
                 </Stack>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <FieldLabel icon={<LocationOnIcon />} label="Service Area" />
+                  <FieldLabel
+                    icon={<LocationOnIcon />}
+                    label={t("mypage.personal.serviceArea")}
+                  />
                   <MultiSelectField
                     options={SERVICE_AREA_OPTIONS}
                     selected={form.memberServiceArea}
@@ -688,14 +726,17 @@ const PersonalInfo = ({
               </Grid>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <FieldLabel icon={<ScheduleIcon />} label="Response Time" />
+                  <FieldLabel
+                    icon={<ScheduleIcon />}
+                    label={t("mypage.personal.responseTime")}
+                  />
                   <TextField
                     fullWidth
                     name="memberResponseTime"
                     disabled={!isEditable}
                     value={form.memberResponseTime}
                     onChange={handleChange}
-                    placeholder="e.g. Usually replies within 10 minutes"
+                    placeholder={t("mypage.personal.phResponse")}
                     sx={fieldBorderStyles}
                   />
                 </Stack>
@@ -719,7 +760,7 @@ const PersonalInfo = ({
                   variant="h6"
                   className="section-title cert-section-title"
                 >
-                  Certifications
+                  {t("mypage.personal.certifications")}
                 </Typography>
               </Stack>
               {isEditable && (
@@ -730,14 +771,14 @@ const PersonalInfo = ({
                   onClick={addCertification}
                   className="add-cert-btn"
                 >
-                  Add Certificate
+                  {t("mypage.personal.addCertificate")}
                 </Button>
               )}
             </Stack>
 
             {certificates.length === 0 && (
               <Typography className="no-certs-text">
-                No certifications added yet.
+                {t("mypage.personal.noCertifications")}
               </Typography>
             )}
 
@@ -769,7 +810,7 @@ const PersonalInfo = ({
                           <Stack alignItems="center" spacing={0.5}>
                             <PhotoCameraIcon />
                             <Typography className="cert-upload-text">
-                              Upload Image
+                              {t("mypage.personal.uploadImage")}
                             </Typography>
                           </Stack>
                         </Box>

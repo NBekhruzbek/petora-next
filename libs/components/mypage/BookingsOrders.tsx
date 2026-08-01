@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import { useIntlLocale } from "@/libs/i18n/format";
 import React, { ChangeEvent, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
@@ -67,8 +69,8 @@ const ORDERS_LIMIT = 5;
 // Deriving the index from the key means reordering the tabs can never silently
 // invert which panel a link opens.
 const TABS = [
-  { key: "ORDERS", label: "Orders" },
-  { key: "BOOKINGS", label: "Bookings" },
+  { key: "ORDERS", labelKey: "mypage.orders.tabOrders" },
+  { key: "BOOKINGS", labelKey: "mypage.orders.tabBookings" },
 ] as const;
 
 const TruckIcon = ({ className }: { className?: string }) => (
@@ -137,14 +139,10 @@ const TruckIcon = ({ className }: { className?: string }) => (
 );
 
 const STAGES = [
-  {
-    label: ["Order", "Processed"],
-    Icon: AssignmentTurnedInOutlinedIcon,
-    pct: 0,
-  },
-  { label: ["Order", "Shipped"], Icon: Inventory2OutlinedIcon, pct: 33 },
-  { label: ["Order", "En Route"], Icon: LocalShippingOutlinedIcon, pct: 66 },
-  { label: ["Order", "Arrived"], Icon: HomeOutlinedIcon, pct: 100 },
+  { key: "processed", Icon: AssignmentTurnedInOutlinedIcon, pct: 0 },
+  { key: "shipped", Icon: Inventory2OutlinedIcon, pct: 33 },
+  { key: "enRoute", Icon: LocalShippingOutlinedIcon, pct: 66 },
+  { key: "arrived", Icon: HomeOutlinedIcon, pct: 100 },
 ];
 
 // There is no carrier ETA on the API, so the tracker advances one stage per
@@ -177,9 +175,9 @@ const prettifyEnum = (value?: string) =>
 
 const formatWon = (value: number) => `₩${(value ?? 0).toLocaleString()}`;
 
-const formatDate = (value?: Date | string) =>
+const formatDate = (value: Date | string | undefined, locale: string) =>
   value
-    ? new Date(value).toLocaleDateString("en-US", {
+    ? new Date(value).toLocaleDateString(locale, {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -187,6 +185,7 @@ const formatDate = (value?: Date | string) =>
     : "";
 
 const DeliveryTracker = ({ orderStatus }: { orderStatus: OrderStatus }) => {
+  const { t } = useTranslation();
   const pct = STATUS_PROGRESS[orderStatus] ?? 0;
 
   return (
@@ -217,10 +216,10 @@ const DeliveryTracker = ({ orderStatus }: { orderStatus: OrderStatus }) => {
             style={{ left: `${s.pct}%` }}
           >
             <s.Icon className="dt-label-icon" />
+            {/* No hardcoded <br /> — the label wraps on its own so each
+                locale can decide whether it needs one line or two. */}
             <Typography className="dt-label-text">
-              {s.label[0]}
-              <br />
-              {s.label[1]}
+              {t(`mypage.orders.step.${s.key}`)}
             </Typography>
           </Stack>
         ))}
@@ -230,6 +229,8 @@ const DeliveryTracker = ({ orderStatus }: { orderStatus: OrderStatus }) => {
 };
 
 const BookingsOrders = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const router = useRouter();
   const user = useReactiveVar(userVar);
   // An unknown or missing ?tab= falls back to the first tab.
@@ -324,8 +325,8 @@ const BookingsOrders = () => {
     try {
       const confirmed = await sweetConfirmAlert(
         startsWithinFeeWindow(booking)
-          ? "This booking starts in less than 24 hours, so cancelling it may incur a fee. Cancel it anyway?"
-          : "Cancel this booking?",
+          ? t("mypage.orders.cancelFeeWarning")
+          : t("mypage.orders.cancelConfirm"),
       );
       if (!confirmed) return;
 
@@ -366,7 +367,7 @@ const BookingsOrders = () => {
           aria-label="bookings and orders tabs"
         >
           {TABS.map((tab) => (
-            <Tab key={tab.key} label={tab.label} />
+            <Tab key={tab.key} label={t(tab.labelKey)} />
           ))}
         </Tabs>
       </Stack>
@@ -378,10 +379,10 @@ const BookingsOrders = () => {
             {orders.length === 0 && (
               <EmptyState
                 icon={<Inventory2OutlinedIcon />}
-                title="No orders yet"
-                description="Anything you buy in the shop lands here, with its delivery progress."
+                title={t("mypage.orders.noOrders")}
+                description={t("mypage.orders.noOrdersDesc")}
                 action={{
-                  label: "Browse the shop",
+                  label: t("mypage.orders.browseShop"),
                   onClick: () => void router.push("/shop"),
                 }}
               />
@@ -417,7 +418,7 @@ const BookingsOrders = () => {
                     >
                       <Stack spacing={0.5}>
                         <Typography className="order-card-label">
-                          Order Number
+                          {t("mypage.orders.orderNumber")}
                         </Typography>
                         <Typography className="order-card-number">
                           {order.orderNumber}
@@ -426,10 +427,10 @@ const BookingsOrders = () => {
                       <Stack direction="row" alignItems="center" spacing={2}>
                         <Stack spacing={0.5} alignItems="flex-end">
                           <Typography className="order-card-label">
-                            Order Date
+                            {t("mypage.orders.orderDate")}
                           </Typography>
                           <Typography className="order-card-date">
-                            {formatDate(order.createdAt)}
+                            {formatDate(order.createdAt, intlLocale)}
                           </Typography>
                         </Stack>
                         {order.orderStatus === OrderStatus.ARRIVED ? (
@@ -442,7 +443,7 @@ const BookingsOrders = () => {
                             alignItems="flex-end"
                           >
                             <Box className="order-status-badge arrived">
-                              Arrived
+                              {t("mypage.orders.arrived")}
                             </Box>
                             {items[0]?.productId && (
                               <Button
@@ -452,7 +453,7 @@ const BookingsOrders = () => {
                                   goToWriteProductReview(items[0].productId)
                                 }
                               >
-                                Write Review
+                                {t("mypage.orders.writeReview")}
                               </Button>
                             )}
                           </Stack>
@@ -534,7 +535,9 @@ const BookingsOrders = () => {
                       justifyContent="space-between"
                       className="price-row"
                     >
-                      <Typography className="price-label">Products</Typography>
+                      <Typography className="price-label">
+                        {t("mypage.orders.products")}
+                      </Typography>
                       <Typography className="price-value">
                         {formatWon(productsPrice)}
                       </Typography>
@@ -547,7 +550,7 @@ const BookingsOrders = () => {
                         className="price-row"
                       >
                         <Typography className="price-label">
-                          Delivery
+                          {t("mypage.orders.delivery")}
                         </Typography>
                         <Typography className="price-value">
                           {formatWon(deliveryPrice)}
@@ -561,7 +564,7 @@ const BookingsOrders = () => {
                       className="price-row total-row"
                     >
                       <Typography className="price-label total-label">
-                        Total Price
+                        {t("mypage.orders.totalPrice")}
                       </Typography>
                       <Typography className="price-value total-value">
                         {formatWon(order.orderTotal)}
@@ -600,10 +603,10 @@ const BookingsOrders = () => {
             {bookings.length === 0 && (
               <EmptyState
                 icon={<CalendarMonthOutlinedIcon />}
-                title="No bookings yet"
-                description="Book a groomer, walker or sitter and you can follow it here."
+                title={t("mypage.orders.noBookings")}
+                description={t("mypage.orders.noBookingsDesc")}
                 action={{
-                  label: "Find a service",
+                  label: t("mypage.orders.findService"),
                   onClick: () => void router.push("/service"),
                 }}
               />
@@ -655,13 +658,17 @@ const BookingsOrders = () => {
                     className="service-row-metrics"
                   >
                     <Stack className="metric-block">
-                      <Typography className="metric-label">Price</Typography>
+                      <Typography className="metric-label">
+                        {t("mypage.orders.price")}
+                      </Typography>
                       <Typography className="service-price">
                         {formatWon(booking.bookingPrice)}
                       </Typography>
                     </Stack>
                     <Stack className="metric-block">
-                      <Typography className="metric-label">Rating</Typography>
+                      <Typography className="metric-label">
+                        {t("mypage.orders.rating")}
+                      </Typography>
                       <Stack
                         direction="row"
                         alignItems="center"
@@ -681,7 +688,7 @@ const BookingsOrders = () => {
                     </Stack>
                     <Stack className="metric-block">
                       <Typography className="metric-label">
-                        Reservations
+                        {t("mypage.orders.reservations")}
                       </Typography>
                       <Typography className="bookings-row">
                         {service?.serviceBookings ?? 0}
@@ -692,7 +699,9 @@ const BookingsOrders = () => {
                   {/* End: Booked time + Status */}
                   <Stack className="booking-end-block" spacing={1}>
                     <Stack spacing={0.25}>
-                      <Typography className="metric-label">Booked</Typography>
+                      <Typography className="metric-label">
+                        {t("mypage.orders.booked")}
+                      </Typography>
                       <Typography className="booking-date">
                         {formatBookingMoment(
                           booking.bookingDate,
@@ -708,7 +717,7 @@ const BookingsOrders = () => {
                         className="cancel-booking-btn"
                         onClick={() => void cancelBooking(booking)}
                       >
-                        Cancel Booking
+                        {t("mypage.orders.cancelBooking")}
                       </Button>
                     )}
                     {booking.bookingStatus === BookingStatus.COMPLETED && (
@@ -718,14 +727,14 @@ const BookingsOrders = () => {
                           startIcon={<RateReviewOutlinedIcon />}
                           onClick={() => goToWriteReview(booking.serviceId)}
                         >
-                          Review Service
+                          {t("mypage.orders.reviewService")}
                         </Button>
                         <Button
                           className="write-review-btn agent-review-btn"
                           startIcon={<PersonOutlineIcon />}
                           onClick={() => goToWriteAgentReview(booking.agentId)}
                         >
-                          Review Agent
+                          {t("mypage.orders.reviewAgent")}
                         </Button>
                       </Stack>
                     )}

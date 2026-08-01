@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import withLayoutBasic from "@/libs/components/layout/LayoutBasic";
 import {
   Badge,
@@ -57,50 +58,43 @@ const linkedOnlyCategories: CategoryKey[] = ["NOTIFICATIONS"];
 
 const HEADER_OFFSET = 210;
 
-const memberTypeLabels: Record<string, string> = {
-  [MemberType.AGENT]: "Service Agent",
-  [MemberType.ADMIN]: "Admin",
-  [MemberType.USER]: "User",
+const memberTypeLabelKeys: Record<string, string> = {
+  [MemberType.AGENT]: "member.typeAgent",
+  [MemberType.ADMIN]: "member.typeAdmin",
+  [MemberType.USER]: "member.typeUser",
 };
 
-const categoryMeta: Record<
-  CategoryKey,
-  { label: string; description: string; icon: ReactNode }
-> = {
-  MY_PROFILE: {
-    label: "My Profile",
-    description: "",
-    icon: <PersonIcon />,
-  },
-  ORDERS_BOOKINGS: {
-    label: "Orders & Bookings",
-    description: "",
-    icon: <FactCheckIcon />,
-  },
-  MY_FAVORITES: {
-    label: "My Favorites",
-    description: "",
-    icon: <FavoriteBorderIcon />,
-  },
-  SERVICE_MANAGEMENT: {
-    label: "Service Management",
-    description: "",
-    icon: <BuildIcon />,
-  },
-  MY_ARTICLES: {
-    label: "My Articles",
-    description: "",
-    icon: <ArticleIcon />,
-  },
-  NOTIFICATIONS: {
-    label: "Notifications",
-    description: "",
-    icon: <NotificationsNoneIcon />,
-  },
-};
+const categoryMeta: Record<CategoryKey, { labelKey: string; icon: ReactNode }> =
+  {
+    MY_PROFILE: {
+      labelKey: "mypage.nav.profile",
+      icon: <PersonIcon />,
+    },
+    ORDERS_BOOKINGS: {
+      labelKey: "mypage.nav.orders",
+      icon: <FactCheckIcon />,
+    },
+    MY_FAVORITES: {
+      labelKey: "mypage.nav.favorites",
+      icon: <FavoriteBorderIcon />,
+    },
+    SERVICE_MANAGEMENT: {
+      labelKey: "mypage.nav.serviceMgmt",
+      icon: <BuildIcon />,
+    },
+    MY_ARTICLES: {
+      labelKey: "mypage.nav.articles",
+      icon: <ArticleIcon />,
+    },
+    NOTIFICATIONS: {
+      labelKey: "mypage.nav.notifications",
+      icon: <NotificationsNoneIcon />,
+    },
+  };
 
 const MyPage: NextPage = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const user = useReactiveVar(userVar);
   const contentRef = useRef<HTMLDivElement | null>(null);
 
@@ -138,9 +132,12 @@ const MyPage: NextPage = () => {
       : categoryOrder[0];
 
   const activeMeta = categoryMeta[activeCategory];
-  const memberName = user?.memberFullName || user?.memberUserName || "My Page";
+  const memberName =
+    user?.memberFullName || user?.memberUserName || t("mypage.fallbackName");
   const memberImage = user?.memberImage || "/img/profile/defaultUser.png";
-  const memberTypeLabel = memberTypeLabels[user?.memberType] ?? "User";
+  const memberTypeLabel = t(
+    memberTypeLabelKeys[user?.memberType] ?? "member.typeUser",
+  );
 
   /** LIFECYCLES **/
 
@@ -220,7 +217,7 @@ const MyPage: NextPage = () => {
                   }}
                 >
                   <Stack direction="row" alignItems="center" flex={1}>
-                    <span>{meta.label}</span>
+                    <span>{t(meta.labelKey)}</span>
                   </Stack>
                   {badgeContent > 0 && (
                     <Badge
@@ -254,7 +251,7 @@ const MyPage: NextPage = () => {
                   "&:hover": { background: "#E0E7FF" },
                 }}
               >
-                Admin Panel
+                {t("mypage.adminPanel")}
               </Button>
             )}
             <Button
@@ -262,10 +259,10 @@ const MyPage: NextPage = () => {
               startIcon={<LogoutIcon />}
               onClick={() => logOut()}
             >
-              Logout
+              {t("auth.logout")}
             </Button>
             <Typography className="my-page-footer-copy">
-              © 2026 All rights reserved
+              {t("mypage.copyright")}
             </Typography>
           </Stack>
         </Stack>
@@ -274,11 +271,9 @@ const MyPage: NextPage = () => {
           <Stack className="my-page-content-top">
             <Stack className="my-page-content-heading">
               <Typography className="my-page-board-title">
-                {activeMeta.label.toUpperCase()}
+                {t(activeMeta.labelKey).toUpperCase()}
               </Typography>
-              <Typography className="my-page-board-subtitle">
-                {activeMeta.description}
-              </Typography>
+              <Typography className="my-page-board-subtitle">{""}</Typography>
             </Stack>
           </Stack>
 
@@ -293,7 +288,7 @@ const MyPage: NextPage = () => {
             >
               {categoryOrder.map((category) => (
                 <MenuItem key={category} value={category}>
-                  {categoryMeta[category].label}
+                  {t(categoryMeta[category].labelKey)}
                 </MenuItem>
               ))}
             </TextField>

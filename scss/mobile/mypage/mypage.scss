@@ -844,8 +844,12 @@
 
   // Tracker geometry is %-based so it scales; only the four step labels
   // need to shrink to avoid colliding at 390px.
-  .delivery-tracker .dt-labels .dt-label .dt-label-text {
-    font-size: 10px;
+  .delivery-tracker .dt-labels .dt-label {
+    width: 62px;
+
+    .dt-label-text {
+      font-size: 10px;
+    }
   }
 }
 
@@ -888,7 +892,8 @@
 
     // Description: guarantee a comfortable multi-line box so it clearly reads as
     // a description area (the fixed rows can render short on some browsers).
-    .add-service-field.description-field .MuiOutlinedInput-root.MuiInputBase-multiline {
+    .add-service-field.description-field
+      .MuiOutlinedInput-root.MuiInputBase-multiline {
       align-items: flex-start;
       min-height: 112px;
     }

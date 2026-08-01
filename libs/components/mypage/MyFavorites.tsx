@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { ChangeEvent, useRef, useState } from "react";
 import {
   Box,
@@ -28,6 +29,7 @@ const PRODUCT_LIMIT = 12;
 const SERVICE_LIMIT = 6;
 
 const MyFavorites = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(0);
   const [productPage, setProductPage] = useState(1);
@@ -125,8 +127,8 @@ const MyFavorites = () => {
           onChange={handleTabChange}
           aria-label="my favorites tabs"
         >
-          <Tab label="Products" />
-          <Tab label="Services" />
+          <Tab label={t("mypage.favorites.products")} />
+          <Tab label={t("mypage.favorites.services")} />
         </Tabs>
       </Box>
 
@@ -136,10 +138,10 @@ const MyFavorites = () => {
             {favProducts.length === 0 && (
               <EmptyState
                 icon={<FavoriteBorderRoundedIcon />}
-                title="No saved products"
-                description="Tap the heart on any product and it stays here for later."
+                title={t("mypage.favorites.emptyProducts")}
+                description={t("mypage.favorites.emptyProductsDesc")}
                 action={{
-                  label: "Browse the shop",
+                  label: t("mypage.favorites.browseShop"),
                   onClick: () => void router.push("/shop"),
                 }}
               />
@@ -181,10 +183,10 @@ const MyFavorites = () => {
             {favServices.length === 0 && (
               <EmptyState
                 icon={<FavoriteBorderRoundedIcon />}
-                title="No saved services"
-                description="Tap the heart on any service and it stays here for later."
+                title={t("mypage.favorites.emptyServices")}
+                description={t("mypage.favorites.emptyServicesDesc")}
                 action={{
-                  label: "Find a service",
+                  label: t("mypage.favorites.findService"),
                   onClick: () => void router.push("/service"),
                 }}
               />

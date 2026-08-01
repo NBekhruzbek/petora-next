@@ -1,3 +1,5 @@
+import { useIntlLocale } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Stack,
@@ -81,9 +83,9 @@ const toForm = (billing?: MemberBillingInfos | null): BillingForm => ({
 
 const formatWon = (value: number) => `₩${(value ?? 0).toLocaleString()}`;
 
-const formatDate = (value?: Date | string) =>
+const formatDate = (value: Date | string | undefined, locale: string) =>
   value
-    ? new Date(value).toLocaleDateString("en-US", {
+    ? new Date(value).toLocaleDateString(locale, {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -96,6 +98,8 @@ const BillingInfo = ({
   saveTrigger,
   onSaveComplete,
 }: BillingInfoProps) => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const user = useReactiveVar(userVar);
   const [form, setForm] = useState<BillingForm>(emptyForm);
   const lastSaveTrigger = useRef(saveTrigger ?? 0);
@@ -168,10 +172,10 @@ const BillingInfo = ({
 
   const handleSave = async () => {
     try {
-      if (!user?._id) throw new Error("Please login first!");
+      if (!user?._id) throw new Error(t("mypage.personal.loginFirst"));
 
       if (form.zipCode && form.zipCode.length < 5) {
-        throw new Error("Please enter a 5 digit ZIP code.");
+        throw new Error(t("mypage.billing.zipError"));
       }
 
       const input: MemberBillingUpdate = {
@@ -190,7 +194,7 @@ const BillingInfo = ({
       const { data: refetched } = await getBillingRefetch();
       applyBilling(refetched?.getMemberBillingInfos);
 
-      await sweetBottomSmallSuccessAlert("Billing info updated!", 900);
+      await sweetBottomSmallSuccessAlert(t("mypage.billing.updated"), 900);
       onSaveComplete?.(true);
     } catch (err: any) {
       console.log("ERROR, handleSave:", err.message);
@@ -221,7 +225,7 @@ const BillingInfo = ({
           alignItems="center"
         >
           <Typography variant="h6" sx={{ fontWeight: 800, color: "#000" }}>
-            Payment Method
+            {t("mypage.billing.paymentMethod")}
           </Typography>
         </Stack>
 
@@ -251,13 +255,17 @@ const BillingInfo = ({
               <Typography className="card-number">{cardNumber}</Typography>
               <Stack direction="row" spacing={4}>
                 <Stack spacing={0.5}>
-                  <Typography className="label">Card Holder</Typography>
+                  <Typography className="label">
+                    {t("mypage.billing.cardHolder")}
+                  </Typography>
                   <Typography className="value">
                     {billing?.cardHolderName || "NAME ON CARD"}
                   </Typography>
                 </Stack>
                 <Stack spacing={0.5}>
-                  <Typography className="label">Expires</Typography>
+                  <Typography className="label">
+                    {t("mypage.billing.expires")}
+                  </Typography>
                   <Typography className="value">{cardExpiry}</Typography>
                 </Stack>
                 <Box className="logos">
@@ -281,7 +289,7 @@ const BillingInfo = ({
                         color: "#4b5563",
                       }}
                     >
-                      Card Holder Name
+                      {t("mypage.billing.cardHolderName")}
                     </Typography>
                   </Stack>
                   <TextField
@@ -303,13 +311,13 @@ const BillingInfo = ({
                         color: "#4b5563",
                       }}
                     >
-                      Card Number
+                      {t("mypage.billing.cardNumber")}
                     </Typography>
                   </Stack>
                   <TextField
                     fullWidth
                     disabled
-                    value={hasCard ? cardNumber : "No card on file"}
+                    value={hasCard ? cardNumber : t("mypage.billing.noCard")}
                     sx={commonTextFieldStyles}
                   />
                 </Stack>
@@ -328,7 +336,7 @@ const BillingInfo = ({
         <Stack direction="row" spacing={1} alignItems="center">
           <BusinessIcon sx={{ color: "#000" }} />
           <Typography variant="h6" sx={{ fontWeight: 800, color: "#000" }}>
-            Billing Address
+            {t("mypage.billing.billingAddress")}
           </Typography>
         </Stack>
 
@@ -341,7 +349,7 @@ const BillingInfo = ({
                   <Typography
                     sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
                   >
-                    Company Name (Optional)
+                    {t("mypage.billing.company")}
                   </Typography>
                 </Stack>
                 <TextField
@@ -361,7 +369,7 @@ const BillingInfo = ({
                   <Typography
                     sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
                   >
-                    VAT Number (Optional)
+                    {t("mypage.billing.vat")}
                   </Typography>
                 </Stack>
                 <TextField
@@ -383,7 +391,7 @@ const BillingInfo = ({
                 <Typography
                   sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
                 >
-                  Address
+                  {t("mypage.billing.address")}
                 </Typography>
               </Stack>
               <TextField
@@ -405,7 +413,7 @@ const BillingInfo = ({
                   <Typography
                     sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
                   >
-                    City
+                    {t("mypage.billing.city")}
                   </Typography>
                 </Stack>
                 <TextField
@@ -427,7 +435,7 @@ const BillingInfo = ({
                   <Typography
                     sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
                   >
-                    ZIP Code
+                    {t("mypage.billing.zip")}
                   </Typography>
                 </Stack>
                 <TextField
@@ -447,7 +455,7 @@ const BillingInfo = ({
                   <Typography
                     sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
                   >
-                    Country
+                    {t("mypage.billing.country")}
                   </Typography>
                 </Stack>
                 <TextField
@@ -479,8 +487,12 @@ const BillingInfo = ({
                   }}
                 >
                   {COUNTRIES.map((option) => (
+                    // The value stays the English name — the API validates
+                    // against its own availableCountries list.
                     <MenuItem key={option} value={option}>
-                      {option}
+                      {t(`mypage.billing.countries.${option}`, {
+                        defaultValue: option,
+                      })}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -495,13 +507,13 @@ const BillingInfo = ({
         <Stack direction="row" spacing={1} alignItems="center">
           <ReceiptLongIcon sx={{ color: "#000" }} />
           <Typography variant="h6" sx={{ fontWeight: 800, color: "#000" }}>
-            Invoice History
+            {t("mypage.billing.invoiceHistory")}
           </Typography>
         </Stack>
 
         {orders.length === 0 ? (
           <Typography sx={{ color: "#6b7280", fontSize: "14px" }}>
-            No invoices yet.
+            {t("mypage.billing.noInvoices")}
           </Typography>
         ) : (
           <Stack className="invoice-list" spacing={1}>
@@ -553,7 +565,7 @@ const BillingInfo = ({
                         className="date"
                         sx={{ color: "#6b7280", fontSize: "13px" }}
                       >
-                        {formatDate(order.createdAt)}
+                        {formatDate(order.createdAt, intlLocale)}
                       </Typography>
                     </Stack>
                   </Stack>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { Stack, Tab, Tabs, Box, Button } from "@mui/material";
 import PersonalInfo from "../mypage/PersonalInfo";
@@ -8,6 +9,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
 
 const MyProfile = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState(0);
   const [isEditable, setIsEditable] = useState(false);
   const [cancelTrigger, setCancelTrigger] = useState(0);
@@ -52,8 +54,8 @@ const MyProfile = () => {
           onChange={handleTabChange}
           aria-label="profile tabs"
         >
-          <Tab label="Personal Info" />
-          <Tab label="Billing Info" />
+          <Tab label={t("mypage.profile.personalTab")} />
+          <Tab label={t("mypage.profile.billingTab")} />
         </Tabs>
 
         <Stack direction="row" spacing={2} className="action-buttons">
@@ -67,7 +69,7 @@ const MyProfile = () => {
                 onClick={handleCancel}
                 disabled={isSaving}
               >
-                Cancel
+                {t("mypage.profile.cancel")}
               </Button>
               <Button
                 variant="contained"
@@ -76,7 +78,9 @@ const MyProfile = () => {
                 onClick={handleSave}
                 disabled={isSaving}
               >
-                {isSaving ? "Saving..." : "Save Changes"}
+                {isSaving
+                  ? t("mypage.profile.saving")
+                  : t("mypage.profile.save")}
               </Button>
             </>
           ) : (
@@ -86,7 +90,9 @@ const MyProfile = () => {
               startIcon={<EditIcon />}
               onClick={toggleEdit}
             >
-              {activeTab === 0 ? "Edit Profile Info" : "Edit Billing Info"}
+              {activeTab === 0
+                ? t("mypage.profile.editProfile")
+                : t("mypage.profile.editBilling")}
             </Button>
           )}
         </Stack>

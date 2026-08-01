@@ -423,6 +423,17 @@
             flex-direction: column;
             align-items: center;
             gap: 3px;
+            // Absolutely positioned with no width, this box shrink-wraps to
+            // whatever space is left before the container edge — which is zero
+            // for the last step at left:100%. Latin text got away with it
+            // (breaks only at spaces); Korean breaks between any two glyphs and
+            // collapsed into a one-character column. An explicit width fixes
+            // the layout box; the transforms below only shift it visually.
+            //
+            // 72px, not more: at 76px "Order Arrived" fits on one line while
+            // the other three wrap to two, leaving the row uneven. Korean is
+            // one line at any of these widths.
+            width: 72px;
             transform: translateX(-50%);
 
             &:first-child {
@@ -444,6 +455,9 @@
               color: #b0b8c9;
               text-align: center;
               line-height: 1.2;
+              // CJK may break between any two characters by default; keep-all
+              // restricts breaks to spaces, as with Latin.
+              word-break: keep-all;
             }
 
             &.done {

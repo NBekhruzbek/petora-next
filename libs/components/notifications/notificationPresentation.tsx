@@ -22,50 +22,50 @@ export const BOOKING_REQUESTS =
 export const ALL_NOTIFICATIONS = "/mypage?category=NOTIFICATIONS";
 
 export const DESTINATIONS: Partial<
-  Record<NotificationType, { label: string; href: string }>
+  Record<NotificationType, { labelKey: string; href: string }>
 > = {
   [NotificationType.BOOKING_CREATED]: {
-    label: "View request",
+    labelKey: "notif.viewRequest",
     href: BOOKING_REQUESTS,
   },
   [NotificationType.BOOKING_CONFIRMED]: {
-    label: "View booking",
+    labelKey: "notif.viewBooking",
     href: MY_BOOKINGS,
   },
   [NotificationType.BOOKING_REJECTED]: {
-    label: "View booking",
+    labelKey: "notif.viewBooking",
     href: MY_BOOKINGS,
   },
   [NotificationType.REVIEW_REQUESTED]: {
-    label: "View booking",
+    labelKey: "notif.viewBooking",
     href: MY_BOOKINGS,
   },
   [NotificationType.ORDER_CREATED]: {
-    label: "View order",
+    labelKey: "notif.viewOrder",
     href: MY_ORDERS,
   },
   [NotificationType.ORDER_PAID]: {
-    label: "View order",
+    labelKey: "notif.viewOrder",
     href: MY_ORDERS,
   },
   [NotificationType.ORDER_SHIPPED]: {
-    label: "View order",
+    labelKey: "notif.viewOrder",
     href: MY_ORDERS,
   },
   [NotificationType.ORDER_DELIVERED]: {
-    label: "View order",
+    labelKey: "notif.viewOrder",
     href: MY_ORDERS,
   },
   [NotificationType.ORDER_CANCELLED]: {
-    label: "View order",
+    labelKey: "notif.viewOrder",
     href: MY_ORDERS,
   },
 };
 
-export const groupLabel: Record<NotificationGroup, string> = {
-  [NotificationGroup.ORDERS]: "Order",
-  [NotificationGroup.BOOKINGS]: "Booking",
-  [NotificationGroup.SYSTEM]: "System",
+export const groupLabelKey: Record<NotificationGroup, string> = {
+  [NotificationGroup.ORDERS]: "mypage.orders.tabOrders",
+  [NotificationGroup.BOOKINGS]: "mypage.notifications.bookings",
+  [NotificationGroup.SYSTEM]: "mypage.notifications.system",
 };
 
 export function getNotificationIcon(type: NotificationType, large = false) {
