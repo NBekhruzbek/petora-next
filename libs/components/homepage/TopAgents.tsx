@@ -7,6 +7,7 @@ import { useQuery, useReactiveVar } from "@apollo/client";
 import { userVar } from "@/apollo/store";
 import { GET_AGENTS } from "@/apollo/user/query";
 import { T } from "@/libs/types/common";
+import { useTranslation } from "react-i18next";
 
 interface TopServiceAgentsProps {
   initialInput?: AgentsInquiry;
@@ -20,6 +21,7 @@ const defaultInput: AgentsInquiry = {
 };
 
 const TopAgents = ({ initialInput = defaultInput }: TopServiceAgentsProps) => {
+  const { t } = useTranslation();
   const [topAgents, setTopAgents] = useState<Member[]>([]);
   const user = useReactiveVar(userVar);
 
@@ -43,7 +45,7 @@ const TopAgents = ({ initialInput = defaultInput }: TopServiceAgentsProps) => {
     <Stack className="top-agents">
       <Stack className="container">
         <Box className="section-title">
-          Top Pet Service Agents
+          {t("home.topAgents.title")}
           <img className="hand-icon" src="/img/logo/Union.svg" alt="" />
         </Box>
 

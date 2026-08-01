@@ -7,6 +7,7 @@ import { useQuery, useReactiveVar } from "@apollo/client";
 import { userVar } from "@/apollo/store";
 import { GET_ALL_SERVICES } from "@/apollo/user/query";
 import { T } from "@/libs/types/common";
+import { useTranslation } from "react-i18next";
 
 interface TopPetServicesProps {
   initialInput?: ServicesInquiry;
@@ -24,6 +25,7 @@ const defaultInput: ServicesInquiry = {
 const TopPetServices = ({
   initialInput = defaultInput,
 }: TopPetServicesProps) => {
+  const { t } = useTranslation();
   const [topServices, setTopServices] = useState<Service[]>([]);
   const user = useReactiveVar(userVar);
 
@@ -55,12 +57,10 @@ const TopPetServices = ({
     <Stack className="top-pet-services">
       <Stack className="container">
         <Box className="section-title">
-          top pet services
+          {t("home.topServices.title")}
           <img className="hand-icon" src="/img/logo/Union.svg" alt="" />
         </Box>
-        <Box className={"desc-text"}>
-          Top Services are based on Rating, Booking Times, Likes and Views.
-        </Box>
+        <Box className={"desc-text"}>{t("home.topServices.desc")}</Box>
 
         <Stack className="top-pet-services-grid">
           {topServices.map((service: Service) => (

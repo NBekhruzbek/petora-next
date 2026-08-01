@@ -7,6 +7,7 @@ import { useQuery, useReactiveVar } from "@apollo/client";
 import { GET_PRODUCTS } from "@/apollo/user/query";
 import { userVar } from "@/apollo/store";
 import { T } from "@/libs/types/common";
+import { useTranslation } from "react-i18next";
 import { Direction } from "@/libs/enums/common.enum";
 
 interface TopPetProductsProps {
@@ -23,6 +24,7 @@ const defaultInput: ProductsInquiry = {
 const TopPetProducts = ({
   initialInput = defaultInput,
 }: TopPetProductsProps) => {
+  const { t } = useTranslation();
   const [topProducts, setTopProducts] = useState<Product[]>([]);
   const user = useReactiveVar(userVar);
 
@@ -56,12 +58,10 @@ const TopPetProducts = ({
     <Stack className="top-pet-products">
       <Stack className="container">
         <Box className="section-title">
-          top pet products
+          {t("home.topProducts.title")}
           <img className="hand-icon" src="/img/logo/Union.svg" alt="" />
         </Box>
-        <Box className={"desc-text"}>
-          Top Products are based on Rating, Sold Times, Likes and Views.
-        </Box>
+        <Box className={"desc-text"}>{t("home.topProducts.desc")}</Box>
 
         <Stack className="top-pet-products-grid">
           {topProducts.map((product: Product) => {

@@ -1,19 +1,20 @@
 import { Box, Button, Stack } from "@mui/material";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 const MainHeader = () => {
+  const { t } = useTranslation();
+
   return (
     <Stack className="container">
       <Stack className="main-header">
         <Stack className="text-area">
-          <Box className={"text1"}>
-            Welcome to the website to book all your pet care and sales
-          </Box>
-          <Box className={"text2"}>CHOOSE THE BEST WAY FOR</Box>
+          <Box className={"text1"}>{t("headers.main.eyebrow")}</Box>
+          <Box className={"text2"}>{t("headers.main.title")}</Box>
           <Box className={"text3"}>
-            YOUR PET{" "}
+            {t("headers.main.titleAccent")}{" "}
             <span>
-              <img src="./img/logo/Union.svg" alt="" />
+              <img src="/img/logo/Union.svg" alt="" />
             </span>
           </Box>
           <Button
@@ -22,13 +23,13 @@ const MainHeader = () => {
             component={Link}
             href="/service"
           >
-            Book a day to take care of your pet now
+            {t("headers.main.cta")}
           </Button>
         </Stack>
         <Stack sx={{ position: "relative" }}>
           <Box className={"circle-background"}>
             <Box className={"ellipse"}>
-              <img src="./img/headers/Ellipse.png" alt="" />
+              <img src="/img/headers/Ellipse.png" alt="" />
             </Box>
             <Box className="green-circle">
               <svg
@@ -69,10 +70,10 @@ const MainHeader = () => {
               </svg>
             </Box>
             <Box className={"dog-icon"}>
-              <img src="./img/icons/Dog.svg" alt="" />
+              <img src="/img/icons/Dog.svg" alt="" />
             </Box>
             <Box className={"cat-icon"}>
-              <img src="./img/icons/Cat.svg" alt="" />
+              <img src="/img/icons/Cat.svg" alt="" />
             </Box>
           </Box>
           <Stack className={"dog-card"}>
@@ -98,7 +99,7 @@ const MainHeader = () => {
             </Stack>
             <Box className={"right"}>
               <img
-                src="./img/headers/home-header-dog.png"
+                src="/img/headers/home-header-dog.png"
                 alt=""
                 style={{
                   width: "80px",
@@ -111,14 +112,14 @@ const MainHeader = () => {
           </Stack>
           <Stack>
             <img
-              src="./img/headers/home-header-dog.png"
+              src="/img/headers/home-header-dog.png"
               className={"dog-image"}
               alt=""
             />
           </Stack>
           <Stack>
             <img
-              src="./img/headers/home-header-cat.png"
+              src="/img/headers/home-header-cat.png"
               className={"cat-image"}
               alt=""
             />
@@ -147,7 +148,7 @@ const MainHeader = () => {
             </Stack>
             <Stack className={"right"}>
               <img
-                src="./img/headers/home-header-cat.png"
+                src="/img/headers/home-header-cat.png"
                 alt=""
                 style={{
                   width: "80px",

@@ -1,47 +1,45 @@
 import { Box, Button, Stack } from "@mui/material";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 const OurCompany = () => {
+  const { t } = useTranslation();
+
   return (
     <Stack className="our-company">
       <Stack className="container" direction="row">
         <Stack className="left-side">
           <Box className={"title"}>
-            Our company{" "}
+            {t("home.ourCompany.title")}{" "}
             <span>
-              <img className="hand-icon" src="./img/logo/Union.svg" alt="" />
+              <img className="hand-icon" src="/img/logo/Union.svg" alt="" />
             </span>
           </Box>
           <Stack className="about-us">
-            <Box className={"main-text"}>About us</Box>
-            <Box className={"text"}>
-              With 10 years of experience in the field of pet care and a team of
-              experienced veterinarians, we are confident we can protect your
-              pets from diseases they will get in the future. their nutrition
-              and daily food intake.
+            <Box className={"main-text"}>
+              {t("home.ourCompany.aboutUsTitle")}
             </Box>
-            <Box className={"text"}>
-              Loving and pampering your pet is not enough, it must also go hand
-              in hand with their health and our service is where you can give
-              your full trust.
-            </Box>
+            <Box className={"text"}>{t("home.ourCompany.aboutUsText1")}</Box>
+            <Box className={"text"}>{t("home.ourCompany.aboutUsText2")}</Box>
           </Stack>
           <Stack className="about-consulting">
-            <Box className={"main-text"}>About consulting</Box>
-            <Box className={"text"}>
-              Each pet species has a different habitat and behavior, so meet and
-              consult directly with an animal specialist.
+            <Box className={"main-text"}>
+              {t("home.ourCompany.consultingTitle")}
             </Box>
+            <Box className={"text"}>{t("home.ourCompany.consultingText")}</Box>
           </Stack>
           <Stack className="our-service">
-            <Box className={"main-text"}>Our Service</Box>
+            <Box className={"main-text"}>
+              {t("home.ourCompany.serviceTitle")}
+            </Box>
             <Stack className="service-cards">
               <Stack className="left-card">
                 <Stack className="text-area">
-                  <Box className={"main-text"}>Physical checkup your pet</Box>
+                  <Box className={"main-text"}>
+                    {t("home.ourCompany.checkupTitle")}
+                  </Box>
                   <Box className={"text"}>
-                    Regular physical checkups are essential for maintaining your
-                    pet's health.
+                    {t("home.ourCompany.checkupText")}
                   </Box>
                   <Button
                     className="read-more-button"
@@ -49,17 +47,18 @@ const OurCompany = () => {
                     href="/service"
                     variant="contained"
                   >
-                    Read More
+                    {t("actions.readMore")}
                   </Button>
                 </Stack>
-                <img className="dog-image" src="./img/apcharka.png" alt="" />
+                <img className="dog-image" src="/img/apcharka.png" alt="" />
               </Stack>
               <Stack className="right-card">
                 <Stack className="text-area">
-                  <Box className={"main-text"}>Grooming</Box>
+                  <Box className={"main-text"}>
+                    {t("home.ourCompany.groomingTitle")}
+                  </Box>
                   <Box className={"text"}>
-                    Our professional service keeps your pet clean, and looking
-                    their best.
+                    {t("home.ourCompany.groomingText")}
                   </Box>
                   <Button
                     className="read-more-button"
@@ -67,10 +66,10 @@ const OurCompany = () => {
                     href="/service"
                     variant="contained"
                   >
-                    Read More
+                    {t("actions.readMore")}
                   </Button>
                 </Stack>
-                <img className="dog-image" src="./img/spa-dog.png" alt="" />
+                <img className="dog-image" src="/img/spa-dog.png" alt="" />
               </Stack>
             </Stack>
           </Stack>
@@ -85,7 +84,7 @@ const OurCompany = () => {
           <Stack className="oc-card">
             <img
               className="oc-dog-img"
-              src="./img/pets/petlogin.png"
+              src="/img/pets/petlogin.png"
               alt="Our company dog"
             />
             {/* Gradient footer inside card */}
@@ -95,15 +94,21 @@ const OurCompany = () => {
           {/* Floating stat badges */}
           <Stack className="oc-badge oc-badge-1">
             <span className="oc-badge-num">10+</span>
-            <span className="oc-badge-label">Years Experience</span>
+            <span className="oc-badge-label">
+              {t("home.ourCompany.yearsExperience")}
+            </span>
           </Stack>
           <Stack className="oc-badge oc-badge-2">
             <span className="oc-badge-num">500+</span>
-            <span className="oc-badge-label">Happy Pets</span>
+            <span className="oc-badge-label">
+              {t("home.ourCompany.happyPets")}
+            </span>
           </Stack>
           <Stack className="oc-badge oc-badge-3">
             <span className="oc-badge-num">50+</span>
-            <span className="oc-badge-label">Expert Vets</span>
+            <span className="oc-badge-label">
+              {t("home.ourCompany.expertVets")}
+            </span>
           </Stack>
 
           {/* Decorative dots */}

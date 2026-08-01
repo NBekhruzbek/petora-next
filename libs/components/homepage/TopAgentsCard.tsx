@@ -5,6 +5,7 @@ import { Member } from "@/libs/types/member/member";
 import { REACT_APP_API_URL } from "@/libs/config";
 import router from "next/router";
 import { KeyboardEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 type TopServiceAgentsProps = {
   agent: Member;
@@ -13,6 +14,7 @@ type TopServiceAgentsProps = {
 const agentDetailHref = "/agents/detail";
 
 const TopAgentsCard = ({ agent }: TopServiceAgentsProps) => {
+  const { t } = useTranslation();
   /** HANDLERS **/
 
   const handleCardClick = () => {
@@ -47,7 +49,7 @@ const TopAgentsCard = ({ agent }: TopServiceAgentsProps) => {
           onKeyDown={handleCardKeyDown}
           startIcon={<ChatBubbleOutlineRoundedIcon />}
         >
-          Read More
+          {t("actions.readMore")}
         </Button>
       </Stack>
     </Stack>

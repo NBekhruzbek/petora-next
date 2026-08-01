@@ -1,0 +1,148 @@
+{
+  "home": {
+    "topServices": {
+      "title": "top pet services",
+      "desc": "Top Services are based on Rating, Booking Times, Likes and Views."
+    },
+    "topProducts": {
+      "title": "top pet products",
+      "desc": "Top Products are based on Rating, Sold Times, Likes and Views."
+    },
+    "topAgents": {
+      "title": "Top Pet Service Agents"
+    },
+    "whatWeOffer": {
+      "title": "WHAT WE OFFER",
+      "cta": "View Services",
+      "dayCare": {
+        "title": "Day Care",
+        "desc": "Safe daytime care with play, rest, and supervision for pets."
+      },
+      "walking": {
+        "title": "Walking",
+        "desc": "Regular walks to keep pets active, healthy, and happy."
+      },
+      "grooming": {
+        "title": "Grooming",
+        "desc": "Bathing, brushing, and grooming to keep pets clean and fresh."
+      },
+      "boarding": {
+        "title": "Boarding",
+        "desc": "Comfortable overnight stay with care and attention."
+      },
+      "training": {
+        "title": "Training",
+        "desc": "Basic obedience and behavior training for better habits."
+      },
+      "veterinary": {
+        "title": "Veterinary",
+        "desc": "Health checkups and medical care from professionals."
+      }
+    },
+    "ourCompany": {
+      "title": "Our company",
+      "aboutUsTitle": "About us",
+      "aboutUsText1": "With 10 years of experience in the field of pet care and a team of experienced veterinarians, we are confident we can protect your pets from diseases they will get in the future. their nutrition and daily food intake.",
+      "aboutUsText2": "Loving and pampering your pet is not enough, it must also go hand in hand with their health and our service is where you can give your full trust.",
+      "consultingTitle": "About consulting",
+      "consultingText": "Each pet species has a different habitat and behavior, so meet and consult directly with an animal specialist.",
+      "serviceTitle": "Our Service",
+      "checkupTitle": "Physical checkup your pet",
+      "checkupText": "Regular physical checkups are essential for maintaining your pet's health.",
+      "groomingTitle": "Grooming",
+      "groomingText": "Our professional service keeps your pet clean, and looking their best.",
+      "yearsExperience": "Years Experience",
+      "happyPets": "Happy Pets",
+      "expertVets": "Expert Vets"
+    },
+    "species": {
+      "title": "Species",
+      "text": "Each dog has a different breed and characteristics, so their lifestyle, nutrition and even entertainment are different, please bring your pet to our store for advice. by experts",
+      "cta": "Booking Day For Your Pet Now"
+    }
+  },
+  "discovery": {
+    "title": "DISCOVERY",
+    "info": "Information",
+    "description": "Description",
+    "difficulty": "Difficulty in raising",
+    "ferocious": "Ferocious",
+    "space": "Space",
+    "groups": "Groups",
+    "addFavorite": "Add to favorites",
+    "removeFavorite": "Remove from favorites",
+    "category": {
+      "Dogs": "Dogs",
+      "Cats": "Cats",
+      "Hamsters": "Hamsters",
+      "Birds": "Birds"
+    },
+    "country": {
+      "Mexico": "Mexico",
+      "Germany": "Germany",
+      "West India": "West India",
+      "United Kingdom": "United Kingdom",
+      "Scotland": "Scotland",
+      "Syria": "Syria",
+      "Mongolia": "Mongolia",
+      "Australia": "Australia"
+    },
+    "pets": {
+      "dog-1": {
+        "name": "CHIHUAHUA DOG",
+        "desc": "Chihuahuas are tiny companion dogs known for their lively and alert character."
+      },
+      "dog-2": {
+        "name": "DACHSHUND DOG",
+        "desc": "Dachshunds are curious, brave dogs with short legs and a playful personality."
+      },
+      "dog-3": {
+        "name": "POODLE DOG",
+        "desc": "Poodles are intelligent and active dogs, quick to learn and eager to socialize."
+      },
+      "dog-4": {
+        "name": "PUG DOG",
+        "desc": "Pugs are affectionate and charming dogs, loved for their friendly nature."
+      },
+      "cat-1": {
+        "name": "BRITISH SHORTHAIR",
+        "desc": "British Shorthairs are calm cats with balanced temperament and easy care."
+      },
+      "cat-2": {
+        "name": "SCOTTISH FOLD",
+        "desc": "Scottish Fold cats are social and gentle with a sweet personality."
+      },
+      "hamster-1": {
+        "name": "SYRIAN HAMSTER",
+        "desc": "Syrian hamsters are small, curious pets that enjoy a calm habitat and routine."
+      },
+      "hamster-2": {
+        "name": "DWARF HAMSTER",
+        "desc": "Dwarf hamsters are active and social, best with enough toys and movement."
+      },
+      "bird-1": {
+        "name": "BUDGERIGAR",
+        "desc": "Budgerigars are interactive birds that thrive in clean spaces and regular care."
+      },
+      "bird-2": {
+        "name": "COCKATIEL",
+        "desc": "Cockatiels are affectionate birds, responsive to gentle training and bonding."
+      }
+    }
+  },
+  "instagram": {
+    "titleLead": "FOLLOW US ON",
+    "titleBrand": "INSTAGRAM",
+    "subtitle": "Join our Instagram community for updates, special deals, and more!",
+    "followBtn": "Follow on Instagram",
+    "openPost": "{{alt}} - open on Instagram"
+  },
+  "headers": {
+    "main": {
+      "eyebrow": "Welcome to the website to book all your pet care and sales",
+      "title": "CHOOSE THE BEST WAY FOR",
+      "titleAccent": "YOUR PET",
+      "cta": "Book a day to take care of your pet now"
+    }
+  }
+}

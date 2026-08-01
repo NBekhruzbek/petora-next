@@ -3,6 +3,7 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import PublicRoundedIcon from "@mui/icons-material/PublicRounded";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 export type DiscoveryCardItem = {
   id: string;
@@ -25,12 +26,24 @@ type DiscoveryCardProps = {
 };
 
 const DiscoveryCard = ({ item, onToggleLike }: DiscoveryCardProps) => {
+  const { t } = useTranslation();
+
   const statRows = [
-    { label: "Difficulty in raising", value: item.stats.difficulty },
-    { label: "Ferocious", value: item.stats.ferocious },
-    { label: "Space", value: item.stats.space },
-    { label: "Groups", value: item.stats.groups },
+    { key: "difficulty", value: item.stats.difficulty },
+    { key: "ferocious", value: item.stats.ferocious },
+    { key: "space", value: item.stats.space },
+    { key: "groups", value: item.stats.groups },
   ];
+
+  // The English copy in the data array is the fallback, so an unlisted breed
+  // or country still renders instead of showing a raw key.
+  const name = t(`discovery.pets.${item.id}.name`, { defaultValue: item.name });
+  const description = t(`discovery.pets.${item.id}.desc`, {
+    defaultValue: item.description,
+  });
+  const country = t(`discovery.country.${item.country}`, {
+    defaultValue: item.country,
+  });
 
   return (
     <Stack className="discovery-card">
@@ -40,7 +53,11 @@ const DiscoveryCard = ({ item, onToggleLike }: DiscoveryCardProps) => {
           type="button"
           className="like-toggle"
           onClick={onToggleLike}
-          aria-label={item.liked ? "Remove from favorites" : "Add to favorites"}
+          aria-label={
+            item.liked
+              ? t("discovery.removeFavorite")
+              : t("discovery.addFavorite")
+          }
         >
           {item.liked ? (
             <FavoriteRoundedIcon className="liked" />
@@ -51,22 +68,22 @@ const DiscoveryCard = ({ item, onToggleLike }: DiscoveryCardProps) => {
       </Box>
 
       <Box className="pet-image-box">
-        <img className="pet-image" src={item.image} alt={item.name} />
+        <img className="pet-image" src={item.image} alt={name} />
       </Box>
 
-      <Box className="pet-title">{item.name}</Box>
+      <Box className="pet-title">{name}</Box>
 
       <Stack className="country-row">
         <PublicRoundedIcon className="country-icon" />
-        <Box className="country-text">{item.country}</Box>
+        <Box className="country-text">{country}</Box>
       </Stack>
 
-      <Box className="info-title">Information</Box>
+      <Box className="info-title">{t("discovery.info")}</Box>
 
       <Stack className="stats-list">
         {statRows.map((stat) => (
-          <Box key={stat.label} className="stat-item">
-            <Box className="stat-label">{stat.label}</Box>
+          <Box key={stat.key} className="stat-item">
+            <Box className="stat-label">{t(`discovery.${stat.key}`)}</Box>
             <Box className="stat-track">
               <Box className="stat-fill" style={{ width: `${stat.value}%` }} />
             </Box>
@@ -74,8 +91,8 @@ const DiscoveryCard = ({ item, onToggleLike }: DiscoveryCardProps) => {
         ))}
       </Stack>
 
-      <Box className="description-title">Description</Box>
-      <Box className="description-text">{item.description}</Box>
+      <Box className="description-title">{t("discovery.description")}</Box>
+      <Box className="description-text">{description}</Box>
     </Stack>
   );
 };

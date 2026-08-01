@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Box, IconButton, Stack } from "@mui/material";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
@@ -19,7 +20,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Dogs",
     name: "CHIHUAHUA DOG",
     country: "Mexico",
-    image: "./img/pets/chihuahua-dog.png",
+    image: "/img/pets/chihuahua-dog.png",
     liked: false,
     stats: { difficulty: 73, ferocious: 91, space: 73, groups: 73 },
     description:
@@ -30,7 +31,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Dogs",
     name: "DACHSHUND DOG",
     country: "Germany",
-    image: "./img/pets/dachshund-dog.png",
+    image: "/img/pets/dachshund-dog.png",
     liked: true,
     stats: { difficulty: 73, ferocious: 91, space: 73, groups: 73 },
     description:
@@ -41,7 +42,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Dogs",
     name: "POODLE DOG",
     country: "West India",
-    image: "./img/pets/poodle-dog.png",
+    image: "/img/pets/poodle-dog.png",
     liked: true,
     stats: { difficulty: 73, ferocious: 91, space: 73, groups: 73 },
     description:
@@ -52,7 +53,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Dogs",
     name: "PUG DOG",
     country: "Mexico",
-    image: "./img/pets/pug-dog.png",
+    image: "/img/pets/pug-dog.png",
     liked: false,
     stats: { difficulty: 73, ferocious: 91, space: 73, groups: 73 },
     description:
@@ -63,7 +64,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Dogs",
     name: "POODLE DOG",
     country: "West India",
-    image: "./img/pets/poodle-dog.png",
+    image: "/img/pets/poodle-dog.png",
     liked: true,
     stats: { difficulty: 73, ferocious: 91, space: 73, groups: 73 },
     description:
@@ -74,7 +75,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Dogs",
     name: "PUG DOG",
     country: "Mexico",
-    image: "./img/pets/pug-dog.png",
+    image: "/img/pets/pug-dog.png",
     liked: false,
     stats: { difficulty: 73, ferocious: 91, space: 73, groups: 73 },
     description:
@@ -85,7 +86,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Cats",
     name: "BRITISH SHORTHAIR",
     country: "United Kingdom",
-    image: "./img/headers/cat-image.webp",
+    image: "/img/headers/cat-image.webp",
     liked: true,
     stats: { difficulty: 70, ferocious: 48, space: 62, groups: 55 },
     description:
@@ -96,7 +97,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Cats",
     name: "SCOTTISH FOLD",
     country: "Scotland",
-    image: "./img/headers/cat.png",
+    image: "/img/headers/cat.png",
     liked: false,
     stats: { difficulty: 66, ferocious: 36, space: 58, groups: 61 },
     description:
@@ -107,7 +108,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Hamsters",
     name: "SYRIAN HAMSTER",
     country: "Syria",
-    image: "./img/headers/cat-image.webp",
+    image: "/img/headers/cat-image.webp",
     liked: false,
     stats: { difficulty: 52, ferocious: 22, space: 44, groups: 30 },
     description:
@@ -118,7 +119,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Hamsters",
     name: "DWARF HAMSTER",
     country: "Mongolia",
-    image: "./img/headers/cat.png",
+    image: "/img/headers/cat.png",
     liked: true,
     stats: { difficulty: 58, ferocious: 28, space: 38, groups: 62 },
     description:
@@ -129,7 +130,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Birds",
     name: "BUDGERIGAR",
     country: "Australia",
-    image: "./img/headers/cat-image.webp",
+    image: "/img/headers/cat-image.webp",
     liked: false,
     stats: { difficulty: 64, ferocious: 18, space: 52, groups: 71 },
     description:
@@ -140,7 +141,7 @@ const discoveryItems: DiscoveryItem[] = [
     category: "Birds",
     name: "COCKATIEL",
     country: "Australia",
-    image: "./img/headers/cat.png",
+    image: "/img/headers/cat.png",
     liked: true,
     stats: { difficulty: 68, ferocious: 24, space: 58, groups: 75 },
     description:
@@ -149,6 +150,7 @@ const discoveryItems: DiscoveryItem[] = [
 ];
 
 const Discovery = () => {
+  const { t } = useTranslation();
   const device = useDeviceDetect();
   const cardsPerPage = device === "mobile" ? 1 : 4;
   const [activeCategory, setActiveCategory] =
@@ -190,7 +192,7 @@ const Discovery = () => {
   return (
     <Stack className="discovery">
       <Stack className="container">
-        <Box className="discovery-title">DISCOVERY</Box>
+        <Box className="discovery-title">{t("discovery.title")}</Box>
 
         <Stack className="category-tabs" direction="row">
           {categories.map((category) => (
@@ -203,7 +205,7 @@ const Discovery = () => {
               }`}
               onClick={() => onCategoryChange(category)}
             >
-              {category}
+              {t(`discovery.category.${category}`)}
             </Box>
           ))}
         </Stack>

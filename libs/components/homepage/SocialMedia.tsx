@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { gsap } from "gsap";
 import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
+import { useTranslation } from "react-i18next";
 
 interface InstagramPost {
   id: number;
@@ -30,6 +31,7 @@ const INSTAGRAM_URL = "https://www.instagram.com/mr_bekhruzbek1/";
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
 const SocialMedia = () => {
+  const { t } = useTranslation();
   const device = useDeviceDetect();
   const contentRef = useRef<HTMLDivElement | null>(null);
   const carouselRef = useRef<HTMLElement | null>(null);
@@ -136,11 +138,13 @@ const SocialMedia = () => {
         <Stack className="container">
           <Stack className="instagram-main">
             <Box className="section-title">
-              FOLLOW US ON <span className="social-media-text">INSTAGRAM</span>
+              {t("instagram.titleLead")}{" "}
+              <span className="social-media-text">
+                {t("instagram.titleBrand")}
+              </span>
             </Box>
             <Typography className="instagram-mobile-subtitle">
-              Join our Instagram community for updates, special deals, and
-              more!
+              {t("instagram.subtitle")}
             </Typography>
             <Box className="instagram-mobile-grid">
               {basePosts.map((post) => (
@@ -150,7 +154,7 @@ const SocialMedia = () => {
                   target="_blank"
                   rel="noreferrer"
                   className="instagram-mobile-tile"
-                  aria-label={`${post.alt} - open on Instagram`}
+                  aria-label={t("instagram.openPost", { alt: post.alt })}
                 >
                   <img src={post.image} alt={post.alt} loading="lazy" />
                 </a>
@@ -162,7 +166,7 @@ const SocialMedia = () => {
               target="_blank"
               rel="noreferrer"
             >
-              Follow on Instagram
+              {t("instagram.followBtn")}
             </a>
           </Stack>
         </Stack>
@@ -175,7 +179,10 @@ const SocialMedia = () => {
       <Stack className="container">
         <Stack className="instagram-main">
           <Box className="section-title">
-            FOLLOW US ON <span className="social-media-text">INSTAGRAM</span>
+            {t("instagram.titleLead")}{" "}
+            <span className="social-media-text">
+              {t("instagram.titleBrand")}
+            </span>
           </Box>
           <Typography
             sx={{
@@ -186,7 +193,7 @@ const SocialMedia = () => {
               textAlign: "center",
             }}
           >
-            Join our Instagram community for updates, special deals, and more!
+            {t("instagram.subtitle")}
           </Typography>
           <Stack id="contentContainer" ref={contentRef} className="trans3d">
             <section
@@ -200,7 +207,7 @@ const SocialMedia = () => {
                     href={INSTAGRAM_URL}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={`${post.alt} - open on Instagram`}
+                    aria-label={t("instagram.openPost", { alt: post.alt })}
                   >
                     <Stack
                       className="carouselItemInner trans3d"
