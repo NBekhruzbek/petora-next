@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   Box,
@@ -31,56 +32,59 @@ type SortOption = "newest" | "rating" | "likes" | "views";
 
 const SORT_OPTIONS: {
   value: SortOption;
-  label: string;
+  labelKey: string;
   sort: string;
   direction: Direction;
 }[] = [
   {
     value: "newest",
-    label: "Newest",
+    labelKey: "sort.newest",
     sort: "createdAt",
     direction: Direction.DESC,
   },
   {
     value: "rating",
-    label: "Highest Rating",
+    labelKey: "sort.ratingCap",
     sort: "memberRating",
     direction: Direction.DESC,
   },
   {
     value: "likes",
-    label: "Most Liked",
+    labelKey: "sort.liked",
     sort: "memberLikes",
     direction: Direction.DESC,
   },
   {
     value: "views",
-    label: "Most Viewed",
+    labelKey: "sort.viewed",
     sort: "memberViews",
     direction: Direction.DESC,
   },
 ];
 
-const SERVICE_TYPE_OPTIONS: { label: string; value: ServiceType }[] = [
-  { label: "Day Care", value: ServiceType.DAY_CARE },
-  { label: "Walking", value: ServiceType.WALKING },
-  { label: "Grooming", value: ServiceType.GROOMING },
-  { label: "Boarding", value: ServiceType.BOARDING },
-  { label: "Training", value: ServiceType.TRAINING },
-  { label: "Veterinary", value: ServiceType.VETERINARY },
+const SERVICE_TYPE_OPTIONS: { labelKey: string; value: ServiceType }[] = [
+  { labelKey: "enums.serviceType.DAY_CARE", value: ServiceType.DAY_CARE },
+  { labelKey: "enums.serviceType.WALKING", value: ServiceType.WALKING },
+  { labelKey: "enums.serviceType.GROOMING", value: ServiceType.GROOMING },
+  { labelKey: "enums.serviceType.BOARDING", value: ServiceType.BOARDING },
+  { labelKey: "enums.serviceType.TRAINING", value: ServiceType.TRAINING },
+  { labelKey: "enums.serviceType.VETERINARY", value: ServiceType.VETERINARY },
 ];
 
-const SERVICE_AREA_OPTIONS: { label: string; value: ServiceLocation }[] = [
-  { label: "Seoul", value: ServiceLocation.SEOUL },
-  { label: "Busan", value: ServiceLocation.BUSAN },
-  { label: "Incheon", value: ServiceLocation.INCHEON },
-  { label: "Daegu", value: ServiceLocation.DAEGU },
-  { label: "Suwon", value: ServiceLocation.SUWON },
-  { label: "Gyeongju", value: ServiceLocation.GYEONGJU },
-  { label: "Gwangju", value: ServiceLocation.GWANGJU },
-  { label: "Jeonju", value: ServiceLocation.JEONJU },
-  { label: "Daejeon", value: ServiceLocation.DAEJEON },
-  { label: "Jeju", value: ServiceLocation.JEJU },
+const SERVICE_AREA_OPTIONS: { labelKey: string; value: ServiceLocation }[] = [
+  { labelKey: "enums.serviceLocation.SEOUL", value: ServiceLocation.SEOUL },
+  { labelKey: "enums.serviceLocation.BUSAN", value: ServiceLocation.BUSAN },
+  { labelKey: "enums.serviceLocation.INCHEON", value: ServiceLocation.INCHEON },
+  { labelKey: "enums.serviceLocation.DAEGU", value: ServiceLocation.DAEGU },
+  { labelKey: "enums.serviceLocation.SUWON", value: ServiceLocation.SUWON },
+  {
+    labelKey: "enums.serviceLocation.GYEONGJU",
+    value: ServiceLocation.GYEONGJU,
+  },
+  { labelKey: "enums.serviceLocation.GWANGJU", value: ServiceLocation.GWANGJU },
+  { labelKey: "enums.serviceLocation.JEONJU", value: ServiceLocation.JEONJU },
+  { labelKey: "enums.serviceLocation.DAEJEON", value: ServiceLocation.DAEJEON },
+  { labelKey: "enums.serviceLocation.JEJU", value: ServiceLocation.JEJU },
 ];
 
 const initialInput: AgentsInquiry = {
@@ -96,6 +100,7 @@ interface AgentsProps {
 }
 
 const Agents = ({ initialInput: propInput = initialInput }: AgentsProps) => {
+  const { t } = useTranslation();
   const device = useDeviceDetect();
   const user = useReactiveVar(userVar);
 
@@ -235,7 +240,7 @@ const Agents = ({ initialInput: propInput = initialInput }: AgentsProps) => {
     <>
       <Box className="search-box">
         <Input
-          placeholder="Search agents..."
+          placeholder={t("list.searchAgents")}
           disableUnderline
           className="text-field"
           value={searchText}
@@ -270,7 +275,9 @@ const Agents = ({ initialInput: propInput = initialInput }: AgentsProps) => {
               onClick={() => typeToggleHandler(type.value)}
             >
               <Box className="category-checkbox" aria-hidden="true" />
-              <Typography className="category-label">{type.label}</Typography>
+              <Typography className="category-label">
+                {t(type.labelKey)}
+              </Typography>
             </Stack>
           ))}
         </Stack>
@@ -297,7 +304,9 @@ const Agents = ({ initialInput: propInput = initialInput }: AgentsProps) => {
               onClick={() => areaToggleHandler(area.value)}
             >
               <Box className="category-checkbox" aria-hidden="true" />
-              <Typography className="category-label">{area.label}</Typography>
+              <Typography className="category-label">
+                {t(area.labelKey)}
+              </Typography>
             </Stack>
           ))}
         </Stack>
@@ -317,7 +326,7 @@ const Agents = ({ initialInput: propInput = initialInput }: AgentsProps) => {
               onClick={() => setIsFilterDrawerOpen(true)}
             >
               <FilterListIcon fontSize="small" />
-              Filters
+              {t("list.filters")}
               {activeFilterCount > 0 && (
                 <Box className="mobile-filter-trigger-count">
                   {activeFilterCount}
@@ -343,7 +352,7 @@ const Agents = ({ initialInput: propInput = initialInput }: AgentsProps) => {
               >
                 {SORT_OPTIONS.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.labelKey)}
                   </MenuItem>
                 ))}
               </Select>

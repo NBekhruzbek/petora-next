@@ -1,39 +1,39 @@
 import { Box, Stack } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const AgentsHeader = () => {
+  const { t } = useTranslation();
+
   return (
     <Stack className="container">
       <Stack className="agents-top">
         <Stack className="text-area">
-          <Box className={"text1"}>Find Trusted</Box>
+          <Box className={"text1"}>{t("headers.agents.eyebrow")}</Box>
           <Box className={"text2"}>
-            Pet Care Agents
+            {t("headers.agents.title")}
             <span>
-              <img className="hand-icon" src="./img/logo/Union.svg" alt="" />
+              <img className="hand-icon" src="/img/logo/Union.svg" alt="" />
             </span>
           </Box>
-          <Box className={"text3"}>
-            Find verified pet care professionals near you. Browse agents by
-            service, location, and ratings.
-          </Box>
+          <Box className={"text3"}>{t("headers.agents.subtitle")}</Box>
         </Stack>
         <Stack className="hero-stage" sx={{ position: "relative" }}>
           <Box className={"circle-background"}>
             <img
               className="ellipse"
-              src="./img/headers/EllipseServiceHeader.png"
+              src="/img/headers/EllipseServiceHeader.png"
               alt=""
             />
             <Box className={"dog-icon"}>
-              <img src="./img/icons/Dog.svg" alt="" />
+              <img src="/img/icons/Dog.svg" alt="" />
             </Box>
             <Box className={"cat-icon"}>
-              <img src="./img/icons/Cat.svg" alt="" />
+              <img src="/img/icons/Cat.svg" alt="" />
             </Box>
           </Box>
           <Box>
             <img
-              src="./img/headers/dogs-discovery-header.png"
+              src="/img/headers/dogs-discovery-header.png"
               className={"dogs-image"}
               alt=""
             />
