@@ -13,15 +13,15 @@ const ProductSales = () => {
           <Box className="sun-shine-wrap">
             <img className="sun-shine" src="/img/sunShine.png" alt="" />
           </Box>
-          <img className="left-lemon" src="./img/lemon2.png" alt="" />
+          <img className="left-lemon" src="/img/lemon2.png" alt="" />
           <Stack className="board">
-            <img className="wood" src="./img/wood.png" alt="" />
+            <img className="wood" src="/img/wood.png" alt="" />
             <Box className={"title"}>The Summer Sale</Box>
-            <img className="hand-icon" src="./img/icons/hand-icon.svg" alt="" />
+            <img className="hand-icon" src="/img/icons/hand-icon.svg" alt="" />
           </Stack>
-          <img className="leav" src="./img/leav.png" alt="" />
-          <img className="leav2" src="./img/leav2.png" alt="" />
-          <img className="wellness" src="./img/products/wellness.png" alt="" />
+          <img className="leav" src="/img/leav.png" alt="" />
+          <img className="leav2" src="/img/leav2.png" alt="" />
+          <img className="wellness" src="/img/products/wellness.png" alt="" />
           <svg
             className="wellness-bottom"
             xmlns="http://www.w3.org/2000/svg"
@@ -61,7 +61,7 @@ const ProductSales = () => {
               </filter>
             </defs>
           </svg>
-          <img className="fillet" src="./img/products/fillet.png" alt="" />
+          <img className="fillet" src="/img/products/fillet.png" alt="" />
           <svg
             className="box-shadow"
             xmlns="http://www.w3.org/2000/svg"
@@ -101,8 +101,8 @@ const ProductSales = () => {
               </filter>
             </defs>
           </svg>
-          <img className="box" src="./img/box.png" alt="" />
-          <img className="lemons" src="./img/lemons.svg" alt="" />
+          <img className="box" src="/img/box.png" alt="" />
+          <img className="lemons" src="/img/lemons.svg" alt="" />
           <svg
             className="fillet-shadow"
             xmlns="http://www.w3.org/2000/svg"
@@ -142,11 +142,11 @@ const ProductSales = () => {
               </filter>
             </defs>
           </svg>
-          <img className="right-lemon" src="./img/lemon1.png" alt="" />
-          <img className="bottom-leav" src="./img/leav.png" alt="" />
+          <img className="right-lemon" src="/img/lemon1.png" alt="" />
+          <img className="bottom-leav" src="/img/leav.png" alt="" />
         </Stack>
       </Stack>
-      <img className="bottom-shade" src="./img/bottom-shade.png" alt="" />
+      <img className="bottom-shade" src="/img/bottom-shade.png" alt="" />
     </Stack>
   );
 };

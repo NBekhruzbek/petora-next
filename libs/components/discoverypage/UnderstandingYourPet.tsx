@@ -7,13 +7,13 @@ const UnderstandingYourPet = () => {
       <Stack className="container">
         <Box>
           {" "}
-          <img className={"pets-image"} src="./img/pets/dog-cat.png" alt="" />
+          <img className={"pets-image"} src="/img/pets/dog-cat.png" alt="" />
         </Box>
         <Stack className="text-area">
           <Box className={"title"}>
             What Do You Understand{" "}
             <span className="green-title">
-              About Your Pet? <img src="./img/logo/Union.svg" alt="" />
+              About Your Pet? <img src="/img/logo/Union.svg" alt="" />
             </span>
           </Box>
           <Stack className={"desc-text"}>

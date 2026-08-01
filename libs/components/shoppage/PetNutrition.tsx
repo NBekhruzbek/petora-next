@@ -9,13 +9,13 @@ const PetNutrition = () => {
           Tailored Nutrition{" "}
           <Box className="green-title">
             for Your Pet's Health{" "}
-            <img className="hand-icon" src="./img/logo/Union.svg" alt="" />
+            <img className="hand-icon" src="/img/logo/Union.svg" alt="" />
           </Box>
         </Box>
         <Stack className="nutrition-main">
           <Stack className="info-card">
             <Box className={"icon-box"}>
-              <img src="./img/icons/HandHeart.svg" alt="" />
+              <img src="/img/icons/HandHeart.svg" alt="" />
             </Box>
             <Box className={"main-text"}>Nutrition and Health</Box>
             <Box className={"desc-text"}>
@@ -25,7 +25,7 @@ const PetNutrition = () => {
           </Stack>
           <Stack className="info-card">
             <Box className={"icon-box"}>
-              <img src="./img/icons/CalendarHeart.svg" alt="" />
+              <img src="/img/icons/CalendarHeart.svg" alt="" />
             </Box>
             <Box className={"main-text"}>Custom Diets</Box>
             <Box className={"desc-text"}>
