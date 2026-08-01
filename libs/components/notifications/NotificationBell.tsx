@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import { useIntlLocale } from "@/libs/i18n/format";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import {
@@ -36,6 +38,8 @@ import { useNotificationDestination } from "./useNotificationDestination";
 const PREVIEW_LIMIT = 6;
 
 const NotificationBell = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const router = useRouter();
   const user = useReactiveVar(userVar);
   const { resolveDestination } = useNotificationDestination();
@@ -144,7 +148,7 @@ const NotificationBell = () => {
         aria-label={
           unreadCount > 0
             ? `Notifications, ${unreadCount} unread`
-            : "Notifications"
+            : t("notif.title")
         }
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
@@ -171,7 +175,7 @@ const NotificationBell = () => {
           <Stack className="notif-menu-header">
             <Stack className="notif-menu-heading">
               <Typography className="notif-menu-title">
-                Notifications
+                {t("notif.title")}
               </Typography>
               {unreadCount > 0 && (
                 <Typography className="notif-menu-count">
@@ -185,7 +189,7 @@ const NotificationBell = () => {
                 startIcon={<DoneAllIcon />}
                 onClick={() => void handleMarkAllRead()}
               >
-                Mark all read
+                {t("notif.markAllRead")}
               </Button>
             )}
           </Stack>
@@ -194,8 +198,8 @@ const NotificationBell = () => {
             {items.length === 0 ? (
               <EmptyState
                 icon={<NotificationsNoneRoundedIcon />}
-                title="You're all caught up"
-                description="Bookings and orders report back here."
+                title={t("notif.caughtUp")}
+                description={t("notif.caughtUpDesc")}
               />
             ) : (
               items.map((notification) => {
@@ -219,7 +223,7 @@ const NotificationBell = () => {
                           {notification.notificationTitle}
                         </Typography>
                         <Typography className="notif-menu-item-time">
-                          {shortTimeAgo(notification.createdAt)}
+                          {shortTimeAgo(notification.createdAt, intlLocale)}
                         </Typography>
                       </Stack>
                       <Typography className="notif-menu-item-text">
@@ -234,7 +238,7 @@ const NotificationBell = () => {
 
           <Box className="notif-menu-footer">
             <Button className="notif-menu-seeall" onClick={handleSeeAll}>
-              See all notifications
+              {t("notif.seeAll")}
             </Button>
           </Box>
         </Box>

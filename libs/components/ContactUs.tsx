@@ -1,5 +1,6 @@
 import { Box, Button, Stack } from "@mui/material";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ContactFormState {
   fullName: string;
@@ -16,6 +17,7 @@ const initialFormState: ContactFormState = {
 };
 
 const ContactUs = () => {
+  const { t } = useTranslation();
   const [formState, setFormState] =
     useState<ContactFormState>(initialFormState);
 
@@ -38,7 +40,7 @@ const ContactUs = () => {
       <Stack className="container">
         <Stack className="contact-form-column">
           <Box className="contact-title">
-            CONTACT WITH US{" "}
+            {t("contact.title")}{" "}
             <span>
               <img src="/img/logo/Union.svg" alt="" />
             </span>
@@ -50,33 +52,32 @@ const ContactUs = () => {
             onSubmit={handleSubmit}
           >
             <Box className="field-wrapper has-label">
-              {/* <span className="field-label">Full Name</span> */}
               <input
                 type="text"
-                placeholder="Full Name"
+                placeholder={t("contact.fullName")}
                 value={formState.fullName}
                 onChange={handleInputChange("fullName")}
-                aria-label="Full Name"
+                aria-label={t("contact.fullName")}
               />
             </Box>
 
             <Box className="field-wrapper">
               <input
                 type="tel"
-                placeholder="Phone Number"
+                placeholder={t("contact.phoneNumber")}
                 value={formState.phoneNumber}
                 onChange={handleInputChange("phoneNumber")}
-                aria-label="Phone Number"
+                aria-label={t("contact.phoneNumber")}
               />
             </Box>
 
             <Box className="field-wrapper">
               <input
                 type="email"
-                placeholder="Email"
+                placeholder={t("contact.email")}
                 value={formState.email}
                 onChange={handleInputChange("email")}
-                aria-label="Email"
+                aria-label={t("contact.email")}
               />
             </Box>
 
@@ -84,16 +85,16 @@ const ContactUs = () => {
               <input
                 className="message"
                 type="text"
-                placeholder="Message"
+                placeholder={t("contact.message")}
                 value={formState.message}
                 onChange={handleInputChange("message")}
-                aria-label="Message"
+                aria-label={t("contact.message")}
               />
             </Box>
 
             <Stack className="action-row" direction="row">
               <Button className="submit-btn" type="submit" variant="contained">
-                Submit
+                {t("contact.submit")}
               </Button>
               <Button
                 className="refresh-btn"
@@ -101,7 +102,7 @@ const ContactUs = () => {
                 variant="outlined"
                 onClick={handleReset}
               >
-                Refresh
+                {t("contact.refresh")}
               </Button>
             </Stack>
           </Stack>

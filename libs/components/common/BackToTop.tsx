@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 
 /**
@@ -18,14 +19,39 @@ const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
 const PawPrint = ({ className }: { className: string }) => (
   <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
     <ellipse cx="12" cy="16.4" rx="5.6" ry="4.6" />
-    <ellipse cx="5.5" cy="10.4" rx="2.5" ry="3.2" transform="rotate(-20 5.5 10.4)" />
-    <ellipse cx="9.9" cy="7.2" rx="2.4" ry="3.3" transform="rotate(-7 9.9 7.2)" />
-    <ellipse cx="14.5" cy="7.2" rx="2.4" ry="3.3" transform="rotate(7 14.5 7.2)" />
-    <ellipse cx="18.9" cy="10.4" rx="2.5" ry="3.2" transform="rotate(20 18.9 10.4)" />
+    <ellipse
+      cx="5.5"
+      cy="10.4"
+      rx="2.5"
+      ry="3.2"
+      transform="rotate(-20 5.5 10.4)"
+    />
+    <ellipse
+      cx="9.9"
+      cy="7.2"
+      rx="2.4"
+      ry="3.3"
+      transform="rotate(-7 9.9 7.2)"
+    />
+    <ellipse
+      cx="14.5"
+      cy="7.2"
+      rx="2.4"
+      ry="3.3"
+      transform="rotate(7 14.5 7.2)"
+    />
+    <ellipse
+      cx="18.9"
+      cy="10.4"
+      rx="2.5"
+      ry="3.2"
+      transform="rotate(20 18.9 10.4)"
+    />
   </svg>
 );
 
 const BackToTop = () => {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -37,7 +63,9 @@ const BackToTop = () => {
       const y = window.scrollY;
       const scrollable =
         document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(scrollable > 0 ? Math.min(1, Math.max(0, y / scrollable)) : 0);
+      setProgress(
+        scrollable > 0 ? Math.min(1, Math.max(0, y / scrollable)) : 0,
+      );
       setVisible(y > REVEAL_AT);
     };
 
@@ -60,7 +88,9 @@ const BackToTop = () => {
   }, []);
 
   const handleClick = () => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
   };
 
@@ -69,10 +99,15 @@ const BackToTop = () => {
       type="button"
       className={`back-to-top${visible ? " is-visible" : ""}`}
       onClick={handleClick}
-      aria-label="Back to top"
+      aria-label={t("backToTop")}
     >
       <svg className="back-to-top-ring" viewBox="0 0 48 48" aria-hidden="true">
-        <circle className="back-to-top-ring-track" cx="24" cy="24" r={RING_RADIUS} />
+        <circle
+          className="back-to-top-ring-track"
+          cx="24"
+          cy="24"
+          r={RING_RADIUS}
+        />
         <circle
           className="back-to-top-ring-fill"
           cx="24"
@@ -95,7 +130,7 @@ const BackToTop = () => {
       </span>
 
       <span className="back-to-top-label" aria-hidden="true">
-        Back to top
+        {t("backToTop")}
       </span>
     </button>
   );

@@ -8,6 +8,7 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import RemoveShoppingCartOutlinedIcon from "@mui/icons-material/RemoveShoppingCartOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
+import { mediumDate, relativeTime } from "@/libs/i18n/format";
 import {
   NotificationGroup,
   NotificationType,
@@ -39,11 +40,26 @@ export const DESTINATIONS: Partial<
     label: "View booking",
     href: MY_BOOKINGS,
   },
-  [NotificationType.ORDER_CREATED]: { label: "View order", href: MY_ORDERS },
-  [NotificationType.ORDER_PAID]: { label: "View order", href: MY_ORDERS },
-  [NotificationType.ORDER_SHIPPED]: { label: "View order", href: MY_ORDERS },
-  [NotificationType.ORDER_DELIVERED]: { label: "View order", href: MY_ORDERS },
-  [NotificationType.ORDER_CANCELLED]: { label: "View order", href: MY_ORDERS },
+  [NotificationType.ORDER_CREATED]: {
+    label: "View order",
+    href: MY_ORDERS,
+  },
+  [NotificationType.ORDER_PAID]: {
+    label: "View order",
+    href: MY_ORDERS,
+  },
+  [NotificationType.ORDER_SHIPPED]: {
+    label: "View order",
+    href: MY_ORDERS,
+  },
+  [NotificationType.ORDER_DELIVERED]: {
+    label: "View order",
+    href: MY_ORDERS,
+  },
+  [NotificationType.ORDER_CANCELLED]: {
+    label: "View order",
+    href: MY_ORDERS,
+  },
 };
 
 export const groupLabel: Record<NotificationGroup, string> = {
@@ -82,40 +98,12 @@ export function getNotificationIcon(type: NotificationType, large = false) {
   }
 }
 
-const MINUTE = 60_000;
-const HOUR = 60 * MINUTE;
-const DAY = 24 * HOUR;
-
-export const timeAgo = (value: Date | string) => {
+// Relative time lives in libs/i18n/format so the community cards and these
+// notifications share one implementation (and one set of plural rules).
+export const timeAgo = (value: Date | string, locale = "en-US") => {
   const elapsed = Date.now() - new Date(value).getTime();
-  if (elapsed < MINUTE) return "Just now";
-  if (elapsed < HOUR) {
-    const mins = Math.floor(elapsed / MINUTE);
-    return `${mins} minute${mins > 1 ? "s" : ""} ago`;
-  }
-  if (elapsed < DAY) {
-    const hours = Math.floor(elapsed / HOUR);
-    return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  }
-  const days = Math.floor(elapsed / DAY);
-  if (days === 1) return "Yesterday";
-  if (days < 7) return `${days} days ago`;
-  return new Date(value).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  if (elapsed >= 7 * 24 * 60 * 60 * 1000) return mediumDate(value, locale);
+  return relativeTime(value, locale);
 };
 
-export const shortTimeAgo = (value: Date | string) => {
-  const elapsed = Date.now() - new Date(value).getTime();
-  if (elapsed < MINUTE) return "now";
-  if (elapsed < HOUR) return `${Math.floor(elapsed / MINUTE)}m ago`;
-  if (elapsed < DAY) return `${Math.floor(elapsed / HOUR)}h ago`;
-  const days = Math.floor(elapsed / DAY);
-  if (days < 7) return `${days}d ago`;
-  return new Date(value).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-};
+export const shortTimeAgo = timeAgo;

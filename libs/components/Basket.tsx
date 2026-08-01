@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
@@ -35,6 +36,7 @@ import {
 import { REACT_APP_API_URL } from "@/libs/config";
 
 const Basket = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const device = useDeviceDetect();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -66,9 +68,9 @@ const Basket = () => {
         justifyContent="space-between"
       >
         <Stack direction="row" alignItems="center" gap="10px">
-          <Typography className="basket-title">Your Basket</Typography>
+          <Typography className="basket-title">{t("basket.title")}</Typography>
           <Chip
-            label={`${totalItemCount} ${totalItemCount === 1 ? "item" : "items"}`}
+            label={t("basket.itemCount", { count: totalItemCount })}
             className="basket-count-chip"
             size="small"
           />
@@ -82,7 +84,7 @@ const Basket = () => {
             onClick={clearBasket}
           >
             <DeleteOutlineIcon fontSize="small" />
-            <span>Clear all</span>
+            <span>{t("basket.clearAll")}</span>
           </Stack>
         )}
       </Stack>
@@ -92,10 +94,10 @@ const Basket = () => {
         <Stack className="basket-empty">
           <ShoppingBagOutlinedIcon className="basket-empty-icon" />
           <Typography className="basket-empty-title">
-            Your basket is empty
+            {t("basket.empty")}
           </Typography>
           <Typography className="basket-empty-sub">
-            Add items from the shop to get started
+            {t("basket.emptyDesc")}
           </Typography>
           <Button
             className="btn-continue-shopping"
@@ -105,7 +107,7 @@ const Basket = () => {
             }}
             endIcon={<ArrowForwardIcon />}
           >
-            Continue Shopping
+            {t("basket.continueShopping")}
           </Button>
         </Stack>
       ) : (
@@ -196,7 +198,9 @@ const Basket = () => {
             justifyContent="space-between"
             className="basket-summary-row"
           >
-            <Typography className="summary-label">Subtotal</Typography>
+            <Typography className="summary-label">
+              {t("basket.subtotal")}
+            </Typography>
             <Typography className="summary-value">
               {formatPrice(subtotal)}
             </Typography>
@@ -206,10 +210,12 @@ const Basket = () => {
             justifyContent="space-between"
             className="basket-summary-row"
           >
-            <Typography className="summary-label">Delivery</Typography>
+            <Typography className="summary-label">
+              {t("basket.delivery")}
+            </Typography>
             {deliveryFee === 0 ? (
               <Typography className="summary-value free-delivery">
-                Free
+                {t("basket.free")}
               </Typography>
             ) : (
               <Typography className="summary-value">
@@ -230,7 +236,9 @@ const Basket = () => {
             alignItems="center"
             className="basket-summary-total-row"
           >
-            <Typography className="summary-total-label">Total</Typography>
+            <Typography className="summary-total-label">
+              {t("basket.total")}
+            </Typography>
             <Typography className="summary-total-value">
               {formatPrice(total)}
             </Typography>
@@ -244,7 +252,7 @@ const Basket = () => {
               void router.push("/checkout");
             }}
           >
-            Proceed to Order
+            {t("basket.proceed")}
           </Button>
         </Stack>
       )}
@@ -256,7 +264,7 @@ const Basket = () => {
       <IconButton
         className="basket-icon-btn"
         onClick={handleClick}
-        aria-label="cart"
+        aria-label={t("basket.aria")}
       >
         <Badge badgeContent={totalItemCount} className="basket-badge">
           <img

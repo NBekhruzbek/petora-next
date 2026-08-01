@@ -26,21 +26,30 @@ import Basket from "./Basket";
 import NotificationBell from "./notifications/NotificationBell";
 import LoginRegister from "./account/LoginRegister";
 import useDeviceDetect from "../hooks/useDeviceDetect";
+import { useTranslation } from "react-i18next";
+import {
+  type AppLocale,
+  defaultLocale,
+  isAppLocale,
+  locales,
+} from "@/libs/i18n";
 
 const Top = () => {
+  const router = useRouter();
+  const { t } = useTranslation();
+
   const user = useReactiveVar(userVar);
   const authMember = Boolean(user._id);
   const memberDisplayName =
-    user.memberFullName || user.memberUserName || "Member";
+    user.memberFullName || user.memberUserName || t("member.fallbackName");
   const memberTypeLabel =
     user.memberType === "AGENT"
-      ? "Service Agent"
+      ? t("member.typeAgent")
       : user.memberType === "ADMIN"
-        ? "Admin"
-        : "User";
+        ? t("member.typeAdmin")
+        : t("member.typeUser");
   const memberAvatar = user.memberImage || "/img/profile/defaultUser.png";
 
-  const router = useRouter();
   const [colorChange, setColorChange] = useState<boolean>(false);
   const [bgColor, setBgColor] = useState<boolean>(false);
   const [logoutAnchor, setLogoutAnchor] = React.useState<null | HTMLElement>(
@@ -50,9 +59,22 @@ const Top = () => {
 
   const [loginOpen, setLoginOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [lang, setLang] = useState<"en" | "ko">("en");
   const [langAnchor, setLangAnchor] = useState<null | HTMLElement>(null);
   const langOpen = Boolean(langAnchor);
+
+  // The active language is the URL's locale, not component state — it used to
+  // be `useState`, which reset to "en" on every navigation.
+  const lang: AppLocale = isAppLocale(router.locale)
+    ? router.locale
+    : defaultLocale;
+
+  const changeLanguage = (next: AppLocale) => {
+    setLangAnchor(null);
+    if (next === lang) return;
+    // Next reads this back on later visits once localeDetection is enabled.
+    document.cookie = `NEXT_LOCALE=${next};path=/;max-age=31536000;samesite=lax`;
+    void router.push(router.asPath, router.asPath, { locale: next });
+  };
 
   const handleLoginOpen = () => setLoginOpen(true);
   const handleLoginClose = () => setLoginOpen(false);
@@ -95,33 +117,52 @@ const Top = () => {
     const closeMobileNav = () => setMobileNavOpen(false);
 
     const mobileNavItems = [
-      { label: "Home", href: "/", active: router.pathname === "/" },
       {
-        label: "Service",
+        key: "home",
+        label: t("nav.home"),
+        href: "/",
+        active: router.pathname === "/",
+      },
+      {
+        key: "service",
+        label: t("nav.service"),
         href: "/service",
         active: router.pathname === "/service",
       },
       {
-        label: "Agents",
+        key: "agents",
+        label: t("nav.agents"),
         href: "/agents",
         active: router.pathname.startsWith("/agents"),
       },
-      { label: "Shop", href: "/shop", active: router.pathname === "/shop" },
       {
-        label: "Community",
+        key: "shop",
+        label: t("nav.shop"),
+        href: "/shop",
+        active: router.pathname === "/shop",
+      },
+      {
+        key: "community",
+        label: t("nav.community"),
         href: "/community?articleCategory=FREE",
         active: router.pathname === "/community",
       },
       ...(authMember
         ? [
             {
-              label: "My Page",
+              key: "mypage",
+              label: t("nav.myPage"),
               href: "/mypage",
               active: router.pathname === "/mypage",
             },
           ]
         : []),
-      { label: "CS", href: "/cs", active: router.pathname === "/cs" },
+      {
+        key: "cs",
+        label: t("nav.cs"),
+        href: "/cs",
+        active: router.pathname === "/cs",
+      },
     ];
 
     return (
@@ -147,7 +188,7 @@ const Top = () => {
             <NotificationBell />
             <IconButton
               className="mobile-nav-toggle"
-              aria-label="Open menu"
+              aria-label={t("nav.openMenu")}
               onClick={() => setMobileNavOpen(true)}
             >
               <MenuRoundedIcon />
@@ -171,7 +212,7 @@ const Top = () => {
               <Box className="mobile-nav-drawer__brand">Petora</Box>
               <IconButton
                 className="mobile-nav-drawer__close"
-                aria-label="Close menu"
+                aria-label={t("nav.closeMenu")}
                 onClick={closeMobileNav}
               >
                 <CloseRoundedIcon />
@@ -180,7 +221,7 @@ const Top = () => {
 
             <Stack className="mobile-nav-drawer__list" component="nav">
               {mobileNavItems.map((item) => (
-                <Link key={item.label} href={item.href}>
+                <Link key={item.key} href={item.href}>
                   <Box
                     className={`mobile-nav-drawer__item ${item.active ? "active" : ""}`}
                     onClick={closeMobileNav}
@@ -197,16 +238,22 @@ const Top = () => {
               <button
                 type="button"
                 className={lang === "en" ? "active" : ""}
-                onClick={() => setLang("en")}
+                onClick={() => {
+                  closeMobileNav();
+                  changeLanguage("en");
+                }}
               >
-                EN
+                {t("language.enShort")}
               </button>
               <button
                 type="button"
                 className={lang === "ko" ? "active" : ""}
-                onClick={() => setLang("ko")}
+                onClick={() => {
+                  closeMobileNav();
+                  changeLanguage("ko");
+                }}
               >
-                KO
+                {t("language.koShort")}
               </button>
             </Stack>
 
@@ -229,7 +276,7 @@ const Top = () => {
                     }}
                   >
                     <Logout />
-                    Logout
+                    {t("auth.logout")}
                   </button>
                 </Stack>
               ) : (
@@ -242,7 +289,7 @@ const Top = () => {
                   }}
                 >
                   <AccountCircleOutlinedIcon />
-                  Login / Sign Up
+                  {t("auth.login")}
                 </button>
               )}
             </Box>
@@ -272,35 +319,35 @@ const Top = () => {
                 <div
                   className={`nav-item ${router.pathname === "/" ? "active" : ""}`}
                 >
-                  Home
+                  {t("nav.home")}
                 </div>
               </Link>
               <Link href={"/service"}>
                 <div
                   className={`nav-item ${router.pathname === "/service" ? "active" : ""}`}
                 >
-                  Service
+                  {t("nav.service")}
                 </div>
               </Link>
               <Link href={"/agents"}>
                 <div
                   className={`nav-item ${router.pathname.startsWith("/agents") ? "active" : ""}`}
                 >
-                  Agents
+                  {t("nav.agents")}
                 </div>
               </Link>
               <Link href={"/shop"}>
                 <div
                   className={`nav-item ${router.pathname === "/shop" ? "active" : ""}`}
                 >
-                  Shop
+                  {t("nav.shop")}
                 </div>
               </Link>
               <Link href={"/community?articleCategory=FREE"}>
                 <div
                   className={`nav-item ${router.pathname === "/community" ? "active" : ""}`}
                 >
-                  Community
+                  {t("nav.community")}
                 </div>
               </Link>
               {authMember && (
@@ -308,7 +355,7 @@ const Top = () => {
                   <div
                     className={`nav-item ${router.pathname === "/mypage" ? "active" : ""}`}
                   >
-                    My Page
+                    {t("nav.myPage")}
                   </div>
                 </Link>
               )}
@@ -316,7 +363,7 @@ const Top = () => {
                 <div
                   className={`nav-item ${router.pathname === "/cs" ? "active" : ""}`}
                 >
-                  CS
+                  {t("nav.cs")}
                 </div>
               </Link>
               <Box>
@@ -338,7 +385,9 @@ const Top = () => {
                   alt={lang}
                 />
                 <Typography className="lang-switcher-label">
-                  {lang === "en" ? "EN" : "KO"}
+                  {lang === "en"
+                    ? t("language.enShort")
+                    : t("language.koShort")}
                 </Typography>
               </Box>
 
@@ -355,14 +404,11 @@ const Top = () => {
                 anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
                 MenuListProps={{ sx: { p: 0 } }}
               >
-                {(["en", "ko"] as const).map((l) => (
+                {locales.map((l) => (
                   <MenuItem
                     key={l}
                     selected={lang === l}
-                    onClick={() => {
-                      setLang(l);
-                      setLangAnchor(null);
-                    }}
+                    onClick={() => changeLanguage(l)}
                     className="lang-menu-item"
                   >
                     <img
@@ -371,7 +417,7 @@ const Top = () => {
                       height={13}
                       alt={l}
                     />
-                    {l === "en" ? "English" : "한국어"}
+                    {t(`language.${l}`)}
                   </MenuItem>
                 ))}
               </Menu>
@@ -524,7 +570,7 @@ const Top = () => {
                         }}
                       >
                         <PersonOutlineIcon className="menu-icon" />
-                        My Page
+                        {t("nav.myPage")}
                       </MenuItem>
 
                       <Divider
@@ -553,7 +599,7 @@ const Top = () => {
                         }}
                       >
                         <Logout sx={{ fontSize: "20px", color: "#dc2626" }} />
-                        Logout
+                        {t("auth.logout")}
                       </MenuItem>
                     </Box>
                   </Menu>
@@ -561,7 +607,7 @@ const Top = () => {
               ) : (
                 <div className={"join-box"} onClick={handleLoginOpen}>
                   <AccountCircleOutlinedIcon />
-                  <span>Login / Sign Up</span>
+                  <span>{t("auth.login")}</span>
                 </div>
               )}
             </Box>

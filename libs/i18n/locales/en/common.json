@@ -1,0 +1,138 @@
+{
+  "nav": {
+    "home": "Home",
+    "service": "Service",
+    "agents": "Agents",
+    "shop": "Shop",
+    "community": "Community",
+    "myPage": "My Page",
+    "cs": "CS",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "auth": {
+    "login": "Login / Sign Up",
+    "logout": "Logout",
+    "loginShort": "Login"
+  },
+  "member": {
+    "fallbackName": "Member",
+    "typeAgent": "Service Agent",
+    "typeAdmin": "Admin",
+    "typeUser": "User"
+  },
+  "language": {
+    "en": "English",
+    "ko": "한국어",
+    "enShort": "EN",
+    "koShort": "KO"
+  },
+  "actions": {
+    "readMore": "Read More"
+  },
+  "list": {
+    "filters": "Filters",
+    "searchHere": "Search here",
+    "searchAgents": "Search agents..."
+  },
+  "sort": {
+    "new": "New",
+    "newest": "Newest",
+    "rating": "Highest rating",
+    "ratingCap": "Highest Rating",
+    "liked": "Most Liked",
+    "viewed": "Most Viewed",
+    "bestSelling": "Best selling",
+    "priceAsc": "Price: Low to High",
+    "priceDesc": "Price: High to Low"
+  },
+  "enums": {
+    "serviceType": {
+      "DAY_CARE": "Day Care",
+      "WALKING": "Walking",
+      "GROOMING": "Grooming",
+      "BOARDING": "Boarding",
+      "TRAINING": "Training",
+      "VETERINARY": "Veterinary"
+    },
+    "serviceLocation": {
+      "SEOUL": "Seoul",
+      "BUSAN": "Busan",
+      "INCHEON": "Incheon",
+      "DAEGU": "Daegu",
+      "SUWON": "Suwon",
+      "GYEONGJU": "Gyeongju",
+      "GWANGJU": "Gwangju",
+      "JEONJU": "Jeonju",
+      "DAEJEON": "Daejeon",
+      "JEJU": "Jeju"
+    },
+    "productType": {
+      "FOOD": "Foods",
+      "TOY": "Toys",
+      "CLOTHES": "Clothes",
+      "HEALTH": "Health",
+      "ACCESSORIES": "Accessories",
+      "OTHER": "Other"
+    },
+    "productPetType": {
+      "DOG": "Dogs",
+      "CAT": "Cats",
+      "RABBIT": "Rabbits",
+      "BIRD": "Birds",
+      "HAMSTER": "Hamsters",
+      "OTHER": "Other"
+    }
+  },
+  "backToTop": "Back to top",
+  "footer": {
+    "about": "Welcome to Cuddle & Care Pets! We provide quality pet products, grooming, and care advice for your furry friends.",
+    "navbar": "Navbar",
+    "enjoy": "Enjoy Our Services!"
+  },
+  "contact": {
+    "title": "CONTACT WITH US",
+    "fullName": "Full Name",
+    "phoneNumber": "Phone Number",
+    "email": "Email",
+    "message": "Message",
+    "submit": "Submit",
+    "refresh": "Refresh"
+  },
+  "basket": {
+    "title": "Your Basket",
+    "clearAll": "Clear all",
+    "empty": "Your basket is empty",
+    "emptyDesc": "Add items from the shop to get started",
+    "continueShopping": "Continue Shopping",
+    "subtotal": "Subtotal",
+    "delivery": "Delivery",
+    "free": "Free",
+    "total": "Total",
+    "proceed": "Proceed to Order",
+    "aria": "cart",
+    "itemCount_one": "{{count}} item",
+    "itemCount_other": "{{count}} items"
+  },
+  "notif": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "caughtUp": "You're all caught up",
+    "caughtUpDesc": "Bookings and orders report back here.",
+    "seeAll": "See all notifications",
+    "viewRequest": "View request",
+    "viewBooking": "View booking",
+    "viewOrder": "View order",
+    "justNow": "Just now",
+    "now": "now"
+  },
+  "promo": {
+    "the": "The",
+    "summer": "Summer",
+    "sale": "Sale",
+    "saving": "save 20% off",
+    "title": "Pet food products",
+    "text": "Buy products for free pet checkup",
+    "cta": "shop now"
+  }
+}

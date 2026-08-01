@@ -1,8 +1,11 @@
 import { Box, Button, Link, Stack, Typography } from "@mui/material";
+import NextLink from "next/link";
+import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecordOutlined";
 
 const Footer = () => {
+  const { t } = useTranslation();
   const router = useRouter();
 
   return (
@@ -13,10 +16,7 @@ const Footer = () => {
             <img className="logo" src="/img/logo/Petora-logo.png" alt="" />
             <span className="logo-name">Petora</span>
           </Box>
-          <Box className={"text"}>
-            Welcome to Cuddle & Care Pets! We provide quality pet products,
-            grooming, and care advice for your furry friends.
-          </Box>
+          <Box className={"text"}>{t("footer.about")}</Box>
           <Stack className="contact-section">
             <Box className={"contact"}>
               <img src="/img/icons/Email.svg" alt="" />
@@ -138,53 +138,56 @@ const Footer = () => {
         </Stack>
 
         <Stack className={"footer-nav"}>
-          <Box className={"main-text"}>Navbar</Box>
+          <Box className={"main-text"}>{t("footer.navbar")}</Box>
           <Stack className="router-box">
             <Box className="left-box">
-              <Link href={"/"}>
+              <Link component={NextLink} href={"/"}>
                 <div className="navLink-text">
                   {" "}
                   <FiberManualRecordOutlinedIcon
                     style={{ fontSize: "12px" }}
                   />{" "}
-                  Home
+                  {t("nav.home")}
                 </div>
               </Link>
-              <Link href={"/service"}>
+              <Link component={NextLink} href={"/service"}>
                 <div className="navLink-text">
                   <FiberManualRecordOutlinedIcon style={{ fontSize: "12px" }} />{" "}
-                  Service
+                  {t("nav.service")}
                 </div>
               </Link>
-              <Link href={"/agents"}>
+              <Link component={NextLink} href={"/agents"}>
                 <div className="navLink-text">
                   <FiberManualRecordOutlinedIcon style={{ fontSize: "12px" }} />{" "}
-                  Agents
+                  {t("nav.agents")}
                 </div>
               </Link>
             </Box>
             <Box className={"right-box"}>
-              <Link href={"/shop"}>
+              <Link component={NextLink} href={"/shop"}>
                 <div className="navLink-text">
                   <FiberManualRecordOutlinedIcon style={{ fontSize: "12px" }} />{" "}
-                  Shop
+                  {t("nav.shop")}
                 </div>
               </Link>
-              <Link href={"/community?articleCategory=FREE"}>
+              <Link
+                component={NextLink}
+                href={"/community?articleCategory=FREE"}
+              >
                 <div className="navLink-text">
                   <FiberManualRecordOutlinedIcon style={{ fontSize: "12px" }} />{" "}
-                  Community
+                  {t("nav.community")}
                 </div>
               </Link>
-              <Link href={"/cs"}>
+              <Link component={NextLink} href={"/cs"}>
                 <div className="navLink-text">
                   <FiberManualRecordOutlinedIcon style={{ fontSize: "12px" }} />{" "}
-                  CS
+                  {t("nav.cs")}
                 </div>
               </Link>
             </Box>
           </Stack>
-          <Box className={"enjoy-text"}>Enjoy Our Services!</Box>
+          <Box className={"enjoy-text"}>{t("footer.enjoy")}</Box>
         </Stack>
         <img className="union1" src="/img/icons/Footer-union.svg" alt="" />
         <img className="union2" src="/img/icons/Footer-union.png" alt="" />
