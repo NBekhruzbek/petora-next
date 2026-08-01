@@ -82,13 +82,6 @@ const emptyForm: ServiceForm = {
   servicePrice: "",
 };
 
-const prettifyEnum = (value?: string) =>
-  (value ?? "")
-    .split("_")
-    .filter(Boolean)
-    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(" ");
-
 const withThousands = (value: string) =>
   value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
@@ -385,7 +378,7 @@ const MyServicesTab = () => {
           </MenuItem>
           {SERVICE_TYPES.map((type) => (
             <MenuItem key={type} value={type} sx={{ color: "#000 !important" }}>
-              {prettifyEnum(type)}
+              {t(`enums.serviceType.${type}`)}
             </MenuItem>
           ))}
         </TextField>
@@ -465,7 +458,7 @@ const MyServicesTab = () => {
                   {service.serviceDescription}
                 </Typography>
                 <Typography className="agent-service-type">
-                  {prettifyEnum(service.serviceType)} ·{" "}
+                  {t(`enums.serviceType.${service.serviceType}`)} ·{" "}
                   {formatDuration(service.serviceDurationMinutes)}
                 </Typography>
               </Stack>
@@ -616,7 +609,7 @@ const MyServicesTab = () => {
               >
                 {SERVICE_TYPES.map((type) => (
                   <MenuItem key={type} value={type}>
-                    {prettifyEnum(type)}
+                    {t(`enums.serviceType.${type}`)}
                   </MenuItem>
                 ))}
               </TextField>
@@ -636,7 +629,7 @@ const MyServicesTab = () => {
               >
                 {SERVICE_LOCATIONS.map((location) => (
                   <MenuItem key={location} value={location}>
-                    {prettifyEnum(location)}
+                    {t(`enums.serviceLocation.${location}`)}
                   </MenuItem>
                 ))}
               </TextField>

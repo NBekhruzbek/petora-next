@@ -241,25 +241,6 @@
       "hourMin": "{{h}} h {{m}} min"
     },
     "delete": "Delete",
-    "status": {
-      "ACTIVE": "Active",
-      "BLOCK": "Blocked",
-      "DELETE": "Deleted",
-      "PAUSE": "Paused",
-      "HIDE": "Hidden",
-      "PROCESSED": "Processed",
-      "SHIPPED": "Shipped",
-      "EN_ROUTE": "En route",
-      "ARRIVED": "Arrived",
-      "CANCELLED": "Cancelled",
-      "PENDING": "Pending",
-      "CONFIRMED": "Confirmed",
-      "COMPLETED": "Completed",
-      "REJECTED": "Rejected",
-      "UNPAID": "Unpaid",
-      "PAID": "Paid",
-      "REFUNDED": "Refunded"
-    },
     "act": {
       "details": "Details",
       "edit": "Edit",
@@ -282,10 +263,6 @@
       "FREE": "Free",
       "NEWS": "News",
       "QNA": "Q&A"
-    },
-    "payment": {
-      "CARD": "Card",
-      "CASH_TO_DELIVERY": "Cash on delivery"
     },
     "upload": {
       "uploadCta": "Click to upload or drag & drop",

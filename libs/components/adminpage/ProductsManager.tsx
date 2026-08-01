@@ -540,24 +540,28 @@ const ProductsManager = () => {
                         size="small"
                         renderValue={(val) => (
                           <span className={statusChipClass(val as string)}>
-                            {t(`admin.status.${val}`)}
+                            {t(`enums.status.${val}`)}
                           </span>
                         )}
                         className="admin-status-select"
                       >
                         {STATUS_OPTIONS.map((s) => (
                           <MenuItem key={s} value={s}>
-                            <span className={statusChipClass(s)}>{s}</span>
+                            <span className={statusChipClass(s)}>
+                              {t(`enums.status.${s}`)}
+                            </span>
                           </MenuItem>
                         ))}
                         {/* Only the current value of an already-retired row —
                             picking Active or Pause above restores it. */}
                         {isRetired && (
-                          <MenuItem value={ProductStatus.DELETE}>
+                          <MenuItem
+                            value={t(`enums.status.${ProductStatus.DELETE}`)}
+                          >
                             <span
                               className={statusChipClass(ProductStatus.DELETE)}
                             >
-                              {ProductStatus.DELETE}
+                              {t(`enums.status.${ProductStatus.DELETE}`)}
                             </span>
                           </MenuItem>
                         )}
@@ -900,7 +904,7 @@ const ProductsManager = () => {
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
-                      {t(`admin.status.${s}`)}
+                      {t(`enums.status.${s}`)}
                     </MenuItem>
                   ))}
                 </Select>

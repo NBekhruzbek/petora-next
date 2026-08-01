@@ -166,13 +166,6 @@ const bookingStatusClass: Record<string, string> = {
   [BookingStatus.REJECTED]: "rejected",
 };
 
-const prettifyEnum = (value?: string) =>
-  (value ?? "")
-    .split("_")
-    .filter(Boolean)
-    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(" ");
-
 const formatWon = (value: number) => `₩${(value ?? 0).toLocaleString()}`;
 
 const formatDate = (value: Date | string | undefined, locale: string) =>
@@ -400,7 +393,7 @@ const BookingsOrders = () => {
               const statusClass = order.orderStatus
                 .toLowerCase()
                 .replace(/_/g, "-");
-              const statusLabel = prettifyEnum(order.orderStatus);
+              const statusLabel = t(`enums.status.${order.orderStatus}`);
 
               return (
                 <Stack
@@ -503,10 +496,12 @@ const BookingsOrders = () => {
                               className="order-product-meta"
                             >
                               <Typography className="product-meta-item">
-                                {prettifyEnum(product?.productPetType)}
+                                {t(
+                                  `enums.productPetType.${product?.productPetType}`,
+                                )}
                               </Typography>
                               <Typography className="product-meta-categories">
-                                {prettifyEnum(product?.productType)}
+                                {t(`enums.productType.${product?.productType}`)}
                               </Typography>
                             </Stack>
                           </Stack>
@@ -646,7 +641,7 @@ const BookingsOrders = () => {
                       {booking.bookingNote || "No additional request"}
                     </Typography>
                     <Typography className="agent-service-type">
-                      {prettifyEnum(service?.serviceType)} ·{" "}
+                      {t(`enums.serviceType.${service?.serviceType}`)} ·{" "}
                       {booking.bookingPetName}
                     </Typography>
                   </Stack>

@@ -503,24 +503,28 @@ const ServicesManager = () => {
                         size="small"
                         renderValue={(val) => (
                           <span className={statusChipClass(val as string)}>
-                            {t(`admin.status.${val}`)}
+                            {t(`enums.status.${val}`)}
                           </span>
                         )}
                         className="admin-status-select"
                       >
                         {STATUS_OPTIONS.map((s) => (
                           <MenuItem key={s} value={s}>
-                            <span className={statusChipClass(s)}>{s}</span>
+                            <span className={statusChipClass(s)}>
+                              {t(`enums.status.${s}`)}
+                            </span>
                           </MenuItem>
                         ))}
                         {/* Only the current value of an already-retired row —
                             picking Active or Pause above restores it. */}
                         {isRetired && (
-                          <MenuItem value={ServiceStatus.DELETE}>
+                          <MenuItem
+                            value={t(`enums.status.${ServiceStatus.DELETE}`)}
+                          >
                             <span
                               className={statusChipClass(ServiceStatus.DELETE)}
                             >
-                              {ServiceStatus.DELETE}
+                              {t(`enums.status.${ServiceStatus.DELETE}`)}
                             </span>
                           </MenuItem>
                         )}
@@ -844,7 +848,7 @@ const ServicesManager = () => {
                 fullWidth
                 renderValue={(val) => (
                   <span className={statusChipClass(val as string)}>
-                    {t(`admin.status.${val}`)}
+                    {t(`enums.status.${val}`)}
                   </span>
                 )}
                 className="admin-svc-select"
@@ -852,7 +856,7 @@ const ServicesManager = () => {
                 {STATUS_OPTIONS.map((s) => (
                   <MenuItem key={s} value={s}>
                     <span className={statusChipClass(s)}>
-                      {t(`admin.status.${s}`)}
+                      {t(`enums.status.${s}`)}
                     </span>
                   </MenuItem>
                 ))}

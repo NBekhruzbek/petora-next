@@ -78,13 +78,6 @@ interface ProfileForm {
 const SERVICE_TYPE_OPTIONS = Object.values(ServiceType);
 const SERVICE_AREA_OPTIONS = Object.values(ServiceLocation);
 
-const prettifyEnum = (value?: string) =>
-  (value ?? "")
-    .split("_")
-    .filter(Boolean)
-    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(" ");
-
 const emptyForm: ProfileForm = {
   memberFullName: "",
   memberUserName: "",
@@ -365,11 +358,15 @@ const PersonalInfo = ({
     </Stack>
   );
 
+  // Options come from two different enums, so the caller says which
+  // namespace its values live in rather than title-casing them.
   const MultiSelectField = ({
+    enumNs,
     options,
     selected,
     onChange,
   }: {
+    enumNs: "serviceType" | "serviceLocation";
     options: string[];
     selected: string[];
     onChange: (values: string[]) => void;
@@ -390,7 +387,7 @@ const PersonalInfo = ({
               </Typography>
             ) : (
               <Typography className="multi-select-value">
-                {sel.map(prettifyEnum).join(", ")}
+                {sel.map((v) => t(`enums.${enumNs}.${v}`)).join(", ")}
               </Typography>
             )
           }
@@ -402,7 +399,7 @@ const PersonalInfo = ({
                 checked={selected.includes(option)}
                 className="multi-select-checkbox"
               />
-              <Typography>{prettifyEnum(option)}</Typography>
+              <Typography>{t(`enums.${enumNs}.${option}`)}</Typography>
             </MenuItem>
           ))}
         </Select>
@@ -411,7 +408,7 @@ const PersonalInfo = ({
       <TextField
         fullWidth
         disabled
-        value={selected.map(prettifyEnum).join(", ") || "—"}
+        value={selected.map((v) => t(`enums.${enumNs}.${v}`)).join(", ") || "—"}
         sx={fieldBorderStyles}
       />
     );
@@ -631,6 +628,7 @@ const PersonalInfo = ({
                     label={t("mypage.personal.serviceType")}
                   />
                   <MultiSelectField
+                    enumNs="serviceType"
                     options={SERVICE_TYPE_OPTIONS}
                     selected={form.memberServiceTypes}
                     onChange={(values) =>
@@ -713,6 +711,7 @@ const PersonalInfo = ({
                     label={t("mypage.personal.serviceArea")}
                   />
                   <MultiSelectField
+                    enumNs="serviceLocation"
                     options={SERVICE_AREA_OPTIONS}
                     selected={form.memberServiceArea}
                     onChange={(values) =>

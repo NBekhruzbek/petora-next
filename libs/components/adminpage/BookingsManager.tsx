@@ -195,14 +195,14 @@ const BookingsManager = () => {
       size="small"
       renderValue={(val) => (
         <span className={statusChipClass(val as string)}>
-          {t(`admin.status.${val}`)}
+          {t(`enums.status.${val}`)}
         </span>
       )}
       className="admin-status-select"
     >
       {STATUS_OPTIONS.map((s) => (
         <MenuItem key={s} value={s}>
-          <span className={statusChipClass(s)}>{t(`admin.status.${s}`)}</span>
+          <span className={statusChipClass(s)}>{t(`enums.status.${s}`)}</span>
         </MenuItem>
       ))}
     </Select>
@@ -243,7 +243,7 @@ const BookingsManager = () => {
             <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {t(`admin.status.${s}`)}
+                {t(`enums.status.${s}`)}
               </MenuItem>
             ))}
           </Select>
@@ -357,7 +357,7 @@ const BookingsManager = () => {
                         <span
                           className={`status-chip status-${booking.bookingPaymentStatus.toLowerCase()} admin-bkg-pay-chip`}
                         >
-                          {t(`admin.status.${booking.bookingPaymentStatus}`)}
+                          {t(`enums.status.${booking.bookingPaymentStatus}`)}
                         </span>
                       </Stack>
                     </TableCell>
@@ -563,7 +563,7 @@ const BookingsManager = () => {
                     },
                     {
                       labelKey: "admin.bookings.payment",
-                      value: t(`admin.status.${selected.bookingPaymentStatus}`),
+                      value: t(`enums.status.${selected.bookingPaymentStatus}`),
                     },
                   ].map(({ labelKey, value }) => (
                     <Stack

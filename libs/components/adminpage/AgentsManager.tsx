@@ -303,7 +303,7 @@ const AgentsManager = () => {
             <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {t(`admin.status.${s}`)}
+                {t(`enums.status.${s}`)}
               </MenuItem>
             ))}
           </Select>
@@ -388,14 +388,16 @@ const AgentsManager = () => {
                       size="small"
                       renderValue={(val) => (
                         <span className={statusChipClass(val as string)}>
-                          {t(`admin.status.${val}`)}
+                          {t(`enums.status.${val}`)}
                         </span>
                       )}
                       className="admin-status-select"
                     >
                       {STATUS_OPTIONS.map((s) => (
                         <MenuItem key={s} value={s}>
-                          <span className={statusChipClass(s)}>{s}</span>
+                          <span className={statusChipClass(s)}>
+                            {t(`enums.status.${s}`)}
+                          </span>
                         </MenuItem>
                       ))}
                     </Select>
@@ -885,7 +887,7 @@ const AgentsManager = () => {
                         <Chip
                           key={value}
                           size="small"
-                          label={t(`enums.serviceType.${value}`)}
+                          label={t(`enums.serviceLocation.${value}`)}
                         />
                       ))}
                     </Stack>
@@ -917,7 +919,7 @@ const AgentsManager = () => {
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
-                      {t(`admin.status.${s}`)}
+                      {t(`enums.status.${s}`)}
                     </MenuItem>
                   ))}
                 </Select>

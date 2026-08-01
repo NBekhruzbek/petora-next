@@ -151,7 +151,7 @@ const UsersManager = () => {
             <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {t(`admin.status.${s}`)}
+                {t(`enums.status.${s}`)}
               </MenuItem>
             ))}
           </Select>
@@ -215,13 +215,15 @@ const UsersManager = () => {
                       className="admin-status-select"
                       renderValue={(val) => (
                         <span className={statusChipClass(val as string)}>
-                          {t(`admin.status.${val}`)}
+                          {t(`enums.status.${val}`)}
                         </span>
                       )}
                     >
                       {STATUS_OPTIONS.map((s) => (
                         <MenuItem key={s} value={s}>
-                          <span className={statusChipClass(s)}>{s}</span>
+                          <span className={statusChipClass(s)}>
+                            {t(`enums.status.${s}`)}
+                          </span>
                         </MenuItem>
                       ))}
                     </Select>

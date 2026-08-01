@@ -174,7 +174,7 @@ const OrdersManager = () => {
             <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {t(`admin.status.${s}`)}
+                {t(`enums.status.${s}`)}
               </MenuItem>
             ))}
           </Select>
@@ -231,7 +231,7 @@ const OrdersManager = () => {
                         size="small"
                         renderValue={(val) => (
                           <span className={statusChipClass(val as string)}>
-                            {t(`admin.status.${val}`)}
+                            {t(`enums.status.${val}`)}
                           </span>
                         )}
                         className="admin-status-select"
@@ -239,7 +239,7 @@ const OrdersManager = () => {
                         {STATUS_OPTIONS.map((s) => (
                           <MenuItem key={s} value={s}>
                             <span className={statusChipClass(s)}>
-                              {t(`admin.status.${s}`)}
+                              {t(`enums.status.${s}`)}
                             </span>
                           </MenuItem>
                         ))}
@@ -349,7 +349,7 @@ const OrdersManager = () => {
                   size="small"
                   renderValue={(val) => (
                     <span className={statusChipClass(val as string)}>
-                      {t(`admin.status.${val}`)}
+                      {t(`enums.status.${val}`)}
                     </span>
                   )}
                   className="admin-ord-status-select"
@@ -357,7 +357,7 @@ const OrdersManager = () => {
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
                       <span className={statusChipClass(s)}>
-                        {t(`admin.status.${s}`)}
+                        {t(`enums.status.${s}`)}
                       </span>
                     </MenuItem>
                   ))}
@@ -417,7 +417,7 @@ const OrdersManager = () => {
                     },
                     {
                       labelKey: "admin.orders.payment",
-                      value: t(`admin.payment.${selectedOrder.paymentMethod}`),
+                      value: t(`enums.payment.${selectedOrder.paymentMethod}`),
                     },
                     {
                       labelKey: "admin.orders.deliveryFee",
