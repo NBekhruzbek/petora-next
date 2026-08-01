@@ -1,17 +1,20 @@
 import { Box, Stack } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const ShopHeader = () => {
+  const { t } = useTranslation();
+
   return (
     <Stack className="container">
       <Stack className="shop-top">
         <Stack className="text-area">
           <Box className={"text1"}>
-            The most popular products{" "}
+            {t("headers.shop.title")}{" "}
             <span>
               <img className="hand-icon" src="/img/logo/Union.svg" alt="" />
             </span>
           </Box>
-          <Box className={"text2"}>Shop everything what you want!</Box>
+          <Box className={"text2"}>{t("headers.shop.subtitle")}</Box>
           <Box className={"text3"}></Box>
         </Stack>
         <Box>

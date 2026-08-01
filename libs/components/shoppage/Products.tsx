@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   ChangeEvent,
   SyntheticEvent,
@@ -36,70 +37,70 @@ import { Messages } from "@/libs/config";
 import { sweetMixinErrorAlert } from "@/libs/sweetAlert";
 
 type SortOption =
-  | "new"
-  | "rating"
-  | "most-liked"
-  | "sold"
-  | "price-low"
-  | "price-high";
+  "new" | "rating" | "most-liked" | "sold" | "price-low" | "price-high";
 
 // The API only accepts these sort keys (createdAt, productRating, productRank,
 // productLikes, productSoldTimes, productPriceAfterDiscount).
 const SORT_OPTIONS: {
   value: SortOption;
-  label: string;
+  labelKey: string;
   sort: string;
   direction: Direction;
 }[] = [
-  { value: "new", label: "New", sort: "createdAt", direction: Direction.DESC },
+  {
+    value: "new",
+    labelKey: "sort.new",
+    sort: "createdAt",
+    direction: Direction.DESC,
+  },
   {
     value: "rating",
-    label: "Highest rating",
+    labelKey: "sort.rating",
     sort: "productRating",
     direction: Direction.DESC,
   },
   {
     value: "most-liked",
-    label: "Most Liked",
+    labelKey: "sort.liked",
     sort: "productLikes",
     direction: Direction.DESC,
   },
   {
     value: "sold",
-    label: "Best selling",
+    labelKey: "sort.bestSelling",
     sort: "productSoldTimes",
     direction: Direction.DESC,
   },
   {
     value: "price-low",
-    label: "Price: Low to High",
+    labelKey: "sort.priceAsc",
     sort: "productPriceAfterDiscount",
     direction: Direction.ASC,
   },
   {
     value: "price-high",
-    label: "Price: High to Low",
+    labelKey: "sort.priceDesc",
     sort: "productPriceAfterDiscount",
     direction: Direction.DESC,
   },
 ];
 
-const PET_TYPE_OPTIONS: { label: string; value: ProductPetType }[] = [
-  { label: "Dogs", value: ProductPetType.DOG },
-  { label: "Cats", value: ProductPetType.CAT },
-  { label: "Rabbits", value: ProductPetType.RABBIT },
-  { label: "Birds", value: ProductPetType.BIRD },
-  { label: "Hamsters", value: ProductPetType.HAMSTER },
-  { label: "Other", value: ProductPetType.OTHER },
+const PET_TYPE_OPTIONS: { labelKey: string; value: ProductPetType }[] = [
+  { labelKey: "enums.productPetType.DOG", value: ProductPetType.DOG },
+  { labelKey: "enums.productPetType.CAT", value: ProductPetType.CAT },
+  { labelKey: "enums.productPetType.RABBIT", value: ProductPetType.RABBIT },
+  { labelKey: "enums.productPetType.BIRD", value: ProductPetType.BIRD },
+  { labelKey: "enums.productPetType.HAMSTER", value: ProductPetType.HAMSTER },
+  { labelKey: "enums.productPetType.OTHER", value: ProductPetType.OTHER },
 ];
 
-const CATEGORY_OPTIONS: { label: string; value: ProductType }[] = [
-  { label: "Foods", value: ProductType.FOOD },
-  { label: "Toys", value: ProductType.TOY },
-  { label: "Clothes", value: ProductType.CLOTHES },
-  { label: "Health", value: ProductType.HEALTH },
-  { label: "Accessories", value: ProductType.ACCESSORIES },
-  { label: "Other", value: ProductType.OTHER },
+const CATEGORY_OPTIONS: { labelKey: string; value: ProductType }[] = [
+  { labelKey: "enums.productType.FOOD", value: ProductType.FOOD },
+  { labelKey: "enums.productType.TOY", value: ProductType.TOY },
+  { labelKey: "enums.productType.CLOTHES", value: ProductType.CLOTHES },
+  { labelKey: "enums.productType.HEALTH", value: ProductType.HEALTH },
+  { labelKey: "enums.productType.ACCESSORIES", value: ProductType.ACCESSORIES },
+  { labelKey: "enums.productType.OTHER", value: ProductType.OTHER },
 ];
 
 // Prices are stored in won, and priceRange matches against the discounted
@@ -126,6 +127,7 @@ interface ProductsProps {
 const Products = ({
   initialInput: propInput = initialInput,
 }: ProductsProps) => {
+  const { t } = useTranslation();
   const device = useDeviceDetect();
   const user = useReactiveVar(userVar);
 
@@ -334,7 +336,7 @@ const Products = ({
     <>
       <Box className="search-box">
         <Input
-          placeholder="Search here"
+          placeholder={t("list.searchHere")}
           disableUnderline
           className="text-field"
           value={searchText}
@@ -415,7 +417,7 @@ const Products = ({
             >
               <Box className="category-checkbox" aria-hidden="true" />
               <Typography className="category-label">
-                {petType.label}
+                {t(petType.labelKey)}
               </Typography>
             </Stack>
           ))}
@@ -455,7 +457,7 @@ const Products = ({
             >
               <Box className="category-checkbox" aria-hidden="true" />
               <Typography className="category-label">
-                {category.label}
+                {t(category.labelKey)}
               </Typography>
             </Stack>
           ))}
@@ -500,7 +502,7 @@ const Products = ({
               onClick={() => setIsFilterDrawerOpen(true)}
             >
               <FilterListIcon fontSize="small" />
-              Filters
+              {t("list.filters")}
               {activeFilterCount > 0 && (
                 <Box className="mobile-filter-trigger-count">
                   {activeFilterCount}
@@ -527,7 +529,7 @@ const Products = ({
               >
                 {SORT_OPTIONS.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.labelKey)}
                   </MenuItem>
                 ))}
               </Select>
