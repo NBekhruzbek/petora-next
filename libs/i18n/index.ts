@@ -7,6 +7,7 @@ import enService from "./locales/en/service.json";
 import enShop from "./locales/en/shop.json";
 import enAgents from "./locales/en/agents.json";
 import enCommunity from "./locales/en/community.json";
+import enCs from "./locales/en/cs.json";
 
 import koCommon from "./locales/ko/common.json";
 import koHome from "./locales/ko/home.json";
@@ -14,6 +15,7 @@ import koService from "./locales/ko/service.json";
 import koShop from "./locales/ko/shop.json";
 import koAgents from "./locales/ko/agents.json";
 import koCommunity from "./locales/ko/community.json";
+import koCs from "./locales/ko/cs.json";
 
 export const locales = ["en", "ko"] as const;
 export type AppLocale = (typeof locales)[number];
@@ -46,10 +48,26 @@ const merge = (...parts: Tree[]): Tree =>
 // existing prefixes (home.*, mypage.*, …) so components are unaffected.
 const resources = {
   en: {
-    common: merge(enCommon, enHome, enService, enShop, enAgents, enCommunity),
+    common: merge(
+      enCommon,
+      enHome,
+      enService,
+      enShop,
+      enAgents,
+      enCommunity,
+      enCs,
+    ),
   },
   ko: {
-    common: merge(koCommon, koHome, koService, koShop, koAgents, koCommunity),
+    common: merge(
+      koCommon,
+      koHome,
+      koService,
+      koShop,
+      koAgents,
+      koCommunity,
+      koCs,
+    ),
   },
 };
 

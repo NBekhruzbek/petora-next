@@ -1,0 +1,39 @@
+{
+  "cs": {
+    "cat": {
+      "ORDERS_PAYMENTS": "Orders & Payments",
+      "DELIVERY_TRACKING": "Delivery & Tracking",
+      "RETURNS_REFUNDS": "Returns & Refunds",
+      "ACCOUNT_SECURITY": "Account & Security",
+      "PET_SERVICES": "Pet Services",
+      "NOTICES": "Notices"
+    },
+    "noticeType": {
+      "IMPORTANT": "Important",
+      "UPDATE": "Update",
+      "EVENT": "Event",
+      "ANNOUNCEMENT": "Announcement"
+    },
+    "noticesChip": "Notices",
+    "noticesPlaceholder": "Petora announcements will appear here.",
+    "popularQuestions": "Popular Questions",
+    "loadingFaqs": "Loading help topics…",
+    "loadingFaqsDesc": "Fetching the latest answers for this category.",
+    "helpful": "We hope this was helpful!",
+    "noFaqs": "No help topics here just yet.",
+    "noFaqsDesc": "We have not published answers for this category. Try another topic on the left, or reach us through the contact form right below this section.",
+    "noticesTitle": "Notices",
+    "noticeResults": "Total {{total}} notices, showing {{shown}} on this page",
+    "loadingNotices": "Loading notices…",
+    "loadingNoticesDesc": "Fetching the latest Petora announcements.",
+    "noNotices": "No notices published yet."
+  },
+  "headers": {
+    "cs": {
+      "titleLead": "Need help? We've got you",
+      "titleAccent": "covered 24/7",
+      "subtitle": "Get support for your orders, pets, or account. Our team is always ready to assist you.",
+      "supportPill": "24/7 Support"
+    }
+  }
+}

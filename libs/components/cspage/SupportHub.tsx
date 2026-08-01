@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import { useIntlLocale } from "@/libs/i18n/format";
 import { Box, Pagination, Stack } from "@mui/material";
 import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
@@ -28,37 +30,41 @@ type CategoryId = FaqType | typeof NOTICES_TAB;
 
 interface CategoryItem {
   id: CategoryId;
-  label: string;
+  labelKey: string;
   icon: ComponentType<{ className?: string }>;
 }
 
 const categories: CategoryItem[] = [
   {
     id: FaqType.ORDERS_PAYMENTS,
-    label: "Orders & Payments",
+    labelKey: "cs.cat.ORDERS_PAYMENTS",
     icon: Inventory2OutlinedIcon,
   },
   {
     id: FaqType.DELIVERY_TRACKING,
-    label: "Delivery & Tracking",
+    labelKey: "cs.cat.DELIVERY_TRACKING",
     icon: LocalShippingOutlinedIcon,
   },
   {
     id: FaqType.RETURNS_REFUNDS,
-    label: "Returns & Refunds",
+    labelKey: "cs.cat.RETURNS_REFUNDS",
     icon: ReplayOutlinedIcon,
   },
   {
     id: FaqType.ACCOUNT_SECURITY,
-    label: "Account & Security",
+    labelKey: "cs.cat.ACCOUNT_SECURITY",
     icon: ShieldOutlinedIcon,
   },
   {
     id: FaqType.PET_SERVICES,
-    label: "Pet Services",
+    labelKey: "cs.cat.PET_SERVICES",
     icon: PetsOutlinedIcon,
   },
-  { id: NOTICES_TAB, label: "Notices", icon: NotificationsOutlinedIcon },
+  {
+    id: NOTICES_TAB,
+    labelKey: "cs.cat.NOTICES",
+    icon: NotificationsOutlinedIcon,
+  },
 ];
 
 // The panel has no FAQ pager in the design, so one page holds every FAQ of a type.
@@ -114,8 +120,9 @@ const noticeParagraphs = (notice?: NoticeDetail) => {
   return lines.length ? lines : [notice?.noticeContent ?? ""].filter(Boolean);
 };
 
-const noticeBadgeLabel = (noticeType: string) =>
-  noticeType.charAt(0) + noticeType.slice(1).toLowerCase();
+// Was `noticeType.charAt(0) + slice(1).toLowerCase()` — title-casing the raw
+// enum value only ever produces English.
+const noticeBadgeKey = (noticeType: string) => `cs.noticeType.${noticeType}`;
 
 /**
  * Signed-in members get their read state from the server (`meViewed`, recorded by
@@ -146,12 +153,12 @@ const writeGuestViewedIds = (ids: string[]) => {
   }
 };
 
-const formatNoticeDate = (value?: Date | string) => {
+const formatNoticeDate = (value: Date | string | undefined, locale: string) => {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
 
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString(locale, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -159,6 +166,8 @@ const formatNoticeDate = (value?: Date | string) => {
 };
 
 const SupportHub = () => {
+  const { t } = useTranslation();
+  const intlLocale = useIntlLocale();
   const [activeCategory, setActiveCategory] = useState<CategoryId>(
     FaqType.ORDERS_PAYMENTS,
   );
@@ -276,7 +285,8 @@ const SupportHub = () => {
   // Members read from the server; guests fall back to what this browser remembers.
   const isNoticeRead = (notice: NoticeDetail) =>
     memberId
-      ? Boolean(notice.meViewed?.length) || sessionViewedIds.includes(notice._id)
+      ? Boolean(notice.meViewed?.length) ||
+        sessionViewedIds.includes(notice._id)
       : guestViewedIds.includes(notice._id);
 
   const serverUnviewedCount: number =
@@ -385,7 +395,7 @@ const SupportHub = () => {
           onClick={moveToNotices}
         >
           <Stack className="notice-chip" direction="row">
-            <Box className="notice-chip-label">Notices</Box>
+            <Box className="notice-chip-label">{t("cs.noticesChip")}</Box>
             <Box className="notice-chip-count">{unviewedNoticeCount}</Box>
           </Stack>
           <Box className="notice-icon-wrap">
@@ -394,13 +404,13 @@ const SupportHub = () => {
           <Stack className="notice-copy">
             <Box className="title">
               {latestNotice
-                ? noticeBadgeLabel(latestNotice.noticeType)
-                : "Notices"}
+                ? t(noticeBadgeKey(latestNotice.noticeType))
+                : t("cs.noticesChip")}
             </Box>
             <Box className="summary">
               {latestNotice
                 ? latestNotice.noticeTitle
-                : "Petora announcements will appear here."}
+                : t("cs.noticesPlaceholder")}
             </Box>
           </Stack>
           <Box className="notice-cta">
@@ -423,7 +433,7 @@ const SupportHub = () => {
                     onClick={() => handleCategorySelect(category.id)}
                   >
                     <Icon className="sidebar-icon" />
-                    <span>{category.label}</span>
+                    <span>{t(category.labelKey)}</span>
                   </button>
                 );
               })}
@@ -434,15 +444,13 @@ const SupportHub = () => {
             {!isNoticeView ? (
               <>
                 <Stack className="panel-head" direction="row">
-                  <Box className="panel-title">Popular Questions</Box>
+                  <Box className="panel-title">{t("cs.popularQuestions")}</Box>
                 </Stack>
 
                 {faqsPending ? (
                   <Stack className="empty-state">
-                    <Box className="empty-title">Loading help topics…</Box>
-                    <Box className="empty-copy">
-                      Fetching the latest answers for this category.
-                    </Box>
+                    <Box className="empty-title">{t("cs.loadingFaqs")}</Box>
+                    <Box className="empty-copy">{t("cs.loadingFaqsDesc")}</Box>
                   </Stack>
                 ) : faqs.length ? (
                   <Box className="faq-grid">
@@ -506,7 +514,7 @@ const SupportHub = () => {
                                 onClick={(event) => event.stopPropagation()}
                               >
                                 <Box className="feedback-label">
-                                  We home this was helpful!
+                                  {t("cs.helpful")}
                                 </Box>
                                 <button
                                   type="button"
@@ -524,14 +532,8 @@ const SupportHub = () => {
                   </Box>
                 ) : (
                   <Stack className="empty-state">
-                    <Box className="empty-title">
-                      No help topics here just yet.
-                    </Box>
-                    <Box className="empty-copy">
-                      We have not published answers for this category. Try
-                      another topic on the left, or reach us through the contact
-                      form right below this section.
-                    </Box>
+                    <Box className="empty-title">{t("cs.noFaqs")}</Box>
+                    <Box className="empty-copy">{t("cs.noFaqsDesc")}</Box>
                   </Stack>
                 )}
               </>
@@ -539,19 +541,21 @@ const SupportHub = () => {
               <>
                 <Stack className="panel-head notice-head" direction="row">
                   <Stack className="notice-head-copy" ref={noticeTopRef}>
-                    <Box className="panel-title">Notices</Box>
+                    <Box className="panel-title">{t("cs.noticesTitle")}</Box>
                     <Box className="notice-results">
-                      Total {pagedNoticeTotal} notices, showing {notices.length}{" "}
-                      on this page
+                      {t("cs.noticeResults", {
+                        total: pagedNoticeTotal,
+                        shown: notices.length,
+                      })}
                     </Box>
                   </Stack>
                 </Stack>
 
                 {noticesPending ? (
                   <Stack className="empty-state">
-                    <Box className="empty-title">Loading notices…</Box>
+                    <Box className="empty-title">{t("cs.loadingNotices")}</Box>
                     <Box className="empty-copy">
-                      Fetching the latest Petora announcements.
+                      {t("cs.loadingNoticesDesc")}
                     </Box>
                   </Stack>
                 ) : notices.length ? (
@@ -570,12 +574,12 @@ const SupportHub = () => {
                           <Stack className="notice-body">
                             <Stack className="notice-meta" direction="row">
                               <Box className="notice-date">
-                                {formatNoticeDate(notice.createdAt)}
+                                {formatNoticeDate(notice.createdAt, intlLocale)}
                               </Box>
                               <Box
                                 className={`notice-badge ${notice.noticeType.toLowerCase()}`}
                               >
-                                {noticeBadgeLabel(notice.noticeType)}
+                                {t(noticeBadgeKey(notice.noticeType))}
                               </Box>
                             </Stack>
                             <Box className="notice-title">
@@ -607,7 +611,7 @@ const SupportHub = () => {
                   </>
                 ) : (
                   <Stack className="empty-state">
-                    <Box className="empty-title">No notices published yet.</Box>
+                    <Box className="empty-title">{t("cs.noNotices")}</Box>
                     <Box className="empty-copy">
                       Service updates, delivery notices, and announcements will
                       show up here as soon as the Petora team posts them.
@@ -639,11 +643,11 @@ const SupportHub = () => {
             </button>
 
             <Box className={modalNotice.noticeType.toLowerCase()}>
-              {noticeBadgeLabel(modalNotice.noticeType)}
+              {t(noticeBadgeKey(modalNotice.noticeType))}
             </Box>
             <Box className="modal-title">{modalNotice.noticeTitle}</Box>
             <Box className="modal-date">
-              {formatNoticeDate(modalNotice.createdAt)}
+              {formatNoticeDate(modalNotice.createdAt, intlLocale)}
             </Box>
 
             <Stack className="modal-copy">

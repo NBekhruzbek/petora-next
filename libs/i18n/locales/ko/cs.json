@@ -1,0 +1,39 @@
+{
+  "cs": {
+    "cat": {
+      "ORDERS_PAYMENTS": "주문 · 결제",
+      "DELIVERY_TRACKING": "배송 조회",
+      "RETURNS_REFUNDS": "반품 · 환불",
+      "ACCOUNT_SECURITY": "계정 · 보안",
+      "PET_SERVICES": "반려동물 서비스",
+      "NOTICES": "공지사항"
+    },
+    "noticeType": {
+      "IMPORTANT": "중요",
+      "UPDATE": "업데이트",
+      "EVENT": "이벤트",
+      "ANNOUNCEMENT": "안내"
+    },
+    "noticesChip": "공지사항",
+    "noticesPlaceholder": "Petora 공지사항이 이곳에 표시됩니다.",
+    "popularQuestions": "자주 묻는 질문",
+    "loadingFaqs": "도움말을 불러오는 중…",
+    "loadingFaqsDesc": "이 카테고리의 최신 답변을 가져오고 있습니다.",
+    "helpful": "도움이 되셨나요?",
+    "noFaqs": "아직 등록된 도움말이 없습니다.",
+    "noFaqsDesc": "이 카테고리에는 아직 답변이 등록되지 않았습니다. 왼쪽에서 다른 주제를 선택하시거나, 아래 문의 양식으로 연락해 주세요.",
+    "noticesTitle": "공지사항",
+    "noticeResults": "전체 {{total}}건 중 {{shown}}건 표시",
+    "loadingNotices": "공지사항을 불러오는 중…",
+    "loadingNoticesDesc": "Petora의 최신 공지사항을 가져오고 있습니다.",
+    "noNotices": "등록된 공지사항이 없습니다."
+  },
+  "headers": {
+    "cs": {
+      "titleLead": "도움이 필요하신가요?",
+      "titleAccent": "연중무휴 24시간 지원",
+      "subtitle": "주문, 반려동물, 계정에 대한 지원을 받아보세요. 저희 팀이 언제나 도와드립니다.",
+      "supportPill": "24시간 지원"
+    }
+  }
+}
