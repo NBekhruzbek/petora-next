@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -119,6 +120,7 @@ const fieldSx = {
 };
 
 const CheckoutPage: NextPage = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const [placed, setPlaced] = useState(false);
   const [orderNumber] = useState(
@@ -186,7 +188,9 @@ const CheckoutPage: NextPage = () => {
       <Stack className="checkout-success">
         <Stack className="checkout-success-card">
           <CheckCircleOutlineIcon className="success-icon" />
-          <Typography className="success-title">Order Placed!</Typography>
+          <Typography className="success-title">
+            {t("checkout.orderPlaced")}
+          </Typography>
           <Typography className="success-order-num">
             Order #{orderNumber}
           </Typography>
@@ -227,17 +231,15 @@ const CheckoutPage: NextPage = () => {
               onClick={() => void router.push("/shop")}
               startIcon={<ShoppingBagOutlinedIcon />}
             >
-              Continue Shopping
+              {t("checkout.continueShopping")}
             </Button>
             <Button
               className="btn-success-orders"
               onClick={() =>
-                void router.push(
-                  "/mypage?category=ORDERS_BOOKINGS&tab=ORDERS",
-                )
+                void router.push("/mypage?category=ORDERS_BOOKINGS&tab=ORDERS")
               }
             >
-              View My Orders
+              {t("checkout.viewMyOrders")}
             </Button>
           </Stack>
         </Stack>
@@ -255,9 +257,11 @@ const CheckoutPage: NextPage = () => {
             startIcon={<ArrowBackIcon />}
             onClick={() => void router.push("/shop")}
           >
-            Back to Shop
+            {t("checkout.backToShop")}
           </Button>
-          <Typography className="checkout-title">Checkout</Typography>
+          <Typography className="checkout-title">
+            {t("checkout.title")}
+          </Typography>
         </Stack>
 
         <Stack className="checkout-body">
@@ -278,7 +282,7 @@ const CheckoutPage: NextPage = () => {
                     <LocationOnOutlinedIcon />
                   </Stack>
                   <Typography className="checkout-section-title">
-                    Delivery Address
+                    {t("checkout.deliveryAddress")}
                   </Typography>
                 </Stack>
                 {!editDelivery && (
@@ -290,7 +294,7 @@ const CheckoutPage: NextPage = () => {
                       setEditDelivery(true);
                     }}
                   >
-                    Edit
+                    {t("checkout.edit")}
                   </Button>
                 )}
               </Stack>
@@ -299,7 +303,7 @@ const CheckoutPage: NextPage = () => {
                 <Stack className="checkout-fields">
                   <Stack className="field-row-2">
                     <TextField
-                      label="Full Name"
+                      label={t("checkout.fFullName")}
                       value={deliveryDraft.fullName}
                       onChange={(e) =>
                         handleDeliveryChange("fullName", e.target.value)
@@ -308,7 +312,7 @@ const CheckoutPage: NextPage = () => {
                       sx={fieldSx}
                     />
                     <TextField
-                      label="Phone Number"
+                      label={t("checkout.fPhone")}
                       value={deliveryDraft.phone}
                       onChange={(e) =>
                         handleDeliveryChange("phone", e.target.value)
@@ -318,7 +322,7 @@ const CheckoutPage: NextPage = () => {
                     />
                   </Stack>
                   <TextField
-                    label="Street Address"
+                    label={t("checkout.fStreet")}
                     value={deliveryDraft.address}
                     onChange={(e) =>
                       handleDeliveryChange("address", e.target.value)
@@ -328,7 +332,7 @@ const CheckoutPage: NextPage = () => {
                   />
                   <Stack className="field-row-3">
                     <TextField
-                      label="City"
+                      label={t("checkout.fCity")}
                       value={deliveryDraft.city}
                       onChange={(e) =>
                         handleDeliveryChange("city", e.target.value)
@@ -337,7 +341,7 @@ const CheckoutPage: NextPage = () => {
                       sx={fieldSx}
                     />
                     <TextField
-                      label="ZIP Code"
+                      label={t("checkout.fZip")}
                       value={deliveryDraft.zip}
                       onChange={(e) =>
                         handleDeliveryChange("zip", e.target.value)
@@ -346,7 +350,7 @@ const CheckoutPage: NextPage = () => {
                       sx={fieldSx}
                     />
                     <TextField
-                      label="Country"
+                      label={t("checkout.fCountry")}
                       value={deliveryDraft.country}
                       onChange={(e) =>
                         handleDeliveryChange("country", e.target.value)
@@ -360,10 +364,10 @@ const CheckoutPage: NextPage = () => {
                       className="btn-section-cancel"
                       onClick={cancelDelivery}
                     >
-                      Cancel
+                      {t("checkout.cancel")}
                     </Button>
                     <Button className="btn-section-save" onClick={saveDelivery}>
-                      Save
+                      {t("checkout.save")}
                     </Button>
                   </Stack>
                 </Stack>
@@ -378,7 +382,7 @@ const CheckoutPage: NextPage = () => {
                         className="review-label"
                       >
                         <PersonOutlineIcon fontSize="small" />
-                        <span>Full Name</span>
+                        <span>{t("checkout.fullName")}</span>
                       </Stack>
                       <Typography className="review-value">
                         {delivery.fullName}
@@ -392,7 +396,7 @@ const CheckoutPage: NextPage = () => {
                         className="review-label"
                       >
                         <PhoneOutlinedIcon fontSize="small" />
-                        <span>Phone</span>
+                        <span>{t("checkout.phone")}</span>
                       </Stack>
                       <Typography className="review-value">
                         {delivery.phone}
@@ -407,7 +411,7 @@ const CheckoutPage: NextPage = () => {
                       className="review-label"
                     >
                       <HomeOutlinedIcon fontSize="small" />
-                      <span>Address</span>
+                      <span>{t("checkout.address")}</span>
                     </Stack>
                     <Typography className="review-value">
                       {delivery.address}
@@ -435,7 +439,7 @@ const CheckoutPage: NextPage = () => {
                     <CreditCardOutlinedIcon />
                   </Stack>
                   <Typography className="checkout-section-title">
-                    Payment Method
+                    {t("checkout.paymentMethod")}
                   </Typography>
                 </Stack>
                 {!editPayment && (
@@ -447,7 +451,7 @@ const CheckoutPage: NextPage = () => {
                       setEditPayment(true);
                     }}
                   >
-                    Edit
+                    {t("checkout.edit")}
                   </Button>
                 )}
               </Stack>
@@ -475,7 +479,9 @@ const CheckoutPage: NextPage = () => {
                 </Typography>
                 <Stack direction="row" spacing={4}>
                   <Stack spacing={0.5}>
-                    <Typography className="label">Card Holder</Typography>
+                    <Typography className="label">
+                      {t("checkout.cardHolder")}
+                    </Typography>
                     <Typography className="value">
                       {(editPayment
                         ? paymentDraft.cardHolder
@@ -483,7 +489,9 @@ const CheckoutPage: NextPage = () => {
                     </Typography>
                   </Stack>
                   <Stack spacing={0.5}>
-                    <Typography className="label">Expires</Typography>
+                    <Typography className="label">
+                      {t("checkout.expires")}
+                    </Typography>
                     <Typography className="value">
                       {(editPayment ? paymentDraft.expiry : payment.expiry) ||
                         "MM/YY"}
@@ -499,17 +507,17 @@ const CheckoutPage: NextPage = () => {
               {editPayment ? (
                 <Stack className="checkout-fields">
                   <TextField
-                    label="Card Number"
+                    label={t("checkout.fCardNumber")}
                     value={paymentDraft.cardNumber}
                     onChange={(e) =>
                       handlePaymentChange("cardNumber", e.target.value)
                     }
                     fullWidth
                     sx={fieldSx}
-                    placeholder="1234 5678 9012 3456"
+                    placeholder={t("checkout.phCardNumber")}
                   />
                   <TextField
-                    label="Cardholder Name"
+                    label={t("checkout.fCardName")}
                     value={paymentDraft.cardHolder}
                     onChange={(e) =>
                       handlePaymentChange("cardHolder", e.target.value)
@@ -519,17 +527,17 @@ const CheckoutPage: NextPage = () => {
                   />
                   <Stack className="field-row-2">
                     <TextField
-                      label="Expiry Date"
+                      label={t("checkout.fExpiry")}
                       value={paymentDraft.expiry}
                       onChange={(e) =>
                         handlePaymentChange("expiry", e.target.value)
                       }
                       fullWidth
                       sx={fieldSx}
-                      placeholder="MM/YY"
+                      placeholder={t("checkout.phExpiry")}
                     />
                     <TextField
-                      label="CVV"
+                      label={t("checkout.fCvv")}
                       type={showCvv ? "text" : "password"}
                       value={paymentDraft.cvv}
                       onChange={(e) =>
@@ -561,10 +569,10 @@ const CheckoutPage: NextPage = () => {
                       className="btn-section-cancel"
                       onClick={cancelPayment}
                     >
-                      Cancel
+                      {t("checkout.cancel")}
                     </Button>
                     <Button className="btn-section-save" onClick={savePayment}>
-                      Save
+                      {t("checkout.save")}
                     </Button>
                   </Stack>
                 </Stack>
@@ -573,16 +581,20 @@ const CheckoutPage: NextPage = () => {
                   <Stack direction="row" gap="32px" flexWrap="wrap">
                     <Stack className="review-field">
                       <Typography className="review-label-plain">
-                        Card
+                        {t("checkout.card")}
                       </Typography>
                       <Typography className="review-value">
-                        {getCardBrand(payment.cardNumber)} ending in{" "}
-                        {payment.cardNumber.replace(/\s/g, "").slice(-4)}
+                        {t("checkout.cardEndingIn", {
+                          brand: getCardBrand(payment.cardNumber),
+                          last4: payment.cardNumber
+                            .replace(/\s/g, "")
+                            .slice(-4),
+                        })}
                       </Typography>
                     </Stack>
                     <Stack className="review-field">
                       <Typography className="review-label-plain">
-                        Expires
+                        {t("checkout.expires")}
                       </Typography>
                       <Typography className="review-value">
                         {payment.expiry}
@@ -599,9 +611,7 @@ const CheckoutPage: NextPage = () => {
                 className="secure-note"
               >
                 <LockOutlinedIcon fontSize="small" />
-                <Typography>
-                  Your payment is secured with 256-bit SSL encryption
-                </Typography>
+                <Typography>{t("checkout.sslNotice")}</Typography>
               </Stack>
             </Stack>
           </Stack>
@@ -610,7 +620,7 @@ const CheckoutPage: NextPage = () => {
           <Stack className="checkout-summary-col">
             <Stack className="checkout-summary-card">
               <Typography className="summary-card-title">
-                Order Summary
+                {t("checkout.orderSummary")}
               </Typography>
 
               <Stack className="summary-items">
@@ -646,7 +656,9 @@ const CheckoutPage: NextPage = () => {
                   justifyContent="space-between"
                   className="summary-totals-row"
                 >
-                  <Typography className="totals-label">Subtotal</Typography>
+                  <Typography className="totals-label">
+                    {t("checkout.subtotal")}
+                  </Typography>
                   <Typography className="totals-value">
                     ${subtotal.toFixed(2)}
                   </Typography>
@@ -656,7 +668,9 @@ const CheckoutPage: NextPage = () => {
                   justifyContent="space-between"
                   className="summary-totals-row"
                 >
-                  <Typography className="totals-label">Delivery</Typography>
+                  <Typography className="totals-label">
+                    {t("checkout.delivery")}
+                  </Typography>
                   {deliveryFee === 0 ? (
                     <Typography className="totals-value free-delivery">
                       Free
@@ -673,7 +687,9 @@ const CheckoutPage: NextPage = () => {
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  <Typography className="totals-total-label">Total</Typography>
+                  <Typography className="totals-total-label">
+                    {t("checkout.total")}
+                  </Typography>
                   <Typography className="totals-total-value">
                     ${total.toFixed(2)}
                   </Typography>
@@ -685,7 +701,7 @@ const CheckoutPage: NextPage = () => {
                 onClick={handlePlaceOrder}
                 startIcon={<LockOutlinedIcon />}
               >
-                Place Order
+                {t("checkout.placeOrder")}
               </Button>
             </Stack>
           </Stack>
