@@ -10,6 +10,11 @@
 !.yarn/releases
 !.yarn/versions
 
+# lockfiles from other package managers — this project uses yarn
+package-lock.json
+pnpm-lock.yaml
+bun.lockb
+
 # testing
 /coverage
 
@@ -22,7 +27,21 @@
 
 # misc
 .DS_Store
+Thumbs.db
 *.pem
+
+# editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# local tool config (machine-specific, holds local permissions)
+.claude/settings.local.json
+
+# caches
+.eslintcache
+.turbo/
 
 # debug
 npm-debug.log*
@@ -30,8 +49,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — real values stay local, the template is committed
 .env*
+!.env.example
 
 # vercel
 .vercel
