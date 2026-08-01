@@ -1,0 +1,64 @@
+{
+  "community": {
+    "brandTitle": "Community",
+    "brandSubtitle": "Connect & Share",
+    "hubTitle": "Community Hub",
+    "copyright": "© 2026 All rights reserved",
+    "free": {
+      "label": "Free Board",
+      "desc": "Share your thoughts, ideas, and experiences with the community"
+    },
+    "news": {
+      "label": "News",
+      "desc": "Stay updated with the latest stories and announcements"
+    },
+    "qna": {
+      "label": "Q&A",
+      "desc": "Ask questions and get helpful answers from other members"
+    },
+    "write": "Write",
+    "askQuestion": "Ask Question",
+    "emptyBoard": "Be the first to write on this board.",
+    "createPost": "Create New Post",
+    "titlePlaceholder": "Enter a catchy title...",
+    "bodyPlaceholder": "Share your thoughts with the community...",
+    "upload": "Upload",
+    "publishing": "Publishing...",
+    "publish": "Publish Post",
+    "uploadFailed": "Image upload failed, please retry.",
+    "postLive": "Your post is live!",
+    "noComments": "No comments yet",
+    "firstComment": "Be the first to share your thoughts on this post!",
+    "leaveComment": "Leave a Comment",
+    "commentPlaceholder": "Write your comment...",
+    "postComment": "Post Comment",
+    "searchQuestions": "Search questions by Title ...",
+    "noQuestions": "No questions found",
+    "tryKeyword": "Try another keyword to find the topic you need.",
+    "firstQuestion": "Be the first to ask the community a question.",
+    "noAnswers": "No answers yet",
+    "firstAnswer": "Be the first to share your knowledge and help others!",
+    "yourAnswer": "Your Answer",
+    "answerPlaceholder": "Write your answer...",
+    "postAnswer": "Post Answer",
+    "askTitle": "Ask a Question",
+    "questionTitlePlaceholder": "What's your question about?",
+    "questionBodyPlaceholder": "Describe your question in detail...",
+    "addImage": "Add Image",
+    "posting": "Posting...",
+    "postQuestion": "Post Question",
+    "questionLive": "Your question is live!",
+    "unknownMember": "Unknown member",
+    "answersCount_one": "{{count}} answer",
+    "answersCount_other": "{{count}} answers",
+    "viewsCount_one": "{{count}} view",
+    "viewsCount_other": "{{count}} views"
+  },
+  "headers": {
+    "community": {
+      "eyebrow": "Community Page",
+      "title": "Discover Pet Stories & Tips",
+      "subtitle": "Share your pet stories, ask questions, and connect with fellow pet lovers."
+    }
+  }
+}

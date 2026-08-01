@@ -18,6 +18,7 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import QNACard from "@/libs/components/community/QNACard";
 import BoardList from "@/libs/components/community/BoardList";
 import { ArticleCategory } from "@/libs/enums/boardArticle.enum";
+import { useTranslation } from "react-i18next";
 
 // Free Board and News are ArticleCategory values; Q&A is a separate collection
 // on the API (getQuestions), so it only exists as a tab key here.
@@ -26,25 +27,24 @@ type CategoryKey = ArticleCategory | "QNA";
 const categoryMeta: Record<
   CategoryKey,
   {
-    label: string;
-    description: string;
+    labelKey: string;
+    descKey: string;
     icon: ReactNode;
   }
 > = {
   [ArticleCategory.FREE]: {
-    label: "Free Board",
-    description:
-      "Share your thoughts, ideas, and experiences with the community",
+    labelKey: "community.free.label",
+    descKey: "community.free.desc",
     icon: <ChatBubbleOutlineRoundedIcon />,
   },
   [ArticleCategory.NEWS]: {
-    label: "News",
-    description: "Stay updated with the latest stories and announcements",
+    labelKey: "community.news.label",
+    descKey: "community.news.desc",
     icon: <FeedOutlinedIcon />,
   },
   QNA: {
-    label: "Q&A",
-    description: "Ask questions and get helpful answers from other members",
+    labelKey: "community.qna.label",
+    descKey: "community.qna.desc",
     icon: <HelpOutlineRoundedIcon />,
   },
 };
@@ -57,6 +57,7 @@ const categoryOrder: CategoryKey[] = [
 
 const Community: NextPage = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const rawCategory = router.query.articleCategory;
   const activeCategory: CategoryKey =
     typeof rawCategory === "string" &&
@@ -100,10 +101,10 @@ const Community: NextPage = () => {
             </Box>
             <Stack className="community-brand-copy">
               <Typography className="community-brand-title">
-                Community
+                {t("community.brandTitle")}
               </Typography>
               <Typography className="community-brand-subtitle">
-                Connect &amp; Share
+                {t("community.brandSubtitle")}
               </Typography>
             </Stack>
           </Stack>
@@ -120,7 +121,7 @@ const Community: NextPage = () => {
                   onClick={() => handleCategoryChange(category)}
                   startIcon={meta.icon}
                 >
-                  {meta.label}
+                  {t(meta.labelKey)}
                 </Button>
               );
             })}
@@ -128,10 +129,10 @@ const Community: NextPage = () => {
 
           <Stack className="community-sidebar-footer">
             <Typography className="community-footer-title">
-              Community Hub
+              {t("community.hubTitle")}
             </Typography>
             <Typography className="community-footer-copy">
-              © 2026 All rights reserved
+              {t("community.copyright")}
             </Typography>
           </Stack>
         </Stack>
@@ -140,10 +141,10 @@ const Community: NextPage = () => {
           <Stack className="community-content-top">
             <Stack className="community-content-heading">
               <Typography className="community-board-title">
-                {activeMeta.label.toUpperCase()}
+                {t(activeMeta.labelKey).toUpperCase()}
               </Typography>
               <Typography className="community-board-subtitle">
-                {activeMeta.description}
+                {t(activeMeta.descKey)}
               </Typography>
             </Stack>
 
@@ -157,7 +158,9 @@ const Community: NextPage = () => {
                   : () => setIsWriteOpen(true)
               }
             >
-              {activeCategory === "QNA" ? "Ask Question" : "Write"}
+              {activeCategory === "QNA"
+                ? t("community.askQuestion")
+                : t("community.write")}
             </Button>
           </Stack>
 
@@ -172,7 +175,7 @@ const Community: NextPage = () => {
             >
               {categoryOrder.map((category) => (
                 <MenuItem key={category} value={category}>
-                  {categoryMeta[category].label}
+                  {t(categoryMeta[category].labelKey)}
                 </MenuItem>
               ))}
             </TextField>

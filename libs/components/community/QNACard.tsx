@@ -1,3 +1,5 @@
+import { useDateFormat } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   Avatar,
@@ -23,7 +25,6 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import QuestionAnswerOutlinedIcon from "@mui/icons-material/QuestionAnswerOutlined";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
-import moment from "moment";
 import { userVar } from "@/apollo/store";
 import { GET_COMMENTS, GET_QUESTION, GET_QUESTIONS } from "@/apollo/user/query";
 import {
@@ -67,7 +68,11 @@ const getQuestionImages = (question?: QnaQuestion): string[] =>
     .map((image) => toServerImage(image))
     .filter((image): image is string => Boolean(image));
 
-const renderUserAvatar = (name: string, image?: string, extraClassName = "") => (
+const renderUserAvatar = (
+  name: string,
+  image?: string,
+  extraClassName = "",
+) => (
   <Avatar className={`qna-author-avatar ${extraClassName}`.trim()} src={image}>
     {image ? undefined : getAuthorInitial(name)}
   </Avatar>
@@ -79,6 +84,8 @@ type QNACardProps = {
 };
 
 const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
+  const { t } = useTranslation();
+  const date = useDateFormat();
   const user = useReactiveVar(userVar);
 
   const [searchFilter, setSearchFilter] = useState<QnaQuestionInquiry>({
@@ -434,7 +441,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
       } else {
         await getQuestionsRefetch({ input: searchFilter });
       }
-      await sweetBottomSmallSuccessAlert("Your question is live!", 900);
+      await sweetBottomSmallSuccessAlert(t("community.questionLive"), 900);
     } catch (err: any) {
       console.log("ERROR, handleSubmitQuestion:", err.message);
       await sweetMixinErrorAlert(err.message);
@@ -448,7 +455,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
       <Stack className="qna-board" ref={boardRef}>
         <TextField
           className="qna-search-field"
-          placeholder="Search questions by Title ..."
+          placeholder={t("community.searchQuestions")}
           value={searchValue}
           onChange={handleSearchChange}
           fullWidth
@@ -526,19 +533,27 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
 
                       <Typography className="qna-meta-dot">•</Typography>
                       <Typography className="qna-meta-text">
-                        {moment(question.createdAt).fromNow()}
+                        {date.fromNow(question.createdAt)}
                       </Typography>
 
                       <Typography className="qna-meta-dot">•</Typography>
                       <Box className="qna-meta-icon-text">
                         <ChatBubbleOutlineRoundedIcon />
-                        <span>{question.questionAnswers} answers</span>
+                        <span>
+                          {t("community.answersCount", {
+                            count: question.questionAnswers,
+                          })}
+                        </span>
                       </Box>
 
                       <Typography className="qna-meta-dot">•</Typography>
                       <Box className="qna-meta-icon-text">
                         <VisibilityOutlinedIcon />
-                        <span>{question.questionViews} views</span>
+                        <span>
+                          {t("community.viewsCount", {
+                            count: question.questionViews,
+                          })}
+                        </span>
                       </Box>
                     </Stack>
                   </Stack>
@@ -552,12 +567,12 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
           ) : (
             <Stack className="qna-empty-state">
               <Typography className="qna-empty-title">
-                No questions found
+                {t("community.noQuestions")}
               </Typography>
               <Typography className="qna-empty-copy">
                 {searchValue.trim()
-                  ? "Try another keyword to find the topic you need."
-                  : "Be the first to ask the community a question."}
+                  ? t("community.tryKeyword")
+                  : t("community.firstQuestion")}
               </Typography>
             </Stack>
           )}
@@ -666,13 +681,17 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
 
                       <Typography className="qna-meta-dot">•</Typography>
                       <Typography className="qna-meta-text">
-                        {moment(selectedQuestion.createdAt).fromNow()}
+                        {date.fromNow(selectedQuestion.createdAt)}
                       </Typography>
 
                       <Typography className="qna-meta-dot">•</Typography>
                       <Box className="qna-meta-icon-text">
                         <VisibilityOutlinedIcon />
-                        <span>{selectedQuestion.questionViews} views</span>
+                        <span>
+                          {t("community.viewsCount", {
+                            count: selectedQuestion.questionViews,
+                          })}
+                        </span>
                       </Box>
                     </Stack>
                   </Stack>
@@ -691,10 +710,10 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
                         <ChatBubbleOutlineRoundedIcon />
                       </Box>
                       <Typography className="qna-empty-title">
-                        No answers yet
+                        {t("community.noAnswers")}
                       </Typography>
                       <Typography className="qna-empty-subtitle">
-                        Be the first to share your knowledge and help others!
+                        {t("community.firstAnswer")}
                       </Typography>
                     </Stack>
                   ) : (
@@ -713,7 +732,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
 
                           <Typography className="qna-meta-dot">•</Typography>
                           <Typography className="qna-meta-text">
-                            {moment(answer.createdAt).fromNow()}
+                            {date.fromNow(answer.createdAt)}
                           </Typography>
                         </Stack>
                         <Typography
@@ -742,7 +761,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
 
               <Stack className="qna-dialog-section qna-answer-form-section">
                 <Typography className="qna-section-title">
-                  Your Answer
+                  {t("community.yourAnswer")}
                 </Typography>
 
                 <Stack className="qna-answer-form">
@@ -756,7 +775,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
                     <Box className="qna-answer-input">
                       <textarea
                         rows={4}
-                        placeholder="Write your answer..."
+                        placeholder={t("community.answerPlaceholder")}
                         value={draftAnswer}
                         onChange={(event) => setDraftAnswer(event.target.value)}
                       />
@@ -770,7 +789,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
                         onClick={handlePostAnswer}
                         disabled={!draftAnswer.trim() || isPostingAnswer}
                       >
-                        Post Answer
+                        {t("community.postAnswer")}
                       </Button>
                     </Stack>
                   </Stack>
@@ -891,7 +910,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
                 sx={{ fontSize: 26, color: "#cb33df" }}
               />
               <Typography className="qna-dialog-title">
-                Ask a Question
+                {t("community.askTitle")}
               </Typography>
             </Stack>
           </Stack>
@@ -909,7 +928,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
               <Box className="qna-answer-input">
                 <input
                   type="text"
-                  placeholder="What's your question about?"
+                  placeholder={t("community.questionTitlePlaceholder")}
                   value={askForm.title}
                   onChange={(e) =>
                     setAskForm((prev) => ({ ...prev, title: e.target.value }))
@@ -925,7 +944,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
               <Box className="qna-answer-input">
                 <textarea
                   rows={6}
-                  placeholder="Describe your question in detail..."
+                  placeholder={t("community.questionBodyPlaceholder")}
                   value={askForm.body}
                   onChange={(e) =>
                     setAskForm((prev) => ({ ...prev, body: e.target.value }))
@@ -986,7 +1005,7 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
                   startIcon={<AddPhotoAlternateOutlinedIcon />}
                   onClick={() => askImageInputRef.current?.click()}
                 >
-                  Add Image
+                  {t("community.addImage")}
                 </Button>
               )}
 
@@ -1018,7 +1037,9 @@ const QNACard = ({ isAskOpen = false, onAskClose }: QNACardProps) => {
                 isPostingQuestion
               }
             >
-              {isPostingQuestion ? "Posting..." : "Post Question"}
+              {isPostingQuestion
+                ? t("community.posting")
+                : t("community.postQuestion")}
             </Button>
           </Stack>
         </DialogContent>

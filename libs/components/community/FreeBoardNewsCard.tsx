@@ -1,3 +1,5 @@
+import { useDateFormat } from "@/libs/i18n/format";
+import { useTranslation } from "react-i18next";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   Avatar,
@@ -17,7 +19,6 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ChatBubbleOutlineRoundedIcon from "@mui/icons-material/ChatBubbleOutlineRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
-import moment from "moment";
 import { userVar } from "@/apollo/store";
 import { GET_BOARD_ARTICLE, GET_COMMENTS } from "@/apollo/user/query";
 import {
@@ -50,6 +51,8 @@ const FreeBoardNewsCard = ({
   article,
   onArticleUpdate,
 }: FreeBoardNewsCardProps) => {
+  const { t } = useTranslation();
+  const date = useDateFormat();
   const user = useReactiveVar(userVar);
   const [isOpen, setIsOpen] = useState(false);
   const [draftComment, setDraftComment] = useState("");
@@ -94,8 +97,7 @@ const FreeBoardNewsCard = ({
 
   // The detail query returns the same normalized entity, so once it resolves the
   // card and the dialog read the same (fresher) counters.
-  const detail: BoardArticle =
-    getBoardArticleData?.getBoardArticle ?? article;
+  const detail: BoardArticle = getBoardArticleData?.getBoardArticle ?? article;
   const comments: Comment[] = getCommentsData?.getComments?.list ?? [];
   const commentTotal: number =
     getCommentsData?.getComments?.metaCounter?.[0]?.total ??
@@ -104,7 +106,7 @@ const FreeBoardNewsCard = ({
   const totalCommentPages = Math.ceil(commentTotal / COMMENTS_PER_PAGE);
   const myFavorite = Boolean(detail.meLiked?.[0]?.myFavorite);
   const articleImage = getArticleImage(detail.articleImage);
-  const articleDate = moment(detail.createdAt).format("MMM DD, YYYY");
+  const articleDate = date.medium(detail.createdAt);
   const currentUserName = user?._id ? getMemberName(user) : "You";
 
   const shortDescription =
@@ -184,10 +186,7 @@ const FreeBoardNewsCard = ({
     }
   };
 
-  const handleCommentPageChange = (
-    _: ChangeEvent<unknown>,
-    value: number,
-  ) => {
+  const handleCommentPageChange = (_: ChangeEvent<unknown>, value: number) => {
     setCommentPage(value);
     commentSectionRef.current?.scrollIntoView({
       behavior: "smooth",
@@ -234,7 +233,9 @@ const FreeBoardNewsCard = ({
               <span>{detail.articleViews.toLocaleString()}</span>
             </Box>
 
-            <Box className={`free-board-news-stat ${myFavorite ? "liked" : ""}`}>
+            <Box
+              className={`free-board-news-stat ${myFavorite ? "liked" : ""}`}
+            >
               {myFavorite ? (
                 <FavoriteRoundedIcon />
               ) : (
@@ -300,7 +301,7 @@ const FreeBoardNewsCard = ({
 
                 <Typography className="qna-meta-dot">•</Typography>
                 <Typography className="qna-meta-text">
-                  {moment(detail.createdAt).fromNow()}
+                  {date.fromNow(detail.createdAt)}
                 </Typography>
               </Stack>
 
@@ -344,10 +345,10 @@ const FreeBoardNewsCard = ({
                     <ChatBubbleOutlineRoundedIcon />
                   </Box>
                   <Typography className="qna-empty-title">
-                    No comments yet
+                    {t("community.noComments")}
                   </Typography>
                   <Typography className="qna-empty-subtitle">
-                    Be the first to share your thoughts on this post!
+                    {t("community.firstComment")}
                   </Typography>
                 </Stack>
               ) : (
@@ -366,7 +367,7 @@ const FreeBoardNewsCard = ({
 
                       <Typography className="qna-meta-dot">•</Typography>
                       <Typography className="qna-meta-text">
-                        {moment(comment.createdAt).fromNow()}
+                        {date.fromNow(comment.createdAt)}
                       </Typography>
                     </Stack>
                     <Typography component="pre" className="qna-answer-content">
@@ -393,7 +394,7 @@ const FreeBoardNewsCard = ({
           {/* Add Comment Section */}
           <Stack className="qna-dialog-section qna-answer-form-section">
             <Typography className="qna-section-title">
-              Leave a Comment
+              {t("community.leaveComment")}
             </Typography>
 
             <Stack className="qna-answer-form">
@@ -402,7 +403,7 @@ const FreeBoardNewsCard = ({
               <Stack className="qna-answer-input-wrap">
                 <Box className="qna-answer-input">
                   <textarea
-                    placeholder="Write your comment..."
+                    placeholder={t("community.commentPlaceholder")}
                     value={draftComment}
                     onChange={(e) => setDraftComment(e.target.value)}
                   />
@@ -416,7 +417,7 @@ const FreeBoardNewsCard = ({
                     onClick={handlePostComment}
                     disabled={!draftComment.trim() || isPostingComment}
                   >
-                    Post Comment
+                    {t("community.postComment")}
                   </Button>
                 </Stack>
               </Stack>

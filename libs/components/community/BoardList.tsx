@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, ChangeEvent, useEffect } from "react";
 import {
   Box,
@@ -37,6 +38,7 @@ type BoardListProps = {
 const ARTICLES_PER_PAGE = 9;
 
 const BoardList = ({ category, isWriteOpen, onWriteClose }: BoardListProps) => {
+  const { t } = useTranslation();
   const user = useReactiveVar(userVar);
 
   const [searchFilter, setSearchFilter] = useState<BoardArticlesInquiry>({
@@ -154,7 +156,7 @@ const BoardList = ({ category, isWriteOpen, onWriteClose }: BoardListProps) => {
       const articleImage: string | undefined = (
         uploadData?.imagesUploader ?? []
       ).filter(Boolean)[0];
-      if (!articleImage) throw new Error("Image upload failed, please retry.");
+      if (!articleImage) throw new Error(t("community.uploadFailed"));
 
       await createNewArticle({
         variables: {
@@ -175,7 +177,7 @@ const BoardList = ({ category, isWriteOpen, onWriteClose }: BoardListProps) => {
       } else {
         await getBoardArticlesRefetch({ input: searchFilter });
       }
-      await sweetBottomSmallSuccessAlert("Your post is live!", 900);
+      await sweetBottomSmallSuccessAlert(t("community.postLive"), 900);
     } catch (err: any) {
       console.log("ERROR, handleSubmit:", err.message);
       await sweetMixinErrorAlert(err.message);
@@ -216,7 +218,7 @@ const BoardList = ({ category, isWriteOpen, onWriteClose }: BoardListProps) => {
           <Stack className="qna-empty-state">
             <Typography className="qna-empty-title">No posts yet</Typography>
             <Typography className="qna-empty-copy">
-              Be the first to write on this board.
+              {t("community.emptyBoard")}
             </Typography>
           </Stack>
         )}
@@ -247,7 +249,7 @@ const BoardList = ({ category, isWriteOpen, onWriteClose }: BoardListProps) => {
         <Stack className="qna-dialog-header">
           <Stack className="qna-dialog-heading">
             <Typography className="qna-dialog-title">
-              Create New Post
+              {t("community.createPost")}
             </Typography>
           </Stack>
           <IconButton onClick={handleClose} className="qna-close-btn">
@@ -263,7 +265,7 @@ const BoardList = ({ category, isWriteOpen, onWriteClose }: BoardListProps) => {
               <Box className="qna-answer-input">
                 <input
                   type="text"
-                  placeholder="Enter a catchy title..."
+                  placeholder={t("community.titlePlaceholder")}
                   value={writeForm.title}
                   onChange={(e) =>
                     setWriteForm((prev) => ({ ...prev, title: e.target.value }))
@@ -279,7 +281,7 @@ const BoardList = ({ category, isWriteOpen, onWriteClose }: BoardListProps) => {
               <Box className="qna-answer-input">
                 <textarea
                   className="qna-write-content-area"
-                  placeholder="Share your thoughts with the community..."
+                  placeholder={t("community.bodyPlaceholder")}
                   value={writeForm.content}
                   onChange={(e) =>
                     setWriteForm((prev) => ({
@@ -300,7 +302,9 @@ const BoardList = ({ category, isWriteOpen, onWriteClose }: BoardListProps) => {
                 {!writeForm.image && (
                   <Button component="label" className="qna-image-upload-btn">
                     <AddPhotoAlternateOutlinedIcon />
-                    <Typography component="span">Upload</Typography>
+                    <Typography component="span">
+                      {t("community.upload")}
+                    </Typography>
                     <input
                       type="file"
                       hidden
@@ -343,7 +347,9 @@ const BoardList = ({ category, isWriteOpen, onWriteClose }: BoardListProps) => {
               onClick={handleSubmit}
               disabled={!canPublish || isPublishing}
             >
-              {isPublishing ? "Publishing..." : "Publish Post"}
+              {isPublishing
+                ? t("community.publishing")
+                : t("community.publish")}
             </Button>
           </Stack>
         </DialogContent>
