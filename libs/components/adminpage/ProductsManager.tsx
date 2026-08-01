@@ -49,7 +49,6 @@ import {
   BLANK_IMAGE,
   imageUrl,
   metaTotal,
-  prettyEnum,
   statusChipClass,
   useDebouncedValue,
   won,
@@ -428,7 +427,7 @@ const ProductsManager = () => {
             <MenuItem value="ALL">{t("admin.filter.allCategories")}</MenuItem>
             {PRODUCT_TYPES.map((c) => (
               <MenuItem key={c} value={c}>
-                {prettyEnum(c)}
+                {t(`enums.productType.${c}`)}
               </MenuItem>
             ))}
           </Select>
@@ -481,10 +480,10 @@ const ProductsManager = () => {
                       </Stack>
                     </TableCell>
                     <TableCell className="admin-prd-cat-cell">
-                      {prettyEnum(product.productType)}
+                      {t(`enums.productType.${product.productType}`)}
                     </TableCell>
                     <TableCell className="admin-prd-pet-cell">
-                      {prettyEnum(product.productPetType)}
+                      {t(`enums.productPetType.${product.productPetType}`)}
                     </TableCell>
                     <TableCell>
                       <Stack gap={0.4}>
@@ -541,7 +540,7 @@ const ProductsManager = () => {
                         size="small"
                         renderValue={(val) => (
                           <span className={statusChipClass(val as string)}>
-                            {val as string}
+                            {t(`admin.status.${val}`)}
                           </span>
                         )}
                         className="admin-status-select"
@@ -581,14 +580,14 @@ const ProductsManager = () => {
                               onClick={() => openEdit(product)}
                               className="admin-btn-edit"
                             >
-                              Edit
+                              {t("admin.act.edit")}
                             </Button>
                             <Button
                               size="small"
                               onClick={() => setDeleteTarget(product)}
                               className="admin-btn-delete"
                             >
-                              Delete
+                              {t("admin.act.delete")}
                             </Button>
                           </>
                         )}
@@ -696,7 +695,7 @@ const ProductsManager = () => {
                 >
                   {PRODUCT_TYPES.map((c) => (
                     <MenuItem key={c} value={c}>
-                      {prettyEnum(c)}
+                      {t(`enums.productType.${c}`)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -713,9 +712,9 @@ const ProductsManager = () => {
                   }
                   className="admin-prd-select"
                 >
-                  {PET_TYPES.map((t) => (
-                    <MenuItem key={t} value={t}>
-                      {prettyEnum(t)}
+                  {PET_TYPES.map((pet) => (
+                    <MenuItem key={pet} value={pet}>
+                      {t(`enums.productPetType.${pet}`)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -901,7 +900,7 @@ const ProductsManager = () => {
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
-                      {prettyEnum(s)}
+                      {t(`admin.status.${s}`)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -1016,11 +1015,13 @@ const ProductsManager = () => {
                   />
                 </Stack>
                 <Typography className="admin-prd-upload-label">
-                  Click to upload or drag &amp; drop
+                  {t("admin.upload.uploadCta")}
                 </Typography>
                 <Typography className="admin-prd-upload-hint">
-                  PNG, JPG, WEBP · {MAX_IMAGES - images.length} slot
-                  {MAX_IMAGES - images.length !== 1 ? "s" : ""} remaining
+                  {t("admin.upload.uploadFormats")} ·{" "}
+                  {t("admin.count.slot", {
+                    count: MAX_IMAGES - images.length,
+                  })}
                 </Typography>
                 <input
                   ref={fileInputRef}
@@ -1094,7 +1095,7 @@ const ProductsManager = () => {
             onClick={confirmDelete}
             className="admin-prd-dialog-delete-btn"
           >
-            Delete
+            {t("admin.act.delete")}
           </Button>
         </DialogActions>
       </Dialog>

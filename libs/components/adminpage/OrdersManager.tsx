@@ -41,7 +41,6 @@ import {
   formatDate,
   imageUrl,
   metaTotal,
-  prettyEnum,
   statusChipClass,
   useDebouncedValue,
   won,
@@ -175,7 +174,7 @@ const OrdersManager = () => {
             <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {prettyEnum(s)}
+                {t(`admin.status.${s}`)}
               </MenuItem>
             ))}
           </Select>
@@ -218,7 +217,7 @@ const OrdersManager = () => {
                       </Stack>
                     </TableCell>
                     <TableCell className="admin-ord-items-cell">
-                      {itemCount} item{itemCount !== 1 ? "s" : ""}
+                      {t("admin.count.item", { count: itemCount })}
                     </TableCell>
                     <TableCell className="admin-ord-total-cell">
                       {won(order.orderTotal)}
@@ -232,7 +231,7 @@ const OrdersManager = () => {
                         size="small"
                         renderValue={(val) => (
                           <span className={statusChipClass(val as string)}>
-                            {prettyEnum(val as string)}
+                            {t(`admin.status.${val}`)}
                           </span>
                         )}
                         className="admin-status-select"
@@ -240,7 +239,7 @@ const OrdersManager = () => {
                         {STATUS_OPTIONS.map((s) => (
                           <MenuItem key={s} value={s}>
                             <span className={statusChipClass(s)}>
-                              {prettyEnum(s)}
+                              {t(`admin.status.${s}`)}
                             </span>
                           </MenuItem>
                         ))}
@@ -255,7 +254,7 @@ const OrdersManager = () => {
                         onClick={() => openDetail(order)}
                         className="admin-btn-edit"
                       >
-                        Details
+                        {t("admin.act.details")}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -350,7 +349,7 @@ const OrdersManager = () => {
                   size="small"
                   renderValue={(val) => (
                     <span className={statusChipClass(val as string)}>
-                      {prettyEnum(val as string)}
+                      {t(`admin.status.${val}`)}
                     </span>
                   )}
                   className="admin-ord-status-select"
@@ -358,7 +357,7 @@ const OrdersManager = () => {
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
                       <span className={statusChipClass(s)}>
-                        {prettyEnum(s)}
+                        {t(`admin.status.${s}`)}
                       </span>
                     </MenuItem>
                   ))}
@@ -418,7 +417,7 @@ const OrdersManager = () => {
                     },
                     {
                       labelKey: "admin.orders.payment",
-                      value: prettyEnum(selectedOrder.paymentMethod),
+                      value: t(`admin.payment.${selectedOrder.paymentMethod}`),
                     },
                     {
                       labelKey: "admin.orders.deliveryFee",
@@ -532,7 +531,7 @@ const OrdersManager = () => {
                           (sum, item) => sum + item.itemQuantity,
                           0,
                         );
-                        return `${units} item${units !== 1 ? "s" : ""}`;
+                        return t("admin.count.item", { count: units });
                       })()}
                     </Typography>
                   </Stack>

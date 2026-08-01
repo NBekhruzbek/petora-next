@@ -42,7 +42,6 @@ import {
   imageUrl,
   isNoDataError,
   metaTotal,
-  prettyEnum,
   statusChipClass,
   useDebouncedValue,
 } from "./adminHelpers";
@@ -304,7 +303,7 @@ const AgentsManager = () => {
             <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {prettyEnum(s)}
+                {t(`admin.status.${s}`)}
               </MenuItem>
             ))}
           </Select>
@@ -359,7 +358,7 @@ const AgentsManager = () => {
                   <TableCell className="admin-agt-service-cell">
                     {(agent.memberServiceTypes ?? []).length
                       ? (agent.memberServiceTypes ?? [])
-                          .map(prettyEnum)
+                          .map((type) => t(`enums.serviceType.${type}`))
                           .join(", ")
                       : "—"}
                   </TableCell>
@@ -389,7 +388,7 @@ const AgentsManager = () => {
                       size="small"
                       renderValue={(val) => (
                         <span className={statusChipClass(val as string)}>
-                          {val as string}
+                          {t(`admin.status.${val}`)}
                         </span>
                       )}
                       className="admin-status-select"
@@ -411,14 +410,14 @@ const AgentsManager = () => {
                         onClick={() => openDetail(agent)}
                         className="admin-btn-sm admin-btn-sm-indigo-bold"
                       >
-                        Details
+                        {t("admin.act.details")}
                       </Button>
                       <Button
                         size="small"
                         onClick={() => openEdit(agent)}
                         className="admin-btn-sm admin-btn-sm-gray"
                       >
-                        Edit
+                        {t("admin.act.edit")}
                       </Button>
                     </Stack>
                   </TableCell>
@@ -628,12 +627,12 @@ const AgentsManager = () => {
                           <Stack direction="row" alignItems="center" gap={0.5}>
                             <PlaceIcon className="admin-icon-13-gray" />
                             <Typography className="admin-agt-info-label">
-                              Service Area
+                              {t("admin.col.serviceArea")}
                             </Typography>
                           </Stack>
                           <Typography className="admin-agt-info-value">
                             {(detailAgent.memberServiceArea ?? [])
-                              .map(prettyEnum)
+                              .map((area) => t(`enums.serviceLocation.${area}`))
                               .join(", ")}
                           </Typography>
                         </Stack>
@@ -671,7 +670,7 @@ const AgentsManager = () => {
                         value={
                           (detailAgent.memberServiceTypes ?? []).length
                             ? (detailAgent.memberServiceTypes ?? [])
-                                .map(prettyEnum)
+                                .map((type) => t(`enums.serviceType.${type}`))
                                 .join(", ")
                             : "—"
                         }
@@ -851,16 +850,16 @@ const AgentsManager = () => {
                         <Chip
                           key={value}
                           size="small"
-                          label={prettyEnum(value)}
+                          label={t(`enums.serviceType.${value}`)}
                         />
                       ))}
                     </Stack>
                   )}
                   className="admin-agt-select"
                 >
-                  {SERVICE_TYPES.map((t) => (
-                    <MenuItem key={t} value={t}>
-                      {prettyEnum(t)}
+                  {SERVICE_TYPES.map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {t(`enums.serviceType.${type}`)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -868,7 +867,7 @@ const AgentsManager = () => {
 
               <Stack gap={0.7}>
                 <Typography className="admin-agt-field-label">
-                  Service Area
+                  {t("admin.col.serviceArea")}
                 </Typography>
                 <Select
                   size="small"
@@ -886,7 +885,7 @@ const AgentsManager = () => {
                         <Chip
                           key={value}
                           size="small"
-                          label={prettyEnum(value)}
+                          label={t(`enums.serviceType.${value}`)}
                         />
                       ))}
                     </Stack>
@@ -895,7 +894,7 @@ const AgentsManager = () => {
                 >
                   {SERVICE_AREAS.map((a) => (
                     <MenuItem key={a} value={a}>
-                      {prettyEnum(a)}
+                      {t(`enums.serviceLocation.${a}`)}
                     </MenuItem>
                   ))}
                 </Select>
@@ -918,7 +917,7 @@ const AgentsManager = () => {
                 >
                   {STATUS_OPTIONS.map((s) => (
                     <MenuItem key={s} value={s}>
-                      {prettyEnum(s)}
+                      {t(`admin.status.${s}`)}
                     </MenuItem>
                   ))}
                 </Select>

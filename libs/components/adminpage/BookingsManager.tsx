@@ -42,7 +42,6 @@ import {
   avatarUrl,
   formatDate,
   metaTotal,
-  prettyEnum,
   statusChipClass,
   useDebouncedValue,
   won,
@@ -196,14 +195,14 @@ const BookingsManager = () => {
       size="small"
       renderValue={(val) => (
         <span className={statusChipClass(val as string)}>
-          {prettyEnum(val as string)}
+          {t(`admin.status.${val}`)}
         </span>
       )}
       className="admin-status-select"
     >
       {STATUS_OPTIONS.map((s) => (
         <MenuItem key={s} value={s}>
-          <span className={statusChipClass(s)}>{prettyEnum(s)}</span>
+          <span className={statusChipClass(s)}>{t(`admin.status.${s}`)}</span>
         </MenuItem>
       ))}
     </Select>
@@ -244,7 +243,7 @@ const BookingsManager = () => {
             <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {prettyEnum(s)}
+                {t(`admin.status.${s}`)}
               </MenuItem>
             ))}
           </Select>
@@ -287,7 +286,9 @@ const BookingsManager = () => {
                           <PetsIcon className="admin-icon-11-gray" />
                           <Typography className="admin-cell-meta">
                             {booking.bookingPetName} ·{" "}
-                            {prettyEnum(booking.bookingPetType)}
+                            {t(
+                              `enums.productPetType.${booking.bookingPetType}`,
+                            )}
                           </Typography>
                         </Stack>
                       </Stack>
@@ -299,7 +300,9 @@ const BookingsManager = () => {
                         </Typography>
                         {booking.serviceData?.serviceLocation && (
                           <Typography className="admin-cell-meta">
-                            {prettyEnum(booking.serviceData.serviceLocation)}
+                            {t(
+                              `enums.serviceLocation.${booking.serviceData.serviceLocation}`,
+                            )}
                           </Typography>
                         )}
                       </Stack>
@@ -354,7 +357,7 @@ const BookingsManager = () => {
                         <span
                           className={`status-chip status-${booking.bookingPaymentStatus.toLowerCase()} admin-bkg-pay-chip`}
                         >
-                          {prettyEnum(booking.bookingPaymentStatus)}
+                          {t(`admin.status.${booking.bookingPaymentStatus}`)}
                         </span>
                       </Stack>
                     </TableCell>
@@ -367,7 +370,7 @@ const BookingsManager = () => {
                         onClick={() => openDetail(booking)}
                         className="admin-btn-edit"
                       >
-                        Details
+                        {t("admin.act.details")}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -490,7 +493,9 @@ const BookingsManager = () => {
                     },
                     {
                       labelKey: "admin.bookings.typeField",
-                      value: prettyEnum(selected.bookingPetType),
+                      value: t(
+                        `enums.productPetType.${selected.bookingPetType}`,
+                      ),
                     },
                     {
                       labelKey: "admin.bookings.age",
@@ -538,11 +543,15 @@ const BookingsManager = () => {
                     },
                     {
                       labelKey: "admin.bookings.typeField",
-                      value: prettyEnum(selected.serviceData?.serviceType),
+                      value: t(
+                        `enums.serviceType.${selected.serviceData?.serviceType}`,
+                      ),
                     },
                     {
                       labelKey: "admin.col.location",
-                      value: prettyEnum(selected.serviceData?.serviceLocation),
+                      value: t(
+                        `enums.serviceLocation.${selected.serviceData?.serviceLocation}`,
+                      ),
                     },
                     {
                       labelKey: "admin.bookings.address",
@@ -554,7 +563,7 @@ const BookingsManager = () => {
                     },
                     {
                       labelKey: "admin.bookings.payment",
-                      value: prettyEnum(selected.bookingPaymentStatus),
+                      value: t(`admin.status.${selected.bookingPaymentStatus}`),
                     },
                   ].map(({ labelKey, value }) => (
                     <Stack

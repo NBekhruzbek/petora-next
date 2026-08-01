@@ -51,7 +51,6 @@ import {
 import {
   isNoDataError,
   metaTotal,
-  prettyEnum,
   statusChipClass,
   useDebouncedValue,
   won,
@@ -544,7 +543,7 @@ const ServicesManager = () => {
                               onClick={() => openEdit(service)}
                               className="admin-btn-edit"
                             >
-                              Edit
+                              {t("admin.act.edit")}
                             </Button>
                             <Button
                               size="small"

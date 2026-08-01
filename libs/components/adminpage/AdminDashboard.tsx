@@ -179,7 +179,7 @@ const AdminDashboard = () => {
                     </TableCell>
                     <TableCell>
                       <span className={statusChipClass(order.orderStatus)}>
-                        {order.orderStatus}
+                        {t(`admin.status.${order.orderStatus}`)}
                       </span>
                     </TableCell>
                   </TableRow>
@@ -253,7 +253,7 @@ const AdminDashboard = () => {
                     </TableCell>
                     <TableCell>
                       <span className={statusChipClass(member.memberStatus)}>
-                        {member.memberStatus}
+                        {t(`admin.status.${member.memberStatus}`)}
                       </span>
                     </TableCell>
                   </TableRow>

@@ -55,7 +55,8 @@
       "answers": "답변",
       "published": "게시일",
       "description": "설명",
-      "serviceTitle": "서비스명"
+      "serviceTitle": "서비스명",
+      "serviceArea": "서비스 지역"
     },
     "filter": {
       "allStatuses": "전체 상태",
@@ -241,11 +242,50 @@
     },
     "delete": "삭제",
     "status": {
-      "ACTIVE": "운영중",
-      "PAUSE": "일시중지",
+      "ACTIVE": "활성",
+      "BLOCK": "차단",
       "DELETE": "삭제됨",
-      "BLOCK": "차단됨",
-      "HOLD": "보류"
+      "PAUSE": "일시중지",
+      "HIDE": "숨김",
+      "PROCESSED": "주문 확인",
+      "SHIPPED": "발송",
+      "EN_ROUTE": "배송 중",
+      "ARRIVED": "배송완료",
+      "CANCELLED": "취소됨",
+      "PENDING": "대기중",
+      "CONFIRMED": "확정",
+      "COMPLETED": "완료",
+      "REJECTED": "거절됨",
+      "UNPAID": "미결제",
+      "PAID": "결제완료",
+      "REFUNDED": "환불됨"
+    },
+    "act": {
+      "details": "상세",
+      "edit": "수정",
+      "delete": "삭제",
+      "hide": "숨기기",
+      "unhide": "숨김 해제",
+      "addNotice": "공지 등록"
+    },
+    "count": {
+      "item_other": "{{count}}개",
+      "faq_other": "FAQ {{count}}건",
+      "notice_other": "공지 {{count}}건",
+      "slot_other": "{{count}}칸 남음"
+    },
+    "board": {
+      "FREE": "자유",
+      "NEWS": "뉴스",
+      "QNA": "질문답변"
+    },
+    "payment": {
+      "CARD": "카드",
+      "CASH_TO_DELIVERY": "착불 현금"
+    },
+    "upload": {
+      "uploadCta": "클릭하거나 파일을 끌어다 놓으세요",
+      "uploadFormats": "PNG, JPG, WEBP"
     }
   }
 }

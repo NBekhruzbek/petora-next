@@ -31,7 +31,6 @@ import {
   formatDate,
   isNoDataError,
   metaTotal,
-  prettyEnum,
   statusChipClass,
   useDebouncedValue,
 } from "./adminHelpers";
@@ -152,7 +151,7 @@ const UsersManager = () => {
             <MenuItem value="ALL">{t("admin.filter.allStatuses")}</MenuItem>
             {STATUS_OPTIONS.map((s) => (
               <MenuItem key={s} value={s}>
-                {prettyEnum(s)}
+                {t(`admin.status.${s}`)}
               </MenuItem>
             ))}
           </Select>
@@ -216,7 +215,7 @@ const UsersManager = () => {
                       className="admin-status-select"
                       renderValue={(val) => (
                         <span className={statusChipClass(val as string)}>
-                          {val as string}
+                          {t(`admin.status.${val}`)}
                         </span>
                       )}
                     >

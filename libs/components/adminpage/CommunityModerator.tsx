@@ -586,7 +586,9 @@ const CommunityModerator = () => {
                         flexShrink: 0,
                       }}
                     >
-                      {isQna ? "Q&A" : post.board}
+                      {isQna
+                        ? t("admin.board.QNA")
+                        : t(`admin.board.${post.board}`)}
                     </span>
                     {isHidden && (
                       <span
@@ -675,7 +677,7 @@ const CommunityModerator = () => {
                     onClick={() => openDetail(post)}
                     className="admin-btn-sm admin-btn-sm-indigo-bold admin-cm-details-btn"
                   >
-                    Details
+                    {t("admin.act.details")}
                   </Button>
                   {isHidden ? (
                     <Button
@@ -691,7 +693,7 @@ const CommunityModerator = () => {
                       onClick={() => setStatus(post, ArticleStatus.HIDE)}
                       className="admin-btn-sm admin-btn-sm-orange"
                     >
-                      Hide
+                      {t("admin.act.hide")}
                     </Button>
                   )}
                   <Button
@@ -699,7 +701,7 @@ const CommunityModerator = () => {
                     onClick={() => setDeleteTarget(post)}
                     className="admin-btn-sm admin-btn-sm-red"
                   >
-                    Delete
+                    {t("admin.act.delete")}
                   </Button>
                 </Stack>
               </Stack>
@@ -970,7 +972,9 @@ const CommunityModerator = () => {
                         letterSpacing: "0.06em",
                       }}
                     >
-                      {isQna ? "Q&A" : selectedPost.board}
+                      {isQna
+                        ? t("admin.board.QNA")
+                        : t(`admin.board.${selectedPost.board}`)}
                     </span>
                     <span
                       className={`status-chip status-${isHidden ? "hidden" : "visible"}`}
@@ -1071,7 +1075,9 @@ const CommunityModerator = () => {
                       {[
                         {
                           label: t("admin.col.board"),
-                          value: isQna ? "Q&A" : selectedPost.board,
+                          value: isQna
+                            ? t("admin.board.QNA")
+                            : t(`admin.board.${selectedPost.board}`),
                         },
                         {
                           label: t("admin.col.status"),
@@ -1257,7 +1263,7 @@ const CommunityModerator = () => {
               "&:hover": { backgroundColor: "#DC2626", boxShadow: "none" },
             }}
           >
-            Delete
+            {t("admin.act.delete")}
           </Button>
         </DialogActions>
       </Dialog>

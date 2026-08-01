@@ -45,7 +45,7 @@ import {
   sweetBottomSmallSuccessAlert,
   sweetMixinErrorAlert,
 } from "@/libs/sweetAlert";
-import { formatDate, metaTotal, prettyEnum } from "./adminHelpers";
+import { formatDate, metaTotal } from "./adminHelpers";
 
 // One page holds every FAQ / notice — the CS page has no pager either.
 const CS_LIMIT = 50;
@@ -409,7 +409,7 @@ const FaqTab = () => {
           ))}
         </Select>
         <Typography className="admin-meta-count">
-          {total} FAQ{total !== 1 ? "s" : ""}
+          {t("admin.count.faq", { count: total })}
         </Typography>
         <Button
           variant="contained"
@@ -479,7 +479,7 @@ const FaqTab = () => {
                           onClick={() => openEdit(faq)}
                           className="admin-btn-sm admin-btn-sm-indigo"
                         >
-                          Edit
+                          {t("admin.act.edit")}
                         </Button>
                         <Button
                           size="small"
@@ -489,7 +489,7 @@ const FaqTab = () => {
                           }}
                           className="admin-btn-sm admin-btn-sm-red"
                         >
-                          Delete
+                          {t("admin.act.delete")}
                         </Button>
                       </Stack>
                       <IconButton
@@ -579,7 +579,7 @@ const FaqTab = () => {
             onClick={confirmDelete}
             className="admin-cs-dialog-delete-btn"
           >
-            Delete
+            {t("admin.act.delete")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -922,14 +922,14 @@ const NoticesTab = () => {
           ))}
         </Select>
         <Typography className="admin-meta-count">
-          {notices.length} notice{notices.length !== 1 ? "s" : ""}
+          {t("admin.count.notice", { count: notices.length })}
         </Typography>
         <Button
           variant="contained"
           onClick={openAdd}
           className="admin-cs-add-notice-btn"
         >
-          Add Notice
+          {t("admin.act.addNotice")}
         </Button>
       </Stack>
 
@@ -999,7 +999,7 @@ const NoticesTab = () => {
                     onClick={() => openEdit(notice)}
                     className="admin-btn-sm admin-btn-sm-indigo"
                   >
-                    Edit
+                    {t("admin.act.edit")}
                   </Button>
                   <Button
                     size="small"
@@ -1009,7 +1009,7 @@ const NoticesTab = () => {
                     }}
                     className="admin-btn-sm admin-btn-sm-red"
                   >
-                    Delete
+                    {t("admin.act.delete")}
                   </Button>
                 </Stack>
                 <IconButton
@@ -1085,7 +1085,7 @@ const NoticesTab = () => {
             onClick={confirmDelete}
             className="admin-cs-dialog-delete-btn"
           >
-            Delete
+            {t("admin.act.delete")}
           </Button>
         </DialogActions>
       </Dialog>

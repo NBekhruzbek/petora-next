@@ -55,7 +55,8 @@
       "answers": "Answers",
       "published": "Published",
       "description": "Description",
-      "serviceTitle": "Service Title"
+      "serviceTitle": "Service Title",
+      "serviceArea": "Service Area"
     },
     "filter": {
       "allStatuses": "All Statuses",
@@ -242,10 +243,53 @@
     "delete": "Delete",
     "status": {
       "ACTIVE": "Active",
-      "PAUSE": "Paused",
-      "DELETE": "Deleted",
       "BLOCK": "Blocked",
-      "HOLD": "On hold"
+      "DELETE": "Deleted",
+      "PAUSE": "Paused",
+      "HIDE": "Hidden",
+      "PROCESSED": "Processed",
+      "SHIPPED": "Shipped",
+      "EN_ROUTE": "En route",
+      "ARRIVED": "Arrived",
+      "CANCELLED": "Cancelled",
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "COMPLETED": "Completed",
+      "REJECTED": "Rejected",
+      "UNPAID": "Unpaid",
+      "PAID": "Paid",
+      "REFUNDED": "Refunded"
+    },
+    "act": {
+      "details": "Details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "hide": "Hide",
+      "unhide": "Unhide",
+      "addNotice": "Add Notice"
+    },
+    "count": {
+      "item_one": "{{count}} item",
+      "item_other": "{{count}} items",
+      "faq_one": "{{count}} FAQ",
+      "faq_other": "{{count}} FAQs",
+      "notice_one": "{{count}} notice",
+      "notice_other": "{{count}} notices",
+      "slot_one": "{{count}} slot remaining",
+      "slot_other": "{{count}} slots remaining"
+    },
+    "board": {
+      "FREE": "Free",
+      "NEWS": "News",
+      "QNA": "Q&A"
+    },
+    "payment": {
+      "CARD": "Card",
+      "CASH_TO_DELIVERY": "Cash on delivery"
+    },
+    "upload": {
+      "uploadCta": "Click to upload or drag & drop",
+      "uploadFormats": "PNG, JPG, WEBP"
     }
   }
 }
