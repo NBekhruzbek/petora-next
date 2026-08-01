@@ -3,9 +3,11 @@ import { initReactI18next } from "react-i18next";
 
 import enCommon from "./locales/en/common.json";
 import enHome from "./locales/en/home.json";
+import enService from "./locales/en/service.json";
 
 import koCommon from "./locales/ko/common.json";
 import koHome from "./locales/ko/home.json";
+import koService from "./locales/ko/service.json";
 
 export const locales = ["en", "ko"] as const;
 export type AppLocale = (typeof locales)[number];
@@ -38,10 +40,10 @@ const merge = (...parts: Tree[]): Tree =>
 // existing prefixes (home.*, mypage.*, …) so components are unaffected.
 const resources = {
   en: {
-    common: merge(enCommon, enHome),
+    common: merge(enCommon, enHome, enService),
   },
   ko: {
-    common: merge(koCommon, koHome),
+    common: merge(koCommon, koHome, koService),
   },
 };
 

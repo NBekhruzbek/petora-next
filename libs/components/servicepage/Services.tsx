@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   Box,
@@ -32,57 +33,65 @@ type SortOption = "new" | "rating" | "likes" | "price-low" | "price-high";
 
 const SORT_OPTIONS: {
   value: SortOption;
-  label: string;
+  labelKey: string;
   sort: string;
   direction: Direction;
 }[] = [
-  { value: "new", label: "New", sort: "createdAt", direction: Direction.DESC },
+  {
+    value: "new",
+    labelKey: "sort.new",
+    sort: "createdAt",
+    direction: Direction.DESC,
+  },
   {
     value: "rating",
-    label: "Highest Rating",
+    labelKey: "sort.ratingCap",
     sort: "serviceRating",
     direction: Direction.DESC,
   },
   {
     value: "likes",
-    label: "Most Liked",
+    labelKey: "sort.liked",
     sort: "serviceLikes",
     direction: Direction.DESC,
   },
   {
     value: "price-low",
-    label: "Price: Low to High",
+    labelKey: "sort.priceAsc",
     sort: "servicePrice",
     direction: Direction.ASC,
   },
   {
     value: "price-high",
-    label: "Price: High to Low",
+    labelKey: "sort.priceDesc",
     sort: "servicePrice",
     direction: Direction.DESC,
   },
 ];
 
-const CATEGORY_OPTIONS: { label: string; value: ServiceType }[] = [
-  { label: "Day Care", value: ServiceType.DAY_CARE },
-  { label: "Walking", value: ServiceType.WALKING },
-  { label: "Grooming", value: ServiceType.GROOMING },
-  { label: "Boarding", value: ServiceType.BOARDING },
-  { label: "Training", value: ServiceType.TRAINING },
-  { label: "Veterinary", value: ServiceType.VETERINARY },
+const CATEGORY_OPTIONS: { labelKey: string; value: ServiceType }[] = [
+  { labelKey: "enums.serviceType.DAY_CARE", value: ServiceType.DAY_CARE },
+  { labelKey: "enums.serviceType.WALKING", value: ServiceType.WALKING },
+  { labelKey: "enums.serviceType.GROOMING", value: ServiceType.GROOMING },
+  { labelKey: "enums.serviceType.BOARDING", value: ServiceType.BOARDING },
+  { labelKey: "enums.serviceType.TRAINING", value: ServiceType.TRAINING },
+  { labelKey: "enums.serviceType.VETERINARY", value: ServiceType.VETERINARY },
 ];
 
-const LOCATION_OPTIONS: { label: string; value: ServiceLocation }[] = [
-  { label: "Seoul", value: ServiceLocation.SEOUL },
-  { label: "Busan", value: ServiceLocation.BUSAN },
-  { label: "Incheon", value: ServiceLocation.INCHEON },
-  { label: "Daegu", value: ServiceLocation.DAEGU },
-  { label: "Suwon", value: ServiceLocation.SUWON },
-  { label: "Gyeongju", value: ServiceLocation.GYEONGJU },
-  { label: "Gwangju", value: ServiceLocation.GWANGJU },
-  { label: "Jeonju", value: ServiceLocation.JEONJU },
-  { label: "Daejeon", value: ServiceLocation.DAEJEON },
-  { label: "Jeju", value: ServiceLocation.JEJU },
+const LOCATION_OPTIONS: { labelKey: string; value: ServiceLocation }[] = [
+  { labelKey: "enums.serviceLocation.SEOUL", value: ServiceLocation.SEOUL },
+  { labelKey: "enums.serviceLocation.BUSAN", value: ServiceLocation.BUSAN },
+  { labelKey: "enums.serviceLocation.INCHEON", value: ServiceLocation.INCHEON },
+  { labelKey: "enums.serviceLocation.DAEGU", value: ServiceLocation.DAEGU },
+  { labelKey: "enums.serviceLocation.SUWON", value: ServiceLocation.SUWON },
+  {
+    labelKey: "enums.serviceLocation.GYEONGJU",
+    value: ServiceLocation.GYEONGJU,
+  },
+  { labelKey: "enums.serviceLocation.GWANGJU", value: ServiceLocation.GWANGJU },
+  { labelKey: "enums.serviceLocation.JEONJU", value: ServiceLocation.JEONJU },
+  { labelKey: "enums.serviceLocation.DAEJEON", value: ServiceLocation.DAEJEON },
+  { labelKey: "enums.serviceLocation.JEJU", value: ServiceLocation.JEJU },
 ];
 
 const DEFAULT_PRICE_RANGE = [0, 200];
@@ -104,6 +113,7 @@ interface ServicesProps {
 const Services = ({
   initialInput: propInput = initialInput,
 }: ServicesProps) => {
+  const { t } = useTranslation();
   const device = useDeviceDetect();
   const user = useReactiveVar(userVar);
 
@@ -140,9 +150,7 @@ const Services = ({
       // clear the previous results to let the no-data empty state render.
       onError: (error) => {
         if (
-          error.graphQLErrors?.some(
-            (e) => e.message === Message.NO_DATA_FOUND,
-          )
+          error.graphQLErrors?.some((e) => e.message === Message.NO_DATA_FOUND)
         ) {
           setServices([]);
           setTotal(0);
@@ -282,7 +290,7 @@ const Services = ({
     <>
       <Box className="search-box">
         <Input
-          placeholder="Search here"
+          placeholder={t("list.searchHere")}
           disableUnderline
           className="text-field"
           value={searchText}
@@ -347,7 +355,9 @@ const Services = ({
               onClick={() => categoryToggleHandler(cat.value)}
             >
               <Box className="category-checkbox" aria-hidden="true" />
-              <Typography className="category-label">{cat.label}</Typography>
+              <Typography className="category-label">
+                {t(cat.labelKey)}
+              </Typography>
             </Stack>
           ))}
         </Stack>
@@ -374,7 +384,9 @@ const Services = ({
               onClick={() => locationToggleHandler(loc.value)}
             >
               <Box className="category-checkbox" aria-hidden="true" />
-              <Typography className="category-label">{loc.label}</Typography>
+              <Typography className="category-label">
+                {t(loc.labelKey)}
+              </Typography>
             </Stack>
           ))}
         </Stack>
@@ -419,7 +431,7 @@ const Services = ({
               onClick={() => setIsFilterDrawerOpen(true)}
             >
               <FilterListIcon fontSize="small" />
-              Filters
+              {t("list.filters")}
               {activeFilterCount > 0 && (
                 <Box className="mobile-filter-trigger-count">
                   {activeFilterCount}
@@ -445,7 +457,7 @@ const Services = ({
               >
                 {SORT_OPTIONS.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.labelKey)}
                   </MenuItem>
                 ))}
               </Select>
