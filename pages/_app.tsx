@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { I18nextProvider } from "react-i18next";
 import { getI18n } from "@/libs/i18n";
+import { hydrateColorScheme } from "@/libs/theme";
 import Head from "next/head";
 import "../scss/app.scss";
 import "../scss/pc/main.scss";
@@ -26,6 +27,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     updateUserInfo(getJwtToken());
+    hydrateColorScheme();
   }, []);
 
   // Socket.io, Redux, MUI ...

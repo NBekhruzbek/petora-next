@@ -25,6 +25,7 @@ import React from "react";
 import Basket from "./Basket";
 import NotificationBell from "./notifications/NotificationBell";
 import LoginRegister from "./account/LoginRegister";
+import ThemeToggle from "./common/ThemeToggle";
 import useDeviceDetect from "../hooks/useDeviceDetect";
 import { useTranslation } from "react-i18next";
 import {
@@ -257,6 +258,8 @@ const Top = () => {
               </button>
             </Stack>
 
+            <ThemeToggle variant="two-up" />
+
             <Box className="mobile-nav-drawer__footer">
               {authMember ? (
                 <Stack className="mobile-nav-drawer__member" direction="row">
@@ -373,6 +376,8 @@ const Top = () => {
             </Box>
 
             <Box component={"div"} className="user-box">
+              <ThemeToggle />
+
               {/* Language Switcher */}
               <Box
                 className="lang-switcher"

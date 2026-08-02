@@ -27,6 +27,14 @@
     "enShort": "EN",
     "koShort": "KO"
   },
+  "theme": {
+    "darkMode": "Dark mode",
+    "appearance": "Appearance",
+    "light": "Light",
+    "dark": "Dark",
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode"
+  },
   "actions": {
     "readMore": "Read More"
   },

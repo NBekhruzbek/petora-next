@@ -2,7 +2,9 @@ import { makeVar } from "@apollo/client";
 
 import { CustomJwtPayload } from "../libs/types/customJwtPayload";
 import { BasketItem } from "../libs/types/basket/basket";
-export const themeVar = makeVar({});
+import { ColorScheme } from "../libs/theme";
+
+export const themeVar = makeVar<ColorScheme>("light");
 
 export const basketVar = makeVar<BasketItem[]>([]);
 

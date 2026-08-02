@@ -11,6 +11,11 @@ export default function Document({ locale }: DocumentProps) {
     <Html lang={locale ?? "en"}>
       <Head>
         <meta charSet="UTF-8" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem("petora-color-scheme");document.documentElement.dataset.theme=s==="dark"?"dark":"light"}catch(e){document.documentElement.dataset.theme="light"}})()`,
+          }}
+        />
         {/* Brand font — every font-family in scss asks for Assistant */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
