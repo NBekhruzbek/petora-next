@@ -172,6 +172,9 @@ const Community: NextPage = () => {
               onChange={(event) =>
                 handleCategoryChange(event.target.value as CategoryKey)
               }
+              SelectProps={{
+                MenuProps: { PaperProps: { className: "community-filter-menu" } },
+              }}
             >
               {categoryOrder.map((category) => (
                 <MenuItem key={category} value={category}>

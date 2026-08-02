@@ -29,13 +29,13 @@
           font-family: $font;
           font-size: 22px;
           font-weight: 800;
-          color: #202635;
+          color: var(--pt-ink-strong);
         }
 
         .community-board-subtitle {
           font-family: $font;
           font-size: 15px;
-          color: #667085;
+          color: var(--pt-ink-cool);
         }
 
         // The gradient pill CTA is #pc-wrap-scoped — restate its visual
@@ -72,8 +72,17 @@
       .community-mobile-filter {
         .MuiOutlinedInput-root {
           border-radius: 14px;
-          background: #fff;
+          background: var(--pt-field-surface);
+          color: var(--pt-ink-strong);
           font-family: $font;
+
+          fieldset {
+            border-color: var(--pt-hairline);
+          }
+
+          .MuiSelect-icon {
+            color: var(--pt-ink-cool);
+          }
         }
       }
     }

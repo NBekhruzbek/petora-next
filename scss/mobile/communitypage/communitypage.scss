@@ -13,6 +13,34 @@
     gap: $space-3;
   }
 
+  .qna-search-field {
+    .MuiOutlinedInput-root {
+      min-height: 50px;
+      border-radius: 14px;
+      background: var(--pt-field-surface);
+      font-family: $font;
+
+      fieldset {
+        border-color: var(--pt-hairline);
+      }
+
+      &.Mui-focused fieldset {
+        border-color: #cb33df;
+      }
+
+      svg {
+        color: var(--pt-ink-faint);
+      }
+    }
+
+    input {
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--pt-ink-strong);
+    }
+  }
+
   .free-board-news-card {
     flex: 1 1 auto;
     flex-direction: row;
@@ -110,7 +138,7 @@
       padding: 2px 10px;
       border: none;
       border-radius: $m-radius-pill;
-      background: #f4ecfb;
+      background: var(--pt-selected);
       font-size: 11px;
       color: #9b30bf;
       box-shadow: none;
@@ -135,7 +163,7 @@
     .qna-question-summary {
       font-size: 13px;
       line-height: 1.5;
-      color: #687184;
+      color: var(--pt-ink-cool);
       display: -webkit-box;
       line-clamp: 2;
       -webkit-line-clamp: 2;
@@ -186,14 +214,14 @@
     .qna-author-name {
       font-size: 13px;
       font-weight: 700;
-      color: #3a4354;
+      color: var(--pt-ink-cool);
     }
 
     .qna-meta-text,
     .qna-meta-dot {
       font-size: 13px;
       font-weight: 600;
-      color: #8a93a3;
+      color: var(--pt-ink-faint);
     }
 
     .qna-meta-icon-text {
@@ -202,11 +230,11 @@
       gap: 5px;
       font-size: 13px;
       font-weight: 600;
-      color: #8a93a3;
+      color: var(--pt-ink-faint);
 
       svg {
         font-size: 16px;
-        color: #aab1be;
+        color: var(--pt-ink-faint);
       }
     }
   }
@@ -222,7 +250,7 @@
     .MuiPaginationItem-root {
       font-family: $font;
       font-weight: 700;
-      color: #526076;
+      color: var(--pt-ink-cool);
       border-radius: $m-radius;
     }
 

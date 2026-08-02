@@ -2,7 +2,7 @@
 
 #pc-wrap {
   #community-top {
-    background-color: #f2e2ff;
+    background-color: var(--pt-header-surface);
     position: relative;
 
     &::after {
@@ -48,7 +48,7 @@
           font-style: normal;
           font-weight: 700;
           text-transform: uppercase;
-          color: var(--Primary-Purple3, #410075);
+          color: var(--pt-ink);
         }
         .text3 {
           width: 387px;
@@ -151,7 +151,7 @@
     width: 100%;
     min-height: auto;
     padding: 100px 0 90px;
-    background: #ffffff;
+    background: var(--pt-page-bg);
 
     .container {
       display: flex;
@@ -170,8 +170,8 @@
       width: 240px;
       min-height: 360px;
       border-radius: 14px;
-      border: 1px solid #8f8f8f80;
-      background: #ffffff;
+      border: 1px solid var(--pt-border-cool);
+      background: var(--pt-surface);
       box-shadow: 0 16px 50px rgba(24, 31, 56, 0.06);
       overflow: hidden;
 
@@ -181,7 +181,7 @@
         align-items: flex-start;
         gap: 14px;
         padding: 24px 20px 22px;
-        border-bottom: 1px solid #b4b4b480;
+        border-bottom: 1px solid var(--pt-hairline);
 
         .community-brand-icon {
           width: 38px;
@@ -208,14 +208,14 @@
             font-size: 18px;
             font-weight: 700;
             line-height: 1.2;
-            color: #1d2433;
+            color: var(--pt-ink-strong);
           }
 
           .community-brand-subtitle {
             font-family: $font;
             font-size: 13px;
             font-weight: 500;
-            color: #7c8597;
+            color: var(--pt-ink-cool);
           }
         }
       }
@@ -229,7 +229,7 @@
           min-height: 46px;
           padding: 12px 14px;
           border-radius: 11px;
-          color: #505a6e;
+          color: var(--pt-ink-cool);
           font-family: $font;
           font-size: 15px;
           font-weight: 700;
@@ -245,16 +245,12 @@
           }
 
           &:hover {
-            background: #f6f6fb;
+            background: var(--pt-hover);
           }
 
           &.active {
-            color: #111827; /* aniqroq, kontrast yaxshi */
-            background: linear-gradient(
-              90deg,
-              #f5f3ff,
-              #fdf2f8
-            ); /* soft gradient */
+            color: var(--pt-ink-strong); /* aniqroq, kontrast yaxshi */
+            background: var(--pt-selected); /* soft gradient */
 
             border: 1px solid rgba(168, 85, 247, 0.3); /* purple accent */
 
@@ -270,13 +266,13 @@
       .community-sidebar-footer {
         margin-top: auto;
         padding: 18px 20px 22px;
-        border-top: 1px solid #b4b4b480;
+        border-top: 1px solid var(--pt-hairline);
 
         .community-footer-title {
           font-family: $font;
           font-size: 14px;
           font-weight: 700;
-          color: #4b5568;
+          color: var(--pt-ink-mid);
         }
 
         .community-footer-copy {
@@ -284,7 +280,7 @@
           font-family: $font;
           font-size: 13px;
           font-weight: 500;
-          color: #9098a9;
+          color: var(--pt-ink-faint);
         }
       }
     }
@@ -311,7 +307,7 @@
             font-size: 28px;
             font-weight: 800;
             line-height: 1.1;
-            color: #202635;
+            color: var(--pt-ink-strong);
             letter-spacing: 0.2px;
           }
 
@@ -320,7 +316,7 @@
             font-size: 18px;
             font-weight: 500;
             line-height: 1.45;
-            color: #667085;
+            color: var(--pt-ink-cool);
           }
         }
 
@@ -389,8 +385,17 @@
 
         .MuiOutlinedInput-root {
           border-radius: 14px;
-          background: #ffffff;
+          background: var(--pt-field-surface);
+          color: var(--pt-ink-strong);
           font-family: $font;
+
+          fieldset {
+            border-color: var(--pt-hairline);
+          }
+
+          .MuiSelect-icon {
+            color: var(--pt-ink-cool);
+          }
         }
       }
 
@@ -411,16 +416,16 @@
             .MuiOutlinedInput-root {
               min-height: 54px;
               border-radius: 16px;
-              background: #ffffff;
+              background: var(--pt-field-surface);
               font-family: $font;
               box-shadow: 0 8px 20px rgba(29, 36, 51, 0.04);
 
               fieldset {
-                border-color: #dde3ef;
+                border-color: var(--pt-hairline);
               }
 
               &:hover fieldset {
-                border-color: #c9d2e3;
+                border-color: var(--pt-ink-faint);
               }
 
               &.Mui-focused fieldset {
@@ -428,7 +433,7 @@
               }
 
               svg {
-                color: #97a0b2;
+                color: var(--pt-ink-faint);
               }
             }
 
@@ -436,7 +441,7 @@
               font-family: $font;
               font-size: 15px;
               font-weight: 600;
-              color: #243043;
+              color: var(--pt-ink-strong);
             }
           }
 
@@ -496,7 +501,7 @@
               font-family: $font;
               font-size: 14px;
               font-weight: 600;
-              color: #6f7b8f;
+              color: var(--pt-ink-cool);
             }
 
             .qna-meta-icon-text {
@@ -506,7 +511,7 @@
 
               svg {
                 font-size: 18px;
-                color: #8a95a8;
+                color: var(--pt-ink-faint);
               }
             }
           }
@@ -517,21 +522,21 @@
             gap: 8px;
             min-height: 280px;
             border-radius: 20px;
-            border: 1px dashed #d8ddea;
-            background: linear-gradient(180deg, #ffffff 0%, #fbf8ff 100%);
+            border: 1px dashed var(--pt-border-cool);
+            background: var(--pt-surface);
 
             .qna-empty-title {
               font-family: $font;
               font-size: 22px;
               font-weight: 800;
-              color: #263043;
+              color: var(--pt-ink-strong);
             }
 
             .qna-empty-copy {
               font-family: $font;
               font-size: 15px;
               font-weight: 500;
-              color: #7a8498;
+              color: var(--pt-ink-faint);
             }
           }
 
@@ -547,7 +552,7 @@
               .MuiPaginationItem-root {
                 font-family: $font;
                 font-weight: 700;
-                color: #526076;
+                color: var(--pt-ink-cool);
                 border-radius: 12px;
               }
 
@@ -569,7 +574,7 @@
   .MuiDialog-container {
     align-items: flex-start;
     backdrop-filter: blur(1.5px);
-    background: rgba(255, 255, 255, 0.25);
+    background: var(--pt-scrim);
   }
 }
 
@@ -657,6 +662,7 @@
   overflow: hidden;
   transform-origin: center top;
   animation: qnaDialogReveal 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  background: var(--pt-surface) !important;
 
   margin-top: 120px !important;
   max-height: calc(100vh - 160px) !important;
@@ -669,7 +675,7 @@
     justify-content: space-between;
     gap: 16px;
     padding: 18px 18px 14px;
-    border-bottom: 1px solid #ebedf4;
+    border-bottom: 1px solid var(--pt-hairline);
     opacity: 0;
     animation: qnaContentReveal 0.38s cubic-bezier(0.22, 1, 0.36, 1) 0.06s
       forwards;
@@ -684,11 +690,11 @@
       font-size: 23px;
       font-weight: 700;
       line-height: 1.3;
-      color: #1f2735;
+      color: var(--pt-ink-strong);
     }
 
     .qna-close-btn {
-      color: #6e7788;
+      color: var(--pt-ink-cool);
       &:hover {
         color: red;
         animation: spin 0.25s;
@@ -703,7 +709,7 @@
 
   .qna-dialog-section {
     padding: 18px;
-    border-bottom: 1px solid #edf0f6;
+    border-bottom: 1px solid var(--pt-hairline);
     gap: 16px;
     opacity: 0;
     animation: qnaContentReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -730,7 +736,7 @@
     font-size: 28px;
     font-weight: 700;
     line-height: 1.2;
-    color: #1f2735;
+    color: var(--pt-ink-strong);
   }
 
   .qna-question-card {
@@ -749,7 +755,7 @@
       font-size: 18px;
       font-weight: 500;
       line-height: 1.4;
-      color: #262626;
+      color: var(--pt-ink-strong);
     }
     .qna-seledted-question-image-row {
       display: flex;
@@ -766,8 +772,8 @@
         height: 102px;
         overflow: hidden;
         border-radius: 12px;
-        border: 1px solid #e7ebf3;
-        background: #f5f7fb;
+        border: 1px solid var(--pt-hairline);
+        background: var(--pt-surface-sunken);
         box-shadow: 0 6px 16px rgba(31, 41, 55, 0.06);
         flex: 0 0 auto;
         cursor: zoom-in;
@@ -793,7 +799,7 @@
 
   .qna-detail-copy {
     font-size: 16px;
-    color: #4f5d73;
+    color: var(--pt-ink-cool);
     white-space: pre-wrap;
     word-break: break-word;
   }
@@ -829,7 +835,7 @@
       font-family: $font;
       font-size: 14px;
       font-weight: 600;
-      color: #6f7b8f;
+      color: var(--pt-ink-cool);
     }
 
     .qna-meta-icon-text {
@@ -839,7 +845,7 @@
 
       svg {
         font-size: 18px;
-        color: #8a95a8;
+        color: var(--pt-ink-faint);
       }
     }
   }
@@ -870,7 +876,7 @@
       max-height: 400px;
       object-fit: cover;
       border-radius: 20px;
-      border: 1px solid #eef1f6;
+      border: 1px solid var(--pt-hairline);
       display: block;
     }
 
@@ -882,7 +888,7 @@
         font-size: 17px;
         font-weight: 500;
         line-height: 1.65;
-        color: #3b4455;
+        color: var(--pt-ink-mid);
         // Keep the author's paragraph breaks instead of collapsing the post
         // into one block.
         white-space: pre-wrap;
@@ -905,7 +911,7 @@
 
           svg {
             font-size: 18px;
-            color: #636c7e;
+            color: var(--pt-ink-cool);
             transition:
               color 0.2s ease,
               transform 0.2s ease;
@@ -915,7 +921,7 @@
             font-family: $font;
             font-size: 14px;
             font-weight: 700;
-            color: #636c7e;
+            color: var(--pt-ink-cool);
             transition: color 0.2s ease;
           }
 
@@ -951,11 +957,11 @@
           font-family: $font;
           font-size: 14px;
           font-weight: 600;
-          color: #8c96a7;
+          color: var(--pt-ink-faint);
         }
 
         .qna-meta-dot {
-          color: #cdd4df;
+          color: var(--pt-ink-faint);
           font-size: 14px;
         }
       }
@@ -973,8 +979,8 @@
       min-width: 0;
       padding: 18px 20px;
       border-radius: 12px;
-      border: 1px solid #e6ebf3;
-      background: #ffffff;
+      border: 1px solid var(--pt-hairline);
+      background: var(--pt-surface);
       box-shadow: 0 10px 24px rgba(31, 41, 55, 0.05);
     }
 
@@ -984,9 +990,9 @@
       padding: 20px 20px;
       text-align: center;
       gap: 5px;
-      background: #f9fafb;
+      background: var(--pt-surface-sunken);
       border-radius: 12px;
-      border: 1.5px dashed #e3e7ef;
+      border: 1.5px dashed var(--pt-border-cool);
 
       .qna-empty-icon-wrap {
         width: 56px;
@@ -1008,7 +1014,7 @@
         font-family: $font;
         font-size: 18px;
         font-weight: 800;
-        color: #293446;
+        color: var(--pt-ink-strong);
         letter-spacing: -0.2px;
       }
 
@@ -1016,7 +1022,7 @@
         font-family: $font;
         font-size: 14px;
         font-weight: 600;
-        color: #8a95a8;
+        color: var(--pt-ink-faint);
         max-width: 320px;
         line-height: 1.5;
       }
@@ -1034,7 +1040,7 @@
     font-size: 15px;
     font-weight: 600;
     line-height: 1.7;
-    color: #4a566b;
+    color: var(--pt-ink-cool);
     white-space: pre-wrap;
     word-break: break-word;
   }
@@ -1055,7 +1061,7 @@
         font-family: $font;
         font-size: 15px;
         font-weight: 700;
-        color: #3a4558;
+        color: var(--pt-ink-mid);
         letter-spacing: 0.2px;
       }
 
@@ -1063,8 +1069,8 @@
       .qna-answer-input {
         width: 100%;
         border-radius: 12px;
-        border: 1px solid #dfe5f0;
-        background: #ffffff;
+        border: 1px solid var(--pt-hairline);
+        background: var(--pt-field-surface);
         transition:
           border-color 0.2s ease,
           box-shadow 0.2s ease;
@@ -1087,10 +1093,10 @@
           font-size: 16px;
           font-weight: 600;
           line-height: 1.5;
-          color: #293446;
+          color: var(--pt-ink-strong);
 
           &::placeholder {
-            color: #a2abba;
+            color: var(--pt-ink-faint);
           }
         }
 
@@ -1108,10 +1114,10 @@
           font-size: 15px;
           font-weight: 600;
           line-height: 1.6;
-          color: #293446;
+          color: var(--pt-ink-strong);
 
           &::placeholder {
-            color: #a2abba;
+            color: var(--pt-ink-faint);
           }
         }
       }
@@ -1121,7 +1127,7 @@
         font-family: $font;
         font-size: 13px;
         font-weight: 700;
-        color: #8a95a8;
+        color: var(--pt-ink-faint);
       }
 
       // Row of uploaded image thumbnails
@@ -1142,8 +1148,8 @@
           height: 100px;
           overflow: hidden;
           border-radius: 12px;
-          border: 1px solid #e7ebf3;
-          background: #f5f7fb;
+          border: 1px solid var(--pt-hairline);
+          background: var(--pt-surface-sunken);
           box-shadow: 0 6px 16px rgba(31, 41, 55, 0.06);
           flex: 0 0 auto;
           transition:
@@ -1174,9 +1180,9 @@
             right: 6px;
             width: 26px;
             height: 26px;
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(188, 196, 210, 0.8);
-            color: #5a6475;
+            background: var(--pt-scrim);
+            border: 1px solid var(--pt-hairline);
+            color: var(--pt-ink-cool);
             opacity: 0;
             transition:
               opacity 0.2s ease,
@@ -1188,7 +1194,7 @@
             }
 
             &:hover {
-              background: #ffffff;
+              background: var(--pt-surface);
               color: #e53935;
             }
           }
@@ -1201,12 +1207,12 @@
         min-height: 42px;
         padding: 8px 22px;
         border-radius: 10px;
-        border: 1.5px dashed #c5cad8;
-        background: #f9fafb;
+        border: 1.5px dashed var(--pt-hairline);
+        background: var(--pt-surface-sunken);
         font-family: $font;
         font-size: 14px;
         font-weight: 700;
-        color: #6b7a8d;
+        color: var(--pt-ink-cool);
         text-transform: none;
         transition:
           border-color 0.2s ease,
@@ -1228,11 +1234,11 @@
         width: 120px;
         height: 120px;
         border-radius: 16px;
-        border: 2px dashed #dfe5f0;
+        border: 2px dashed var(--pt-hairline);
         display: flex;
         flex-direction: column;
         gap: 8px;
-        color: #6d7485;
+        color: var(--pt-ink-cool);
         background: transparent;
         transition: all 0.2s ease;
         text-transform: none;
@@ -1263,7 +1269,7 @@
           height: 100%;
           object-fit: cover;
           border-radius: 16px;
-          border: 1px solid #e7ebf3;
+          border: 1px solid var(--pt-hairline);
         }
       }
 
@@ -1378,8 +1384,8 @@
     .qna-answer-input {
       width: 100%;
       border-radius: 12px;
-      border: 1px solid #dfe5f0;
-      background: #ffffff;
+      border: 1px solid var(--pt-hairline);
+      background: var(--pt-field-surface);
       transition:
         border-color 0.2s ease,
         box-shadow 0.2s ease;
@@ -1402,10 +1408,10 @@
         font-size: 15px;
         font-weight: 600;
         line-height: 1.6;
-        color: #293446;
+        color: var(--pt-ink-strong);
 
         &::placeholder {
-          color: #a2abba;
+          color: var(--pt-ink-faint);
         }
       }
     }
@@ -1485,7 +1491,7 @@
   z-index: 2000 !important;
 
   .MuiBackdrop-root {
-    background: rgba(255, 255, 255, 0.398);
+    background: var(--pt-scrim);
   }
 }
 
@@ -1506,7 +1512,7 @@
     gap: 18px;
     padding: 22px 22px 20px;
     border-radius: 28px;
-    background: rgba(241, 243, 247, 0.96);
+    background: var(--pt-panel);
     box-shadow: 0 24px 60px rgba(70, 77, 92, 0.14);
     animation: qnaDialogReveal 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 
@@ -1517,12 +1523,12 @@
       z-index: 3;
       width: 42px;
       height: 42px;
-      background: rgba(255, 255, 255, 0.9);
-      color: #4c5668;
-      border: 1px solid rgba(188, 196, 210, 0.9);
+      background: var(--pt-scrim);
+      color: var(--pt-ink-cool);
+      border: 1px solid var(--pt-hairline);
 
       &:hover {
-        background: #ffffff;
+        background: var(--pt-surface);
       }
     }
 
@@ -1540,8 +1546,8 @@
           rgba(255, 255, 255, 0.7),
           transparent 55%
         ),
-        #e8ecf2;
-      border: 1px solid rgba(198, 206, 218, 0.9);
+        var(--pt-surface-sunken);
+      border: 1px solid var(--pt-hairline);
       overflow: hidden;
 
       .qna-stage-image {
@@ -1549,7 +1555,7 @@
         height: 100%;
         display: block;
         object-fit: contain;
-        background: #e8ecf2;
+        background: var(--pt-surface-sunken);
         animation: qnaGalleryImageReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1)
           both;
         will-change: opacity, transform;
@@ -1563,9 +1569,9 @@
       z-index: 3;
       width: 52px;
       height: 52px;
-      background: rgba(255, 255, 255, 0.92);
-      color: #4d586b;
-      border: 1px solid rgba(194, 202, 214, 0.95);
+      background: var(--pt-scrim);
+      color: var(--pt-ink-cool);
+      border: 1px solid var(--pt-hairline);
       box-shadow: 0 10px 22px rgba(89, 98, 112, 0.14);
 
       &.prev {
@@ -1577,7 +1583,7 @@
       }
 
       &:hover {
-        background: #ffffff;
+        background: var(--pt-surface);
       }
 
       svg {
@@ -1588,12 +1594,12 @@
     .qna-image-dialog-counter {
       padding: 7px 14px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
-      border: 1px solid rgba(198, 206, 218, 0.95);
+      background: var(--pt-scrim);
+      border: 1px solid var(--pt-hairline);
       font-family: $font;
       font-size: 13px;
       font-weight: 700;
-      color: #596477;
+      color: var(--pt-ink-cool);
     }
 
     .qna-image-dialog-thumbs {
@@ -1614,7 +1620,7 @@
       overflow: hidden;
       border-radius: 12px;
       border: 2px solid transparent;
-      background: rgba(255, 255, 255, 0.8);
+      background: var(--pt-scrim);
       cursor: pointer;
       opacity: 0.72;
       transition:
@@ -1629,7 +1635,7 @@
 
       &.active {
         opacity: 1;
-        border-color: #aeb8c9;
+        border-color: var(--pt-ink-faint);
       }
 
       img {
