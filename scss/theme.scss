@@ -231,6 +231,14 @@ html[data-theme="dark"] {
       }
     }
 
+    #cs-top {
+      background-color: var(--pt-header-surface);
+
+      &::after {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C360,120 1080,0 1440,60 L1440,120 L0,120 Z' fill='%23150f1e'/%3E%3C/svg%3E");
+      }
+    }
+
     #footer {
       background-color: var(--pt-footer-surface);
 

@@ -2,9 +2,9 @@
 
 .faq-card {
   position: relative;
-  border: 1px solid #cccccc80 !important;
+  border: 1px solid var(--pt-border-cool) !important;
   border-radius: 12px;
-  background: #fff;
+  background: var(--pt-surface);
   box-shadow: 0 12px 30px rgba(77, 60, 159, 0.07);
   cursor: pointer;
   text-align: left;
@@ -48,7 +48,7 @@
   }
 
   .faq-title {
-    color: #20283a;
+    color: var(--pt-ink-strong);
     font-family: $font;
     font-size: 17px;
     font-weight: 700;
@@ -56,14 +56,14 @@
   }
 
   .faq-arrow {
-    color: #6d5df6;
+    color: var(--pt-accent);
     font-size: 24px;
     transition: transform 0.3s ease;
   }
 
   .faq-description {
     margin-top: 10px;
-    color: #55637a;
+    color: var(--pt-ink-cool);
     font-family: $font;
     font-size: 15px;
     line-height: 1.55;
@@ -80,7 +80,7 @@
   }
 
   .faq-answer {
-    color: #40345f;
+    color: var(--pt-ink-mid);
     font-family: $font;
     font-size: 15px;
     line-height: 1.65;
@@ -90,7 +90,7 @@
     margin: 14px 0 0;
     padding-left: 18px;
     list-style: disc; // the global reset strips markers off every ul
-    color: #5e557d;
+    color: var(--pt-ink-cool);
     font-family: $font;
     font-size: 14px;
     line-height: 1.8;
@@ -104,7 +104,7 @@
   }
 
   .feedback-label {
-    color: #584f7a;
+    color: var(--pt-ink-mid);
     font-family: $font;
     font-size: 14px;
     font-weight: 700;
@@ -124,8 +124,8 @@
     height: 40px;
     border: 0;
     border-radius: 999px;
-    background: #f4f1ff;
-    color: #6d5df6;
+    background: var(--pt-selected);
+    color: var(--pt-accent);
     cursor: pointer;
     transition:
       transform 0.22s ease,
@@ -138,17 +138,21 @@
   }
 
   .feedback-btn.selected {
-    background: #6d5df6;
-    color: #fff;
+    background: var(--pt-ink);
+    color: var(--pt-on-ink);
   }
 
   .feedback-btn.selected.down {
     background: #8f6fff;
+
+    html[data-theme="dark"] & {
+      background: #a68aff;
+    }
   }
 
   .close-expanded {
-    background: #f7f5ff;
-    color: #6f62ad;
+    background: var(--pt-selected);
+    color: var(--pt-ink-cool);
   }
 }
 
@@ -156,9 +160,9 @@
   display: flex;
   align-items: stretch;
   width: 100%;
-  border: 1px solid #cccccc80 !important;
+  border: 1px solid var(--pt-border-cool) !important;
   border-radius: 12px;
-  background: #fff;
+  background: var(--pt-surface);
   box-shadow: 0 10px 24px rgba(82, 64, 166, 0.07);
   cursor: pointer;
   padding-top: 0;
@@ -216,7 +220,7 @@
   }
 
   .notice-date {
-    color: #847aa6;
+    color: var(--pt-ink-cool);
     font-family: $font;
     font-size: 13px;
     font-weight: 700;
@@ -251,7 +255,7 @@
   }
 
   .notice-title {
-    color: #20283a;
+    color: var(--pt-ink-strong);
     font-family: $font;
     font-size: 17px;
     font-weight: 700;
@@ -259,7 +263,7 @@
   }
 
   .notice-summary {
-    color: #55637a;
+    color: var(--pt-ink-cool);
     font-family: $font;
     font-size: 14px;
     line-height: 1.55;
@@ -268,7 +272,7 @@
   .notice-arrow {
     align-self: center;
     margin: 0 18px 0 0;
-    color: #6d5df6;
+    color: var(--pt-accent);
     font-size: 24px;
   }
 }

@@ -35,7 +35,7 @@
 
         .hero-title {
           gap: 6px;
-          color: #24163e;
+          color: var(--pt-ink-strong);
           font-family:
             "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia,
             serif;
@@ -46,7 +46,7 @@
           letter-spacing: -1px;
 
           .accent-line {
-            color: #6826c9;
+            color: var(--pt-accent);
           }
         }
 
@@ -57,7 +57,7 @@
           font-style: normal;
           font-weight: 400;
           line-height: 1.45;
-          color: #463d61;
+          color: var(--pt-ink-muted);
         }
 
         .support-highlights {
@@ -75,7 +75,7 @@
             gap: 8px;
             border-radius: 24px;
             background: transparent;
-            color: #000;
+            color: var(--pt-ink-body);
             font-family: Assistant;
             font-size: 20px;
             font-style: normal;
@@ -87,7 +87,7 @@
             }
 
             .pill-icon.purple {
-              color: #7a59f4;
+              color: var(--pt-accent);
             }
           }
         }
@@ -160,7 +160,7 @@
       position: relative;
       padding: 40px 0 80px;
       margin-top: -20px;
-      background: #ffffff;
+      background: var(--pt-page-bg);
       overflow: visible;
 
       .container {
@@ -176,9 +176,9 @@
         align-items: center;
         gap: 18px;
         padding: 18px 24px;
-        border: 1px solid #8f8f8f80 !important;
+        border: 1px solid var(--pt-border-cool) !important;
         border-radius: 24px;
-        background: #fff;
+        background: var(--pt-surface);
         box-shadow: 0 12px 34px rgba(109, 93, 246, 0.08);
         cursor: pointer;
         overflow: hidden;
@@ -196,7 +196,7 @@
           gap: 8px;
           padding: 7px 10px;
           border-radius: 999px;
-          background: rgb(250, 225, 254);
+          background: var(--pt-selected);
           flex-shrink: 0;
           position: relative;
           overflow: hidden;
@@ -219,7 +219,7 @@
           }
 
           .notice-chip-label {
-            color: #7100ff;
+            color: var(--pt-price);
             font-family: $font;
             font-size: 13px;
             font-weight: 700;
@@ -271,7 +271,7 @@
           text-align: left;
 
           .title {
-            color: #1e273c;
+            color: var(--pt-ink-strong);
             font-family: $font;
             font-size: 18px;
             font-weight: 700;
@@ -280,7 +280,7 @@
 
           .summary {
             max-width: 760px;
-            color: #4f5d73;
+            color: var(--pt-ink-cool);
             font-family: $font;
             font-size: 15px;
             line-height: 1.45;
@@ -291,7 +291,7 @@
           margin-left: auto;
           display: flex;
           align-items: center;
-          color: #6d5df6;
+          color: var(--pt-accent);
           white-space: nowrap;
         }
       }
@@ -322,7 +322,7 @@
           border-radius: 12px;
           padding: 14px 18px;
           background: transparent;
-          color: #33415a;
+          color: var(--pt-ink-cool);
           font-family: $font;
           font-size: 15px;
           font-weight: 600;
@@ -335,15 +335,15 @@
 
           .sidebar-icon {
             font-size: 21px;
-            color: #394964;
+            color: var(--pt-ink-cool);
             transition: color 0.24s ease;
             flex-shrink: 0;
           }
 
           &:hover {
-            background: rgba(255, 255, 255, 0.66);
+            background: var(--pt-hover);
             transform: translateX(1px);
-            border: 1px solid #8f8f8f80 !important;
+            border: 1px solid var(--pt-border-cool) !important;
           }
 
           &.active {
@@ -381,7 +381,7 @@
         }
 
         .panel-title {
-          color: #1d2437;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 24px;
           font-weight: 700;
@@ -396,7 +396,7 @@
         }
 
         .notice-results {
-          color: #69758d;
+          color: var(--pt-ink-cool);
           font-family: $font;
           font-size: 14px;
           font-weight: 600;
@@ -412,7 +412,7 @@
         }
 
         .notice-page-summary {
-          color: #69758d;
+          color: var(--pt-ink-cool);
           font-family: $font;
           font-size: 14px;
           font-weight: 600;
@@ -432,8 +432,8 @@
             font-family: $font;
             font-size: 13px;
             font-weight: 700;
-            color: #526076;
-            background: #fff;
+            color: var(--pt-ink-cool);
+            background: var(--pt-surface);
             box-shadow: 0 8px 22px rgba(109, 93, 246, 0.08);
           }
 
@@ -464,15 +464,11 @@
           justify-content: center;
           min-height: 250px;
           border-radius: 24px;
-          background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.92),
-            rgba(246, 242, 255, 0.94)
-          );
+          background: var(--pt-surface);
           text-align: center;
 
           .empty-title {
-            color: #342750;
+            color: var(--pt-ink-strong);
             font-family: $font;
             font-size: 24px;
             font-weight: 700;
@@ -481,7 +477,7 @@
           .empty-copy {
             max-width: 520px;
             margin-top: 10px;
-            color: #70678f;
+            color: var(--pt-ink-cool);
             font-family: $font;
             font-size: 15px;
             line-height: 1.7;
@@ -506,17 +502,19 @@
         position: relative;
         width: min(100%, 700px);
         padding: 32px;
-        border: 1px solid rgba(255, 255, 255, 0.58);
+        border: 1px solid var(--pt-hairline);
         border-radius: 28px;
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.8),
-          rgba(247, 243, 255, 0.9)
-        );
+        background: var(--pt-surface);
         box-shadow:
           0 30px 80px rgba(53, 36, 122, 0.24),
           inset 0 1px 0 rgba(255, 255, 255, 0.88);
         animation: csModalScale 0.2s ease;
+
+        html[data-theme="dark"] & {
+          box-shadow:
+            0 30px 80px rgba(0, 0, 0, 0.45),
+            inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
 
         .modal-close {
           position: absolute;
@@ -529,8 +527,8 @@
           height: 42px;
           border: 0;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.88);
-          color: #574a87;
+          background: var(--pt-field-surface);
+          color: var(--pt-ink-cool);
           cursor: pointer;
         }
 
@@ -574,7 +572,7 @@
 
         .modal-title {
           margin-top: 10px;
-          color: #291e47;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 32px;
           font-weight: 700;
@@ -583,7 +581,7 @@
 
         .modal-date {
           margin-top: 10px;
-          color: #7c719e;
+          color: var(--pt-ink-cool);
           font-family: $font;
           font-size: 14px;
           font-weight: 700;
@@ -592,7 +590,7 @@
         .modal-copy {
           margin-top: 22px;
           gap: 14px;
-          color: #4f456c;
+          color: var(--pt-ink-muted);
           font-family: $font;
           font-size: 16px;
           line-height: 1.75;

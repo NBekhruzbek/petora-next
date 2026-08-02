@@ -14,7 +14,7 @@
   .support-hub-section {
     padding: $space-5 0 $space-6;
     margin-top: 0;
-    background: #fff; // pc sets #fff; restate so the header's lilac can't bleed
+    background: var(--pt-page-bg); // pc sets the same; restate so the header's lilac can't bleed
 
     .container {
       padding: 0 $space-4;
@@ -35,9 +35,9 @@
       row-gap: 6px;
       width: 100%;
       padding: $space-4;
-      border: 1px solid #e6ddf5 !important;
+      border: 1px solid var(--pt-border-cool) !important;
       border-radius: 18px;
-      background: #fff;
+      background: var(--pt-surface);
       box-shadow: 0 10px 26px rgba(109, 93, 246, 0.08);
       text-align: left;
       cursor: pointer;
@@ -70,10 +70,10 @@
         gap: 6px;
         padding: 4px 6px 4px 10px;
         border-radius: 999px;
-        background: rgb(250, 225, 254);
+        background: var(--pt-selected);
 
         .notice-chip-label {
-          color: #7100ff;
+          color: var(--pt-price);
           font-family: $font;
           font-size: 12px;
           font-weight: 700;
@@ -103,7 +103,7 @@
         display: flex;
         align-items: center;
         margin-left: 0;
-        color: #6d5df6;
+        color: var(--pt-accent);
       }
 
       .notice-copy {
@@ -114,7 +114,7 @@
         text-align: left;
 
         .title {
-          color: #1e273c;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 16px;
           font-weight: 700;
@@ -122,7 +122,7 @@
         }
 
         .summary {
-          color: #4f5d73;
+          color: var(--pt-ink-cool);
           font-family: $font;
           font-size: 13px;
           line-height: 1.45;
@@ -168,10 +168,10 @@
         width: auto;
         padding: 10px 16px;
         min-height: $touch-target-min;
-        border: 1px solid #e2d9f2;
+        border: 1px solid var(--pt-border-cool);
         border-radius: 999px;
-        background: #fff;
-        color: #4a4363;
+        background: var(--pt-surface);
+        color: var(--pt-ink-mid);
         font-family: $font;
         font-size: 14px;
         font-weight: 600;
@@ -184,7 +184,7 @@
 
         .sidebar-icon {
           font-size: 19px;
-          color: #7c6f97;
+          color: var(--pt-ink-cool);
           flex-shrink: 0;
         }
 
@@ -208,14 +208,14 @@
       }
 
       .panel-title {
-        color: #1d2437; // pc-scoped, else inherits the section purple
+        color: var(--pt-ink-strong); // pc-scoped, else inherits the section purple
         font-family: $font;
         font-size: 20px;
         font-weight: 700;
       }
 
       .notice-results {
-        color: #69758d;
+        color: var(--pt-ink-cool);
         font-family: $font;
         font-size: 13px;
         font-weight: 600;
@@ -267,7 +267,7 @@
     }
 
     .notice-page-summary {
-      color: #69758d;
+      color: var(--pt-ink-cool);
       font-family: $font;
       font-size: 13px;
       font-weight: 600;
@@ -288,8 +288,8 @@
         font-family: $font;
         font-size: 13px;
         font-weight: 700;
-        color: #526076;
-        background: #fff;
+        color: var(--pt-ink-cool);
+        background: var(--pt-surface);
         box-shadow: 0 6px 16px rgba(109, 93, 246, 0.08);
       }
 
@@ -305,11 +305,11 @@
       min-height: 180px;
       padding: $space-5;
       border-radius: 18px;
-      background: linear-gradient(180deg, #ffffff, #f6f2ff);
+      background: var(--pt-surface);
       text-align: center;
 
       .empty-title {
-        color: #342750;
+        color: var(--pt-ink-strong);
         font-family: $font;
         font-size: 18px;
         font-weight: 700;
@@ -318,7 +318,7 @@
       .empty-copy {
         max-width: 34ch;
         margin-top: 8px;
-        color: #70678f;
+        color: var(--pt-ink-cool);
         font-family: $font;
         font-size: 14px;
         line-height: 1.6;
@@ -352,7 +352,7 @@
       padding: $space-5 $space-4 $space-6;
       border: 0;
       border-radius: 22px 22px 0 0;
-      background: #fff;
+      background: var(--pt-surface);
       box-shadow: 0 -18px 50px rgba(53, 36, 122, 0.24);
       animation: csSheetUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -367,8 +367,8 @@
         height: 38px;
         border: 0;
         border-radius: 999px;
-        background: #f4f0fb;
-        color: #574a87;
+        background: var(--pt-field-surface);
+        color: var(--pt-ink-cool);
         cursor: pointer;
       }
 
@@ -411,7 +411,7 @@
       .modal-title {
         margin-top: 12px;
         padding-right: 40px; // clear the close button
-        color: #291e47;
+        color: var(--pt-ink-strong);
         font-family: $font;
         font-size: 22px;
         font-weight: 700;
@@ -420,7 +420,7 @@
 
       .modal-date {
         margin-top: 8px;
-        color: #7c719e;
+        color: var(--pt-ink-cool);
         font-family: $font;
         font-size: 13px;
         font-weight: 700;
@@ -429,7 +429,7 @@
       .modal-copy {
         margin-top: 18px;
         gap: 12px;
-        color: #4f456c;
+        color: var(--pt-ink-muted);
         font-family: $font;
         font-size: 15px;
         line-height: 1.7;

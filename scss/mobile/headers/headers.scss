@@ -197,12 +197,12 @@
       // flat inherited purple. 26px keeps "Need help? We've got you" on its own
       // line without clipping; the serif carries CS's reassuring, human tone.
       .hero-title {
-        color: #24163e;
+        color: var(--pt-ink-strong);
         font-size: $m-font-page-title !important; // 26px
         line-height: 1.15 !important;
 
         .accent-line {
-          color: #6826c9;
+          color: var(--pt-accent);
         }
 
         // The paw flourish sits inline in the sentence (no .hand-icon class to
@@ -217,7 +217,7 @@
       .text3 {
         max-width: 100%;
         font-size: 16px;
-        color: #463d61; // muted plum-grey (pc-scoped, else inherited purple)
+        color: var(--pt-ink-muted); // muted plum-grey (pc-scoped, else inherited purple)
       }
 
       // The support label becomes a real chip so it reads as a live status, not
@@ -232,9 +232,9 @@
           gap: 8px;
           padding: 9px 15px 9px 30px;
           border-radius: 999px;
-          background: #efe0fc;
-          border: 1px solid #e2c9f7;
-          color: #2f2350;
+          background: var(--pt-selected);
+          border: 1px solid var(--pt-border-lilac);
+          color: var(--pt-ink-strong);
           font-size: 15px;
           position: relative;
 
@@ -257,7 +257,7 @@
             font-size: 20px;
           }
           .pill-icon.purple {
-            color: #7a59f4;
+            color: var(--pt-accent);
           }
         }
       }
