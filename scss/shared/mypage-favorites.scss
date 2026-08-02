@@ -5,7 +5,7 @@
   flex-direction: column;
 
   .my-favorites-tabs-wrapper {
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid var(--pt-hairline);
     padding-bottom: 8px;
 
     .MuiTabs-root {
@@ -14,17 +14,17 @@
         font-family: $font;
         font-weight: 700;
         font-size: 16px;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
         min-width: 120px;
         transition: all 0.3s ease;
 
         &.Mui-selected {
-          color: #410075;
+          color: var(--pt-ink);
         }
       }
 
       .MuiTabs-indicator {
-        background-color: #410075;
+        background-color: var(--pt-ink);
         height: 3px;
         border-radius: 3px 3px 0 0;
       }
@@ -54,8 +54,8 @@
       max-width: calc((100% - 60px) / 4);
       min-height: 300px;
       border-radius: 12px;
-      border: 1px solid #e5c3ff;
-      background: #fff;
+      border: 1px solid var(--pt-border-lilac);
+      background: var(--pt-surface);
       overflow: hidden;
       cursor: pointer;
       transition:
@@ -82,7 +82,7 @@
         position: relative;
         height: 180px;
         padding: 14px;
-        background: #f4f4f4;
+        background: var(--pt-surface-sunken);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -132,7 +132,7 @@
         }
 
         .unliked {
-          color: #666;
+          color: var(--pt-ink-soft);
           font-size: 20px;
         }
 
@@ -157,7 +157,7 @@
         gap: 5px;
 
         .product-title {
-          color: #252525;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 16px;
           font-weight: 700;
@@ -188,7 +188,7 @@
             }
 
             .MuiRating-iconEmpty {
-              color: #d8d8d8;
+              color: var(--pt-track);
             }
 
             .MuiSvgIcon-root {
@@ -197,7 +197,7 @@
           }
 
           .rating-text {
-            color: #666;
+            color: var(--pt-ink-soft);
             font-family: $font;
             font-size: 13px;
             font-weight: 400;
@@ -209,7 +209,7 @@
         }
 
         .sold-text {
-          color: #666;
+          color: var(--pt-ink-soft);
           font-family: $font;
           font-size: 13px;
           font-weight: 600;
@@ -221,7 +221,7 @@
           gap: 10px;
 
           .discounted-price {
-            color: #7100ff;
+            color: var(--pt-price);
             font-family: $font;
             font-size: 24px;
             font-weight: 700;
@@ -240,7 +240,7 @@
           }
 
           .origin-price {
-            color: #353434;
+            color: var(--pt-ink-mid);
             font-family: $font;
             font-size: 14px;
             font-weight: 400;
@@ -309,9 +309,9 @@
             width: 30px;
             height: 30px;
             border-radius: 6px;
-            border: 1.5px solid #c4c4c4;
-            background: #fff;
-            color: #595959;
+            border: 1.5px solid var(--pt-track);
+            background: var(--pt-surface);
+            color: var(--pt-ink-muted);
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -324,9 +324,9 @@
               color 0.15s ease;
 
             &:hover {
-              border-color: #4b158d;
-              background: #f6eeff;
-              color: #4b158d;
+              border-color: var(--pt-ink);
+              background: var(--pt-selected);
+              color: var(--pt-ink);
               box-shadow: 0 8px 16px rgba(75, 21, 141, 0.16);
             }
           }
@@ -350,8 +350,8 @@
     .service-card {
       width: 100%;
       border-radius: 16px;
-      border: 1px solid #ede0f9;
-      background: #fff;
+      border: 1px solid var(--pt-border-lilac);
+      background: var(--pt-surface);
       overflow: hidden;
       cursor: pointer;
       box-shadow: 0 4px 16px rgba(18, 18, 25, 0.06);
@@ -372,7 +372,7 @@
         position: relative;
         height: 160px;
         overflow: hidden;
-        background: #f3e8ff;
+        background: var(--pt-tint-soft);
 
         .service-card-image {
           width: 100%;
@@ -450,7 +450,7 @@
           font-family: $font;
           font-size: 16px;
           font-weight: 700;
-          color: #111827;
+          color: var(--pt-ink-strong);
           line-height: 1.2;
           white-space: nowrap;
           overflow: hidden;
@@ -464,26 +464,26 @@
             font-family: $font;
             font-size: 22px;
             font-weight: 800;
-            color: #7100ff;
+            color: var(--pt-price);
             line-height: 1;
           }
 
           .service-price-sep {
-            color: #d1d5db;
+            color: var(--pt-track);
             font-size: 16px;
             line-height: 1;
           }
 
           .duration-icon {
             font-size: 14px;
-            color: #9ca3af;
+            color: var(--pt-ink-faint);
           }
 
           .service-duration {
             font-family: $font;
             font-size: 13px;
             font-weight: 500;
-            color: #6b7280;
+            color: var(--pt-ink-soft);
           }
         }
 
@@ -492,14 +492,14 @@
 
           .location-icon {
             font-size: 15px;
-            color: #9ca3af;
+            color: var(--pt-ink-faint);
           }
 
           .service-location {
             font-family: $font;
             font-size: 13px;
             font-weight: 500;
-            color: #6b7280;
+            color: var(--pt-ink-soft);
           }
         }
 
@@ -511,7 +511,7 @@
               color: #f6c200;
             }
             .MuiRating-iconEmpty {
-              color: #e5e7eb;
+              color: var(--pt-track);
             }
             .MuiSvgIcon-root {
               font-size: 15px;
@@ -522,14 +522,14 @@
             font-family: $font;
             font-size: 13px;
             font-weight: 700;
-            color: #374151;
+            color: var(--pt-ink-strong);
           }
 
           .review-count {
             font-family: $font;
             font-size: 12px;
             font-weight: 400;
-            color: #9ca3af;
+            color: var(--pt-ink-faint);
           }
         }
 
@@ -605,12 +605,12 @@
     font-family: $font;
     font-size: 13px;
     font-weight: 600;
-    color: #4b158d;
+    color: var(--pt-ink);
   }
 
   .pagination-section .Mui-selected {
-    background: #4b158d;
-    color: #fff;
+    background: var(--pt-ink);
+    color: var(--pt-on-ink);
   }
 }
 

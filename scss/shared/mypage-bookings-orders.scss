@@ -5,7 +5,7 @@
   flex-direction: column;
 
   .bookings-orders-tabs-wrapper {
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid var(--pt-hairline);
     padding-bottom: 8px;
 
     .MuiTabs-root {
@@ -14,17 +14,17 @@
         font-family: $font;
         font-weight: 700;
         font-size: 16px;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
         min-width: 120px;
         transition: all 0.3s ease;
 
         &.Mui-selected {
-          color: #410075;
+          color: var(--pt-ink);
         }
       }
 
       .MuiTabs-indicator {
-        background-color: #410075;
+        background-color: var(--pt-ink);
         height: 3px;
         border-radius: 3px 3px 0 0;
       }
@@ -43,8 +43,8 @@
       min-height: 116px;
       gap: 18px;
       padding: 18px 20px;
-      background: #ffffff;
-      border: 1px solid #8f8f8f80 !important;
+      background: var(--pt-surface);
+      border: 1px solid var(--pt-border-cool) !important;
       border-radius: 14px;
       transition:
         border-color 0.25s,
@@ -52,8 +52,8 @@
         background-color 0.25s;
 
       &:hover {
-        border-color: rgba(65, 0, 117, 0.34) !important;
-        background: #fdfbff;
+        border-color: var(--pt-ink) !important;
+        background: var(--pt-surface);
         box-shadow: 0 10px 26px rgba(33, 24, 43, 0.06);
       }
 
@@ -66,7 +66,7 @@
         height: 72px;
         border-radius: 14px;
         overflow: hidden;
-        border: 1px solid #8f8f8f80 !important;
+        border: 1px solid var(--pt-border-cool) !important;
 
         .service-thumb-img {
           width: 100%;
@@ -87,7 +87,7 @@
 
       .agent-name {
         min-width: 0;
-        color: #111111;
+        color: var(--pt-ink-strong);
         font-family: $font;
         font-size: 18px;
         font-weight: 900;
@@ -122,7 +122,7 @@
 
       .service-description {
         max-width: 520px;
-        color: #6b6473;
+        color: var(--pt-ink-muted);
         font-family: $font;
         font-size: 14px;
         font-weight: 600;
@@ -139,9 +139,9 @@
         min-height: 24px;
         padding: 4px 10px;
         border-radius: 999px;
-        background: #ffffff;
-        border: 1px solid #8f8f8f80 !important;
-        color: #410075;
+        background: var(--pt-surface);
+        border: 1px solid var(--pt-border-cool) !important;
+        color: var(--pt-ink);
         font-family: $font;
         font-size: 12px;
         font-weight: 800;
@@ -161,7 +161,7 @@
       }
 
       .metric-label {
-        color: #9a93a3;
+        color: var(--pt-ink-faint);
         font-family: $font;
         font-size: 11px;
         font-weight: 900;
@@ -172,7 +172,7 @@
       .service-price,
       .bookings-row,
       .rating-value {
-        color: #151019;
+        color: var(--pt-ink-strong);
         font-family: $font;
         font-size: 15px;
         font-weight: 900;
@@ -191,10 +191,10 @@
         flex: 0 0 auto;
         align-items: flex-end;
         padding-left: 18px;
-        border-left: 1px solid rgba(143, 143, 143, 0.2);
+        border-left: 1px solid var(--pt-border-cool);
 
         .booking-date {
-          color: #151019;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 13px;
           font-weight: 800;
@@ -273,6 +273,10 @@
           font-weight: 600;
           color: #166534;
           white-space: nowrap;
+
+          html[data-theme="dark"] & {
+            color: #4ade80;
+          }
         }
       }
     }
@@ -325,8 +329,8 @@
   }
 
   .order-card {
-    background: #ffffff;
-    border: 1px solid #8f8f8f80 !important;
+    background: var(--pt-surface);
+    border: 1px solid var(--pt-border-cool) !important;
     border-radius: 14px;
     overflow: hidden;
     transition:
@@ -334,7 +338,7 @@
       box-shadow 0.25s;
 
     &:hover {
-      border-color: rgba(65, 0, 117, 0.34) !important;
+      border-color: var(--pt-ink) !important;
       box-shadow: 0 10px 26px rgba(33, 24, 43, 0.06);
     }
 
@@ -344,8 +348,8 @@
 
     .order-card-header {
       padding: 16px 20px 20px;
-      border-bottom: 1px solid rgba(143, 143, 143, 0.2);
-      background: #fafafa;
+      border-bottom: 1px solid var(--pt-border-cool);
+      background: var(--pt-surface-sunken);
 
       // ── Delivery progress tracker ──
       .delivery-tracker {
@@ -360,7 +364,7 @@
             right: 0;
             top: 28px;
             height: 4px;
-            background: #e5e7eb;
+            background: var(--pt-track);
             border-radius: 999px;
           }
 
@@ -395,8 +399,8 @@
             width: 15px;
             height: 15px;
             border-radius: 50%;
-            background: #e5e7eb;
-            border: 2px solid #fafafa;
+            background: var(--pt-track);
+            border: 2px solid var(--pt-surface-sunken);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -445,14 +449,14 @@
 
             .dt-label-icon {
               font-size: 15px !important;
-              color: #d1d5db;
+              color: var(--pt-ink-faint);
             }
 
             .dt-label-text {
               font-family: $font;
               font-size: 12px;
               font-weight: 900;
-              color: #b0b8c9;
+              color: var(--pt-ink-faint);
               text-align: center;
               line-height: 1.2;
               // CJK may break between any two characters by default; keep-all
@@ -485,7 +489,7 @@
       }
 
       .order-card-label {
-        color: #9a93a3;
+        color: var(--pt-ink-faint);
         font-family: $font;
         font-size: 11px;
         font-weight: 900;
@@ -494,7 +498,7 @@
       }
 
       .order-card-number {
-        color: #151019;
+        color: var(--pt-ink-strong);
         font-family: $font;
         font-size: 15px;
         font-weight: 900;
@@ -503,7 +507,7 @@
       }
 
       .order-card-date {
-        color: #4d4358;
+        color: var(--pt-ink-muted);
         font-family: $font;
         font-size: 15px;
         font-weight: 800;
@@ -557,17 +561,17 @@
 
     .order-card-products {
       padding: 16px 20px;
-      border-bottom: 1px solid rgba(143, 143, 143, 0.2);
+      border-bottom: 1px solid var(--pt-border-cool);
 
       .order-product-card {
         padding: 12px 14px;
         border-radius: 10px;
-        border: 1px solid rgba(143, 143, 143, 0.22);
-        background: #ffffff;
+        border: 1px solid var(--pt-border-cool);
+        background: var(--pt-surface);
         transition: border-color 0.2s;
 
         &:hover {
-          border-color: rgba(65, 0, 117, 0.22);
+          border-color: var(--pt-ink);
         }
 
         .order-product-image {
@@ -576,8 +580,8 @@
           height: 68px;
           border-radius: 10px;
           overflow: hidden;
-          background: #f5f5f5;
-          border: 1px solid rgba(143, 143, 143, 0.22);
+          background: var(--pt-surface-sunken);
+          border: 1px solid var(--pt-border-cool);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -591,7 +595,7 @@
         }
 
         .order-product-title {
-          color: #111111;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 15px;
           font-weight: 800;
@@ -610,9 +614,9 @@
             min-height: 22px;
             padding: 3px 10px;
             border-radius: 999px;
-            background: #ffffff;
-            border: 1px solid #8f8f8f80 !important;
-            color: #410075;
+            background: var(--pt-surface);
+            border: 1px solid var(--pt-border-cool) !important;
+            color: var(--pt-ink);
             font-family: $font;
             font-size: 12px;
             font-weight: 800;
@@ -620,7 +624,7 @@
           }
 
           .product-meta-categories {
-            color: #9a93a3;
+            color: var(--pt-ink-faint);
             font-family: $font;
             font-size: 12px;
             font-weight: 700;
@@ -632,7 +636,7 @@
           flex: 0 0 auto;
 
           .product-quantity {
-            color: #9a93a3;
+            color: var(--pt-ink-faint);
             font-family: $font;
             font-size: 12px;
             font-weight: 700;
@@ -641,7 +645,7 @@
           }
 
           .product-line-total {
-            color: #151019;
+            color: var(--pt-ink-strong);
             font-family: $font;
             font-size: 16px;
             font-weight: 900;
@@ -654,18 +658,18 @@
 
     .order-card-footer {
       padding: 14px 20px 16px;
-      background: #fafafa;
+      background: var(--pt-surface-sunken);
 
       .price-row {
         .price-label {
-          color: #6b6473;
+          color: var(--pt-ink-muted);
           font-family: $font;
           font-size: 14px;
           font-weight: 700;
         }
 
         .price-value {
-          color: #151019;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 14px;
           font-weight: 800;
@@ -675,16 +679,16 @@
       .total-row {
         padding-top: 10px;
         margin-top: 4px;
-        border-top: 1px solid rgba(143, 143, 143, 0.2);
+        border-top: 1px solid var(--pt-border-cool);
 
         .total-label {
-          color: #111827;
+          color: var(--pt-ink-strong);
           font-weight: 900;
           font-size: 15px;
         }
 
         .total-value {
-          color: #410075;
+          color: var(--pt-ink);
           font-weight: 900;
           font-size: 17px;
         }
@@ -709,12 +713,12 @@
       font-family: $font;
       font-size: 13px;
       font-weight: 600;
-      color: #4b158d;
+      color: var(--pt-ink);
     }
 
     .Mui-selected {
-      background: #4b158d;
-      color: #fff;
+      background: var(--pt-ink);
+      color: var(--pt-on-ink);
     }
   }
 }

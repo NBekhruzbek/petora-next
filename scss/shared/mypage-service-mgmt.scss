@@ -5,7 +5,7 @@
   flex-direction: column;
 
   .service-mgmt-tabs-wrapper {
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid var(--pt-hairline);
     padding-bottom: 8px;
     .MuiTabs-root {
       .MuiTab-root {
@@ -13,16 +13,16 @@
         font-family: $font;
         font-weight: 700;
         font-size: 15px;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
         min-width: 100px;
         padding: 10px 16px;
         transition: all 0.3s ease;
         &.Mui-selected {
-          color: #410075;
+          color: var(--pt-ink);
         }
       }
       .MuiTabs-indicator {
-        background-color: #410075;
+        background-color: var(--pt-ink);
         height: 3px;
         border-radius: 3px 3px 0 0;
       }
@@ -45,8 +45,8 @@
       align-items: center;
       gap: 14px;
       padding: 20px 22px;
-      background: #ffffff;
-      border: 1px solid rgba(143, 143, 143, 0.25);
+      background: var(--pt-surface);
+      border: 1px solid var(--pt-border-cool);
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
       transition: all 0.3s ease;
@@ -70,14 +70,14 @@
         font-family: $font;
         font-size: 22px;
         font-weight: 800;
-        color: #111827;
+        color: var(--pt-ink-strong);
         line-height: 1.1;
       }
       .summary-label {
         font-family: $font;
         font-size: 13px;
         font-weight: 500;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
       }
       .summary-change {
         font-family: $font;
@@ -93,24 +93,24 @@
   .search-field {
     .MuiOutlinedInput-root {
       border-radius: 8px !important;
-      background: #fff;
+      background: var(--pt-field-surface);
       font-family: $font;
       font-size: 16px;
-      color: #000 !important;
+      color: var(--pt-ink-strong) !important;
       fieldset {
-        border: 1px solid #8f8f8f80 !important;
+        border: 1px solid var(--pt-border-cool) !important;
       }
       &:hover fieldset {
-        border-color: #6f2cff !important;
+        border-color: var(--pt-ink) !important;
       }
       &.Mui-focused fieldset {
-        border-color: #6f2cff !important;
+        border-color: var(--pt-ink) !important;
       }
       input {
-        color: #000 !important;
+        color: var(--pt-ink-strong) !important;
       }
       .MuiSelect-select {
-        color: #000 !important;
+        color: var(--pt-ink-strong) !important;
       }
     }
   }
@@ -124,54 +124,6 @@
     height: 36.5px !important;
     margin-left: 640px;
     margin-top: 8.5px;
-  }
-
-  // Dropdown Menu Styles (Opened state)
-  .custom-filter-menu {
-    z-index: 9999 !important;
-    .MuiPaper-root {
-      border-radius: 12px !important;
-      margin-top: 4px !important;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-      border: 1px solid rgba(0, 0, 0, 0.05) !important;
-    }
-    .MuiList-root {
-      padding: 8px !important;
-    }
-    .MuiMenuItem-root {
-      font-family: $font !important;
-      font-size: 14px !important;
-      color: #000 !important;
-      font-weight: 500 !important;
-      padding: 10px 16px !important;
-      border-radius: 8px !important;
-      margin: 2px 0 !important;
-      transition: all 0.2s !important;
-
-      // Force black on all children
-      * {
-        color: #000 !important;
-      }
-
-      &:hover {
-        background-color: #f3f4f6 !important;
-        color: #000 !important;
-        * {
-          color: #000 !important;
-        }
-      }
-      &.Mui-selected {
-        background-color: #f3f4f6 !important;
-        color: #000 !important;
-        font-weight: 700 !important;
-        * {
-          color: #000 !important;
-        }
-        &:hover {
-          background-color: #e5e7eb !important;
-        }
-      }
-    }
   }
 
   // TAB 1: MY SERVICES
@@ -220,8 +172,8 @@
       min-height: 116px;
       gap: 18px;
       padding: 18px 20px;
-      background: #ffffff;
-      border: 1px solid #8f8f8f80 !important;
+      background: var(--pt-surface);
+      border: 1px solid var(--pt-border-cool) !important;
       border-radius: 14px;
       transition:
         border-color 0.25s,
@@ -229,8 +181,8 @@
         background-color 0.25s;
 
       &:hover {
-        border-color: rgba(65, 0, 117, 0.34) !important;
-        background: #fdfbff;
+        border-color: var(--pt-ink) !important;
+        background: var(--pt-surface);
         box-shadow: 0 10px 26px rgba(33, 24, 43, 0.06);
       }
 
@@ -240,7 +192,7 @@
       }
 
       &.deleted {
-        background: #fffafa;
+        background: var(--pt-surface);
       }
 
       .service-row-media {
@@ -252,7 +204,7 @@
         height: 72px;
         border-radius: 14px;
         overflow: hidden;
-        border: 1px solid #8f8f8f80 !important;
+        border: 1px solid var(--pt-border-cool) !important;
 
         .thumb-img {
           width: 100%;
@@ -273,7 +225,7 @@
 
       .agent-name {
         min-width: 0;
-        color: #111111;
+        color: var(--pt-ink-strong);
         font-family: $font;
         font-size: 18px;
         font-weight: 900;
@@ -314,7 +266,7 @@
 
       .service-description {
         max-width: 520px;
-        color: #6b6473;
+        color: var(--pt-ink-muted);
         font-family: $font;
         font-size: 14px;
         font-weight: 600;
@@ -337,9 +289,9 @@
         min-height: 24px;
         padding: 4px 10px;
         border-radius: 999px;
-        background: #ffffff;
-        border: 1px solid #8f8f8f80 !important;
-        color: #4d4358;
+        background: var(--pt-surface);
+        border: 1px solid var(--pt-border-cool) !important;
+        color: var(--pt-ink-muted);
         font-family: $font;
         font-size: 12px;
         font-weight: 800;
@@ -347,7 +299,7 @@
       }
 
       .agent-service-type {
-        color: #410075;
+        color: var(--pt-ink);
         width: fit-content;
       }
 
@@ -364,7 +316,7 @@
       }
 
       .metric-label {
-        color: #9a93a3;
+        color: var(--pt-ink-faint);
         font-family: $font;
         font-size: 11px;
         font-weight: 900;
@@ -375,7 +327,7 @@
       .service-price,
       .bookings-row,
       .rating-value {
-        color: #151019;
+        color: var(--pt-ink-strong);
         font-family: $font;
         font-size: 15px;
         font-weight: 900;
@@ -400,9 +352,9 @@
           height: 34px;
           padding: 0 14px;
           border-radius: 999px;
-          background: #ffffff;
-          border: 1px solid #8f8f8f80 !important;
-          color: #5f5669;
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool) !important;
+          color: var(--pt-ink-muted);
           font-family: $font;
           font-size: 13px;
           font-weight: 900;
@@ -415,14 +367,14 @@
             transform 0.2s;
 
           &:hover {
-            color: #410075;
-            background: #f7f0ff;
-            border-color: rgba(65, 0, 117, 0.28) !important;
+            color: var(--pt-ink);
+            background: var(--pt-selected);
+            border-color: var(--pt-ink) !important;
             transform: translateY(-1px);
           }
 
           &.edit {
-            color: #410075;
+            color: var(--pt-ink);
           }
 
           &.pause {
@@ -438,9 +390,9 @@
         .service-status-tabs {
           height: 34px;
           overflow: hidden;
-          border: 1px solid #8f8f8f80 !important;
+          border: 1px solid var(--pt-border-cool) !important;
           border-radius: 999px;
-          background: #ffffff;
+          background: var(--pt-surface);
         }
 
         .status-tab {
@@ -448,7 +400,7 @@
           height: 32px;
           padding: 0 12px;
           border-radius: 0;
-          color: #6d6376;
+          color: var(--pt-ink-muted);
           font-family: $font;
           font-size: 12px;
           font-weight: 900;
@@ -459,11 +411,11 @@
             background-color 0.2s;
 
           & + .status-tab {
-            border-left: 1px solid #8f8f8f80;
+            border-left: 1px solid var(--pt-border-cool);
           }
 
           &:hover {
-            background: #faf7fd;
+            background: var(--pt-hover);
           }
 
           &.active.selected {
@@ -491,8 +443,8 @@
       .request-row {
         gap: 22px;
         min-height: 92px;
-        background: #ffffff;
-        border: 1px solid #8f8f8f80 !important;
+        background: var(--pt-surface);
+        border: 1px solid var(--pt-border-cool) !important;
         border-radius: 14px;
         padding: 18px 20px;
         transition:
@@ -501,8 +453,8 @@
           background-color 0.25s;
 
         &:hover {
-          border-color: rgba(65, 0, 117, 0.34) !important;
-          background: #ffffff;
+          border-color: var(--pt-ink) !important;
+          background: var(--pt-surface);
           box-shadow: 0 10px 26px rgba(33, 24, 43, 0.06);
         }
 
@@ -522,7 +474,7 @@
         }
 
         .request-label {
-          color: #9a93a3;
+          color: var(--pt-ink-faint);
           font-family: $font;
           font-size: 11px;
           font-weight: 900;
@@ -534,7 +486,7 @@
         .request-date,
         .request-note {
           min-width: 0;
-          color: #151019;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 15px;
           font-weight: 800;
@@ -550,11 +502,11 @@
         }
 
         .request-date {
-          color: #4d4358;
+          color: var(--pt-ink-muted);
         }
 
         .request-note {
-          color: #6b6473;
+          color: var(--pt-ink-muted);
           font-weight: 700;
         }
 
@@ -572,8 +524,8 @@
           min-width: 84px;
           border-radius: 5px;
 
-          background: #ffffff;
-          border: 1px solid #8f8f8f80 !important;
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool) !important;
           font-family: $font;
           font-size: 12px;
           font-weight: 900;
@@ -597,7 +549,7 @@
           height: 32px;
           padding: 0 14px;
           border-radius: 5px;
-          border: 1px solid #8f8f8f80 !important;
+          border: 1px solid var(--pt-border-cool) !important;
           font-family: $font;
           font-size: 13px;
           font-weight: 900;
@@ -644,8 +596,8 @@
       .request-row {
         gap: 22px;
         min-height: 92px;
-        background: #ffffff;
-        border: 1px solid #8f8f8f80 !important;
+        background: var(--pt-surface);
+        border: 1px solid var(--pt-border-cool) !important;
         border-radius: 14px;
         padding: 18px 20px;
         transition:
@@ -654,8 +606,8 @@
           background-color 0.25s;
 
         &:hover {
-          border-color: rgba(65, 0, 117, 0.34) !important;
-          background: #ffffff;
+          border-color: var(--pt-ink) !important;
+          background: var(--pt-surface);
           box-shadow: 0 10px 26px rgba(33, 24, 43, 0.06);
         }
 
@@ -675,7 +627,7 @@
         }
 
         .request-label {
-          color: #9a93a3;
+          color: var(--pt-ink-faint);
           font-family: $font;
           font-size: 11px;
           font-weight: 900;
@@ -687,7 +639,7 @@
         .request-date,
         .request-note {
           min-width: 0;
-          color: #151019;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 15px;
           font-weight: 800;
@@ -703,11 +655,11 @@
         }
 
         .request-date {
-          color: #4d4358;
+          color: var(--pt-ink-muted);
         }
 
         .request-note {
-          color: #6b6473;
+          color: var(--pt-ink-muted);
           font-weight: 700;
         }
 
@@ -723,8 +675,8 @@
           height: 30px;
           min-width: 98px;
           border-radius: 5px;
-          background: #ffffff;
-          border: 1px solid #8f8f8f80 !important;
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool) !important;
           font-family: $font;
           font-size: 12px;
           font-weight: 900;
@@ -749,7 +701,7 @@
           border-radius: 5px;
           color: #166534;
           background: #ecfdf3;
-          border: 1px solid #8f8f8f80 !important;
+          border: 1px solid var(--pt-border-cool) !important;
           font-family: $font;
           font-size: 13px;
           font-weight: 900;
@@ -768,6 +720,51 @@
             transform: translateY(-1px);
           }
         }
+      }
+    }
+  }
+}
+
+// Portals to document.body (MenuProps.className, no disablePortal) — an
+// ancestor selector under .service-mgmt-container never matches it.
+.custom-filter-menu {
+  z-index: 9999 !important;
+  background-color: var(--pt-menu-surface) !important;
+  .MuiPaper-root {
+    border-radius: 12px !important;
+    margin-top: 4px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid var(--pt-hairline) !important;
+    background-color: var(--pt-menu-surface) !important;
+  }
+  .MuiList-root {
+    padding: 8px !important;
+  }
+  .MuiMenuItem-root {
+    font-family: $font !important;
+    font-size: 14px !important;
+    color: var(--pt-menu-ink) !important;
+    font-weight: 500 !important;
+    padding: 10px 16px !important;
+    border-radius: 8px !important;
+    margin: 2px 0 !important;
+    transition: all 0.2s !important;
+
+    * {
+      color: inherit !important;
+    }
+
+    &:hover {
+      background-color: var(--pt-hover) !important;
+      color: var(--pt-ink) !important;
+    }
+    &.Mui-selected {
+      background-color: var(--pt-selected) !important;
+      color: var(--pt-ink) !important;
+      font-weight: 700 !important;
+
+      &:hover {
+        background-color: var(--pt-selected) !important;
       }
     }
   }

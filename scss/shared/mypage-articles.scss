@@ -15,7 +15,7 @@
       font-family: $font;
       font-size: 14px;
       font-weight: 700;
-      color: #9ca3af;
+      color: var(--pt-ink-faint);
     }
 
     .btn-write-article {
@@ -66,8 +66,8 @@
       max-width: calc((100% - 36px) / 3);
       overflow: hidden;
       border-radius: 12px;
-      border: 1px solid #e6e8ef;
-      background: #ffffff;
+      border: 1px solid var(--pt-border-cool);
+      background: var(--pt-surface);
       box-shadow: 0 8px 24px rgba(31, 41, 55, 0.06);
       cursor: pointer;
       transition:
@@ -87,7 +87,7 @@
         position: relative;
         height: 184px;
         overflow: hidden;
-        background: #eceff5;
+        background: var(--pt-surface-sunken);
 
         .free-board-news-image {
           width: 100%;
@@ -103,14 +103,14 @@
           height: 34px;
           padding: 0 14px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.96);
+          background: var(--pt-scrim);
           display: inline-flex;
           align-items: center;
           justify-content: center;
           font-family: $font;
           font-size: 13px;
           font-weight: 700;
-          color: #4c5565;
+          color: var(--pt-ink-cool);
           box-shadow: 0 8px 20px rgba(25, 35, 60, 0.08);
         }
       }
@@ -124,7 +124,7 @@
           font-size: 17px;
           font-weight: 800;
           line-height: 1.35;
-          color: #232938;
+          color: var(--pt-ink-strong);
           display: -webkit-box;
           -webkit-line-clamp: 2;
           line-clamp: 2;
@@ -138,7 +138,7 @@
           font-size: 14px;
           font-weight: 500;
           line-height: 1.55;
-          color: #687184;
+          color: var(--pt-ink-cool);
           display: -webkit-box;
           -webkit-line-clamp: 3;
           line-clamp: 3;
@@ -159,11 +159,11 @@
             font-family: $font;
             font-size: 14px;
             font-weight: 700;
-            color: #6d7485;
+            color: var(--pt-ink-cool);
 
             svg {
               font-size: 18px;
-              color: #8d96a7;
+              color: var(--pt-ink-faint);
             }
 
             &.liked svg {
@@ -195,12 +195,12 @@
       font-family: $font;
       font-size: 13px;
       font-weight: 600;
-      color: #4b158d;
+      color: var(--pt-ink);
     }
 
     .Mui-selected {
-      background: #4b158d;
-      color: #fff;
+      background: var(--pt-ink);
+      color: var(--pt-on-ink);
     }
   }
 }

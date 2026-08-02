@@ -35,7 +35,7 @@
           font-weight: 700;
           line-height: 48px;
           text-transform: uppercase;
-          color: var(--Primary-Purple3, #410075);
+          color: var(--pt-ink);
         }
         .text2 {
           font-family: Assistant;
@@ -136,7 +136,7 @@
     width: 100%;
     min-height: auto;
     padding: 20px 0 90px;
-    background: #ffffff;
+    background: var(--pt-page-bg);
 
     .container {
       display: flex;
@@ -157,8 +157,8 @@
       width: 255px;
       min-height: 360px;
       border-radius: 14px;
-      border: 1px solid #939393;
-      background: #ffffff;
+      border: 1px solid var(--pt-border-cool);
+      background: var(--pt-surface);
       box-shadow: 0 16px 50px rgba(24, 31, 56, 0.06);
       overflow: hidden;
 
@@ -168,7 +168,7 @@
         align-items: flex-start;
         gap: 14px;
         padding: 24px 20px 22px;
-        border-bottom: 1px solid #bbbbbb;
+        border-bottom: 1px solid var(--pt-hairline);
 
         .member-img {
           width: 50px;
@@ -186,14 +186,14 @@
             font-size: 18px;
             font-weight: 700;
             line-height: 1.2;
-            color: #1d2433;
+            color: var(--pt-ink-strong);
           }
 
           .my-page-brand-subtitle {
             font-family: $font;
             font-size: 14px;
             font-weight: 500;
-            color: #410075;
+            color: var(--pt-ink);
           }
         }
       }
@@ -207,7 +207,7 @@
           min-height: 46px;
           padding: 12px 14px;
           border-radius: 8px;
-          color: #505a6e;
+          color: var(--pt-ink-muted);
           font-family: $font;
           font-size: 15px;
           font-weight: 700;
@@ -222,13 +222,13 @@
           }
 
           &:hover {
-            background: #f6f6fb;
+            background: var(--pt-hover);
           }
 
           &.active {
-            color: #111827;
-            background: linear-gradient(90deg, #ececec, #ffffff);
-            border: 1px solid rgba(142, 142, 142, 0.42);
+            color: var(--pt-ink-strong);
+            background: var(--pt-selected);
+            border: 1px solid var(--pt-border-cool);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             font-weight: 600;
             transition: all 0.25s ease;
@@ -246,7 +246,7 @@
       .my-page-sidebar-footer {
         margin-top: auto;
         padding: 18px 20px 22px;
-        border-top: 1px solid #ececf3;
+        border-top: 1px solid var(--pt-hairline);
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -282,7 +282,7 @@
           font-family: $font;
           font-size: 12px;
           font-weight: 500;
-          color: #9098a9;
+          color: var(--pt-ink-faint);
         }
       }
     }
@@ -309,7 +309,7 @@
             font-size: 28px;
             font-weight: 800;
             line-height: 1.1;
-            color: #202635;
+            color: var(--pt-ink-strong);
             letter-spacing: 0.2px;
           }
         }
@@ -417,8 +417,8 @@
       .notif-dialog-paper {
         width: min(460px, calc(100vw - 32px));
         border-radius: 22px;
-        border: 1px solid #ede9fe;
-        background: #ffffff;
+        border: 1px solid var(--pt-hairline);
+        background: var(--pt-surface) !important;
         box-shadow:
           0 32px 80px rgba(65, 0, 117, 0.18),
           0 2px 8px rgba(65, 0, 117, 0.06);
@@ -438,8 +438,8 @@
           font-weight: 800;
           letter-spacing: 0.5px;
           text-transform: uppercase;
-          background: #f3e8ff;
-          color: #6d28d9;
+          background: var(--pt-selected);
+          color: var(--pt-ink);
           border-radius: 999px;
           height: 24px;
         }
@@ -447,10 +447,10 @@
         .notif-dialog-close {
           width: 32px;
           height: 32px;
-          color: #9ca3af;
-          border: 1px solid #e9e4f5;
+          color: var(--pt-ink-faint);
+          border: 1px solid var(--pt-hairline);
           border-radius: 999px;
-          background: #faf7ff;
+          background: var(--pt-field-surface);
           transition:
             color 0.2s,
             background 0.2s,
@@ -484,8 +484,8 @@
 
           .notif-icon-lg {
             font-size: 24px;
-            color: #7c3aed;
-            background: #f3e8ff;
+            color: var(--pt-accent);
+            background: var(--pt-selected);
             border-radius: 14px;
             padding: 10px;
             box-sizing: content-box;
@@ -496,7 +496,7 @@
           font-family: $font;
           font-size: 17px;
           font-weight: 800;
-          color: #1a1333;
+          color: var(--pt-ink-strong);
           line-height: 1.25;
         }
 
@@ -504,17 +504,17 @@
           font-family: $font;
           font-size: 12px;
           font-weight: 600;
-          color: #a78bca;
+          color: var(--pt-ink-soft);
         }
 
         .notif-dialog-message {
           font-family: $font;
           font-size: 14px;
           font-weight: 500;
-          color: #4b5563;
+          color: var(--pt-ink-muted);
           line-height: 1.7;
-          background: #faf7ff;
-          border: 1px solid #ede9fe;
+          background: var(--pt-field-surface);
+          border: 1px solid var(--pt-hairline);
           border-radius: 12px;
           padding: 14px 16px;
         }
@@ -552,15 +552,15 @@
         width: min(760px, calc(100vw - 32px));
         max-height: calc(100vh - 48px);
         border-radius: 18px;
-        border: 1px solid #8f8f8f80 !important;
-        background: #ffffff;
+        border: 1px solid var(--pt-border-cool) !important;
+        background: var(--pt-surface) !important;
         box-shadow: 0 26px 80px rgba(24, 14, 34, 0.22);
         overflow: hidden;
       }
 
       .add-dialog-title {
         padding: 22px 28px 18px;
-        border-bottom: 1px solid rgba(65, 0, 117, 0.1);
+        border-bottom: 1px solid var(--pt-hairline);
         font-family: $font;
 
         > .MuiStack-root {
@@ -568,14 +568,14 @@
         }
 
         span {
-          color: #171321;
+          color: var(--pt-ink-strong);
           font-size: 24px;
           font-weight: 900;
           line-height: 1.15;
         }
 
         .add-dialog-subtitle {
-          color: #756b82;
+          color: var(--pt-ink-muted);
           font-family: $font;
           font-size: 14px;
           font-weight: 600;
@@ -590,9 +590,9 @@
           width: 44px;
           height: 44px;
           border-radius: 12px;
-          color: #410075;
-          background: #ffffff;
-          border: 1px solid #8f8f8f80 !important;
+          color: var(--pt-ink);
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool) !important;
           box-shadow: 0 10px 24px rgba(65, 0, 117, 0.12);
 
           svg {
@@ -603,9 +603,9 @@
         .dialog-close-btn {
           width: 36px;
           height: 36px;
-          color: #5e5669;
-          background: #ffffff;
-          border: 1px solid #8f8f8f80 !important;
+          color: var(--pt-ink-muted);
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool) !important;
           transition:
             transform 0.2s,
             background-color 0.2s,
@@ -613,7 +613,7 @@
 
           &:hover {
             color: #ff0000;
-            background: #ffffff;
+            background: var(--pt-surface);
             transform: rotate(90deg);
           }
         }
@@ -636,39 +636,39 @@
 
         .add-service-field {
           .MuiInputLabel-root {
-            color: #655b70;
+            color: var(--pt-ink-muted);
             font-family: $font;
             font-size: 15px;
             font-weight: 700;
 
             &.Mui-focused {
-              color: #410075;
+              color: var(--pt-ink);
             }
           }
 
           .MuiOutlinedInput-root {
             border-radius: 12px;
-            background: #ffffff;
+            background: var(--pt-field-surface);
             font-family: $font;
-            color: #1c1722;
+            color: var(--pt-ink-strong);
             transition:
               background-color 0.2s,
               box-shadow 0.2s;
 
             fieldset {
-              border: 1px solid #8f8f8f80 !important;
+              border: 1px solid var(--pt-border-cool) !important;
             }
 
             &:hover fieldset {
-              border-color: rgba(65, 0, 117, 0.42);
+              border-color: var(--pt-ink);
             }
 
             &.Mui-focused {
-              background: #ffffff;
+              background: var(--pt-field-surface);
               box-shadow: 0 0 0 2.5px rgba(207, 207, 207, 0.2);
 
               fieldset {
-                border-color: #7b30c7;
+                border-color: var(--pt-ink);
                 border-width: 1px;
               }
             }
@@ -680,7 +680,7 @@
               font-weight: 600;
 
               &::placeholder {
-                color: #b8b3be;
+                color: var(--pt-ink-faint);
                 opacity: 1;
               }
             }
@@ -690,7 +690,7 @@
           .field-suffix {
             display: inline-flex;
             align-items: center;
-            color: #74697f;
+            color: var(--pt-ink-muted);
             font-family: $font;
             font-size: 14px;
             font-weight: 800;
@@ -706,7 +706,7 @@
 
           &.description-field {
             .MuiInputLabel-root {
-              background: #ffffff;
+              background: var(--pt-field-surface);
               padding: 0 6px;
 
               &.MuiInputLabel-shrink {
@@ -730,14 +730,14 @@
       .image-upload-section {
         padding: 18px;
         border-radius: 16px;
-        background: #ffffff;
-        border: 1px solid #8f8f8f80 !important;
+        background: var(--pt-surface);
+        border: 1px solid var(--pt-border-cool) !important;
 
         .image-upload-heading {
           gap: 12px;
 
           > .MuiTypography-root {
-            color: #21182b;
+            color: var(--pt-ink-strong);
             font-family: $font;
             font-size: 16px;
             font-weight: 900;
@@ -746,9 +746,9 @@
 
         .image-count-chip {
           height: 28px;
-          color: #410075;
-          background: #ffffff;
-          border: 1px solid #8f8f8f80 !important;
+          color: var(--pt-ink);
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool) !important;
           font-family: $font;
           font-size: 12px;
           font-weight: 900;
@@ -756,16 +756,16 @@
       }
 
       .upload-dropzone {
-        border: 1px solid #8f8f8f80 !important;
+        border: 1px solid var(--pt-border-cool) !important;
         border-radius: 14px;
-        background: #ffffff;
+        background: var(--pt-surface);
         transition:
           border-color 0.2s,
           box-shadow 0.2s,
           transform 0.2s;
 
         &:hover {
-          border-color: #8a40d2;
+          border-color: var(--pt-ink);
           box-shadow: 0 14px 34px rgba(65, 0, 117, 0.08);
           transform: translateY(-1px);
         }
@@ -795,9 +795,9 @@
           width: 58px;
           height: 58px;
           border-radius: 16px;
-          color: #410075;
-          background: #ffffff;
-          border: 1px solid #8f8f8f80 !important;
+          color: var(--pt-ink);
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool) !important;
 
           svg {
             font-size: 30px;
@@ -805,14 +805,14 @@
         }
 
         .upload-title {
-          color: #25182f;
+          color: var(--pt-ink-strong);
           font-family: $font;
           font-size: 17px;
           font-weight: 900;
         }
 
         .upload-note {
-          color: #7b7285;
+          color: var(--pt-ink-muted);
           font-family: $font;
           font-size: 14px;
           font-weight: 600;
@@ -825,8 +825,8 @@
           aspect-ratio: 1;
           border-radius: 12px;
           overflow: hidden;
-          background: #ffffff;
-          border: 1px solid #8f8f8f80 !important;
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool) !important;
 
           img {
             width: 100%;
@@ -875,8 +875,8 @@
         justify-content: flex-end;
         gap: 12px;
         padding: 18px 28px 24px;
-        border-top: 1px solid rgba(65, 0, 117, 0.1);
-        background: #ffffff;
+        border-top: 1px solid var(--pt-hairline);
+        background: var(--pt-surface);
 
         .btn-dialog-cancel,
         .btn-dialog-publish {
@@ -889,9 +889,9 @@
         }
 
         .btn-dialog-cancel {
-          color: #4e4658;
-          border: 1px solid #8f8f8f80 !important;
-          background: #ffffff;
+          color: var(--pt-ink-muted);
+          border: 1px solid var(--pt-border-cool) !important;
+          background: var(--pt-surface);
           font-weight: 800;
 
           &:hover {
@@ -931,21 +931,26 @@
       }
     }
 
-    // Select menus portal to <body>, so they cannot be nested under
-    // .add-service-dialog above. The dialog reuses .qna-dialog, which the
-    // community stylesheet pins to z-index 1500; MUI's menus default to 1300
-    // and would otherwise open *behind* the dialog, swallowing every click.
-    @at-root .add-service-select-menu {
+    @at-root .add-service-select-menu-anchor {
       z-index: 1600 !important;
+    }
+
+    @at-root .add-service-select-menu {
+      background-color: var(--pt-menu-surface) !important;
+      border: 1px solid var(--pt-hairline) !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16) !important;
 
       .MuiMenuItem-root {
-        color: #1c1722 !important;
+        color: var(--pt-ink-strong) !important;
         font-family: $font;
         font-size: 15px;
         font-weight: 600;
+        &:hover {
+          background: var(--pt-hover);
+        }
 
         &.Mui-selected {
-          background: rgba(65, 0, 117, 0.08);
+          background: var(--pt-selected);
         }
       }
     }
@@ -972,6 +977,7 @@
   border-radius: 20px !important;
   padding: 8px !important;
   min-width: 420px !important;
+  background-color: var(--pt-surface) !important;
   box-shadow: 0 24px 60px rgba(65, 0, 117, 0.15) !important;
 
   .review-dialog-title {
@@ -981,13 +987,13 @@
     font-family: $font;
     font-size: 18px !important;
     font-weight: 800 !important;
-    color: #111;
+    color: var(--pt-ink-strong);
     padding-bottom: 4px !important;
 
     .review-dialog-close {
-      color: #9ca3af;
+      color: var(--pt-ink-faint);
       &:hover {
-        color: #111;
+        color: var(--pt-ink-strong);
       }
     }
   }
@@ -1002,7 +1008,7 @@
       font-family: $font;
       font-size: 14px !important;
       font-weight: 600;
-      color: #6b7280;
+      color: var(--pt-ink-cool);
     }
 
     .review-dialog-rating-row {
@@ -1012,7 +1018,7 @@
         font-family: $font;
         font-size: 14px !important;
         font-weight: 600;
-        color: #374151;
+        color: var(--pt-ink-mid);
       }
 
       .review-dialog-stars {
@@ -1020,7 +1026,7 @@
           color: #f59e0b;
         }
         .MuiRating-iconEmpty {
-          color: #d1d5db;
+          color: var(--pt-track);
         }
       }
     }
@@ -1030,12 +1036,17 @@
         border-radius: 12px !important;
         font-family: $font;
         font-size: 14px;
+        background: var(--pt-field-surface);
+        color: var(--pt-ink-strong);
 
+        fieldset {
+          border-color: var(--pt-hairline) !important;
+        }
         &:hover fieldset {
-          border-color: #410075 !important;
+          border-color: var(--pt-ink) !important;
         }
         &.Mui-focused fieldset {
-          border-color: #410075 !important;
+          border-color: var(--pt-ink) !important;
         }
       }
     }
@@ -1043,8 +1054,8 @@
     .review-dialog-submit {
       height: 44px !important;
       border-radius: 12px !important;
-      background-color: #410075 !important;
-      color: #fff !important;
+      background-color: var(--pt-ink) !important;
+      color: var(--pt-on-ink) !important;
       font-family: $font;
       font-size: 15px !important;
       font-weight: 700 !important;
@@ -1052,10 +1063,14 @@
 
       &:hover {
         background-color: #2d0052 !important;
+
+        html[data-theme="dark"] & {
+          background-color: #b78cf7 !important;
+        }
       }
       &.Mui-disabled {
-        background-color: #e5e7eb !important;
-        color: #9ca3af !important;
+        background-color: var(--pt-track) !important;
+        color: var(--pt-ink-faint) !important;
       }
     }
   }

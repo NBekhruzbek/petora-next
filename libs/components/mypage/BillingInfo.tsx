@@ -205,8 +205,15 @@ const BillingInfo = ({
 
   const commonTextFieldStyles = {
     "& .MuiOutlinedInput-root": {
+      backgroundColor: "var(--pt-field-surface)",
+      color: "var(--pt-ink-strong)",
       "& fieldset": {
-        borderColor: isEditable ? "#410075" : "rgba(0, 0, 0, 0.05)",
+        borderColor: isEditable
+          ? "var(--pt-ink)"
+          : "var(--pt-hairline)",
+      },
+      "& .MuiInputBase-input.Mui-disabled": {
+        WebkitTextFillColor: "var(--pt-ink-strong)",
       },
     },
   };
@@ -224,7 +231,7 @@ const BillingInfo = ({
           justifyContent="space-between"
           alignItems="center"
         >
-          <Typography variant="h6" sx={{ fontWeight: 800, color: "#000" }}>
+          <Typography variant="h6" sx={{ fontWeight: 800, color: "var(--pt-ink-strong)" }}>
             {t("mypage.billing.paymentMethod")}
           </Typography>
         </Stack>
@@ -281,12 +288,12 @@ const BillingInfo = ({
               <Box>
                 <Stack spacing={1}>
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <PersonIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
+                    <PersonIcon sx={{ fontSize: 18, color: "var(--pt-ink-faint)" }} />
                     <Typography
                       sx={{
                         fontSize: "14px",
                         fontWeight: 600,
-                        color: "#4b5563",
+                        color: "var(--pt-ink-muted)",
                       }}
                     >
                       {t("mypage.billing.cardHolderName")}
@@ -303,12 +310,12 @@ const BillingInfo = ({
               <Box>
                 <Stack spacing={1}>
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <CreditCardIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
+                    <CreditCardIcon sx={{ fontSize: 18, color: "var(--pt-ink-faint)" }} />
                     <Typography
                       sx={{
                         fontSize: "14px",
                         fontWeight: 600,
-                        color: "#4b5563",
+                        color: "var(--pt-ink-muted)",
                       }}
                     >
                       {t("mypage.billing.cardNumber")}
@@ -334,8 +341,8 @@ const BillingInfo = ({
         sx={{ p: 5 }}
       >
         <Stack direction="row" spacing={1} alignItems="center">
-          <BusinessIcon sx={{ color: "#000" }} />
-          <Typography variant="h6" sx={{ fontWeight: 800, color: "#000" }}>
+          <BusinessIcon sx={{ color: "var(--pt-ink-strong)" }} />
+          <Typography variant="h6" sx={{ fontWeight: 800, color: "var(--pt-ink-strong)" }}>
             {t("mypage.billing.billingAddress")}
           </Typography>
         </Stack>
@@ -345,9 +352,9 @@ const BillingInfo = ({
             <Box flex={1}>
               <Stack spacing={1}>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <BusinessIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
+                  <BusinessIcon sx={{ fontSize: 18, color: "var(--pt-ink-faint)" }} />
                   <Typography
-                    sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
+                    sx={{ fontSize: "14px", fontWeight: 600, color: "var(--pt-ink-muted)" }}
                   >
                     {t("mypage.billing.company")}
                   </Typography>
@@ -365,9 +372,9 @@ const BillingInfo = ({
             <Box flex={1}>
               <Stack spacing={1}>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <ReceiptIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
+                  <ReceiptIcon sx={{ fontSize: 18, color: "var(--pt-ink-faint)" }} />
                   <Typography
-                    sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
+                    sx={{ fontSize: "14px", fontWeight: 600, color: "var(--pt-ink-muted)" }}
                   >
                     {t("mypage.billing.vat")}
                   </Typography>
@@ -387,9 +394,9 @@ const BillingInfo = ({
           <Box>
             <Stack spacing={1}>
               <Stack direction="row" spacing={1} alignItems="center">
-                <LocationOnIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
+                <LocationOnIcon sx={{ fontSize: 18, color: "var(--pt-ink-faint)" }} />
                 <Typography
-                  sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
+                  sx={{ fontSize: "14px", fontWeight: 600, color: "var(--pt-ink-muted)" }}
                 >
                   {t("mypage.billing.address")}
                 </Typography>
@@ -409,9 +416,9 @@ const BillingInfo = ({
             <Box flex={1}>
               <Stack spacing={1}>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <LocationCityIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
+                  <LocationCityIcon sx={{ fontSize: 18, color: "var(--pt-ink-faint)" }} />
                   <Typography
-                    sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
+                    sx={{ fontSize: "14px", fontWeight: 600, color: "var(--pt-ink-muted)" }}
                   >
                     {t("mypage.billing.city")}
                   </Typography>
@@ -430,10 +437,10 @@ const BillingInfo = ({
               <Stack spacing={1}>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <MarkunreadMailboxIcon
-                    sx={{ fontSize: 18, color: "#9ca3af" }}
+                    sx={{ fontSize: 18, color: "var(--pt-ink-faint)" }}
                   />
                   <Typography
-                    sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
+                    sx={{ fontSize: "14px", fontWeight: 600, color: "var(--pt-ink-muted)" }}
                   >
                     {t("mypage.billing.zip")}
                   </Typography>
@@ -451,9 +458,9 @@ const BillingInfo = ({
             <Box flex={1}>
               <Stack spacing={1}>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <PublicIcon sx={{ fontSize: 18, color: "#9ca3af" }} />
+                  <PublicIcon sx={{ fontSize: 18, color: "var(--pt-ink-faint)" }} />
                   <Typography
-                    sx={{ fontSize: "14px", fontWeight: 600, color: "#4b5563" }}
+                    sx={{ fontSize: "14px", fontWeight: 600, color: "var(--pt-ink-muted)" }}
                   >
                     {t("mypage.billing.country")}
                   </Typography>
@@ -470,16 +477,18 @@ const BillingInfo = ({
                     MenuProps: {
                       PaperProps: {
                         sx: {
+                          backgroundColor: "var(--pt-menu-surface) !important",
+                          border: "1px solid var(--pt-hairline)",
                           "& .MuiMenuItem-root": {
-                            color: "#111827",
+                            color: "var(--pt-menu-ink)",
                             fontWeight: 500,
                           },
                           "& .Mui-selected": {
-                            backgroundColor: "#f3f4f6 !important",
-                            color: "#111827",
+                            backgroundColor: "var(--pt-selected) !important",
+                            color: "var(--pt-ink)",
                           },
                           "& .MuiMenuItem-root:hover": {
-                            backgroundColor: "#f9fafb",
+                            backgroundColor: "var(--pt-hover)",
                           },
                         },
                       },
@@ -505,14 +514,14 @@ const BillingInfo = ({
       {/* Invoice History Section */}
       <Stack spacing={3} className="invoice-history-section" sx={{ p: 4 }}>
         <Stack direction="row" spacing={1} alignItems="center">
-          <ReceiptLongIcon sx={{ color: "#000" }} />
-          <Typography variant="h6" sx={{ fontWeight: 800, color: "#000" }}>
+          <ReceiptLongIcon sx={{ color: "var(--pt-ink-strong)" }} />
+          <Typography variant="h6" sx={{ fontWeight: 800, color: "var(--pt-ink-strong)" }}>
             {t("mypage.billing.invoiceHistory")}
           </Typography>
         </Stack>
 
         {orders.length === 0 ? (
-          <Typography sx={{ color: "#6b7280", fontSize: "14px" }}>
+          <Typography sx={{ color: "var(--pt-ink-cool)", fontSize: "14px" }}>
             {t("mypage.billing.noInvoices")}
           </Typography>
         ) : (
@@ -534,20 +543,20 @@ const BillingInfo = ({
                   justifyContent="space-between"
                   alignItems="center"
                   className="invoice-item"
-                  sx={{ p: 2, borderBottom: "1px solid #f3f4f6" }}
+                  sx={{ p: 2, borderBottom: "1px solid var(--pt-hairline)" }}
                 >
                   <Stack direction="row" spacing={2} alignItems="center">
                     <Box
                       className="icon-box"
                       sx={{
                         p: 1.5,
-                        backgroundColor: "#f9fafb",
+                        backgroundColor: "var(--pt-surface-sunken)",
                         borderRadius: "8px",
                       }}
                     >
                       <ReceiptLongIcon
                         fontSize="small"
-                        sx={{ color: "#6b7280" }}
+                        sx={{ color: "var(--pt-ink-cool)" }}
                       />
                     </Box>
                     <Stack>
@@ -555,7 +564,7 @@ const BillingInfo = ({
                         className="id"
                         sx={{
                           fontWeight: 600,
-                          color: "#111827",
+                          color: "var(--pt-ink-strong)",
                           fontSize: "14px",
                         }}
                       >
@@ -563,7 +572,7 @@ const BillingInfo = ({
                       </Typography>
                       <Typography
                         className="date"
-                        sx={{ color: "#6b7280", fontSize: "13px" }}
+                        sx={{ color: "var(--pt-ink-cool)", fontSize: "13px" }}
                       >
                         {formatDate(order.createdAt, intlLocale)}
                       </Typography>
@@ -572,7 +581,7 @@ const BillingInfo = ({
                   <Stack direction="row" spacing={4} alignItems="center">
                     <Typography
                       className="amount"
-                      sx={{ fontWeight: 600, color: "#111827" }}
+                      sx={{ fontWeight: 600, color: "var(--pt-ink-strong)" }}
                     >
                       {formatWon(order.orderTotal)}
                     </Typography>

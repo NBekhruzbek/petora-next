@@ -242,13 +242,13 @@ const MyPage: NextPage = () => {
                   textTransform: "none",
                   fontWeight: 700,
                   fontSize: "14px",
-                  color: "#6366F1",
-                  background: "#EEF2FF",
+                  color: "var(--pt-ink)",
+                  background: "var(--pt-selected)",
                   borderRadius: "10px",
                   px: 2,
                   py: 1,
                   mb: 1,
-                  "&:hover": { background: "#E0E7FF" },
+                  "&:hover": { background: "var(--pt-hover)" },
                 }}
               >
                 {t("mypage.adminPanel")}
@@ -285,6 +285,9 @@ const MyPage: NextPage = () => {
               onChange={(event) =>
                 handleCategoryChange(event.target.value as CategoryKey)
               }
+              SelectProps={{
+                MenuProps: { PaperProps: { className: "mypage-filter-menu" } },
+              }}
             >
               {categoryOrder.map((category) => (
                 <MenuItem key={category} value={category}>

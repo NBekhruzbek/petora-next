@@ -31,13 +31,13 @@
         font-family: $font;
         font-size: 22px;
         font-weight: 800;
-        color: #202635;
+        color: var(--pt-ink-strong);
       }
 
       .my-page-board-subtitle {
         font-family: $font;
         font-size: 15px;
-        color: #667085;
+        color: var(--pt-ink-cool);
       }
     }
   }
@@ -47,8 +47,17 @@
 
     .MuiOutlinedInput-root {
       border-radius: 14px;
-      background: #fff;
+      background: var(--pt-field-surface);
+      color: var(--pt-ink-strong);
       font-family: $font;
+
+      fieldset {
+        border-color: var(--pt-border-cool);
+      }
+
+      .MuiSelect-icon {
+        color: var(--pt-ink-muted);
+      }
     }
   }
 
@@ -99,7 +108,7 @@
       flex-direction: column !important;
       align-items: center !important;
       text-align: center;
-      background: linear-gradient(180deg, #faf5ff 0%, #ffffff 62%) !important;
+      background: var(--pt-surface) !important;
 
       // The row spacing put margin-left on the text column; make it a vertical
       // gap now that the card is a column.
@@ -111,7 +120,7 @@
       .MuiAvatar-root {
         width: 96px !important;
         height: 96px !important;
-        border: 3px solid #fff;
+        border: 3px solid var(--pt-surface);
         box-shadow:
           0 0 0 3px #e2c9f7,
           0 8px 20px rgba(65, 0, 117, 0.14);
@@ -145,7 +154,7 @@
         width: 100%;
         margin-top: $space-3 !important;
         padding-top: $space-3;
-        border-top: 1px solid #f0e6fa;
+        border-top: 1px solid var(--pt-hairline);
         font-size: 14px;
         line-height: 1.6;
       }
@@ -154,7 +163,7 @@
     // ── Info cards: softer lift + tighter title→content rhythm ──
     .info-form-card {
       padding: $space-4 !important;
-      border-color: #ece7f2 !important;
+      border-color: var(--pt-border-cool) !important;
       box-shadow: 0 4px 16px rgba(65, 0, 117, 0.04);
 
       // Stack spacing={3} leaves a 24px void under each section title; halve it.
@@ -195,7 +204,7 @@
       // Each field group (label + value) gets a divider; the last one drops it.
       .MuiGrid-item > .MuiStack-root {
         padding-bottom: $space-3;
-        border-bottom: 1px solid #f1eef5;
+        border-bottom: 1px solid var(--pt-hairline);
 
         // Tighten the label→value pair (the Stack spacing={1} gap is too airy
         // once the field is just text).
@@ -238,8 +247,8 @@
           padding: 0 !important;
           font-size: 15px !important;
           font-weight: 600 !important;
-          color: #1c2333 !important;
-          -webkit-text-fill-color: #1c2333 !important;
+          color: var(--pt-ink-strong) !important;
+          -webkit-text-fill-color: var(--pt-ink-strong) !important;
         }
       }
 
@@ -568,7 +577,7 @@
       flex-wrap: wrap;
       padding: $space-3 0 0;
       gap: $space-4;
-      border-top: 1px solid #f1eef5;
+      border-top: 1px solid var(--pt-hairline);
     }
 
     .service-row-actions {
@@ -577,7 +586,7 @@
       width: 100%;
       padding: $space-3 0 0;
       gap: $space-2;
-      border-top: 1px solid #f1eef5;
+      border-top: 1px solid var(--pt-hairline);
 
       .service-action-tab {
         height: $m-btn-height-compact; // 34px → tappable
@@ -635,7 +644,7 @@
       align-items: center;
       gap: 6px;
       white-space: normal !important;
-      color: #6b6473 !important;
+      color: var(--pt-ink-muted) !important;
       font-size: 13px !important;
       font-weight: 700 !important;
 
@@ -653,19 +662,19 @@
     .request-note-block {
       margin-top: $space-1;
       padding: $space-2 $space-3;
-      background: #f7f4fb;
-      border-left: 3px solid #d9c6ef;
+      background: var(--pt-tint-soft);
+      border-left: 3px solid var(--pt-border-lilac);
       border-radius: $m-radius-sm;
 
       .request-label {
         display: block;
         font-size: 10px !important;
-        color: #9a7bc0 !important;
+        color: var(--pt-ink-cool) !important;
       }
 
       .request-note {
         white-space: normal !important; // desktop clips to one line
-        color: #5a5364 !important;
+        color: var(--pt-ink-muted) !important;
         font-weight: 600 !important;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -681,7 +690,7 @@
       gap: $space-2;
       margin-top: $space-1;
       padding-top: $space-3;
-      border-top: 1px solid #f1eef5;
+      border-top: 1px solid var(--pt-hairline);
 
       .request-accept-btn,
       .request-complete-btn {
@@ -756,7 +765,7 @@
     gap: $space-2;
     padding: $space-3 0 0;
     border-left: none;
-    border-top: 1px solid #f1eef5;
+    border-top: 1px solid var(--pt-hairline);
 
     // BOOKED label + date, left-aligned (desktop right-aligns them).
     > .MuiStack-root:first-child {

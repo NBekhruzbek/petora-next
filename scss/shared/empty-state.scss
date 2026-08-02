@@ -1,9 +1,6 @@
 @use "../variables.scss" as *;
 
-$empty-ink: #1a1333;
-$empty-text: #6f6885; // 5.3:1 on white
 $empty-violet: #7c3aed;
-$empty-wash: #f3e8ff;
 
 .empty-state {
   align-items: center;
@@ -31,19 +28,19 @@ $empty-wash: #f3e8ff;
     width: 76px;
     height: 76px;
     border-radius: 26px;
-    background: linear-gradient(150deg, $empty-wash, #ece0ff);
-    border: 1px solid rgba(124, 58, 237, 0.14);
+    background: var(--pt-selected);
+    border: 1px solid var(--pt-hairline);
     svg {
       font-size: 32px;
       width: 32px;
       height: 32px;
-      color: $empty-violet;
+      color: var(--pt-accent);
     }
   }
 
   .empty-state-paw {
     position: absolute;
-    fill: $empty-violet;
+    fill: var(--pt-accent);
 
     &.paw-1 {
       width: 27px;
@@ -83,7 +80,7 @@ $empty-wash: #f3e8ff;
     font-family: $font;
     font-size: 17px;
     font-weight: 800;
-    color: $empty-ink;
+    color: var(--pt-ink-strong);
     line-height: 1.25;
   }
 
@@ -91,7 +88,7 @@ $empty-wash: #f3e8ff;
     font-family: $font;
     font-size: 14px;
     font-weight: 500;
-    color: $empty-text;
+    color: var(--pt-ink-cool);
     line-height: 1.55;
   }
 

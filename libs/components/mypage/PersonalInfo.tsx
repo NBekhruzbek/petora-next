@@ -329,14 +329,14 @@ const PersonalInfo = ({
   const fieldBorderStyles = {
     "& .MuiOutlinedInput-root": {
       "& fieldset": {
-        borderColor: isEditable ? "#410075" : "rgba(0, 0, 0, 0.05)",
+        borderColor: isEditable ? "var(--pt-ink)" : "var(--pt-hairline)",
       },
     },
   };
 
   const selectBorderStyles = {
     "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: isEditable ? "#410075" : "rgba(0, 0, 0, 0.05)",
+      borderColor: isEditable ? "var(--pt-ink)" : "var(--pt-hairline)",
     },
   };
 

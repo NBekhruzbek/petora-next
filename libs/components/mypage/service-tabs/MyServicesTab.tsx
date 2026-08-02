@@ -365,19 +365,12 @@ const MyServicesTab = () => {
           SelectProps={{
             MenuProps: {
               className: "custom-filter-menu",
-              sx: {
-                "& .MuiMenuItem-root": {
-                  color: "#000 !important",
-                },
-              },
             },
           }}
         >
-          <MenuItem value="ALL" sx={{ color: "#000 !important" }}>
-            All
-          </MenuItem>
+          <MenuItem value="ALL">All</MenuItem>
           {SERVICE_TYPES.map((type) => (
-            <MenuItem key={type} value={type} sx={{ color: "#000 !important" }}>
+            <MenuItem key={type} value={type}>
               {t(`enums.serviceType.${type}`)}
             </MenuItem>
           ))}
@@ -604,7 +597,10 @@ const MyServicesTab = () => {
                 variant="outlined"
                 className="add-service-field"
                 SelectProps={{
-                  MenuProps: { className: "add-service-select-menu" },
+                  MenuProps: {
+                    className: "add-service-select-menu-anchor",
+                    PaperProps: { className: "add-service-select-menu" },
+                  },
                 }}
               >
                 {SERVICE_TYPES.map((type) => (
@@ -624,7 +620,10 @@ const MyServicesTab = () => {
                 variant="outlined"
                 className="add-service-field"
                 SelectProps={{
-                  MenuProps: { className: "add-service-select-menu" },
+                  MenuProps: {
+                    className: "add-service-select-menu-anchor",
+                    PaperProps: { className: "add-service-select-menu" },
+                  },
                 }}
               >
                 {SERVICE_LOCATIONS.map((location) => (
