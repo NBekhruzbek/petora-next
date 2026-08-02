@@ -94,9 +94,14 @@
         width: 100% !important;
         height: auto !important;
         font-size: 16px !important;
+        // Desktop colours the body line via --Neutral-700, but that rule is
+        // #pc-wrap-scoped, so mobile was left on the light literal (#595959)
+        // no matter the theme. --pt-ink-muted is that same value in light.
+        color: var(--pt-ink-muted);
       }
     }
   }
+
 
   // MainHeader inverts the roles (text1 = intro line, text2/text3 = headline).
   // Unlike the other 6 headers this one keeps its brand styling on mobile:
@@ -110,7 +115,7 @@
         width: 100% !important;
         font-size: $m-font-body !important;
         line-height: 1.45 !important;
-        color: #595959;
+        color: var(--pt-ink-muted);
       }
 
       // $m-font-page-title keeps "CHOOSE THE BEST WAY FOR" on one line
@@ -124,7 +129,7 @@
 
       .text2 {
         margin-top: $space-3;
-        color: #410075;
+        color: var(--pt-ink);
       }
 
       .text3 {
@@ -302,7 +307,7 @@
       // want!"), so drop a notch from the shared 26px to keep each line on one
       // line instead of a ragged 3-line stack that collides with the rings.
       .text1 {
-        color: #410075;
+        color: var(--pt-ink);
         font-size: 22px !important;
         font-weight: 800;
         letter-spacing: 0.2px;
@@ -440,7 +445,7 @@
     // uppercase, read as the section's voice instead of a caption.
     .text-area {
       .text2 {
-        color: #410075;
+        color: var(--pt-ink);
         font-size: 26px !important;
         font-weight: 800;
         text-transform: uppercase;
@@ -470,7 +475,7 @@
 
       .text3 {
         margin-top: $space-3;
-        color: #595959;
+        color: var(--pt-ink-muted);
         line-height: 1.5 !important;
       }
     }
@@ -603,7 +608,7 @@
 
       .text1 {
         margin-top: 2px;
-        color: #410075;
+        color: var(--pt-ink);
         font-size: 19px !important;
         font-weight: 800;
         text-transform: uppercase;
@@ -954,7 +959,7 @@
     // uppercase, read as the section's voice instead of a caption.
     .text-area {
       .text1 {
-        color: #410075;
+        color: var(--pt-ink);
         font-weight: 800;
         letter-spacing: 0.2px;
         line-height: 1.1 !important;
@@ -971,7 +976,7 @@
 
       .text3 {
         margin-top: $space-3;
-        color: #595959;
+        color: var(--pt-ink-muted);
         line-height: 1.5 !important;
       }
     }
@@ -1119,7 +1124,7 @@
     // the section's voice instead of a caption.
     .agents-top .text-area {
       .text1 {
-        color: #410075;
+        color: var(--pt-ink);
         font-weight: 800;
         letter-spacing: 0.2px;
         line-height: 1.12 !important;
@@ -1146,7 +1151,7 @@
       .text3 {
         margin-top: $space-3;
         max-width: 100%;
-        color: #595959;
+        color: var(--pt-ink-muted);
         line-height: 1.5 !important;
       }
     }

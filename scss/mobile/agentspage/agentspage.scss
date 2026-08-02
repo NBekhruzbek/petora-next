@@ -9,8 +9,11 @@
       padding: $space-5 $space-4 0;
     }
 
+    // No colour of its own on mobile, so it inherited CssBaseline's
+    // palette.text.primary (#410075) — invisible once the page went dark.
     .agents-page-title {
       font-size: $m-font-section-title;
+      color: var(--pt-ink-strong);
       margin-bottom: $space-4;
     }
 
@@ -27,10 +30,11 @@
 
       .MuiPaginationItem-root {
         font-family: $font;
+        color: var(--pt-ink-body);
 
         &.Mui-selected {
-          background-color: #410075 !important;
-          color: #fff;
+          background-color: var(--pt-ink) !important;
+          color: var(--pt-on-ink);
         }
       }
     }
@@ -40,6 +44,23 @@
 
       .filter-section-wrap {
         justify-content: space-between;
+      }
+
+      // MUI's theme sets `MuiOutlinedInput.root { background: #fff }` sitewide,
+      // and only the #pc-wrap copy of this rule ever overrode it — so the sort
+      // trigger stayed a white pill on the dark page. Same two-line fix the
+      // shop and service list pages already carry.
+      .filter-section {
+        background: var(--pt-field-surface);
+        color: var(--pt-ink-body);
+
+        .MuiOutlinedInput-notchedOutline {
+          border-color: var(--pt-hairline) !important;
+        }
+
+        .MuiSelect-icon {
+          color: var(--pt-ink-soft);
+        }
       }
     }
 
@@ -197,7 +218,7 @@
 
     .agent-detail-breadcrumb {
       font-size: 12px;
-      color: #9ca3af;
+      color: var(--pt-ink-faint);
       margin-bottom: $space-3;
     }
 
@@ -210,8 +231,8 @@
     .agent-detail-profile {
       position: static;
       top: auto;
-      background: #fff;
-      border: 1px solid rgba(143, 143, 143, 0.22);
+      background: var(--pt-surface);
+      border: 1px solid var(--pt-border-cool);
       border-radius: $m-radius-lg;
       padding: $space-5 $space-4;
       gap: $space-3;
@@ -230,19 +251,19 @@
         border-radius: 50%;
         object-fit: cover;
         display: block;
-        border: 3px solid #f3e8ff;
+        border: 3px solid var(--pt-tint-soft);
       }
 
       .agent-detail-name {
         font-size: 20px;
         font-weight: 800;
-        color: #111;
+        color: var(--pt-ink-strong);
         text-align: center;
       }
 
       .agent-detail-role {
         font-size: 13px;
-        color: #6b7280;
+        color: var(--pt-ink-soft);
         font-weight: 500;
         text-align: center;
       }
@@ -257,29 +278,29 @@
         .agent-detail-rating-score {
           font-size: 14px;
           font-weight: 700;
-          color: #111;
+          color: var(--pt-ink-strong);
         }
         .agent-detail-rating-sep {
-          color: #d1d5db;
+          color: var(--pt-ink-faint);
         }
         .agent-detail-rating-count {
           font-size: 13px;
-          color: #6b7280;
+          color: var(--pt-ink-soft);
         }
       }
 
       // Divided info blocks, mirroring the desktop card rhythm.
       .agent-detail-bio {
         font-size: 13px;
-        color: #4b5563;
+        color: var(--pt-ink-mid);
         line-height: 1.6;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        border-top: 1px solid var(--pt-hairline);
         padding-top: $space-3;
       }
 
       .agent-detail-info-list {
         gap: $space-2;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        border-top: 1px solid var(--pt-hairline);
         padding-top: $space-3;
 
         .agent-detail-info-row {
@@ -287,12 +308,12 @@
 
           .agent-detail-info-icon {
             font-size: 17px !important;
-            color: #777777;
+            color: var(--pt-ink-soft);
             flex-shrink: 0;
           }
           .agent-detail-info-text {
             font-size: 13px;
-            color: #374151;
+            color: var(--pt-ink-mid);
             font-weight: 500;
           }
         }
@@ -300,7 +321,7 @@
 
       .agent-detail-certs {
         gap: $space-3;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        border-top: 1px solid var(--pt-hairline);
         padding-top: $space-3;
 
         .agent-detail-certs-title-row {
@@ -308,12 +329,12 @@
 
           .agent-detail-certs-icon {
             font-size: 18px !important;
-            color: #410075;
+            color: var(--pt-ink);
           }
           .agent-detail-certs-title {
             font-size: 14px;
             font-weight: 700;
-            color: #111;
+            color: var(--pt-ink-strong);
           }
         }
 
@@ -323,10 +344,10 @@
           gap: $space-2;
 
           .agent-detail-cert-card {
-            border: 1px solid rgba(0, 0, 0, 0.07);
+            border: 1px solid var(--pt-hairline);
             border-radius: $m-radius-sm;
             overflow: hidden;
-            background: #faf5ff;
+            background: var(--pt-tint-soft);
 
             .agent-detail-cert-img {
               width: 100%;
@@ -346,8 +367,8 @@
 
     // Summary panel: heading, big score, satisfaction pill, distribution bars.
     .review-summary-panel {
-      background: #fff;
-      border: 1px solid rgba(143, 143, 143, 0.22);
+      background: var(--pt-surface);
+      border: 1px solid var(--pt-border-cool);
       border-radius: $m-radius-lg;
       padding: $space-4;
       gap: $space-3;
@@ -356,7 +377,7 @@
       .review-summary-title {
         font-size: 17px;
         font-weight: 800;
-        color: #111;
+        color: var(--pt-ink-strong);
       }
 
       .review-score-row {
@@ -369,7 +390,7 @@
         .review-score-count {
           font-size: 24px;
           font-weight: 800;
-          color: #111;
+          color: var(--pt-ink-strong);
         }
       }
 
@@ -377,18 +398,18 @@
         display: flex;
         align-items: center;
         gap: $space-2;
-        background: #f0fdf4;
+        background: var(--pt-band);
         border-radius: $m-radius-sm;
         padding: $space-2 $space-3;
 
         .review-satisfied-icon {
-          color: #16a34a;
+          color: var(--pt-ink);
           font-size: 18px !important;
           flex-shrink: 0;
         }
         .review-satisfied-text {
           font-size: 12px;
-          color: #15803d;
+          color: var(--pt-ink-strong);
           font-weight: 600;
           line-height: 1.35;
         }
@@ -406,19 +427,19 @@
 
           .review-distribution-label {
             font-size: 12px;
-            color: #4b5563;
+            color: var(--pt-ink-soft);
             min-width: 62px;
           }
           .review-distribution-value {
             font-size: 12px;
-            color: #4b5563;
+            color: var(--pt-ink-soft);
             text-align: right;
             min-width: 30px;
           }
           .review-distribution-track {
             flex: 1;
             height: 7px;
-            background: #f3f4f6;
+            background: var(--pt-track);
             border-radius: 99px;
             overflow: hidden;
 
@@ -430,7 +451,7 @@
                 background: #f59e0a;
               }
               &.cool {
-                background: #d1d5db;
+                background: var(--pt-ink-faint);
               }
             }
           }
@@ -449,7 +470,7 @@
         .review-cards-count {
           font-size: 15px;
           font-weight: 700;
-          color: #111;
+          color: var(--pt-ink-strong);
         }
         .review-sort-field {
           min-width: 0;
@@ -458,23 +479,53 @@
           .MuiOutlinedInput-root {
             border-radius: $m-radius-sm !important;
             font-size: 13px;
+            background: var(--pt-field-surface);
+            color: var(--pt-ink-strong);
+          }
+
+          .MuiOutlinedInput-notchedOutline {
+            border-color: var(--pt-hairline);
+          }
+
+          .MuiSelect-icon {
+            color: var(--pt-ink-soft);
+          }
+        }
+
+        // The options list. It sets disablePortal, so the Paper stays inside
+        // #mobile-wrap — but the only rule that ever styled it is scoped under
+        // #pc-wrap, leaving a plain white MUI menu here. Same block as desktop.
+        .review-sort-menu {
+          border-radius: $m-radius-sm !important;
+          background: var(--pt-menu-surface) !important;
+          border: 1px solid var(--pt-hairline);
+
+          .MuiMenuItem-root {
+            font-size: 13px;
+            font-family: $font;
+            color: var(--pt-menu-ink);
+
+            &.Mui-selected {
+              background: var(--pt-selected) !important;
+              color: var(--pt-ink);
+            }
           }
         }
       }
 
       .review-empty-text {
-        background: #fff;
-        border: 1px dashed rgba(143, 143, 143, 0.35);
+        background: var(--pt-surface);
+        border: 1px dashed var(--pt-border-cool);
         border-radius: $m-radius;
         padding: $space-5 $space-4;
         font-size: 14px;
-        color: #6b7280;
+        color: var(--pt-ink-soft);
         text-align: center;
       }
 
       .review-card {
-        background: #fff;
-        border: 1px solid rgba(143, 143, 143, 0.2);
+        background: var(--pt-surface);
+        border: 1px solid var(--pt-border-cool);
         border-radius: $m-radius;
         padding: $space-4;
         gap: $space-2;
@@ -510,18 +561,18 @@
             .review-card-username {
               font-size: 14px;
               font-weight: 700;
-              color: #111;
+              color: var(--pt-ink-strong);
             }
             .review-card-location {
               font-size: 12px;
-              color: #9ca3af;
+              color: var(--pt-ink-faint);
             }
           }
         }
 
         .review-card-booking-info {
           font-size: 12px;
-          color: #6b7280;
+          color: var(--pt-ink-soft);
           font-weight: 500;
         }
 
@@ -533,19 +584,19 @@
           }
           .review-card-date {
             font-size: 12px;
-            color: #9ca3af;
+            color: var(--pt-ink-faint);
           }
         }
 
         .review-card-content {
           font-size: 13px;
-          color: #374151;
+          color: var(--pt-ink-mid);
           line-height: 1.6;
         }
 
         .review-toggle-btn {
           font-size: 13px;
-          color: #410075;
+          color: var(--pt-ink);
           font-weight: 600;
         }
 
@@ -559,7 +610,7 @@
             height: 84px;
             object-fit: cover;
             border-radius: $m-radius-sm;
-            border: 1px solid rgba(0, 0, 0, 0.07);
+            border: 1px solid var(--pt-hairline);
           }
         }
       }
@@ -570,10 +621,11 @@
 
         .MuiPaginationItem-root {
           font-family: $font;
+          color: var(--pt-ink-body);
 
           &.Mui-selected {
-            background-color: #410075 !important;
-            color: #fff;
+            background-color: var(--pt-ink) !important;
+            color: var(--pt-on-ink);
           }
         }
       }

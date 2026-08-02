@@ -1,8 +1,8 @@
 @use "../variables.scss" as *;
 
-$btt-ink: #410075;
+// The puck follows the page's own surface/ink pair so it reads as part of
+// the page in either scheme rather than a bright disc floating on a dark one.
 $btt-lavender: #b56cff;
-$btt-ring-track: rgba(65, 0, 117, 0.13);
 $btt-shadow: rgba(41, 12, 72, 0.2);
 
 .back-to-top {
@@ -24,7 +24,7 @@ $btt-shadow: rgba(41, 12, 72, 0.2);
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: #ffffff;
+  background: var(--pt-surface);
   box-shadow:
     0 10px 26px $btt-shadow,
     0 2px 6px rgba(41, 12, 72, 0.08);
@@ -58,7 +58,7 @@ $btt-shadow: rgba(41, 12, 72, 0.2);
   }
 
   &:focus-visible {
-    outline: 2px solid $btt-ink;
+    outline: 2px solid var(--pt-ink);
     outline-offset: 3px;
   }
 }
@@ -80,7 +80,7 @@ $btt-shadow: rgba(41, 12, 72, 0.2);
   }
 
   .back-to-top-ring-track {
-    stroke: $btt-ring-track;
+    stroke: var(--pt-hairline);
   }
 
   .back-to-top-ring-fill {
@@ -107,7 +107,7 @@ $btt-shadow: rgba(41, 12, 72, 0.2);
   display: block;
   width: var(--btt-paw);
   height: var(--btt-paw);
-  fill: $btt-ink;
+  fill: var(--pt-ink);
 
   // Alternating feet — the tilt is what makes the loop read as a walk rather
   // than a strip sliding past.
@@ -153,9 +153,9 @@ $btt-shadow: rgba(41, 12, 72, 0.2);
   height: 28px;
   padding: 0 12px;
   border-radius: 999px;
-  background: #ffffff;
+  background: var(--pt-surface);
   box-shadow: 0 6px 18px rgba(41, 12, 72, 0.16);
-  color: $btt-ink;
+  color: var(--pt-ink);
   font-family: $font;
   font-size: 12.5px;
   font-weight: 700;
