@@ -2,48 +2,78 @@ import { Box, Stack } from "@mui/material";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import PublicRoundedIcon from "@mui/icons-material/PublicRounded";
-import Link from "next/link";
 import { useTranslation } from "react-i18next";
-
-export type DiscoveryCardItem = {
-  id: string;
-  name: string;
-  country: string;
-  description: string;
-  image: string;
-  liked?: boolean;
-  stats: {
-    difficulty: number;
-    ferocious: number;
-    space: number;
-    groups: number;
-  };
-};
+import {
+  ApolloQueryResult,
+  OperationVariables,
+  useMutation,
+  useReactiveVar,
+} from "@apollo/client";
+import { MouseEvent } from "react";
+import { userVar } from "@/apollo/store";
+import { LIKE_TARGET_DISCOVERY_PET } from "@/apollo/user/mutation";
+import { DiscoveryPet } from "@/libs/types/discovery-pet/discovery-pet";
+import { T } from "@/libs/types/common";
+import { Messages } from "@/libs/config";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
 
 type DiscoveryCardProps = {
-  item: DiscoveryCardItem;
-  onToggleLike?: () => void;
+  pet: DiscoveryPet;
+  getDiscoveryPetsRefetch: (
+    variables?: Partial<OperationVariables>,
+  ) => Promise<ApolloQueryResult<T>>;
 };
 
-const DiscoveryCard = ({ item, onToggleLike }: DiscoveryCardProps) => {
+const DiscoveryCard = ({
+  pet,
+  getDiscoveryPetsRefetch,
+}: DiscoveryCardProps) => {
   const { t } = useTranslation();
+  const user = useReactiveVar(userVar);
+  const myFavorite = Boolean(pet?.meLiked?.[0]?.myFavorite);
+
+  /** APOLLO REQUESTS **/
+
+  const [likeTargetDiscoveryPet] = useMutation(LIKE_TARGET_DISCOVERY_PET);
 
   const statRows = [
-    { key: "difficulty", value: item.stats.difficulty },
-    { key: "ferocious", value: item.stats.ferocious },
-    { key: "space", value: item.stats.space },
-    { key: "groups", value: item.stats.groups },
+    { key: "difficulty", value: pet.petDifficulty },
+    { key: "ferocious", value: pet.petFerocious },
+    { key: "space", value: pet.petSpace },
+    { key: "groups", value: pet.petGroups },
   ];
 
-  // The English copy in the data array is the fallback, so an unlisted breed
-  // or country still renders instead of showing a raw key.
-  const name = t(`discovery.pets.${item.id}.name`, { defaultValue: item.name });
-  const description = t(`discovery.pets.${item.id}.desc`, {
-    defaultValue: item.description,
+  const name = t(`discovery.pets.${pet.petSlug}.name`, {
+    defaultValue: pet.petName,
   });
-  const country = t(`discovery.country.${item.country}`, {
-    defaultValue: item.country,
+  const description = t(`discovery.pets.${pet.petSlug}.desc`, {
+    defaultValue: pet.petDescription,
   });
+  const country = t(`discovery.country.${pet.petCountry}`, {
+    defaultValue: pet.petCountry,
+  });
+
+  /** HANDLERS **/
+
+  const likePetHandler = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    try {
+      if (!user?._id) throw new Error(Messages.error2);
+
+      await likeTargetDiscoveryPet({ variables: { input: pet._id } });
+
+      // Refetch so the local list re-syncs meLiked + petLikes.
+      await getDiscoveryPetsRefetch();
+
+      await sweetBottomSmallSuccessAlert("Success!", 700);
+    } catch (err: any) {
+      console.log("ERROR, likePetHandler:", err.message);
+      await sweetMixinErrorAlert(err.message);
+    }
+  };
 
   return (
     <Stack className="discovery-card">
@@ -52,23 +82,24 @@ const DiscoveryCard = ({ item, onToggleLike }: DiscoveryCardProps) => {
           component="button"
           type="button"
           className="like-toggle"
-          onClick={onToggleLike}
+          onClick={likePetHandler}
           aria-label={
-            item.liked
+            myFavorite
               ? t("discovery.removeFavorite")
               : t("discovery.addFavorite")
           }
         >
-          {item.liked ? (
+          {myFavorite ? (
             <FavoriteRoundedIcon className="liked" />
           ) : (
             <FavoriteBorderRoundedIcon className="unliked" />
           )}
         </Box>
+        <Box className="like-count">{pet.petLikes}</Box>
       </Box>
 
       <Box className="pet-image-box">
-        <img className="pet-image" src={item.image} alt={name} />
+        <img className="pet-image" src={pet.petImage} alt={name} />
       </Box>
 
       <Box className="pet-title">{name}</Box>
@@ -93,6 +124,27 @@ const DiscoveryCard = ({ item, onToggleLike }: DiscoveryCardProps) => {
 
       <Box className="description-title">{t("discovery.description")}</Box>
       <Box className="description-text">{description}</Box>
+
+      {pet.petLink ? (
+        <Box
+          component="a"
+          href={pet.petLink}
+          target="_blank"
+          rel="noreferrer"
+          className="read-more-btn"
+        >
+          {t("actions.readMore")}
+        </Box>
+      ) : (
+        <Box
+          component="button"
+          type="button"
+          className="read-more-btn disabled"
+          disabled
+        >
+          {t("actions.readMore")}
+        </Box>
+      )}
     </Stack>
   );
 };

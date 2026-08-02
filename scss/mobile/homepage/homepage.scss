@@ -470,67 +470,52 @@
           }
         }
 
-        // Full-width card with the prev/next controls floated over the pet
-        // photo, so the card gets the whole column instead of being pinched
-        // between two arrows.
         .discovery-slider {
-          position: relative;
           display: block;
 
           .cards-track {
             width: 100%;
             justify-content: center;
           }
+        }
 
-          .slider-nav {
-            position: absolute;
-            top: 100px;
-            z-index: 3;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            box-shadow: 0 4px 14px rgba(65, 0, 117, 0.2);
+        .discovery-pager {
+          align-self: center;
+          align-items: center;
+          gap: $space-3;
+
+          .pager-arrow {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            color: var(--pt-ink);
+            opacity: 0.55;
 
             svg {
               font-size: 22px;
             }
 
-            &.prev {
-              left: 2px;
-            }
-
-            &.next {
-              right: 2px;
-            }
-
-            &.enabled {
-              background: var(--pt-ink);
-              color: var(--pt-on-ink);
-            }
-
             &.disabled {
-              background: var(--pt-track);
-              color: var(--pt-ink-faint);
+              opacity: 0.25;
+              pointer-events: none;
             }
           }
-        }
 
-        .pagination-dots {
-          align-self: center;
-          gap: $space-2;
-
-          .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            border: 1px solid var(--pt-track);
-            background: transparent;
-            cursor: pointer;
-
-            &.active {
-              border-color: var(--pt-ink);
-              background: var(--pt-ink);
-            }
+          .pager-page {
+            min-width: 34px;
+            height: 34px;
+            padding: 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--pt-ink);
+            color: var(--pt-on-ink);
+            font-family: $font;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1;
           }
         }
       }

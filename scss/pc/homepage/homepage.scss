@@ -746,65 +746,58 @@
         }
 
         .discovery-slider {
-          position: relative;
           align-items: center;
           justify-content: center;
 
-          .slider-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            z-index: 3;
-
-            svg {
-              font-size: 18px;
-            }
-
-            &.prev {
-              left: -52px;
-            }
-
-            &.next {
-              right: -52px;
-            }
-
-            &.enabled {
-              background: var(--pt-ink);
-              color: var(--pt-on-ink);
-            }
-
-            &.disabled {
-              background: var(--pt-track);
-              color: var(--pt-ink-faint);
-            }
-          }
-
           .cards-track {
             width: 100%;
-            margin-left: 65px;
             gap: 30px;
           }
         }
 
-        .pagination-dots {
+        .discovery-pager {
           align-self: center;
-          gap: 8px;
+          align-items: center;
+          gap: 10px;
 
-          .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            border: 1px solid #b3b3b3;
-            background: transparent;
-            cursor: pointer;
+          .pager-arrow {
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            color: var(--pt-ink);
+            opacity: 0.55;
+            transition: opacity 0.15s ease;
 
-            &.active {
-              border-color: var(--pt-ink);
-              background: var(--pt-ink);
+            svg {
+              font-size: 20px;
             }
+
+            &.enabled:hover {
+              opacity: 1;
+              background: transparent;
+            }
+
+            &.disabled {
+              opacity: 0.25;
+              pointer-events: none;
+            }
+          }
+
+          .pager-page {
+            min-width: 32px;
+            height: 32px;
+            padding: 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--pt-ink);
+            color: var(--pt-on-ink);
+            font-family: $font;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1;
           }
         }
       }

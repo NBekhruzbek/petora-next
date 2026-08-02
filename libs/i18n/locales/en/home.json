@@ -74,6 +74,7 @@
     "category": {
       "Dogs": "Dogs",
       "Cats": "Cats",
+      "Rabbits": "Rabbits",
       "Hamsters": "Hamsters",
       "Birds": "Birds"
     },

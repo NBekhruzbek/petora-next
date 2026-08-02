@@ -74,6 +74,7 @@
     "category": {
       "Dogs": "강아지",
       "Cats": "고양이",
+      "Rabbits": "토끼",
       "Hamsters": "햄스터",
       "Birds": "새"
     },

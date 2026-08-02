@@ -817,3 +817,22 @@ export const MARK_ALL_NOTIFICATIONS_READ = gql`
     markAllNotificationsRead
   }
 `;
+
+/***********************************
+ *          DISCOVERY PET          *
+ ***********************************/
+
+export const LIKE_TARGET_DISCOVERY_PET = gql`
+  mutation LikeTargetDiscoveryPet($input: String!) {
+    likeTargetDiscoveryPet(petId: $input) {
+      _id
+      petSlug
+      petLikes
+      meLiked {
+        memberId
+        likeRefId
+        myFavorite
+      }
+    }
+  }
+`;

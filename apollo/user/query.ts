@@ -1076,3 +1076,74 @@ export const GET_UNREAD_NOTIFICATIONS_COUNT = gql`
     getUnreadNotificationsCount
   }
 `;
+
+/***********************************
+ *          DISCOVERY PET          *
+ ***********************************/
+
+export const GET_DISCOVERY_PET = gql`
+  query GetDiscoveryPet($input: String!) {
+    getDiscoveryPet(petId: $input) {
+      _id
+      petSlug
+      petCategory
+      petStatus
+      petName
+      petCountry
+      petImage
+      petDifficulty
+      petFerocious
+      petSpace
+      petGroups
+      petDescription
+      petLink
+      petLikes
+      petViews
+      petRank
+      memberId
+      createdAt
+      updatedAt
+      meLiked {
+        memberId
+        likeRefId
+        myFavorite
+      }
+    }
+  }
+`;
+
+export const GET_ALL_DISCOVERY_PETS = gql`
+  query GetAllDiscoveryPets($input: DiscoveryPetsInquiry!) {
+    getAllDiscoveryPets(input: $input) {
+      list {
+        _id
+        petSlug
+        petCategory
+        petStatus
+        petName
+        petCountry
+        petImage
+        petDifficulty
+        petFerocious
+        petSpace
+        petGroups
+        petDescription
+        petLink
+        petLikes
+        petViews
+        petRank
+        memberId
+        createdAt
+        updatedAt
+        meLiked {
+          memberId
+          likeRefId
+          myFavorite
+        }
+      }
+      metaCounter {
+        total
+      }
+    }
+  }
+`;

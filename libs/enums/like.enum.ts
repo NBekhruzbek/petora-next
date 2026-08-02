@@ -5,4 +5,5 @@ export enum LikeGroup {
   ARTICLE = "ARTICLE",
   QNA = "QNA",
   COMMENT = "COMMENT",
+  PET = "PET",
 }
