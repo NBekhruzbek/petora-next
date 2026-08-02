@@ -10,12 +10,12 @@
     min-height: $touch-target-min;
     padding: 0 $space-4;
     border-radius: 12px;
-    border: 1px solid #eee;
-    background: #fff;
+    border: 1px solid var(--pt-hairline);
+    background: var(--pt-surface);
     font-family: $font;
     font-size: 14px;
     font-weight: 600;
-    color: #410075;
+    color: var(--pt-ink);
     align-self: flex-start;
     box-shadow: 0 4px 12px rgba(20, 20, 20, 0.06);
 
@@ -27,8 +27,8 @@
       height: 18px;
       padding: 0 4px;
       border-radius: 999px;
-      background: #410075;
-      color: #fff;
+      background: var(--pt-ink);
+      color: var(--pt-on-ink);
       font-size: 11px;
       font-weight: 700;
     }
@@ -65,8 +65,8 @@
     align-items: center;
     gap: $space-2;
     border-radius: $m-radius;
-    border: 1px solid #e5e0ee;
-    background: #fff;
+    border: 1px solid var(--pt-hairline);
+    background: var(--pt-field-surface);
 
     .text-field {
       flex: 1;
@@ -74,10 +74,10 @@
       padding: 0 $space-3;
       font-family: $font;
       font-size: 15px;
-      color: #1f1f1f;
+      color: var(--pt-ink-strong);
 
       input::placeholder {
-        color: #8a8a8a;
+        color: var(--pt-ink-faint);
         opacity: 1;
       }
     }
@@ -87,8 +87,8 @@
       width: 40px;
       height: 38px;
       border-radius: $m-radius-sm;
-      background: rgba(65, 0, 117, 0.06);
-      color: #410075;
+      background: var(--pt-hover);
+      color: var(--pt-ink);
     }
   }
 
@@ -96,7 +96,7 @@
   .divider {
     height: 1px !important;
     margin: 0;
-    background-color: #ececec;
+    background-color: var(--pt-hairline);
     border: none;
   }
 
@@ -120,15 +120,15 @@
       font-size: 16px;
       font-weight: 700;
       line-height: 1.2;
-      color: #111;
+      color: var(--pt-ink-body);
     }
 
     .category-toggle,
     .likes-toggle {
       width: 10px;
       height: 10px;
-      border-right: 2px solid #410075;
-      border-top: 2px solid #410075;
+      border-right: 2px solid var(--pt-ink);
+      border-top: 2px solid var(--pt-ink);
       transform: rotate(135deg);
       transition: transform 0.3s ease;
 
@@ -170,8 +170,8 @@
       width: 22px;
       height: 22px;
       border-radius: 7px;
-      background: #fff;
-      border: 2px solid #cfc7dc;
+      background: var(--pt-field-surface);
+      border: 2px solid var(--pt-border-cool);
       transition:
         background 0.15s ease,
         border-color 0.15s ease;
@@ -196,19 +196,19 @@
       font-size: 15px;
       font-weight: 600;
       line-height: 1.2;
-      color: #3a3a3a;
+      color: var(--pt-ink-mid);
     }
   }
 
   .category-option.is-selected .category-checkbox,
   .likes-option.is-selected .likes-checkbox {
-    background: #410075;
-    border-color: #410075;
+    background: var(--pt-ink);
+    border-color: var(--pt-ink);
   }
 
   .category-option.is-selected .category-checkbox::after,
   .likes-option.is-selected .likes-checkbox::after {
-    border-color: #fff;
+    border-color: var(--pt-on-ink);
   }
 
   // ── Price slider ──
@@ -220,11 +220,11 @@
     .price-line {
       height: 4px;
       padding: $space-2 0;
-      color: #410075;
+      color: var(--pt-ink);
 
       .MuiSlider-rail {
         height: 4px;
-        color: #e5e0ee;
+        color: var(--pt-border-lilac);
         opacity: 1;
       }
       .MuiSlider-track {
@@ -234,8 +234,8 @@
       .MuiSlider-thumb {
         width: 16px;
         height: 16px;
-        background: #fff;
-        border: 2px solid #410075;
+        background: var(--pt-field-surface);
+        border: 2px solid var(--pt-ink);
         box-shadow: 0 2px 6px rgba(65, 0, 117, 0.3);
 
         &:hover,
@@ -251,7 +251,7 @@
       font-family: $font;
       font-size: 14px;
       font-weight: 600;
-      color: #410075;
+      color: var(--pt-ink);
     }
   }
 

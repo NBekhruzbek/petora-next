@@ -12,6 +12,7 @@
     .title {
       font-size: $m-font-section-title;
       margin-bottom: $space-4;
+      color: var(--pt-ink);
     }
 
     .products-main {
@@ -24,6 +25,14 @@
 
       .filter-section-wrap {
         justify-content: space-between;
+      }
+
+      // Desktop's border/background/text colour live under #pc-wrap only, so
+      // on mobile this fell back to the global MUI outlined-input default
+      // (solid white) — a bright island once the page went dark.
+      .filter-section {
+        background: var(--pt-field-surface);
+        color: var(--pt-ink-body);
       }
     }
 
@@ -86,7 +95,7 @@
           padding: $space-4;
           border-radius: $m-radius-lg;
           overflow: hidden;
-          background: #f1f1f1;
+          background: var(--pt-surface-sunken);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -121,8 +130,8 @@
             height: 62px;
             padding: 6px;
             border-radius: 12px;
-            border: 2px solid #ececec;
-            background: #fff;
+            border: 2px solid var(--pt-hairline);
+            background: var(--pt-field-surface);
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -137,7 +146,7 @@
             }
 
             &.active {
-              border-color: #410075;
+              border-color: var(--pt-ink);
             }
           }
         }
@@ -150,8 +159,8 @@
       .shopping-sidebar {
         .shopping-card {
           padding: $space-4;
-          background: #fff;
-          border: 1px solid rgba(143, 143, 143, 0.18);
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool);
           border-radius: $m-radius-lg;
           box-shadow: 0 6px 22px rgba(0, 0, 0, 0.05);
 
@@ -159,7 +168,7 @@
             font-size: 20px;
             font-weight: 800;
             line-height: 1.25;
-            color: #1c1c1c;
+            color: var(--pt-ink-strong);
           }
 
           .pet-type {
@@ -169,10 +178,10 @@
             flex-shrink: 0;
             padding-top: 1px;
             text-align: center;
-            border: 1px solid #9f9f9f;
+            border: 1px solid var(--pt-hairline);
             border-radius: 30px;
-            color: #3d3d3d;
-            background-color: #f9eafb;
+            color: var(--pt-ink-mid);
+            background-color: var(--pt-selected);
           }
 
           .rating-row {
@@ -189,11 +198,11 @@
             }
             .rating-text {
               font-size: 14px;
-              color: #111;
+              color: var(--pt-ink-body);
 
               .reviews {
                 font-size: 13px;
-                color: #666;
+                color: var(--pt-ink-soft);
               }
             }
           }
@@ -207,14 +216,14 @@
             .price-after-discount {
               font-size: 24px;
               font-weight: 700;
-              color: #111;
+              color: var(--pt-ink-body);
             }
             .price-before-discount {
               margin-bottom: 3px;
               font-size: 15px;
               font-weight: 600;
               text-decoration-line: line-through;
-              color: #686868;
+              color: var(--pt-ink-soft);
             }
             .saving-price {
               margin-bottom: 4px;
@@ -236,9 +245,17 @@
             font-weight: 600;
             color: #16a34a;
 
+            html[data-theme="dark"] & {
+              color: #4ade80;
+            }
+
             svg {
               font-size: 18px;
               color: #16a34a;
+
+              html[data-theme="dark"] & {
+                color: #4ade80;
+              }
             }
             .stock-left {
               color: #e11d48;
@@ -249,14 +266,14 @@
             margin-top: $space-3;
             font-size: 15px;
             font-weight: 700;
-            color: #111;
+            color: var(--pt-ink-body);
           }
           .short-desc-text {
             margin-top: 4px;
             font-size: 13px;
             font-weight: 500;
             line-height: 1.55;
-            color: #4b5563;
+            color: var(--pt-ink-muted);
           }
 
           .quantity-views-likes {
@@ -272,13 +289,13 @@
               gap: 5px;
               font-size: 13px;
               font-weight: 500;
-              color: #676767;
+              color: var(--pt-ink-soft);
 
               .view-icon {
                 font-size: 20px;
               }
               .heart-icon {
-                color: #676767;
+                color: var(--pt-ink-soft);
               }
               .liked-icon {
                 color: #e11d48;
@@ -300,14 +317,14 @@
               justify-content: space-between;
               align-items: center;
               width: auto;
-              border: 1px solid #d4d4d4;
+              border: 1px solid var(--pt-hairline);
               border-radius: 30px;
               overflow: hidden;
-              color: #111;
+              color: var(--pt-ink-body);
 
               .button {
                 min-width: 44px;
-                color: #111;
+                color: var(--pt-ink-body);
               }
               .dec-inc-icon {
                 font-size: 20px;
@@ -334,9 +351,9 @@
             }
             // Secondary action — outlined.
             .add-btn {
-              background: #fff;
-              border: 1.5px solid #410075;
-              color: #410075;
+              background: var(--pt-field-surface);
+              border: 1.5px solid var(--pt-ink);
+              color: var(--pt-ink);
             }
             // Primary action — solid brand fill.
             .pay-btn {
@@ -369,7 +386,7 @@
           .detail-block-title {
             font-size: 16px;
             font-weight: 800;
-            color: #1c1c1c;
+            color: var(--pt-ink-strong);
           }
 
           .detail-info-grid {
@@ -389,12 +406,12 @@
               .detail-info-label {
                 font-size: 13px;
                 font-weight: 700;
-                color: #111;
+                color: var(--pt-ink);
               }
               .detail-info-value {
                 font-size: 13px;
                 font-weight: 500;
-                color: #4b5563;
+                color: var(--pt-ink-muted);
               }
             }
           }
@@ -402,7 +419,7 @@
           .detail-description-text {
             font-size: 13px;
             line-height: 1.6;
-            color: #666;
+            color: var(--pt-ink-soft);
           }
 
           .detail-benefits-list {
@@ -412,14 +429,14 @@
             .detail-benefit-title {
               font-size: 13px;
               font-weight: 600;
-              color: #545454;
+              color: var(--pt-ink-muted);
             }
             .detail-benefit-text {
               position: relative;
               padding-left: 16px;
               font-size: 13px;
               line-height: 1.55;
-              color: #666;
+              color: var(--pt-ink-soft);
 
               &::before {
                 content: "";
@@ -429,7 +446,7 @@
                 width: 5px;
                 height: 5px;
                 border-radius: 50%;
-                background: #666;
+                background: var(--pt-ink-soft);
               }
             }
           }
@@ -447,7 +464,7 @@
         .review-summary-title {
           font-size: 18px;
           font-weight: 800;
-          color: #1f2937;
+          color: var(--pt-ink-strong);
         }
 
         .review-score-row {
@@ -463,13 +480,13 @@
               color: #ff9d59;
             }
             .MuiRating-iconEmpty {
-              color: #d6d6d6;
+              color: var(--pt-track);
             }
           }
           .review-score-count {
             font-size: 24px;
             font-weight: 800;
-            color: #1f2937;
+            color: var(--pt-ink-strong);
           }
         }
 
@@ -479,18 +496,18 @@
           gap: $space-2;
           padding: $space-2 $space-3;
           border-radius: 999px;
-          background: #f2f4f7;
+          background: var(--pt-band);
 
           .review-satisfied-icon {
             font-size: 20px;
-            color: #253244;
+            color: var(--pt-ink);
             flex-shrink: 0;
           }
           .review-satisfied-text {
             font-size: 12px;
             font-weight: 700;
             line-height: 1.35;
-            color: #253244;
+            color: var(--pt-ink-strong);
           }
         }
 
@@ -508,7 +525,7 @@
             .review-distribution-value {
               font-size: 12px;
               font-weight: 700;
-              color: #253244;
+              color: var(--pt-ink-strong);
             }
             .review-distribution-value {
               text-align: right;
@@ -518,7 +535,7 @@
               height: 8px;
               border-radius: 999px;
               overflow: hidden;
-              background: #e7eaef;
+              background: var(--pt-track);
 
               .review-distribution-fill {
                 height: 100%;
@@ -528,7 +545,7 @@
                   background: #ff9d59;
                 }
                 &.cool {
-                  background: #aab6c4;
+                  background: var(--pt-ink-faint);
                 }
               }
             }
@@ -549,7 +566,7 @@
           flex-direction: column;
           gap: $space-3;
           padding: $space-4 0;
-          border-bottom: 1px solid #eceff3;
+          border-bottom: 1px solid var(--pt-hairline);
 
           &:first-child {
             padding-top: 0;
@@ -570,7 +587,7 @@
               flex-shrink: 0;
               overflow: hidden;
               border-radius: 50%;
-              background: #eef1f5;
+              background: var(--pt-surface-sunken);
 
               img {
                 width: 100%;
@@ -584,13 +601,13 @@
               .review-user-name {
                 font-size: 14px;
                 font-weight: 700;
-                color: #222f3d;
+                color: var(--pt-ink-strong);
               }
               .review-user-location,
               .review-user-purchase {
                 font-size: 12px;
                 font-weight: 500;
-                color: #7e8794;
+                color: var(--pt-ink-cool);
               }
             }
           }
@@ -613,12 +630,12 @@
                   color: #ff9d59;
                 }
                 .MuiRating-iconEmpty {
-                  color: #d6d6d6;
+                  color: var(--pt-track);
                 }
               }
               .review-card-date {
                 font-size: 12px;
-                color: #7e8794;
+                color: var(--pt-ink-cool);
               }
             }
 
@@ -633,7 +650,7 @@
                 height: 62px;
                 overflow: hidden;
                 border-radius: 10px;
-                background: #eef1f4;
+                background: var(--pt-surface-sunken);
 
                 img {
                   width: 100%;
@@ -647,7 +664,7 @@
               font-size: 13px;
               font-weight: 500;
               line-height: 1.6;
-              color: #444f5b;
+              color: var(--pt-ink-muted);
             }
 
             .review-card-toggle {
@@ -657,7 +674,7 @@
               font-size: 13px;
               font-weight: 700;
               text-transform: none;
-              color: #410075;
+              color: var(--pt-ink);
             }
           }
         }
@@ -674,8 +691,8 @@
             font-family: $font;
 
             &.Mui-selected {
-              background-color: #410075 !important;
-              color: #fff;
+              background-color: var(--pt-ink) !important;
+              color: var(--pt-on-ink);
             }
           }
         }
@@ -694,7 +711,7 @@
       .related-products-title {
         font-size: 22px;
         font-weight: 800;
-        color: #1c1c1c; // desktop #000 — was inherited purple on mobile
+        color: var(--pt-ink-strong); // desktop #000 — was inherited purple on mobile
 
         img {
           width: 20px;
@@ -766,7 +783,7 @@
 
       .title {
         font-size: $m-font-section-title;
-        color: #252525;
+        color: var(--pt-ink-strong);
         text-align: center;
         font-weight: 700;
         line-height: 1.25;
@@ -780,9 +797,9 @@
         min-width: $touch-target-min;
         min-height: $touch-target-min;
         flex-shrink: 0;
-        border: 1px solid #d9d9d9;
+        border: 1px solid var(--pt-hairline);
         border-radius: 50%;
-        color: #2f2f2f;
+        color: var(--pt-ink-strong);
       }
     }
 
@@ -824,8 +841,8 @@
         box-sizing: border-box;
         padding: $space-3 $space-3 $space-2;
         border-radius: 16px;
-        border: 1px solid #ececec;
-        background: #fff;
+        border: 1px solid var(--pt-hairline);
+        background: var(--pt-surface);
         box-shadow: 0 8px 18px rgba(17, 17, 17, 0.07);
         display: flex;
         flex-direction: column;
@@ -868,16 +885,16 @@
           font-weight: 700;
           letter-spacing: 0.5px;
           line-height: 1.25;
-          color: #6b6b6b;
+          color: var(--pt-ink-soft);
         }
 
         // Spotlight the focused card with a brand-tinted edge + lift.
         &.active {
-          border-color: #e0cbf3;
+          border-color: var(--pt-border-lilac);
           box-shadow: 0 16px 30px rgba(65, 0, 117, 0.14);
 
           .card-title {
-            color: #303030;
+            color: var(--pt-ink-strong);
           }
         }
       }
@@ -893,7 +910,7 @@
       // line with the paw flourish (all #pc-wrap-scoped, so mobile went flat).
       .title {
         font-size: $m-font-section-title;
-        color: #410075;
+        color: var(--pt-ink);
         font-weight: 800;
         line-height: 1.25;
 
@@ -938,7 +955,7 @@
             justify-content: center;
             align-items: center;
             border-radius: 50%;
-            background-color: #f2e2ff;
+            background-color: var(--pt-header-surface);
 
             img {
               max-width: 58%;
@@ -947,7 +964,7 @@
 
             .expert-icon {
               font-size: 30px;
-              color: #410075;
+              color: var(--pt-ink);
             }
           }
 
@@ -956,7 +973,7 @@
             align-self: end;
             font-size: 15px;
             font-weight: 700;
-            color: #252525;
+            color: var(--pt-ink-strong);
           }
 
           .desc-text {
@@ -965,7 +982,7 @@
             width: 100%;
             font-size: 13px;
             line-height: 1.5;
-            color: #595959;
+            color: var(--pt-ink-muted);
           }
         }
       }
@@ -993,8 +1010,8 @@
       align-items: center;
       justify-content: center;
       gap: $space-4;
-      background: linear-gradient(160deg, #faf4ff 0%, #f0e2ff 100%);
-      border: 1px solid #ecd9ff;
+      background: var(--pt-band);
+      border: 1px solid var(--pt-border-lilac);
       border-radius: 22px;
       padding: $space-5 $space-4;
 
@@ -1029,8 +1046,8 @@
           position: static;
           font-size: $m-font-section-title;
           background-image: none;
-          -webkit-text-fill-color: #410075;
-          color: #410075;
+          -webkit-text-fill-color: var(--pt-ink);
+          color: var(--pt-ink);
           font-weight: 800;
         }
 
@@ -1048,8 +1065,8 @@
         width: 132px;
         height: 132px;
         object-fit: contain;
-        background: #fff;
-        border: 1px solid #efe2fb;
+        background: var(--pt-surface);
+        border: 1px solid var(--pt-border-lilac);
         border-radius: 18px;
         padding: 14px;
         box-shadow: 0 8px 18px rgba(65, 0, 117, 0.08);

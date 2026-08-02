@@ -5,8 +5,8 @@
   max-width: calc((100% - 60px) / 4);
   min-height: 300px;
   border-radius: 12px;
-  border: 1px solid #e5c3ff;
-  background: #fff;
+  border: 1px solid var(--pt-border-lilac);
+  background: var(--pt-surface);
   overflow: hidden;
   cursor: pointer;
   transition:
@@ -33,7 +33,7 @@
     position: relative;
     height: 180px;
     padding: 14px;
-    background: #f4f4f4;
+    background: var(--pt-surface-sunken);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -68,7 +68,7 @@
       gap: 10px;
       padding: 5px 11px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.72);
+      background: var(--pt-scrim);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       box-shadow: 0 2px 8px rgba(20, 10, 40, 0.12);
@@ -92,7 +92,7 @@
 
       .like-count,
       .views-count {
-        color: #666;
+        color: var(--pt-ink-soft);
         text-align: center;
         font-family: $font;
         font-size: 11px;
@@ -102,7 +102,7 @@
       }
 
       .views-icon {
-        color: #666;
+        color: var(--pt-ink-soft);
         font-size: 20px;
       }
     }
@@ -132,7 +132,7 @@
     }
 
     .unliked {
-      color: #666;
+      color: var(--pt-ink-soft);
       font-size: 20px;
     }
 
@@ -158,7 +158,7 @@
     height: auto;
 
     .product-title {
-      color: #252525;
+      color: var(--pt-ink-strong);
       font-family: $font;
       font-size: 16px;
       font-style: normal;
@@ -190,7 +190,7 @@
         }
 
         .MuiRating-iconEmpty {
-          color: #d8d8d8;
+          color: var(--pt-track);
         }
 
         .MuiSvgIcon-root {
@@ -199,7 +199,7 @@
       }
 
       .rating-text {
-        color: #666;
+        color: var(--pt-ink-soft);
         font-family: $font;
         font-size: 13px;
         font-style: normal;
@@ -212,7 +212,7 @@
     }
 
     .sold-text {
-      color: #666;
+      color: var(--pt-ink-soft);
       font-family: $font;
       font-size: 13px;
       font-style: normal;
@@ -237,7 +237,7 @@
       }
 
       .discounted-price {
-        color: #7100ff;
+        color: var(--pt-price);
         font-family: $font;
         font-size: 20px;
         font-style: normal;
@@ -258,7 +258,7 @@
       }
 
       .origin-price {
-        color: #353434;
+        color: var(--pt-ink-mid);
         font-family: $font;
         font-size: 13px;
         font-style: normal;
@@ -335,9 +335,9 @@
         width: 30px;
         height: 30px;
         border-radius: 6px;
-        border: 1.5px solid #c4c4c4;
-        background: #fff;
-        color: #595959;
+        border: 1.5px solid var(--pt-track);
+        background: var(--pt-surface);
+        color: var(--pt-ink-muted);
         cursor: pointer;
         display: inline-flex;
         align-items: center;
@@ -350,9 +350,9 @@
           color 0.15s ease;
 
         &:hover {
-          border-color: #4b158d;
-          background: #f6eeff;
-          color: #4b158d;
+          border-color: var(--pt-ink);
+          background: var(--pt-selected);
+          color: var(--pt-ink);
           box-shadow: 0 8px 16px rgba(75, 21, 141, 0.16);
           transform: translateY(-1px);
         }

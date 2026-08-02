@@ -6,6 +6,7 @@
   border-radius: 20px 20px 0 0 !important;
   max-height: 82vh;
   overflow: hidden !important;
+  background: var(--pt-surface) !important;
   box-shadow: 0 -8px 32px rgba(65, 0, 117, 0.16) !important;
 
   * {
@@ -26,6 +27,10 @@
     background: rgba(65, 0, 117, 0.18);
     margin: 10px auto 2px;
     flex-shrink: 0;
+
+    html[data-theme="dark"] & {
+      background: rgba(201, 166, 255, 0.35);
+    }
   }
 
   &__header {
@@ -34,21 +39,21 @@
     justify-content: space-between;
     padding: $space-2 $space-4 $space-3;
     flex-shrink: 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--pt-hairline);
 
     &-title {
       font-family: $font;
       font-size: 17px;
       font-weight: 700;
-      color: #111;
+      color: var(--pt-ink-strong);
     }
 
     &-close {
       width: $touch-target-min !important;
       height: $touch-target-min !important;
       border-radius: 50% !important;
-      background: rgba(65, 0, 117, 0.06) !important;
-      color: #410075 !important;
+      background: var(--pt-hover) !important;
+      color: var(--pt-ink) !important;
     }
   }
 
@@ -63,7 +68,7 @@
     align-items: center;
     gap: $space-3;
     padding: $space-3 $space-4;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--pt-hairline);
     flex-shrink: 0;
     padding-bottom: max(#{$space-3}, env(safe-area-inset-bottom));
   }
@@ -72,7 +77,7 @@
     font-family: $font;
     font-size: 14px;
     font-weight: 600;
-    color: #595959;
+    color: var(--pt-ink-muted);
     background: none;
     border: none;
     min-height: $touch-target-min;
@@ -85,8 +90,8 @@
     min-height: $touch-target-min;
     border: none;
     border-radius: 12px;
-    background: #410075;
-    color: #fff;
+    background: var(--pt-ink);
+    color: var(--pt-on-ink);
     font-family: $font;
     font-size: 15px;
     font-weight: 700;
@@ -95,6 +100,10 @@
 
     &:active {
       background: #34005e;
+
+      html[data-theme="dark"] & {
+        background: #b78cf7;
+      }
     }
 
     &:disabled {
