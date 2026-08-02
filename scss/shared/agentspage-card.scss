@@ -1,8 +1,8 @@
 @use "../variables.scss" as *;
 
 .agent-card {
-  background: #ffffff;
-  border: 1px solid rgba(143, 143, 143, 0.2);
+  background: var(--pt-surface);
+  border: 1px solid var(--pt-border-cool);
   border-radius: 16px;
   overflow: hidden;
   transition:
@@ -109,13 +109,13 @@
     .agent-card-name {
       font-size: 16px;
       font-weight: 800;
-      color: #111;
+      color: var(--pt-ink-strong);
       font-family: $font;
     }
 
     .agent-card-role {
       font-size: 12px;
-      color: #6b7280;
+      color: var(--pt-ink-soft);
       font-family: $font;
       font-weight: 500;
     }
@@ -130,18 +130,18 @@
       .agent-rating-value {
         font-size: 13px;
         font-weight: 700;
-        color: #111;
+        color: var(--pt-ink-strong);
         font-family: $font;
       }
 
       .agent-rating-sep {
-        color: #d1d5db;
+        color: var(--pt-ink-faint);
         font-size: 13px;
       }
 
       .agent-booking-count {
         font-size: 12px;
-        color: #6b7280;
+        color: var(--pt-ink-soft);
         font-family: $font;
       }
     }
@@ -151,13 +151,13 @@
 
       .agent-meta-icon {
         font-size: 15px !important;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
         flex-shrink: 0;
       }
 
       .agent-meta-text {
         font-size: 12px;
-        color: #4b5563;
+        color: var(--pt-ink-mid);
         font-family: $font;
       }
     }

@@ -346,8 +346,8 @@ const Agents = ({ initialInput: propInput = initialInput }: AgentsProps) => {
                 className="filter-section"
                 MenuProps={{
                   disableScrollLock: true,
-                  PaperProps: { className: "filter-menu" },
-                  MenuListProps: { className: "filter-menu-list" },
+                  PaperProps: { className: "agents-sort-menu" },
+                  MenuListProps: { className: "agents-sort-menu-list" },
                 }}
               >
                 {SORT_OPTIONS.map((option) => (

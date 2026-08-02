@@ -2,7 +2,7 @@
 
 #pc-wrap {
   #agents-top {
-    background-color: #f2e2ff;
+    background-color: var(--pt-header-surface);
     position: relative;
 
     &::after {
@@ -36,7 +36,7 @@
           font-weight: 700;
           line-height: 48px; /* 133.333% */
           text-transform: uppercase;
-          color: var(--Primary-Purple3, #410075);
+          color: var(--pt-ink);
         }
         .text2 {
           font-family: font;
@@ -126,7 +126,7 @@
     .agents-page-title {
       font-size: 28px;
       font-weight: 800;
-      color: #111;
+      color: var(--pt-ink-strong);
       margin-bottom: 32px;
       font-family: $font;
     }
@@ -148,8 +148,8 @@
         height: 46px;
         padding: 4px;
         border-radius: 12px;
-        border: 1px solid #d6d6d6;
-        background: #fff;
+        border: 1px solid var(--pt-hairline);
+        background: var(--pt-field-surface);
         display: flex;
         align-items: center;
         gap: 8px;
@@ -162,14 +162,14 @@
           font-family: $font;
           font-size: 14px;
           font-weight: 500;
-          color: #1f1f1f;
+          color: var(--pt-ink-strong);
 
           input {
             height: 100%;
             padding: 0;
           }
           input::placeholder {
-            color: #8a8a8a;
+            color: var(--pt-ink-faint);
             opacity: 1;
           }
         }
@@ -192,13 +192,13 @@
         height: 2px;
         margin-top: 20px;
         margin-bottom: 20px;
-        background-color: #9b9a9a;
+        background-color: var(--pt-ink-faint);
       }
 
       .category-section {
         width: 280px;
         gap: 14px;
-        background: #fff;
+        background: var(--pt-field-surface);
 
         .category-header {
           flex-direction: row;
@@ -211,14 +211,14 @@
             font-size: 20px;
             font-weight: 600;
             line-height: 36px;
-            color: #000;
+            color: var(--pt-ink-body);
           }
 
           .category-toggle {
             width: 12px;
             height: 12px;
-            border-right: 2px solid #111;
-            border-top: 2px solid #111;
+            border-right: 2px solid var(--pt-ink-strong);
+            border-top: 2px solid var(--pt-ink-strong);
             transform: rotate(135deg);
             margin-right: 2px;
             transition: transform 0.3s ease;
@@ -252,8 +252,8 @@
               width: 24px;
               height: 24px;
               border-radius: 8px;
-              background: #fff;
-              border: 2px solid #111;
+              background: var(--pt-field-surface);
+              border: 2px solid var(--pt-ink-strong);
             }
 
             .category-checkbox::after {
@@ -273,12 +273,12 @@
               font-size: 18px;
               font-weight: 600;
               line-height: 1.2;
-              color: #3a3a3a;
+              color: var(--pt-ink-mid);
             }
           }
 
           .category-option.is-selected .category-checkbox {
-            background: #111;
+            background: var(--pt-ink-strong);
           }
           .category-option.is-selected .category-checkbox::after {
             border-color: #f6c200;
@@ -302,10 +302,10 @@
           border-radius: 10px !important;
           font-size: 14px !important;
           font-family: $font;
-          background: #fff;
+          background: var(--pt-field-surface);
 
           .MuiOutlinedInput-notchedOutline {
-            border-color: rgba(0, 0, 0, 0.12) !important;
+            border-color: var(--pt-hairline) !important;
           }
 
           .MuiSelect-select {
@@ -313,33 +313,15 @@
             font-size: 14px;
             font-family: $font;
             font-weight: 600;
-            color: #111 !important;
+            color: var(--pt-ink-body) !important;
           }
         }
       }
 
-      .filter-menu {
-        border-radius: 12px !important;
-        box-shadow: 0 8px 24px rgba(65, 0, 117, 0.1) !important;
-      }
-
-      .filter-menu-list {
-        padding: 6px !important;
-
-        .MuiMenuItem-root {
-          border-radius: 8px;
-          font-size: 14px;
-          font-family: $font;
-          &:hover {
-            background: #faf5ff !important;
-          }
-          &.Mui-selected {
-            background: #f3e8ff !important;
-            color: #111 !important;
-            font-weight: 600;
-          }
-        }
-      }
+      // .agents-sort-menu / .agents-sort-menu-list styling lives outside
+      // #pc-wrap in agentspage.scss's top-level block — the Select's Menu
+      // portals its Paper to document.body, so a selector scoped under this
+      // id never matches it.
 
       .agents-cards {
         display: grid;
@@ -381,9 +363,10 @@
 
         .MuiPaginationItem-root {
           font-family: $font;
+          color: var(--pt-ink-body);
           &.Mui-selected {
-            background-color: #410075 !important;
-            color: #fff;
+            background-color: var(--pt-ink) !important;
+            color: var(--pt-on-ink);
           }
         }
       }
@@ -401,7 +384,7 @@
 
     .agent-detail-top {
       height: 85px;
-      background-color: #f3e2ff;
+      background-color: var(--pt-header-surface);
     }
 
     .container {
@@ -412,7 +395,7 @@
 
     .agent-detail-breadcrumb {
       font-size: 13px;
-      color: #9ca3af;
+      color: var(--pt-ink-faint);
       font-family: $font;
       margin-bottom: 28px;
     }
@@ -426,8 +409,8 @@
 
     // ── Profile column ──
     .agent-detail-profile {
-      background: #fff;
-      border: 1px solid rgba(143, 143, 143, 0.25);
+      background: var(--pt-surface);
+      border: 1px solid var(--pt-border-cool);
       border-radius: 20px;
       padding: 28px 24px;
       gap: 14px;
@@ -446,16 +429,16 @@
           border-radius: 50%;
           object-fit: cover;
           display: block;
-          border: 3px solid #f3e8ff;
+          border: 3px solid var(--pt-tint-soft);
         }
 
         .agent-detail-verified {
           position: absolute;
           bottom: 2px;
           right: -4px;
-          background: #fff;
-          border: 1px solid #e9d5ff;
-          color: #410075;
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-lilac);
+          color: var(--pt-ink);
           font-size: 11px;
           font-weight: 700;
           font-family: $font;
@@ -470,14 +453,14 @@
       .agent-detail-name {
         font-size: 20px;
         font-weight: 800;
-        color: #111;
+        color: var(--pt-ink-strong);
         font-family: $font;
         text-align: center;
       }
 
       .agent-detail-role {
         font-size: 13px;
-        color: #6b7280;
+        color: var(--pt-ink-soft);
         font-family: $font;
         text-align: center;
         font-weight: 500;
@@ -490,33 +473,33 @@
         .agent-detail-rating-score {
           font-size: 14px;
           font-weight: 700;
-          color: #111;
+          color: var(--pt-ink-strong);
           font-family: $font;
         }
 
         .agent-detail-rating-sep {
-          color: #d1d5db;
+          color: var(--pt-ink-faint);
         }
 
         .agent-detail-rating-count {
           font-size: 13px;
-          color: #6b7280;
+          color: var(--pt-ink-soft);
           font-family: $font;
         }
       }
 
       .agent-detail-bio {
         font-size: 13px;
-        color: #4b5563;
+        color: var(--pt-ink-mid);
         font-family: $font;
         line-height: 1.6;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        border-top: 1px solid var(--pt-hairline);
         padding-top: 14px;
       }
 
       .agent-detail-info-list {
         gap: 10px;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        border-top: 1px solid var(--pt-hairline);
         padding-top: 14px;
 
         .agent-detail-info-row {
@@ -524,13 +507,13 @@
 
           .agent-detail-info-icon {
             font-size: 17px !important;
-            color: #777777;
+            color: var(--pt-ink-soft);
             flex-shrink: 0;
           }
 
           .agent-detail-info-text {
             font-size: 13px;
-            color: #374151;
+            color: var(--pt-ink-mid);
             font-family: $font;
             font-weight: 500;
           }
@@ -539,7 +522,7 @@
 
       .agent-detail-certs {
         gap: 12px;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        border-top: 1px solid var(--pt-hairline);
         padding-top: 14px;
 
         .agent-detail-certs-title-row {
@@ -547,13 +530,13 @@
 
           .agent-detail-certs-icon {
             font-size: 18px !important;
-            color: #410075;
+            color: var(--pt-ink);
           }
 
           .agent-detail-certs-title {
             font-size: 14px;
             font-weight: 700;
-            color: #111;
+            color: var(--pt-ink-strong);
             font-family: $font;
           }
         }
@@ -564,10 +547,10 @@
           gap: 10px;
 
           .agent-detail-cert-card {
-            border: 1px solid rgba(0, 0, 0, 0.07);
+            border: 1px solid var(--pt-hairline);
             border-radius: 10px;
             overflow: hidden;
-            background: #faf5ff;
+            background: var(--pt-tint-soft);
 
             .agent-detail-cert-img {
               width: 100%;
@@ -578,7 +561,7 @@
 
             .agent-detail-cert-title {
               font-size: 11px;
-              color: #374151;
+              color: var(--pt-ink-mid);
               font-family: $font;
               font-weight: 600;
               padding: 8px;
@@ -596,8 +579,8 @@
       .write-review-panel {
         width: 100%;
         border-radius: 20px;
-        border: 1.5px solid #e9d5ff;
-        background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
+        border: 1.5px solid var(--pt-border-lilac);
+        background: var(--pt-surface);
         padding: 32px 36px;
         gap: 0;
         display: flex;
@@ -611,13 +594,13 @@
           gap: 20px;
           min-width: 240px;
           padding-right: 36px;
-          border-right: 1.5px solid #f3e8ff;
+          border-right: 1.5px solid var(--pt-hairline);
 
           .write-review-panel-title {
             font-family: $font;
             font-size: 20px;
             font-weight: 800;
-            color: #111;
+            color: var(--pt-ink-strong);
           }
 
           .write-review-rating-row {
@@ -629,7 +612,7 @@
               font-family: $font;
               font-size: 13px;
               font-weight: 600;
-              color: #6b7280;
+              color: var(--pt-ink-soft);
               text-transform: uppercase;
               letter-spacing: 0.05em;
             }
@@ -637,7 +620,7 @@
             .write-review-stars {
               font-size: 36px !important;
               .MuiRating-iconFilled { color: #f59e0b; }
-              .MuiRating-iconEmpty { color: #e5e7eb; }
+              .MuiRating-iconEmpty { color: var(--pt-track); }
             }
           }
         }
@@ -655,12 +638,12 @@
               border-radius: 12px !important;
               font-family: $font;
               font-size: 14px;
-              color: #111;
+              color: var(--pt-ink-body);
               align-items: flex-start;
 
-              fieldset { border-color: #e9d5ff !important; }
-              &:hover fieldset { border-color: #410075 !important; }
-              &.Mui-focused fieldset { border-color: #410075 !important; }
+              fieldset { border-color: var(--pt-border-lilac) !important; }
+              &:hover fieldset { border-color: var(--pt-ink) !important; }
+              &.Mui-focused fieldset { border-color: var(--pt-ink) !important; }
             }
           }
 
@@ -706,8 +689,8 @@
               width: 72px;
               height: 72px;
               border-radius: 10px;
-              border: 1.5px dashed #c4b5fd;
-              background: #faf5ff;
+              border: 1.5px dashed var(--pt-border-lilac);
+              background: var(--pt-tint-soft);
               display: flex;
               flex-direction: column;
               align-items: center;
@@ -718,13 +701,13 @@
               flex-shrink: 0;
 
               &:hover {
-                border-color: #410075;
-                background: #f3e8ff;
+                border-color: var(--pt-ink);
+                background: var(--pt-selected);
               }
 
               .write-review-img-upload-icon {
                 font-size: 22px;
-                color: #7c3aed;
+                color: var(--pt-accent);
                 line-height: 1;
               }
 
@@ -732,7 +715,7 @@
                 font-family: $font;
                 font-size: 10px;
                 font-weight: 600;
-                color: #7c3aed;
+                color: var(--pt-accent);
               }
             }
           }
@@ -782,9 +765,9 @@
             }
 
             &.Mui-disabled {
-              background: #e5e7eb !important;
+              background: var(--pt-track) !important;
               border-color: transparent !important;
-              color: #9ca3af !important;
+              color: var(--pt-ink-faint) !important;
               animation: none !important;
             }
           }
@@ -808,19 +791,23 @@
             font-size: 20px;
             font-weight: 800;
             color: #166534;
+
+            html[data-theme="dark"] & {
+              color: #4ade80;
+            }
           }
 
           .write-review-success-sub {
             font-family: $font;
             font-size: 14px;
-            color: #4b5563;
+            color: var(--pt-ink-soft);
           }
         }
       }
 
       .review-summary-panel {
-        background: #fff;
-        border: 1px solid rgba(143, 143, 143, 0.25);
+        background: var(--pt-surface);
+        border: 1px solid var(--pt-border-cool);
         border-radius: 16px;
         padding: 24px;
         gap: 14px;
@@ -828,7 +815,7 @@
         .review-summary-title {
           font-size: 18px;
           font-weight: 800;
-          color: #111;
+          color: var(--pt-ink-strong);
           font-family: $font;
         }
 
@@ -843,7 +830,7 @@
           .review-score-count {
             font-size: 28px;
             font-weight: 800;
-            color: #111;
+            color: var(--pt-ink-strong);
             font-family: $font;
           }
         }
@@ -852,18 +839,18 @@
           display: flex;
           align-items: center;
           gap: 8px;
-          background: #f0fdf4;
+          background: var(--pt-band);
           border-radius: 10px;
           padding: 10px 14px;
 
           .review-satisfied-icon {
-            color: #16a34a;
+            color: var(--pt-ink);
             font-size: 20px !important;
           }
 
           .review-satisfied-text {
             font-size: 13px;
-            color: #15803d;
+            color: var(--pt-ink-strong);
             font-family: $font;
             font-weight: 600;
           }
@@ -881,7 +868,7 @@
             .review-distribution-value {
               font-size: 13px;
               font-family: $font;
-              color: #4b5563;
+              color: var(--pt-ink-soft);
               min-width: 56px;
             }
 
@@ -893,7 +880,7 @@
             .review-distribution-track {
               flex: 1;
               height: 8px;
-              background: #f3f4f6;
+              background: var(--pt-track);
               border-radius: 99px;
               overflow: hidden;
 
@@ -904,7 +891,7 @@
                   background: #f59e0a;
                 }
                 &.cool {
-                  background: #d1d5db;
+                  background: var(--pt-ink-faint);
                 }
               }
             }
@@ -920,7 +907,7 @@
             width: 150px;
             font-size: 15px;
             font-weight: 700;
-            color: #111;
+            color: var(--pt-ink-strong);
             font-family: $font;
           }
 
@@ -931,41 +918,50 @@
               border-radius: 10px !important;
               font-size: 13px;
               font-family: $font;
+              background: var(--pt-field-surface);
+              color: var(--pt-ink-strong);
+            }
+
+            .MuiOutlinedInput-notchedOutline {
+              border-color: var(--pt-hairline);
             }
           }
 
           .review-sort-menu {
             border-radius: 12px !important;
             box-shadow: 0 8px 24px rgba(65, 0, 117, 0.1) !important;
+            background: var(--pt-menu-surface) !important;
+            border: 1px solid var(--pt-hairline);
 
             .MuiMenuItem-root {
               font-size: 13px;
               font-family: $font;
+              color: var(--pt-menu-ink);
               &:hover {
-                background: #faf5ff !important;
+                background: var(--pt-hover) !important;
               }
               &.Mui-selected {
-                background: #f3e8ff !important;
-                color: #410075;
+                background: var(--pt-selected) !important;
+                color: var(--pt-ink);
               }
             }
           }
         }
 
         .review-empty-text {
-          background: #fff;
-          border: 1px dashed rgba(143, 143, 143, 0.35);
+          background: var(--pt-surface);
+          border: 1px dashed var(--pt-border-cool);
           border-radius: 14px;
           padding: 28px 20px;
           font-size: 14px;
-          color: #6b7280;
+          color: var(--pt-ink-soft);
           font-family: $font;
           text-align: center;
         }
 
         .review-card {
-          background: #fff;
-          border: 1px solid rgba(143, 143, 143, 0.2);
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-border-cool);
           border-radius: 14px;
           padding: 20px;
           gap: 10px;
@@ -1002,13 +998,13 @@
               .review-card-username {
                 font-size: 14px;
                 font-weight: 700;
-                color: #111;
+                color: var(--pt-ink-strong);
                 font-family: $font;
               }
 
               .review-card-location {
                 font-size: 12px;
-                color: #9ca3af;
+                color: var(--pt-ink-faint);
                 font-family: $font;
               }
             }
@@ -1016,7 +1012,7 @@
 
           .review-card-booking-info {
             font-size: 12px;
-            color: #6b7280;
+            color: var(--pt-ink-soft);
             font-family: $font;
             font-weight: 500;
           }
@@ -1030,21 +1026,21 @@
 
             .review-card-date {
               font-size: 12px;
-              color: #9ca3af;
+              color: var(--pt-ink-faint);
               font-family: $font;
             }
           }
 
           .review-card-content {
             font-size: 14px;
-            color: #374151;
+            color: var(--pt-ink-mid);
             font-family: $font;
             line-height: 1.65;
           }
 
           .review-toggle-btn {
             font-size: 13px;
-            color: #410075;
+            color: var(--pt-ink);
             font-weight: 600;
             font-family: $font;
             cursor: pointer;
@@ -1062,7 +1058,7 @@
               height: 80px;
               object-fit: cover;
               border-radius: 8px;
-              border: 1px solid rgba(0, 0, 0, 0.07);
+              border: 1px solid var(--pt-hairline);
             }
           }
         }
@@ -1073,13 +1069,43 @@
 
           .MuiPaginationItem-root {
             font-family: $font;
+            color: var(--pt-ink-body);
             &.Mui-selected {
-              background-color: #410075 !important;
-              color: #fff;
+              background-color: var(--pt-ink) !important;
+              color: var(--pt-on-ink);
             }
           }
         }
       }
+    }
+  }
+}
+
+// ─── Agents sort dropdown (portalled to document.body, so unscoped) ───────────
+
+.agents-sort-menu {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(65, 0, 117, 0.1) !important;
+  background: var(--pt-menu-surface) !important;
+  border: 1px solid var(--pt-hairline);
+}
+
+.agents-sort-menu-list {
+  padding: 6px !important;
+  background: var(--pt-menu-surface) !important;
+
+  .MuiMenuItem-root {
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: $font;
+    color: var(--pt-menu-ink);
+    &:hover {
+      background: var(--pt-hover) !important;
+    }
+    &.Mui-selected {
+      background: var(--pt-selected) !important;
+      color: var(--pt-ink) !important;
+      font-weight: 600;
     }
   }
 }
