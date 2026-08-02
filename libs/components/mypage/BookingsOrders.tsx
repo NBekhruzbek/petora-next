@@ -637,6 +637,10 @@ const BookingsOrders = () => {
                     <Typography className="agent-name">
                       {service?.serviceTitle ?? "Service removed"}
                     </Typography>
+                    <Typography className="booking-number">
+                      {t("mypage.orders.bookingNumber")}:{" "}
+                      {booking.bookingNumber}
+                    </Typography>
                     <Typography className="service-description">
                       {booking.bookingNote || "No additional request"}
                     </Typography>

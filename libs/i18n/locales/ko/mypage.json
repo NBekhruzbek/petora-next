@@ -151,6 +151,7 @@
       "findService": "서비스 찾기",
       "orderNumber": "주문번호",
       "orderDate": "주문일",
+      "bookingNumber": "예약번호",
       "arrived": "배송완료",
       "writeReview": "리뷰 작성",
       "delivery": "배송",

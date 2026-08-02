@@ -120,6 +120,15 @@
         }
       }
 
+      .booking-number {
+        color: var(--pt-ink-faint);
+        font-family: $font;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: 0.2px;
+      }
+
       .service-description {
         max-width: 520px;
         color: var(--pt-ink-muted);
