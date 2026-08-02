@@ -30,7 +30,7 @@
             display: inline-flex;
             align-items: center;
             gap: $space-2;
-            color: #410075;
+            color: var(--pt-ink);
             text-transform: uppercase;
             letter-spacing: 0.4px;
 
@@ -53,7 +53,7 @@
               line-height: 1.2;
               letter-spacing: 0.6px;
               text-transform: uppercase;
-              color: #410075;
+              color: var(--pt-ink);
             }
 
             .text {
@@ -61,7 +61,7 @@
               font-size: 15px;
               font-weight: 400;
               line-height: 1.55;
-              color: #595959;
+              color: var(--pt-ink-muted);
             }
           }
 
@@ -75,7 +75,7 @@
               line-height: 1.2;
               letter-spacing: 0.6px;
               text-transform: uppercase;
-              color: #410075;
+              color: var(--pt-ink);
             }
 
             .service-cards {
@@ -103,7 +103,7 @@
                     font-size: 15px;
                     font-weight: 700;
                     line-height: 1.25;
-                    color: #252525;
+                    color: var(--pt-ink-strong);
                   }
 
                   .text {
@@ -112,7 +112,7 @@
                     font-size: 13px;
                     font-weight: 400;
                     line-height: 1.4;
-                    color: #595959;
+                    color: var(--pt-ink-muted);
                   }
 
                   // Compact pill instead of the full-width bar the base
@@ -151,11 +151,11 @@
               }
 
               .left-card {
-                background: #dfefda;
+                background: var(--pt-card-mint);
               }
 
               .right-card {
-                background: #e5c3ff;
+                background: var(--pt-tint-strong);
               }
             }
           }
@@ -190,7 +190,11 @@
             height: 300px;
             border-radius: 22px;
             overflow: hidden;
-            background: linear-gradient(160deg, #f3e8ff 0%, #e9d5ff 100%);
+            background: linear-gradient(
+              160deg,
+              var(--pt-tint-soft) 0%,
+              var(--pt-tint) 100%
+            );
             box-shadow: 0 18px 40px rgba(109, 40, 217, 0.18);
 
             .oc-dog-img {
@@ -215,7 +219,7 @@
             justify-content: center;
             gap: 2px;
             padding: $space-3 $space-2;
-            background: #fff;
+            background: var(--pt-surface);
             border-radius: 16px;
             box-shadow: 0 10px 24px rgba(109, 40, 217, 0.14);
             transform: none;
@@ -226,7 +230,7 @@
               font-size: 18px;
               font-weight: 800;
               line-height: 1;
-              color: #410075;
+              color: var(--pt-ink);
             }
 
             .oc-badge-label {
@@ -234,7 +238,7 @@
               font-size: 11px;
               font-weight: 600;
               line-height: 1.2;
-              color: #9ca3af;
+              color: var(--pt-ink-faint);
             }
           }
         }
@@ -253,7 +257,7 @@
       height: auto;
       margin-top: $space-4;
       padding: $space-6 0;
-      background: #fcf7ff;
+      background: var(--pt-band);
 
       .container {
         width: 100%;
@@ -272,7 +276,7 @@
             display: inline-flex;
             align-items: center;
             gap: $space-2;
-            color: #410075;
+            color: var(--pt-ink);
             text-transform: uppercase;
             letter-spacing: 0.4px;
 
@@ -326,7 +330,7 @@
             margin-bottom: $space-2;
             padding: $space-3;
             border-radius: 20px;
-            background: #fff;
+            background: var(--pt-surface);
             box-shadow: 0 10px 28px rgba(65, 0, 117, 0.1);
 
             .ring {
@@ -359,7 +363,7 @@
             gap: $space-2;
             padding: $space-4;
             border-radius: 16px;
-            background: #fff;
+            background: var(--pt-surface);
             box-shadow: 0 6px 18px rgba(65, 0, 117, 0.08);
 
             .offer-number {
@@ -395,7 +399,7 @@
                 font-size: 15px;
                 font-weight: 700;
                 line-height: 1.2;
-                color: #252525;
+                color: var(--pt-ink-strong);
               }
 
               .offer-description {
@@ -404,7 +408,7 @@
                 font-size: 12px;
                 font-weight: 400;
                 line-height: 1.4;
-                color: #595959;
+                color: var(--pt-ink-muted);
               }
             }
           }
@@ -420,7 +424,7 @@
     .discovery {
       width: 100%;
       padding: $space-6 0 $space-5;
-      background: #fff;
+      background: var(--pt-surface);
 
       .container {
         width: 100%;
@@ -430,7 +434,7 @@
 
         .discovery-title {
           @include m-section-title;
-          color: #252525;
+          color: var(--pt-ink-strong);
           letter-spacing: 0.3px;
           text-transform: uppercase;
         }
@@ -448,9 +452,9 @@
             height: 40px;
             padding: 0 $space-2;
             border-radius: $m-radius-pill;
-            border: 1px solid #9f9f9f;
+            border: 1px solid var(--pt-track);
             background: transparent;
-            color: #606060;
+            color: var(--pt-ink-soft);
             font-family: $font;
             font-size: 13px;
             font-weight: 600;
@@ -500,13 +504,13 @@
             }
 
             &.enabled {
-              background: #410075;
-              color: #fff;
+              background: var(--pt-ink);
+              color: var(--pt-on-ink);
             }
 
             &.disabled {
-              background: #ece7f2;
-              color: #b3aac2;
+              background: var(--pt-track);
+              color: var(--pt-ink-faint);
             }
           }
         }
@@ -519,13 +523,13 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            border: 1px solid #b3b3b3;
+            border: 1px solid var(--pt-track);
             background: transparent;
             cursor: pointer;
 
             &.active {
-              border-color: #410075;
-              background: #410075;
+              border-color: var(--pt-ink);
+              background: var(--pt-ink);
             }
           }
         }
@@ -542,7 +546,7 @@
     // inherits the section purple and the button collapses to a bar.
     .species {
       height: auto;
-      background: #fcf7ff;
+      background: var(--pt-band);
       padding: $space-6 0;
 
       .species-main {
@@ -566,7 +570,7 @@
             height: 240px;
             margin: 0;
             border-radius: 50%;
-            background: #f3e2ff;
+            background: var(--pt-tint-soft);
             transform: translate(-50%, -50%);
             z-index: 1;
           }
@@ -580,7 +584,7 @@
             height: 190px;
             margin: 0;
             border-radius: 50%;
-            background: #e9ccff;
+            background: var(--pt-tint);
             transform: translate(-50%, -50%);
             z-index: 1;
           }
@@ -606,7 +610,11 @@
             top: auto;
             left: auto;
             border-radius: 50%;
-            background: linear-gradient(39deg, #e5c3ff 14.13%, #fff 85.24%);
+            background: linear-gradient(
+              39deg,
+              var(--pt-tint-strong) 14.13%,
+              var(--pt-surface) 85.24%
+            );
             box-shadow: 0 6px 16px rgba(65, 0, 117, 0.16);
             z-index: 3;
           }
@@ -675,7 +683,7 @@
             text-align: left;
             text-transform: uppercase;
             letter-spacing: 0.4px;
-            color: #252525;
+            color: var(--pt-ink-strong);
           }
 
           .text {
@@ -683,7 +691,7 @@
             font-size: 15px;
             font-weight: 400;
             line-height: 1.55;
-            color: #595959;
+            color: var(--pt-ink-muted);
           }
 
           // Compact pill instead of the full-width contained bar MUI falls
@@ -837,7 +845,7 @@
             font-weight: 700;
             line-height: 1.2;
             text-transform: uppercase;
-            color: #410075;
+            color: var(--pt-ink);
           }
 
           .title {
@@ -846,7 +854,7 @@
             font-weight: 700;
             line-height: 1.2;
             text-transform: uppercase;
-            color: #252525;
+            color: var(--pt-ink-strong);
           }
 
           .text {
@@ -854,7 +862,7 @@
             font-size: 15px;
             font-weight: 400;
             line-height: 1.4;
-            color: #595959;
+            color: var(--pt-ink-muted);
           }
 
           .shop-button {
@@ -902,7 +910,7 @@
           font-weight: 700;
           line-height: 1;
           text-transform: uppercase;
-          color: #410075;
+          color: var(--pt-ink);
 
           .hand-icon {
             display: inline-block; // headers.scss hides paws globally; the title flourish earns its place
@@ -914,7 +922,7 @@
           font-family: $font;
           font-size: 13px;
           font-weight: 500;
-          color: #595959;
+          color: var(--pt-ink-muted);
         }
       }
 
@@ -1079,7 +1087,7 @@
     // ─── Instagram section (simplified mobile grid, no 3D coverflow) ──────
     .instagram-frame {
       padding: $space-5 0 $space-6;
-      background: #fff;
+      background: var(--pt-surface);
 
       .container {
         padding: 0 $space-4;
@@ -1091,7 +1099,7 @@
       }
 
       .section-title {
-        color: #410075;
+        color: var(--pt-ink);
         font-family: $font;
         font-size: $m-font-section-title;
         font-weight: 700;
@@ -1117,7 +1125,7 @@
       .instagram-mobile-subtitle {
         font-family: $font;
         font-size: 15px;
-        color: #646464;
+        color: var(--pt-ink-soft);
         text-align: center;
       }
 

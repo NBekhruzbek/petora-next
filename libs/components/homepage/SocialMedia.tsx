@@ -189,7 +189,7 @@ const SocialMedia = () => {
               fontFamily: '"Archivo", sans-serif',
               fontSize: "16px",
               fontWeight: 400,
-              color: "#646464",
+              color: "var(--pt-ink-soft)",
               textAlign: "center",
             }}
           >

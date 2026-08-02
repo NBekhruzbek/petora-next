@@ -5,8 +5,8 @@
   min-height: 450px;
   padding: 10px 12px 12px;
   border-radius: 10px;
-  border: 1px solid #f0c0c0;
-  background: #f9f7fa;
+  border: 1px solid var(--pt-border-warm);
+  background: var(--pt-surface);
   box-sizing: border-box;
   transition:
     transform 0.2s ease,
@@ -41,7 +41,7 @@
     }
 
     .unliked {
-      color: #6d6d6d;
+      color: var(--pt-ink-soft);
       font-size: 18px;
     }
   }
@@ -65,7 +65,7 @@
 
   .pet-title {
     margin-top: 8px;
-    color: #410075;
+    color: var(--pt-ink);
     font-family: $font;
     font-size: 22px;
     font-style: normal;
@@ -82,11 +82,11 @@
 
     .country-icon {
       font-size: 15px;
-      color: #6d6d6d;
+      color: var(--pt-ink-soft);
     }
 
     .country-text {
-      color: #595959;
+      color: var(--pt-ink-muted);
       font-family: $font;
       font-size: 16px;
       font-style: normal;
@@ -97,7 +97,7 @@
 
   .info-title {
     margin-top: 8px;
-    color: #252525;
+    color: var(--pt-ink-strong);
     font-family: $font;
     font-size: 20px;
     font-style: normal;
@@ -111,7 +111,7 @@
 
     .stat-item {
       .stat-label {
-        color: #646464;
+        color: var(--pt-ink-soft);
         font-family: $font;
         font-size: 12px;
         font-style: normal;
@@ -123,14 +123,14 @@
         width: 100%;
         height: 5px;
         border-radius: 100px;
-        background: #c4c4c4;
+        background: var(--pt-track);
         margin-top: 4px;
         overflow: hidden;
 
         .stat-fill {
           height: 100%;
           border-radius: 100px;
-          background: #410075;
+          background: var(--pt-ink);
         }
       }
     }
@@ -138,7 +138,7 @@
 
   .description-title {
     margin-top: 10px;
-    color: #252525;
+    color: var(--pt-ink-strong);
     font-family: $font;
     font-size: 20px;
     font-style: normal;
@@ -148,7 +148,7 @@
 
   .description-text {
     margin-top: 6px;
-    color: #696969;
+    color: var(--pt-ink-soft);
     font-family: $font;
     font-size: 12px;
     font-style: normal;
@@ -164,7 +164,7 @@
     padding-top: 10px;
     display: inline-flex;
     justify-content: center;
-    color: #410075;
+    color: var(--pt-ink);
     font-family: $font;
     font-size: 14px;
     font-style: normal;
@@ -177,8 +177,8 @@
 .top-pet-product-card {
   min-height: 380px;
   border-radius: 12px;
-  border: 1px solid #e5c3ff;
-  background: #fff;
+  border: 1px solid var(--pt-border-lilac);
+  background: var(--pt-surface);
   overflow: hidden;
   cursor: pointer;
   transition:
@@ -205,7 +205,7 @@
     position: relative;
     height: 248px;
     padding: 14px;
-    background: #f4f4f4;
+    background: var(--pt-surface-sunken);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -225,7 +225,9 @@
         rgba(20, 10, 40, 0) 75%
       );
       transform: translateX(-50%) scaleX(1);
-      transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+      transition:
+        transform 0.3s ease-out,
+        opacity 0.3s ease-out;
       z-index: 0;
       pointer-events: none;
     }
@@ -239,7 +241,7 @@
       gap: 10px;
       padding: 5px 11px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.72);
+      background: var(--pt-scrim);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       box-shadow: 0 2px 8px rgba(20, 10, 40, 0.12);
@@ -263,7 +265,7 @@
 
       .like-count,
       .views-count {
-        color: #666;
+        color: var(--pt-ink-soft);
         text-align: center;
         font-family: $font;
         font-size: 11px;
@@ -273,7 +275,7 @@
       }
 
       .views-icon {
-        color: #666;
+        color: var(--pt-ink-soft);
         font-size: 20px;
       }
     }
@@ -303,7 +305,7 @@
     }
 
     .unliked {
-      color: #666;
+      color: var(--pt-ink-soft);
       font-size: 20px;
     }
 
@@ -329,7 +331,7 @@
     height: calc(100% - 248px);
 
     .product-title {
-      color: #252525;
+      color: var(--pt-ink-strong);
       font-family: $font;
       font-size: 16px;
       font-style: normal;
@@ -353,7 +355,7 @@
         }
 
         .MuiRating-iconEmpty {
-          color: #d8d8d8;
+          color: var(--pt-track);
         }
 
         .MuiSvgIcon-root {
@@ -362,7 +364,7 @@
       }
 
       .rating-value {
-        color: #374151;
+        color: var(--pt-ink-strong);
         font-family: $font;
         font-size: 13px;
         font-style: normal;
@@ -371,7 +373,7 @@
       }
 
       .review-count {
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
         font-family: $font;
         font-size: 12px;
         font-style: normal;
@@ -380,13 +382,13 @@
       }
 
       .rating-sep {
-        color: #d1d5db;
+        color: var(--pt-track);
         font-size: 16px;
         line-height: 1;
       }
 
       .sold-count {
-        color: #7c3aed;
+        color: var(--pt-accent);
         font-family: $font;
         font-size: 12px;
         font-style: normal;
@@ -400,7 +402,7 @@
       gap: 10px;
 
       .discounted-price {
-        color: #7100ff;
+        color: var(--pt-price);
         font-family: $font;
         font-size: 24px;
         font-style: normal;
@@ -424,7 +426,7 @@
       }
 
       .origin-price {
-        color: #353434;
+        color: var(--pt-ink-mid);
         font-family: $font;
         font-size: 14px;
         font-style: normal;
@@ -480,8 +482,8 @@
   width: 250px;
   min-height: 364px;
   border-radius: 26px;
-  border: 1px solid #d8dde8;
-  background: #fff;
+  border: 1px solid var(--pt-border-cool);
+  background: var(--pt-surface);
   overflow: hidden;
   transition:
     transform 0.2s ease,
@@ -497,7 +499,7 @@
   .agent-image-wrap {
     height: 250px;
     overflow: hidden;
-    background: #f3f3f3;
+    background: var(--pt-surface-sunken);
 
     .agent-image {
       width: 100%;
@@ -513,7 +515,7 @@
     gap: 6px;
 
     .agent-name {
-      color: #111;
+      color: var(--pt-ink-strong);
       text-align: center;
       font-family: $font;
       font-size: 18px;
@@ -523,7 +525,7 @@
     }
 
     .agent-email {
-      color: #667085;
+      color: var(--pt-ink-cool);
       text-align: center;
       font-family: $font;
       font-size: 13px;
@@ -537,9 +539,9 @@
       width: 170px;
       height: 44px;
       border-radius: 999px;
-      border: 2px solid #d3d8e2;
-      color: #667085;
-      background: #fff;
+      border: 2px solid var(--pt-border-cool);
+      color: var(--pt-ink-cool);
+      background: var(--pt-surface);
       font-family: $font;
       font-size: 14px;
       font-style: normal;
@@ -560,10 +562,9 @@
       }
 
       &:hover {
-        border-color: #c0c7d8;
-        background: #f7f9fc;
+        border-color: var(--pt-border-cool);
+        background: var(--pt-hover);
       }
     }
   }
 }
-

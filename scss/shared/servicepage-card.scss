@@ -3,8 +3,8 @@
 .service-card {
   width: 100%;
   border-radius: 16px;
-  border: 1px solid #ede0f9;
-  background: #fff;
+  border: 1px solid var(--pt-border-lilac);
+  background: var(--pt-surface);
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(18, 18, 25, 0.06);
@@ -25,7 +25,7 @@
     position: relative;
     height: 160px;
     overflow: hidden;
-    background: #f3e8ff;
+    background: var(--pt-tint-soft);
 
     .service-card-image {
       width: 100%;
@@ -161,7 +161,7 @@
       font-family: $font;
       font-size: 16px;
       font-weight: 700;
-      color: #111827;
+      color: var(--pt-ink-strong);
       line-height: 1.2;
       white-space: nowrap;
       overflow: hidden;
@@ -175,26 +175,26 @@
         font-family: $font;
         font-size: 22px;
         font-weight: 800;
-        color: #7100ff;
+        color: var(--pt-price);
         line-height: 1;
       }
 
       .service-price-sep {
-        color: #d1d5db;
+        color: var(--pt-track);
         font-size: 16px;
         line-height: 1;
       }
 
       .duration-icon {
         font-size: 14px;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
       }
 
       .service-duration {
         font-family: $font;
         font-size: 13px;
         font-weight: 500;
-        color: #6b7280;
+        color: var(--pt-ink-soft);
       }
     }
 
@@ -203,14 +203,14 @@
 
       .location-icon {
         font-size: 15px;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
       }
 
       .service-location {
         font-family: $font;
         font-size: 13px;
         font-weight: 500;
-        color: #6b7280;
+        color: var(--pt-ink-soft);
       }
     }
 
@@ -222,7 +222,7 @@
           color: #f6c200;
         }
         .MuiRating-iconEmpty {
-          color: #e5e7eb;
+          color: var(--pt-track);
         }
         .MuiSvgIcon-root {
           font-size: 15px;
@@ -233,21 +233,21 @@
         font-family: $font;
         font-size: 13px;
         font-weight: 700;
-        color: #374151;
+        color: var(--pt-ink-strong);
       }
 
       .review-count {
         font-family: $font;
         font-size: 12px;
         font-weight: 400;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
       }
 
       .service-booking-count {
         font-family: $font;
         font-size: 12px;
         font-weight: 600;
-        color: #7c3aed;
+        color: var(--pt-accent);
       }
     }
 
