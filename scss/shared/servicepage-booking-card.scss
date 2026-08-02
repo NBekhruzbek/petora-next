@@ -7,7 +7,7 @@
   gap: 24px;
   .booking-card,
   .details-card {
-    background: #ffffff;
+    background: var(--pt-surface);
     border-radius: 24px;
     padding: 28px 32px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
@@ -16,7 +16,7 @@
       font-size: 28px;
       font-weight: 700;
       margin: 0;
-      color: #222;
+      color: var(--pt-ink-strong);
     }
 
     .booking-card-head {
@@ -40,7 +40,7 @@
       font-family: $font;
       font-size: 12px;
       font-weight: 500;
-      color: #9ca3af;
+      color: var(--pt-ink-faint);
       line-height: 1;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
@@ -55,7 +55,7 @@
       margin: 8px 0 0;
       font-family: $font;
       font-size: 14px;
-      color: #6e6e6e;
+      color: var(--pt-ink-soft);
     }
     .booking-rating-row {
       margin-top: 10px;
@@ -65,7 +65,7 @@
         color: #f6c200;
       }
       .MuiRating-iconEmpty {
-        color: #e5e7eb;
+        color: var(--pt-track);
       }
       .MuiSvgIcon-root {
         font-size: 16px;
@@ -75,25 +75,25 @@
         font-family: $font;
         font-size: 14px;
         font-weight: 700;
-        color: #111;
+        color: var(--pt-ink-strong);
       }
 
       .booking-rating-sep {
-        color: #d1d5db;
+        color: var(--pt-track);
         font-size: 14px;
       }
 
       .booking-rating-count {
         font-family: $font;
         font-size: 13px;
-        color: #6b7280;
+        color: var(--pt-ink-cool);
       }
 
       .booking-booking-count {
         font-family: $font;
         font-size: 13px;
         font-weight: 600;
-        color: #7c3aed;
+        color: var(--pt-accent);
       }
     }
 
@@ -107,16 +107,16 @@
         gap: 5px;
         padding: 5px 11px;
         border-radius: 999px;
-        background: #f3e8ff;
-        border: 1px solid #e4d0f9;
-        color: #5b21b6;
+        background: var(--pt-selected);
+        border: 1px solid var(--pt-border-lilac);
+        color: var(--pt-ink);
         font-family: $font;
         font-size: 12px;
         font-weight: 600;
 
         svg {
           font-size: 14px;
-          color: #7c3aed;
+          color: var(--pt-accent);
         }
       }
     }
@@ -126,12 +126,12 @@
       font-family: $font;
       font-size: 28px;
       font-weight: 800;
-      color: #7100ff;
+      color: var(--pt-price);
 
       .price-unit {
         font-size: 14px;
         font-weight: 500;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
       }
     }
 
@@ -148,25 +148,25 @@
       .field-label {
         font-family: $font;
         font-size: 13px;
-        color: #6e6e6e;
+        color: var(--pt-ink-soft);
       }
       .input {
         .MuiOutlinedInput-root {
           border-radius: 12px;
-          background: #fff;
+          background: var(--pt-field-surface);
           font-family: $font;
           font-size: 14px;
-          color: #222;
+          color: var(--pt-ink-strong);
           transition:
             border-color 0.2s ease,
             box-shadow 0.2s ease;
         }
         .MuiOutlinedInput-notchedOutline {
-          border-color: #dcdcdc;
+          border-color: var(--pt-hairline);
         }
 
         &:hover .MuiOutlinedInput-notchedOutline {
-          border-color: #111;
+          border-color: var(--pt-ink-strong);
         }
 
         .MuiInputBase-input {
@@ -180,24 +180,24 @@
         .booking-menu {
           border-radius: 14px;
           box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-          border: 1px solid rgba(0, 0, 0, 0.06);
+          border: 1px solid var(--pt-hairline);
           padding: 6px 4px;
           .MuiMenuItem-root {
             font-family: $font;
             font-size: 14px;
-            color: #2b2b2b;
+            color: var(--pt-ink-strong);
             padding: 10px 14px;
             border-radius: 10px;
             margin: 4px 6px;
 
             &:hover {
-              background: rgba(17, 17, 17, 0.06);
+              background: var(--pt-hover);
             }
 
             &.Mui-selected,
             &.Mui-selected:hover {
               background: rgba(246, 196, 0, 0.25);
-              color: #111;
+              color: var(--pt-ink-strong);
               font-weight: 600;
             }
           }
@@ -207,7 +207,7 @@
       .no-slots-text {
         font-family: $font;
         font-size: 13px;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
         margin-top: 4px;
       }
 
@@ -217,12 +217,12 @@
         justify-content: center;
         padding: 7px 14px;
         border-radius: 999px;
-        border: 1.5px solid rgba(143, 143, 143, 0.4);
-        background: #ffffff;
+        border: 1.5px solid var(--pt-hairline);
+        background: var(--pt-field-surface);
         font-family: $font;
         font-size: 13px;
         font-weight: 600;
-        color: #374151;
+        color: var(--pt-ink-strong);
         cursor: pointer;
         user-select: none;
         transition:
@@ -232,15 +232,15 @@
           box-shadow 0.18s ease;
 
         &:hover {
-          border-color: #7c3aed;
-          color: #410075;
-          background: #faf5ff;
+          border-color: var(--pt-accent);
+          color: var(--pt-ink);
+          background: var(--pt-hover);
         }
 
         &.selected {
-          border-color: #410075;
-          background: #f3e8ff;
-          color: #410075;
+          border-color: var(--pt-ink);
+          background: var(--pt-selected);
+          color: var(--pt-ink);
           font-weight: 700;
           box-shadow: 0 2px 8px rgba(65, 0, 117, 0.14);
         }
@@ -251,7 +251,7 @@
       font-family: $font;
       font-size: 20px;
       font-weight: 700;
-      color: #111;
+      color: var(--pt-ink-strong);
     }
     .cta-row {
       display: flex;

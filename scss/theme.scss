@@ -447,4 +447,83 @@ html[data-theme="dark"] {
       color: var(--pt-ink) !important;
     }
   }
+
+  .service-sort-menu {
+    background-color: var(--pt-menu-surface) !important;
+    border-color: var(--pt-hairline) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .service-sort-menu-list {
+    background-color: var(--pt-menu-surface) !important;
+  }
+
+  .service-sort-menu-list .MuiMenuItem-root {
+    color: var(--pt-menu-ink) !important;
+
+    &:hover,
+    &.Mui-selected {
+      background-color: var(--pt-hover) !important;
+      color: var(--pt-ink) !important;
+    }
+  }
+
+  /** Booking date field — MUI X DatePicker portals its calendar to
+      document.body via Popper, so it needs the same global treatment. **/
+  .booking-datepicker-popper {
+    .MuiPickersPopper-paper {
+      background-color: var(--pt-surface) !important;
+      border: 1px solid var(--pt-hairline) !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .MuiPickersCalendarHeader-label,
+    .MuiPickersCalendarHeader-switchViewButton {
+      color: var(--pt-ink-strong) !important;
+    }
+
+    .MuiPickersArrowSwitcher-button {
+      color: var(--pt-ink-strong) !important;
+
+      &.Mui-disabled {
+        color: var(--pt-ink-faint) !important;
+      }
+    }
+
+    .MuiDayCalendar-weekDayLabel {
+      color: var(--pt-ink-cool) !important;
+    }
+
+    .MuiPickersDay-root {
+      color: var(--pt-ink-strong) !important;
+      background-color: transparent !important;
+
+      &:hover {
+        background-color: var(--pt-hover) !important;
+      }
+
+      &.Mui-selected {
+        background-color: var(--pt-ink) !important;
+        color: var(--pt-on-ink) !important;
+      }
+
+      &.Mui-disabled {
+        color: var(--pt-ink-faint) !important;
+      }
+
+      &.MuiPickersDay-today {
+        border-color: var(--pt-ink) !important;
+      }
+    }
+
+    .MuiPickersYear-yearButton,
+    .MuiPickersMonth-monthButton {
+      color: var(--pt-ink-strong) !important;
+
+      &.Mui-selected {
+        background-color: var(--pt-ink) !important;
+        color: var(--pt-on-ink) !important;
+      }
+    }
+  }
 }

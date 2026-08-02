@@ -731,7 +731,10 @@ const Booking = () => {
                       }}
                       minDate={moment()}
                       shouldDisableDate={isDateFullyBooked}
-                      slotProps={{ textField: { size: "small" } }}
+                      slotProps={{
+                        textField: { size: "small" },
+                        popper: { className: "booking-datepicker-popper" },
+                      }}
                     />
                   </LocalizationProvider>
                 </Stack>

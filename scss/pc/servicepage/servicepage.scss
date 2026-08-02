@@ -374,10 +374,11 @@
       width: 100%;
       height: auto;
       padding-top: 70px;
-      background-color: #fff;
+      background-color: var(--pt-page-bg);
       .container {
         .title {
           text-align: center;
+          color: var(--pt-ink);
 
           /* Web/28px-Header/Bold */
           font-family: $font;
@@ -400,8 +401,8 @@
               height: 46px;
               padding: 4px;
               border-radius: 12px;
-              border: 1px solid #d6d6d6;
-              background: #fff;
+              border: 1px solid var(--pt-hairline);
+              background: var(--pt-field-surface);
               display: flex;
               align-items: center;
               gap: 8px;
@@ -415,7 +416,7 @@
                 font-size: 14px;
                 font-style: normal;
                 font-weight: 500;
-                color: #1f1f1f;
+                color: var(--pt-ink-strong);
 
                 input {
                   height: 100%;
@@ -423,7 +424,7 @@
                 }
 
                 input::placeholder {
-                  color: #8a8a8a;
+                  color: var(--pt-ink-faint);
                   opacity: 1;
                 }
               }
@@ -446,11 +447,11 @@
               margin-top: 20px;
               margin-bottom: 20px;
 
-              background-color: #9b9a9a;
+              background-color: var(--pt-ink-faint);
             }
             .price-range {
               width: 280px;
-              background: #fff;
+              background: var(--pt-field-surface);
               .price-line {
                 color: #eab308;
                 height: 4px;
@@ -464,21 +465,21 @@
                 .MuiSlider-thumb {
                   width: 12px;
                   height: 12px;
-                  color: #000;
-                  box-shadow: 0 0 0 2px #fff;
+                  color: var(--pt-ink-body);
+                  box-shadow: 0 0 0 2px var(--pt-field-surface);
                 }
               }
               .selected-price {
                 margin-top: 1px;
                 font-size: 14px;
                 text-align: center;
-                color: #595959;
+                color: var(--pt-ink-muted);
               }
             }
             .category-section {
               width: 280px;
               gap: 14px;
-              background: #fff;
+              background: var(--pt-field-surface);
               &.price-section {
                 .category-list {
                   overflow: visible;
@@ -499,13 +500,13 @@
                   font-style: normal;
                   font-weight: 600;
                   line-height: 36px; /* 128.571% */
-                  color: #000;
+                  color: var(--pt-ink-body);
                 }
                 .category-toggle {
                   width: 12px;
                   height: 12px;
-                  border-right: 2px solid #111;
-                  border-top: 2px solid #111;
+                  border-right: 2px solid var(--pt-ink-strong);
+                  border-top: 2px solid var(--pt-ink-strong);
                   transform: rotate(135deg);
                   margin-right: 2px;
                   transition: transform 0.3s ease;
@@ -536,8 +537,8 @@
                     width: 24px;
                     height: 24px;
                     border-radius: 8px;
-                    background: #fff;
-                    border: 2px solid #111;
+                    background: var(--pt-field-surface);
+                    border: 2px solid var(--pt-ink-strong);
                   }
                   .category-checkbox::after {
                     content: "";
@@ -556,11 +557,11 @@
                     font-style: normal;
                     font-weight: 600;
                     line-height: 1.2;
-                    color: #3a3a3a;
+                    color: var(--pt-ink-mid);
                   }
                 }
                 .category-option.is-selected .category-checkbox {
-                  background: #111;
+                  background: var(--pt-ink-strong);
                 }
                 .category-option.is-selected .category-checkbox::after {
                   border-color: #f6c200;
@@ -569,7 +570,7 @@
             }
             .liked-agents-section {
               width: 280px;
-              background: #fff;
+              background: var(--pt-field-surface);
               gap: 14px;
               .likes-header {
                 flex-direction: row;
@@ -583,13 +584,13 @@
                   font-style: normal;
                   font-weight: 600;
                   line-height: 36px; /* 128.571% */
-                  color: #000;
+                  color: var(--pt-ink-body);
                 }
                 .likes-toggle {
                   width: 12px;
                   height: 12px;
-                  border-right: 2px solid #111;
-                  border-top: 2px solid #111;
+                  border-right: 2px solid var(--pt-ink-strong);
+                  border-top: 2px solid var(--pt-ink-strong);
                   transform: rotate(135deg);
                   margin-right: 2px;
                   transition: transform 0.3s ease;
@@ -620,8 +621,8 @@
                     width: 24px;
                     height: 24px;
                     border-radius: 8px;
-                    background: #fff;
-                    border: 2px solid #111;
+                    background: var(--pt-field-surface);
+                    border: 2px solid var(--pt-ink-strong);
                   }
                   .likes-checkbox::after {
                     content: "";
@@ -640,11 +641,11 @@
                     font-style: normal;
                     font-weight: 600;
                     line-height: 1.2;
-                    color: #3a3a3a;
+                    color: var(--pt-ink-mid);
                   }
                 }
                 .likes-option.is-selected .likes-checkbox {
-                  background: #111;
+                  background: var(--pt-ink-strong);
                 }
                 .likes-option.is-selected .likes-checkbox::after {
                   border-color: #f6c200;
@@ -652,7 +653,7 @@
                 .likes-divider {
                   height: 2px;
                   margin-top: 18px;
-                  background-color: #9b9a9a;
+                  background-color: var(--pt-ink-faint);
                 }
               }
             }
@@ -686,8 +687,8 @@
             font-family: $font;
             border-radius: 25px;
             border: 1px solid #f83d8e;
-            background: #fff;
-            color: #000;
+            background: var(--pt-field-surface);
+            color: var(--pt-ink-body);
 
             .MuiSelect-select {
               display: flex;
@@ -737,11 +738,11 @@
             font-size: 13px;
             font-style: normal;
             font-weight: 600;
-            color: #4b158d;
+            color: var(--pt-ink);
           }
           .pagination-section .Mui-selected {
-            background: #4b158d;
-            color: #fff;
+            background: var(--pt-ink);
+            color: var(--pt-on-ink);
           }
         }
       }
@@ -750,7 +751,7 @@
   .booking-section {
     .booking-top {
       height: 85px;
-      background-color: #f3e2ff;
+      background-color: var(--pt-header-surface);
     }
 
     .container {
@@ -759,7 +760,7 @@
       .breadcrumb {
         font-family: $font;
         font-size: 14px;
-        color: #8a8a8a;
+        color: var(--pt-ink-faint);
         letter-spacing: 0.2px;
       }
       .booking-grid {
@@ -779,8 +780,8 @@
               width: 78px;
               height: 78px;
               border-radius: 16px;
-              border: 2px solid #ececec;
-              background: #ffffff;
+              border: 2px solid var(--pt-hairline);
+              background: var(--pt-field-surface);
               padding: 0;
               cursor: pointer;
               display: flex;
@@ -798,12 +799,12 @@
               }
 
               &:hover {
-                border-color: #222;
+                border-color: var(--pt-ink-strong);
                 transform: translateY(-2px);
               }
 
               &.active {
-                border-color: #111;
+                border-color: var(--pt-ink-strong);
               }
             }
           }
@@ -811,7 +812,7 @@
             width: 620px;
             height: 520px;
             border-radius: 28px;
-            background: #f1f1f1;
+            background: var(--pt-surface-sunken);
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -841,8 +842,8 @@
             padding: 16px 24px;
             border-radius: 16px 16px 0 0;
             border-bottom: 3px solid transparent;
-            background: #f6f3fb;
-            color: #292929;
+            background: var(--pt-band);
+            color: var(--pt-ink-strong);
             font-family: $font;
             font-size: 16px;
             font-weight: 700;
@@ -862,9 +863,9 @@
               }
             }
             &.Mui-selected {
-              background: #fbf9ff;
-              border-bottom-color: #6f2dbd;
-              color: #4b158d;
+              background: var(--pt-surface);
+              border-bottom-color: var(--pt-ink);
+              color: var(--pt-ink);
             }
           }
         }
@@ -876,8 +877,8 @@
         .agent-detail-card,
         .booking-review-placeholder {
           border-radius: 28px;
-          background: linear-gradient(180deg, #fff 0%, #fcf8ff 100%);
-          border: 1px solid #eee4f8;
+          background: var(--pt-surface);
+          border: 1px solid var(--pt-hairline);
           box-shadow: 0 14px 34px rgba(76, 23, 141, 0.08);
         }
         .agent-overview-card {
@@ -889,7 +890,7 @@
             height: 300px;
             border-radius: 28px;
             overflow: hidden;
-            background: #f1ecf7;
+            background: var(--pt-surface-sunken);
 
             img {
               width: 100%;
@@ -906,14 +907,14 @@
               font-size: 36px;
               font-weight: 700;
               line-height: 1.1;
-              color: #1f1f1f;
+              color: var(--pt-ink-strong);
             }
             .agent-overview-role {
               font-family: $font;
               font-size: 18px;
               font-weight: 600;
               line-height: 1.4;
-              color: #5d6470;
+              color: var(--pt-ink-cool);
             }
             .agent-overview-metrics {
               flex-direction: row;
@@ -922,8 +923,8 @@
               .agent-metric-chip {
                 padding: 10px 14px;
                 border-radius: 999px;
-                background: #f6efe7;
-                color: #5b4a37;
+                background: var(--pt-selected);
+                color: var(--pt-ink);
                 font-family: $font;
                 font-size: 14px;
                 font-weight: 700;
@@ -940,7 +941,7 @@
                   color: #ffab2d;
                 }
                 .MuiRating-iconEmpty {
-                  color: #e0d7eb;
+                  color: var(--pt-track);
                 }
               }
               .agent-overview-rating-text,
@@ -948,7 +949,7 @@
                 font-family: $font;
                 font-size: 15px;
                 font-weight: 700;
-                color: #535862;
+                color: var(--pt-ink-muted);
               }
             }
             .agent-overview-bio {
@@ -957,7 +958,7 @@
               font-size: 16px;
               font-weight: 400;
               line-height: 1.8;
-              color: #5f6672;
+              color: var(--pt-ink-cool);
             }
             .agent-overview-actions {
               margin-top: 8px;
@@ -967,7 +968,7 @@
                 font-family: $font;
                 font-size: 16px;
                 font-weight: 700;
-                color: #2b2139;
+                color: var(--pt-ink-strong);
               }
               .contact-info-item {
                 width: 300px;
@@ -977,15 +978,15 @@
                 gap: 18px;
                 padding: 12px 14px;
                 border-radius: 16px;
-                background: linear-gradient(180deg, #ffffff 0%, #fbf8ff 100%);
-                border: 1px solid #eadff7;
+                background: var(--pt-surface);
+                border: 1px solid var(--pt-hairline);
                 transition:
                   border-color 0.2s ease,
                   box-shadow 0.2s ease,
                   transform 0.2s ease;
 
                 &:hover {
-                  border-color: #ceb4ee;
+                  border-color: var(--pt-border-lilac);
                   box-shadow: 0 8px 18px rgba(76, 23, 141, 0.08);
                   transform: translateY(-1px);
                 }
@@ -995,20 +996,20 @@
                   font-weight: 700;
                   letter-spacing: 0.2px;
                   text-transform: uppercase;
-                  color: #8b7ba5;
+                  color: var(--pt-ink-cool);
                 }
                 .contact-info-link {
                   font-family: $font;
                   font-size: 15px;
                   font-weight: 700;
-                  color: #4b158d;
+                  color: var(--pt-ink);
                   text-decoration: none;
                   transition:
                     color 0.2s ease,
                     text-decoration-color 0.2s ease;
 
                   &:hover {
-                    color: #6d28d9;
+                    color: var(--pt-accent);
                     text-decoration: underline;
                     text-decoration-color: rgba(109, 40, 217, 0.45);
                   }
@@ -1032,7 +1033,7 @@
             font-size: 22px;
             font-weight: 700;
             line-height: 1.2;
-            color: #202020;
+            color: var(--pt-ink-strong);
           }
 
           .detail-info-grid {
@@ -1044,7 +1045,7 @@
               align-items: start;
               gap: 18px;
               padding-bottom: 16px;
-              border-bottom: 1px solid #f0e8f7;
+              border-bottom: 1px solid var(--pt-hairline);
 
               &:last-child {
                 padding-bottom: 0;
@@ -1055,7 +1056,7 @@
                 font-family: $font;
                 font-size: 15px;
                 font-weight: 700;
-                color: #4b158d;
+                color: var(--pt-ink);
               }
 
               .detail-info-value {
@@ -1063,7 +1064,7 @@
                 font-size: 15px;
                 font-weight: 600;
                 line-height: 1.7;
-                color: #4a4f59;
+                color: var(--pt-ink-muted);
               }
             }
           }
@@ -1079,16 +1080,16 @@
             gap: 14px;
             padding: 18px;
             border-radius: 20px;
-            background: #fff;
-            border: 1px solid #efe5f9;
+            background: var(--pt-surface);
+            border: 1px solid var(--pt-hairline);
 
             .compact-info-icon {
               width: 48px;
               min-width: 48px;
               height: 48px;
               border-radius: 16px;
-              background: #f4ebff;
-              color: #5e239d;
+              background: var(--pt-selected);
+              color: var(--pt-ink);
               display: flex;
               align-items: center;
               justify-content: center;
@@ -1107,7 +1108,7 @@
                 font-weight: 700;
                 letter-spacing: 0.2px;
                 text-transform: uppercase;
-                color: #8b7ba5;
+                color: var(--pt-ink-cool);
               }
 
               .compact-info-value {
@@ -1115,7 +1116,7 @@
                 font-size: 20px;
                 font-weight: 700;
                 line-height: 1.3;
-                color: #202020;
+                color: var(--pt-ink-strong);
               }
 
               .compact-info-description {
@@ -1123,7 +1124,7 @@
                 font-size: 14px;
                 font-weight: 400;
                 line-height: 1.6;
-                color: #636a76;
+                color: var(--pt-ink-cool);
               }
             }
           }
@@ -1166,8 +1167,8 @@
           .certificate-card {
             padding: 12px;
             border-radius: 18px;
-            border: 1px solid #efe5f9;
-            background: #fff;
+            border: 1px solid var(--pt-hairline);
+            background: var(--pt-surface);
             box-shadow: 0 8px 18px rgba(76, 23, 141, 0.05);
             max-width: 220px;
 
@@ -1176,7 +1177,7 @@
               height: 150px;
               overflow: hidden;
               border-radius: 14px;
-              background: linear-gradient(180deg, #faf7ff 0%, #f3ecfb 100%);
+              background: var(--pt-surface-sunken);
               margin-bottom: 10px;
               padding: 10px;
               display: flex;
@@ -1194,7 +1195,7 @@
               font-size: 14px;
               font-weight: 700;
               line-height: 1.4;
-              color: #262626;
+              color: var(--pt-ink-strong);
             }
           }
         }
@@ -1205,12 +1206,12 @@
           gap: 16px;
           padding: 20px;
           border-radius: 20px;
-          border: 1px dashed #d9c7f0;
-          background: #fcf9ff;
+          border: 1px dashed var(--pt-border-lilac);
+          background: var(--pt-surface);
 
           .certificate-empty-icon {
             font-size: 36px;
-            color: #8b63bf;
+            color: var(--pt-ink);
           }
 
           .certificate-empty-copy {
@@ -1220,13 +1221,13 @@
               font-family: $font;
               font-size: 16px;
               font-weight: 700;
-              color: #2b2139;
+              color: var(--pt-ink-strong);
             }
             .certificate-empty-text {
               font-family: $font;
               font-size: 14px;
               line-height: 1.7;
-              color: #667085;
+              color: var(--pt-ink-cool);
             }
           }
         }
@@ -1240,8 +1241,8 @@
           .write-review-panel {
             width: 100%;
             border-radius: 20px;
-            border: 1.5px solid #e9d5ff;
-            background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
+            border: 1.5px solid var(--pt-border-lilac);
+            background: var(--pt-surface);
             padding: 32px 36px;
             gap: 0;
             display: flex;
@@ -1256,13 +1257,13 @@
               gap: 20px;
               min-width: 240px;
               padding-right: 36px;
-              border-right: 1.5px solid #f3e8ff;
+              border-right: 1.5px solid var(--pt-hairline);
 
               .write-review-panel-title {
                 font-family: $font;
                 font-size: 20px;
                 font-weight: 800;
-                color: #111;
+                color: var(--pt-ink-strong);
               }
 
               .write-review-rating-row {
@@ -1274,7 +1275,7 @@
                   font-family: $font;
                   font-size: 13px;
                   font-weight: 600;
-                  color: #6b7280;
+                  color: var(--pt-ink-cool);
                   text-transform: uppercase;
                   letter-spacing: 0.05em;
                 }
@@ -1282,7 +1283,7 @@
                 .write-review-stars {
                   font-size: 36px !important;
                   .MuiRating-iconFilled { color: #f59e0b; }
-                  .MuiRating-iconEmpty { color: #e5e7eb; }
+                  .MuiRating-iconEmpty { color: var(--pt-track); }
                 }
               }
             }
@@ -1301,12 +1302,12 @@
                   border-radius: 12px !important;
                   font-family: $font;
                   font-size: 14px;
-                  color: #111;
+                  color: var(--pt-ink-strong);
                   align-items: flex-start;
 
-                  fieldset { border-color: #e9d5ff !important; }
-                  &:hover fieldset { border-color: #410075 !important; }
-                  &.Mui-focused fieldset { border-color: #410075 !important; }
+                  fieldset { border-color: var(--pt-border-lilac) !important; }
+                  &:hover fieldset { border-color: var(--pt-ink) !important; }
+                  &.Mui-focused fieldset { border-color: var(--pt-ink) !important; }
                 }
               }
 
@@ -1352,8 +1353,8 @@
                   width: 72px;
                   height: 72px;
                   border-radius: 10px;
-                  border: 1.5px dashed #c4b5fd;
-                  background: #faf5ff;
+                  border: 1.5px dashed var(--pt-border-lilac);
+                  background: var(--pt-band);
                   display: flex;
                   flex-direction: column;
                   align-items: center;
@@ -1364,13 +1365,13 @@
                   flex-shrink: 0;
 
                   &:hover {
-                    border-color: #410075;
-                    background: #f3e8ff;
+                    border-color: var(--pt-ink);
+                    background: var(--pt-selected);
                   }
 
                   .write-review-img-upload-icon {
                     font-size: 22px;
-                    color: #7c3aed;
+                    color: var(--pt-accent);
                     line-height: 1;
                   }
 
@@ -1378,7 +1379,7 @@
                     font-family: $font;
                     font-size: 10px;
                     font-weight: 600;
-                    color: #7c3aed;
+                    color: var(--pt-accent);
                   }
                 }
               }
@@ -1428,9 +1429,9 @@
                 }
 
                 &.Mui-disabled {
-                  background: #e5e7eb !important;
+                  background: var(--pt-track) !important;
                   border-color: transparent !important;
-                  color: #9ca3af !important;
+                  color: var(--pt-ink-faint) !important;
                   animation: none !important;
                 }
               }
@@ -1454,12 +1455,16 @@
                 font-size: 20px;
                 font-weight: 800;
                 color: #166534;
+
+                html[data-theme="dark"] & {
+                  color: #4ade80;
+                }
               }
 
               .write-review-success-sub {
                 font-family: $font;
                 font-size: 14px;
-                color: #4b5563;
+                color: var(--pt-ink-muted);
               }
             }
           }
@@ -1467,8 +1472,8 @@
           .review-summary-panel,
           .review-cards-panel {
             border-radius: 28px;
-            background: linear-gradient(180deg, #fff 0%, #fcf8ff 100%);
-            border: 1px solid #eee4f8;
+            background: var(--pt-surface);
+            border: 1px solid var(--pt-hairline);
             box-shadow: 0 14px 34px rgba(76, 23, 141, 0.08);
           }
 
@@ -1484,7 +1489,7 @@
               font-size: 30px;
               font-weight: 700;
               line-height: 1.15;
-              color: #1f2937;
+              color: var(--pt-ink-strong);
             }
 
             .review-score-row {
@@ -1500,7 +1505,7 @@
                 }
 
                 .MuiRating-iconEmpty {
-                  color: #d6d6d6;
+                  color: var(--pt-track);
                 }
 
                 .MuiSvgIcon-root {
@@ -1513,7 +1518,7 @@
                 font-size: 38px;
                 font-weight: 700;
                 line-height: 1;
-                color: #1f2937;
+                color: var(--pt-ink-strong);
               }
             }
 
@@ -1524,11 +1529,11 @@
               gap: 12px;
               padding: 14px 18px;
               border-radius: 20px;
-              background: #f5f3fa;
+              background: var(--pt-band);
 
               .review-satisfied-icon {
                 font-size: 30px;
-                color: #4b158d;
+                color: var(--pt-ink);
               }
 
               .review-satisfied-text {
@@ -1536,7 +1541,7 @@
                 font-size: 16px;
                 font-weight: 700;
                 line-height: 1.4;
-                color: #253244;
+                color: var(--pt-ink-strong);
               }
             }
 
@@ -1555,7 +1560,7 @@
                   font-size: 15px;
                   font-weight: 700;
                   line-height: 1.2;
-                  color: #253244;
+                  color: var(--pt-ink-strong);
                 }
 
                 .review-distribution-track {
@@ -1564,7 +1569,7 @@
                   height: 10px;
                   overflow: hidden;
                   border-radius: 999px;
-                  background: #e7eaef;
+                  background: var(--pt-track);
 
                   .review-distribution-fill {
                     height: 100%;
@@ -1575,7 +1580,7 @@
                     }
 
                     &.cool {
-                      background: #aab6c4;
+                      background: var(--pt-ink-faint);
                     }
                   }
                 }
@@ -1600,7 +1605,7 @@
                 font-family: $font;
                 font-size: 16px;
                 font-weight: 700;
-                color: #253244;
+                color: var(--pt-ink-strong);
                 white-space: nowrap;
                 flex-shrink: 0;
               }
@@ -1611,18 +1616,18 @@
 
                 .MuiOutlinedInput-root {
                   border-radius: 12px;
-                  background: #fff;
+                  background: var(--pt-field-surface);
                   font-family: $font;
                   font-size: 14px;
-                  color: #222;
+                  color: var(--pt-ink-strong);
                 }
 
                 .MuiOutlinedInput-notchedOutline {
-                  border-color: #dcd6e8;
+                  border-color: var(--pt-hairline);
                 }
 
                 &:hover .MuiOutlinedInput-notchedOutline {
-                  border-color: #b8a2d8;
+                  border-color: var(--pt-border-lilac);
                 }
 
                 .MuiSelect-select {
@@ -1637,7 +1642,7 @@
               gap: 24px;
               padding: 0 0 24px;
               margin-bottom: 24px;
-              border-bottom: 1px solid #eceff3;
+              border-bottom: 1px solid var(--pt-hairline);
 
               &:last-child {
                 margin-bottom: 0;
@@ -1656,7 +1661,7 @@
                   flex-shrink: 0;
                   overflow: hidden;
                   border-radius: 50%;
-                  background: #eef1f5;
+                  background: var(--pt-surface-sunken);
 
                   img {
                     width: 100%;
@@ -1673,7 +1678,7 @@
                     font-size: 18px;
                     font-weight: 700;
                     line-height: 1.3;
-                    color: #222f3d;
+                    color: var(--pt-ink-strong);
                   }
 
                   .review-user-location,
@@ -1682,7 +1687,7 @@
                     font-size: 14px;
                     font-weight: 500;
                     line-height: 1.4;
-                    color: #7e8794;
+                    color: var(--pt-ink-cool);
                   }
                 }
               }
@@ -1705,7 +1710,7 @@
                     }
 
                     .MuiRating-iconEmpty {
-                      color: #d6d6d6;
+                      color: var(--pt-track);
                     }
 
                     .MuiSvgIcon-root {
@@ -1718,7 +1723,7 @@
                     font-size: 14px;
                     font-weight: 500;
                     line-height: 1.4;
-                    color: #7e8794;
+                    color: var(--pt-ink-cool);
                   }
                 }
 
@@ -1732,7 +1737,7 @@
                     height: 64px;
                     overflow: hidden;
                     border-radius: 10px;
-                    background: #eef1f4;
+                    background: var(--pt-surface-sunken);
 
                     img {
                       width: 100%;
@@ -1747,7 +1752,7 @@
                   font-size: 16px;
                   font-weight: 500;
                   line-height: 1.75;
-                  color: #444f5b;
+                  color: var(--pt-ink-muted);
                 }
 
                 .review-card-toggle {
@@ -1759,7 +1764,7 @@
                   font-weight: 700;
                   line-height: 1.2;
                   text-transform: none;
-                  color: #253244;
+                  color: var(--pt-ink-strong);
 
                   &:hover {
                     background: transparent;
@@ -1772,25 +1777,26 @@
             .review-sort-menu {
               border-radius: 14px;
               box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-              border: 1px solid rgba(0, 0, 0, 0.06);
+              border: 1px solid var(--pt-hairline);
               padding: 6px 4px;
+              background: var(--pt-menu-surface);
 
               .MuiMenuItem-root {
                 font-family: $font;
                 font-size: 14px;
-                color: #2b2b2b;
+                color: var(--pt-ink-strong);
                 padding: 10px 14px;
                 border-radius: 10px;
                 margin: 4px 6px;
 
                 &:hover {
-                  background: rgba(17, 17, 17, 0.06);
+                  background: var(--pt-hover);
                 }
 
                 &.Mui-selected,
                 &.Mui-selected:hover {
                   background: rgba(246, 196, 0, 0.25);
-                  color: #111;
+                  color: var(--pt-ink-strong);
                   font-weight: 600;
                 }
               }
@@ -1812,13 +1818,13 @@
                 font-family: $font;
                 font-size: 14px;
                 font-weight: 700;
-                color: #5f6671;
-                background: #f4f6f8;
+                color: var(--pt-ink-cool);
+                background: var(--pt-surface-sunken);
               }
 
               .Mui-selected {
-                background: #5e239d;
-                color: #ffffff;
+                background: var(--pt-ink);
+                color: var(--pt-on-ink);
               }
             }
           }
@@ -1838,7 +1844,7 @@
       background: transparent;
       box-shadow: none;
       padding: 18px 0;
-      border-bottom: 1px solid #ededed;
+      border-bottom: 1px solid var(--pt-hairline);
 
       &:before {
         display: none;
@@ -1858,7 +1864,7 @@
         font-family: $font;
         font-size: 16px;
         font-weight: 700;
-        color: #222;
+        color: var(--pt-ink-strong);
         width: 100%;
         background: transparent;
         border: none;
@@ -1872,7 +1878,7 @@
         }
 
         .MuiAccordionSummary-expandIconWrapper {
-          color: #888;
+          color: var(--pt-ink-faint);
 
           svg {
             font-size: 20px;
@@ -1885,7 +1891,7 @@
         .MuiTypography-root {
           font-family: $font;
           font-size: 14px;
-          color: #6d6d6d;
+          color: var(--pt-ink-soft);
           line-height: 1.7;
         }
       }
@@ -1894,7 +1900,7 @@
 
   .related-services {
     padding: 40px 0 110px;
-    background: #fff;
+    background: var(--pt-page-bg);
     .container {
       flex-direction: column;
       gap: 28px;
@@ -1903,7 +1909,7 @@
         font-size: 36px;
         font-weight: 700;
         letter-spacing: 0.3px;
-        color: #000;
+        color: var(--pt-ink-body);
         img {
           margin-left: 10px;
         }
@@ -1916,8 +1922,8 @@
         .service-card {
           width: 100%;
           border-radius: 16px;
-          border: 1px solid #ede0f9;
-          background: #fff;
+          border: 1px solid var(--pt-border-lilac);
+          background: var(--pt-surface);
           overflow: hidden;
           cursor: pointer;
           box-shadow: 0 4px 16px rgba(18, 18, 25, 0.06);
@@ -1938,7 +1944,7 @@
             position: relative;
             height: 150px;
             overflow: hidden;
-            background: #f3e8ff;
+            background: var(--pt-tint-soft);
 
             .service-card-image {
               width: 100%;
@@ -2016,7 +2022,7 @@
               font-family: $font;
               font-size: 14px;
               font-weight: 700;
-              color: #111827;
+              color: var(--pt-ink-strong);
               line-height: 1.2;
               white-space: nowrap;
               overflow: hidden;
@@ -2030,26 +2036,26 @@
                 font-family: $font;
                 font-size: 18px;
                 font-weight: 800;
-                color: #7100ff;
+                color: var(--pt-price);
                 line-height: 1;
               }
 
               .service-price-sep {
-                color: #d1d5db;
+                color: var(--pt-track);
                 font-size: 14px;
                 line-height: 1;
               }
 
               .duration-icon {
                 font-size: 13px;
-                color: #9ca3af;
+                color: var(--pt-ink-faint);
               }
 
               .service-duration {
                 font-family: $font;
                 font-size: 12px;
                 font-weight: 500;
-                color: #6b7280;
+                color: var(--pt-ink-soft);
               }
             }
 
@@ -2058,14 +2064,14 @@
 
               .location-icon {
                 font-size: 13px;
-                color: #9ca3af;
+                color: var(--pt-ink-faint);
               }
 
               .service-location {
                 font-family: $font;
                 font-size: 12px;
                 font-weight: 500;
-                color: #6b7280;
+                color: var(--pt-ink-soft);
               }
             }
 
@@ -2077,7 +2083,7 @@
                   color: #f6c200;
                 }
                 .MuiRating-iconEmpty {
-                  color: #e5e7eb;
+                  color: var(--pt-track);
                 }
                 .MuiSvgIcon-root {
                   font-size: 13px;
@@ -2088,14 +2094,14 @@
                 font-family: $font;
                 font-size: 12px;
                 font-weight: 700;
-                color: #374151;
+                color: var(--pt-ink-strong);
               }
 
               .review-count {
                 font-family: $font;
                 font-size: 11px;
                 font-weight: 400;
-                color: #9ca3af;
+                color: var(--pt-ink-faint);
               }
             }
 
@@ -2204,21 +2210,21 @@
   .booking-dialog-paper {
     width: min(520px, calc(100vw - 32px));
     border-radius: 22px !important;
-    border: 1px solid rgba(65, 0, 117, 0.12) !important;
-    background: #ffffff !important;
+    border: 1px solid var(--pt-hairline) !important;
+    background: var(--pt-surface) !important;
     box-shadow: 0 28px 72px rgba(41, 12, 72, 0.2) !important;
     overflow: hidden !important;
   }
 
   .booking-dialog-header {
     padding: 20px 22px 16px;
-    border-bottom: 1px solid rgba(143, 143, 143, 0.18);
+    border-bottom: 1px solid var(--pt-hairline);
 
     .booking-dialog-title {
       font-family: $font;
       font-size: 18px;
       font-weight: 800;
-      color: #111827;
+      color: var(--pt-ink-strong);
       letter-spacing: -0.01em;
     }
 
@@ -2226,16 +2232,16 @@
       font-family: $font;
       font-size: 12px;
       font-weight: 600;
-      color: #9ca3af;
+      color: var(--pt-ink-faint);
     }
 
     .booking-dialog-close {
       width: 32px;
       height: 32px;
-      color: #9ca3af;
-      border: 1px solid #e5e7eb;
+      color: var(--pt-ink-faint);
+      border: 1px solid var(--pt-hairline);
       border-radius: 999px;
-      background: #f9fafb;
+      background: var(--pt-surface-sunken);
       transition:
         color 0.2s,
         background 0.2s,
@@ -2266,21 +2272,21 @@
       width: 4px;
     }
     &::-webkit-scrollbar-thumb {
-      background: rgba(65, 0, 117, 0.15);
+      background: var(--pt-hairline);
       border-radius: 999px;
     }
   }
 
   .booking-dialog-divider {
-    border-color: rgba(143, 143, 143, 0.18) !important;
+    border-color: var(--pt-hairline) !important;
   }
 
   // ── Service summary strip ──
   .booking-service-summary {
     padding: 12px 14px;
     border-radius: 14px;
-    border: 1px solid rgba(143, 143, 143, 0.3);
-    background: #f9fafb;
+    border: 1px solid var(--pt-hairline);
+    background: var(--pt-surface-sunken);
 
     .booking-summary-img {
       width: 56px;
@@ -2288,7 +2294,7 @@
       border-radius: 10px;
       overflow: hidden;
       flex-shrink: 0;
-      border: 1px solid rgba(143, 143, 143, 0.2);
+      border: 1px solid var(--pt-hairline);
 
       img {
         width: 100%;
@@ -2301,18 +2307,18 @@
       font-family: $font;
       font-size: 14px;
       font-weight: 800;
-      color: #111827;
+      color: var(--pt-ink-strong);
     }
 
     .booking-summary-meta {
       font-family: $font;
       font-size: 12px;
       font-weight: 600;
-      color: #6b7280;
+      color: var(--pt-ink-cool);
 
       svg {
         font-size: 14px;
-        color: #9ca3af;
+        color: var(--pt-ink-faint);
       }
       span {
         font-family: $font;
@@ -2323,7 +2329,7 @@
       font-family: $font;
       font-size: 14px;
       font-weight: 800;
-      color: #410075;
+      color: var(--pt-ink);
     }
   }
 
@@ -2332,10 +2338,10 @@
     font-family: $font;
     font-size: 13px;
     font-weight: 700;
-    color: #374151;
+    color: var(--pt-ink-muted);
 
     svg {
-      color: #7c3aed;
+      color: var(--pt-accent);
       font-size: 17px;
     }
 
@@ -2343,7 +2349,7 @@
       font-family: $font;
       font-size: 13px;
       font-weight: 700;
-      color: #374151;
+      color: var(--pt-ink-muted);
     }
   }
 
@@ -2363,13 +2369,13 @@
       font-family: $font;
       font-size: 12px;
       font-weight: 700;
-      color: #4b5563;
+      color: var(--pt-ink-muted);
     }
 
     .booking-input {
       .MuiOutlinedInput-root {
         border-radius: 10px !important;
-        background: #ffffff !important;
+        background: var(--pt-field-surface) !important;
         font-family: $font !important;
 
         input,
@@ -2377,18 +2383,18 @@
           font-family: $font !important;
           font-size: 14px !important;
           font-weight: 500 !important;
-          color: #111827 !important;
-          -webkit-text-fill-color: #111827 !important;
+          color: var(--pt-ink-strong) !important;
+          -webkit-text-fill-color: var(--pt-ink-strong) !important;
         }
 
         fieldset {
-          border-color: rgba(143, 143, 143, 0.5) !important;
+          border-color: var(--pt-hairline) !important;
         }
         &:hover fieldset {
-          border-color: #7c3aed !important;
+          border-color: var(--pt-accent) !important;
         }
         &.Mui-focused fieldset {
-          border-color: #410075 !important;
+          border-color: var(--pt-ink) !important;
         }
       }
 
@@ -2409,12 +2415,12 @@
     gap: 5px;
     padding: 7px 16px;
     border-radius: 999px;
-    border: 1.5px solid rgba(143, 143, 143, 0.4);
-    background: #ffffff;
+    border: 1.5px solid var(--pt-hairline);
+    background: var(--pt-field-surface);
     font-family: $font;
     font-size: 13px;
     font-weight: 600;
-    color: #374151;
+    color: var(--pt-ink-muted);
     cursor: pointer;
     user-select: none;
     transition:
@@ -2424,15 +2430,15 @@
       box-shadow 0.18s ease;
 
     &:hover {
-      border-color: #7c3aed;
-      color: #410075;
-      background: #faf5ff;
+      border-color: var(--pt-accent);
+      color: var(--pt-ink);
+      background: var(--pt-hover);
     }
 
     &.selected {
-      border-color: #410075;
-      background: #f3e8ff;
-      color: #410075;
+      border-color: var(--pt-ink);
+      background: var(--pt-selected);
+      color: var(--pt-ink);
       font-weight: 700;
       box-shadow: 0 2px 8px rgba(65, 0, 117, 0.14);
     }
@@ -2505,14 +2511,14 @@
     gap: 10px;
     padding: 18px 20px;
     border-radius: 14px;
-    border: 1px solid rgba(143, 143, 143, 0.3);
-    background: #f9fafb;
+    border: 1px solid var(--pt-hairline);
+    background: var(--pt-surface-sunken);
 
     .confirm-section-title {
       font-family: $font;
       font-size: 14px;
       font-weight: 800;
-      color: #111827;
+      color: var(--pt-ink-strong);
       margin-bottom: 4px;
     }
 
@@ -2527,7 +2533,7 @@
         font-family: $font;
         font-size: 13px;
         font-weight: 600;
-        color: #6b7280;
+        color: var(--pt-ink-cool);
         flex-shrink: 0;
       }
 
@@ -2535,13 +2541,13 @@
         font-family: $font;
         font-size: 13px;
         font-weight: 700;
-        color: #111827;
+        color: var(--pt-ink-strong);
         text-align: right;
       }
 
       .confirm-notes {
         font-weight: 500;
-        color: #4b5563;
+        color: var(--pt-ink-muted);
         text-align: right;
       }
 
@@ -2550,14 +2556,14 @@
           font-family: $font;
           font-size: 15px;
           font-weight: 700;
-          color: #374151;
+          color: var(--pt-ink-muted);
         }
 
         .confirm-total-value {
           font-family: $font;
           font-size: 22px;
           font-weight: 800;
-          color: #111827;
+          color: var(--pt-ink-strong);
           letter-spacing: -0.03em;
         }
       }
@@ -2567,14 +2573,14 @@
   .booking-confirm-policy {
     padding: 10px 14px;
     border-radius: 10px;
-    background: #faf5ff;
-    border: 1px solid rgba(65, 0, 117, 0.1);
+    background: var(--pt-hover);
+    border: 1px solid var(--pt-hairline);
 
     .MuiTypography-root {
       font-family: $font;
       font-size: 12px;
       font-weight: 600;
-      color: #6b7280;
+      color: var(--pt-ink-cool);
     }
   }
 
@@ -2585,15 +2591,15 @@
     font-family: $font;
     font-size: 14px;
     font-weight: 700;
-    color: #374151;
+    color: var(--pt-ink-muted);
     text-transform: none;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--pt-hairline);
     background: transparent;
     flex-shrink: 0;
     transition: background 0.2s;
 
     &:hover {
-      background: #f9fafb;
+      background: var(--pt-surface-sunken);
     }
   }
 
@@ -2660,7 +2666,7 @@
       font-family: $font;
       font-size: 22px;
       font-weight: 800;
-      color: #111827;
+      color: var(--pt-ink-strong);
       letter-spacing: -0.02em;
     }
 
@@ -2668,9 +2674,9 @@
       font-family: $font;
       font-size: 12px;
       font-weight: 700;
-      color: #410075;
-      background: #faf5ff;
-      border: 1px solid rgba(65, 0, 117, 0.15);
+      color: var(--pt-ink);
+      background: var(--pt-hover);
+      border: 1px solid var(--pt-hairline);
       padding: 4px 14px;
       border-radius: 999px;
     }
@@ -2679,7 +2685,7 @@
       font-family: $font;
       font-size: 14px;
       font-weight: 500;
-      color: #6b7280;
+      color: var(--pt-ink-cool);
       line-height: 1.65;
       max-width: 380px;
     }
@@ -2691,14 +2697,14 @@
       font-family: $font;
       font-size: 15px;
       font-weight: 700;
-      color: #410075;
+      color: var(--pt-ink);
       text-transform: none;
-      border: 1.5px solid rgba(65, 0, 117, 0.3);
+      border: 1.5px solid var(--pt-hairline);
       background: transparent;
       transition: background 0.2s;
 
       &:hover {
-        background: #faf5ff;
+        background: var(--pt-hover);
       }
     }
   }

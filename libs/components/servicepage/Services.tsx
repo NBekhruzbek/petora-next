@@ -451,8 +451,8 @@ const Services = ({
                 className="filter-section"
                 MenuProps={{
                   disableScrollLock: true,
-                  PaperProps: { className: "filter-menu" },
-                  MenuListProps: { className: "filter-menu-list" },
+                  PaperProps: { className: "service-sort-menu" },
+                  MenuListProps: { className: "service-sort-menu-list" },
                 }}
               >
                 {SORT_OPTIONS.map((option) => (
