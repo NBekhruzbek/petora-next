@@ -83,6 +83,43 @@
   }
 }
 
+// ─── Global: admin language switcher dropdown ───────────────────────────────
+// Same portal situation as .MuiMenu-root above, but styled as its own
+// component (min-width, gap, selected state) rather than relying on the
+// generic Select-menu fallback.
+.admin-lang-menu-paper {
+  min-width: 130px !important;
+  border: 1px solid var(--adm-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 32px rgba(15, 14, 23, 0.14) !important;
+  overflow: hidden !important;
+  padding: 6px !important;
+}
+
+.admin-lang-menu-item {
+  border-radius: 8px !important;
+  gap: 10px !important;
+  font-family: $font;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--adm-text-1) !important;
+
+  &:hover {
+    background: var(--adm-surface-1) !important;
+    color: var(--adm-accent) !important;
+  }
+
+  &.Mui-selected {
+    background: var(--adm-accent-tint-1) !important;
+    color: var(--adm-accent) !important;
+  }
+
+  img {
+    border-radius: 2px;
+    display: block;
+  }
+}
+
 // ─── Global: admin confirm/delete dialogs ───────────────────────────────────
 // Every <Dialog> in the admin manager components uses disablePortal, so its
 // Paper stays a descendant of #admin-wrap — one scoped rule reaches all of
@@ -343,6 +380,39 @@ $sidebar-width: 260px;
         flex-direction: row;
         align-items: center;
         gap: 12px;
+
+        .admin-header-lang-switcher {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 6px;
+          height: 34px;
+          padding: 0 10px;
+          border-radius: 9px;
+          cursor: pointer;
+          transition: background 0.15s;
+
+          @media (prefers-reduced-motion: reduce) {
+            transition: none;
+          }
+
+          &:hover {
+            background: var(--adm-surface-1);
+          }
+
+          img {
+            border-radius: 2px;
+            display: block;
+          }
+
+          .admin-header-lang-label {
+            font-family: $font;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: $text-2;
+          }
+        }
 
         .admin-header-theme-toggle {
           width: 34px;
