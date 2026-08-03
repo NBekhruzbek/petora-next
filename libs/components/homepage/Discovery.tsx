@@ -148,7 +148,21 @@ const Discovery = () => {
             <ChevronLeftRoundedIcon />
           </IconButton>
 
-          <Box className="pager-page">{safeActivePage + 1}</Box>
+          {Array.from({ length: pageCount }, (_, pageIndex) => (
+            <Box
+              key={pageIndex}
+              component="button"
+              type="button"
+              className={`pager-page ${
+                pageIndex === safeActivePage ? "active" : "inactive"
+              }`}
+              onClick={() =>
+                pageIndex !== safeActivePage && goToPage(pageIndex)
+              }
+            >
+              {pageIndex + 1}
+            </Box>
+          ))}
 
           <IconButton
             className={`pager-arrow next ${canGoNext ? "enabled" : "disabled"}`}

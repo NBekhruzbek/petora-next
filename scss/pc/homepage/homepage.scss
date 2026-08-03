@@ -791,13 +791,29 @@
             align-items: center;
             justify-content: center;
             border-radius: 10px;
-            background: var(--pt-ink);
-            color: var(--pt-on-ink);
+            border: 0;
             font-family: $font;
             font-size: 14px;
             font-style: normal;
             font-weight: 700;
             line-height: 1;
+            cursor: pointer;
+
+            &.active {
+              background: var(--pt-ink);
+              color: var(--pt-on-ink);
+              cursor: default;
+            }
+
+            &.inactive {
+              background: transparent;
+              color: var(--pt-ink-soft);
+              transition: background 0.15s ease;
+
+              &:hover {
+                background: var(--pt-track);
+              }
+            }
           }
         }
       }
