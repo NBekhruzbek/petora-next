@@ -19,7 +19,7 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
-import StatCard from "./StatCard";
+import StatCard, { RevenueHero } from "./StatCard";
 import {
   GET_ADMIN_DASHBOARD_STATS,
   GET_ALL_ORDERS_BY_ADMIN,
@@ -76,59 +76,66 @@ const AdminDashboard = () => {
   const recentUsers: Member[] = recentUsersData?.getAllUsersByAdmin?.list ?? [];
 
   const revenue = stats?.totalRevenue ?? 0;
-  const revenueLabel =
+  const revenueValue =
     revenue >= 1_000_000
-      ? `₩${(revenue / 1_000_000).toFixed(1)}M`
-      : won(revenue);
+      ? `${(revenue / 1_000_000).toFixed(1)}M`
+      : revenue.toLocaleString();
+
+  const pendingOrders = stats?.pendingOrders ?? 0;
+  const pendingBookings = stats?.pendingBookings ?? 0;
 
   return (
     <Stack className="admin-dashboard">
+      <RevenueHero
+        label={t("admin.dashboard.revenue")}
+        value={revenueValue}
+        caption={t("admin.ordersPaidBookings")}
+        icon={<AttachMoneyIcon />}
+      />
+
       <Stack className="stat-cards-row">
         <StatCard
           title={t("admin.dashboard.totalUsers")}
           value={stats?.totalUsers ?? 0}
           icon={<PeopleAltIcon />}
           color="#6366F1"
-          trendNeutral={t("admin.registeredMembers")}
+          caption={t("admin.registeredMembers")}
         />
         <StatCard
           title={t("admin.dashboard.totalAgents")}
           value={stats?.totalAgents ?? 0}
           icon={<SupportAgentIcon />}
           color="#0EA5E9"
-          trendNeutral={t("admin.serviceProviders")}
+          caption={t("admin.serviceProviders")}
         />
         <StatCard
           title={t("admin.dashboard.products")}
           value={stats?.totalProducts ?? 0}
           icon={<InventoryIcon />}
           color="#10B981"
-          trendNeutral={t("admin.listingsInCatalogue")}
+          caption={t("admin.listingsInCatalogue")}
         />
         <StatCard
           title={t("admin.dashboard.orders")}
           value={stats?.totalOrders ?? 0}
           icon={<ShoppingCartIcon />}
           color="#F59E0B"
-          trendNeutral={t("admin.awaitingShipment", {
-            count: stats?.pendingOrders ?? 0,
-          })}
+          pending={{
+            count: pendingOrders,
+            activeLabel: t("admin.dashboard.pendingCount", { count: pendingOrders }),
+            clearLabel: t("admin.dashboard.allClear"),
+          }}
         />
         <StatCard
           title={t("admin.dashboard.bookings")}
           value={stats?.totalBookings ?? 0}
           icon={<EventAvailableIcon />}
           color="#8B5CF6"
-          trendNeutral={t("admin.awaitingReply", {
-            count: stats?.pendingBookings ?? 0,
-          })}
-        />
-        <StatCard
-          title={t("admin.dashboard.revenue")}
-          value={revenueLabel}
-          icon={<AttachMoneyIcon />}
-          color="#6366F1"
-          trendNeutral={t("admin.ordersPaidBookings")}
+          pending={{
+            count: pendingBookings,
+            activeLabel: t("admin.dashboard.pendingCount", { count: pendingBookings }),
+            clearLabel: t("admin.dashboard.allClear"),
+          }}
         />
       </Stack>
 

@@ -82,6 +82,8 @@
       "revenue": "Revenue",
       "orders": "Orders",
       "bookings": "Bookings",
+      "pendingCount": "{{count}} pending",
+      "allClear": "All clear",
       "quickActions": "Quick Actions",
       "addProduct": "Add Product",
       "manageOrders": "Manage Orders",

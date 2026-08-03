@@ -82,6 +82,8 @@
       "revenue": "매출",
       "orders": "주문",
       "bookings": "예약",
+      "pendingCount": "대기 {{count}}건",
+      "allClear": "처리 완료",
       "quickActions": "빠른 작업",
       "addProduct": "상품 등록",
       "manageOrders": "주문 관리",

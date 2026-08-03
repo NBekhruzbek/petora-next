@@ -518,16 +518,93 @@ $sidebar-width: 260px;
 
   // ─── Stat cards ─────────────────────────────────────────────────────
 
+  .admin-stat-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+      135deg,
+      var(--adm-accent) 0%,
+      var(--adm-accent-hover) 100%
+    );
+    border-radius: $radius-card;
+    padding: 26px 32px;
+    box-shadow: 0 14px 32px -8px rgba(var(--adm-accent-rgb), 0.4);
+    gap: 24px;
+
+    .hero-watermark {
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-18deg);
+      font-size: 168px;
+      color: rgba(255, 255, 255, 0.1);
+      pointer-events: none;
+    }
+
+    .hero-info {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+
+      .hero-label {
+        font-family: $font;
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.78);
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+      }
+
+      .hero-value {
+        font-family: $font;
+        font-size: 40px;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.01em;
+        line-height: 1.15;
+        font-variant-numeric: tabular-nums;
+        margin-top: 2px;
+        .hero-currency {
+          letter-spacing: normal;
+          margin-right: 0.06em;
+        }
+      }
+
+      .hero-caption {
+        font-family: $font;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.75);
+        margin-top: 6px;
+      }
+    }
+
+    .hero-icon-box {
+      position: relative;
+      z-index: 1;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.16);
+      flex-shrink: 0;
+      margin-left: auto;
+
+      svg {
+        font-size: 26px;
+        color: #fff;
+      }
+    }
+  }
+
   .admin-stat-card {
     background: $card-bg;
     border-radius: $radius-card;
     border: 1px solid $card-border;
-    padding: 20px 22px;
+    padding: 18px 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 16px;
-    flex: 1;
+    gap: 14px;
     min-width: 0;
     transition:
       box-shadow 0.18s,
@@ -539,17 +616,18 @@ $sidebar-width: 260px;
     }
 
     .stat-icon-box {
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      background: color-mix(in srgb, var(--stat-accent) 14%, transparent);
 
       svg {
-        font-size: 24px;
-        color: #fff;
+        font-size: 20px;
+        color: var(--stat-accent);
       }
     }
 
@@ -559,7 +637,7 @@ $sidebar-width: 260px;
 
       .stat-value {
         font-family: $font;
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 800;
         color: $text-1;
         letter-spacing: -0.03em;
@@ -576,20 +654,49 @@ $sidebar-width: 260px;
         margin-top: 3px;
       }
 
-      .stat-trend {
-        font-family: $font;
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--adm-success);
-        margin-top: 5px;
-      }
-
-      .stat-trend-neutral {
+      .stat-caption {
         font-family: $font;
         font-size: 11px;
         font-weight: 600;
         color: $text-3;
-        margin-top: 5px;
+        margin-top: 6px;
+      }
+
+      .stat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-family: $font;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3px 8px 3px 7px;
+        border-radius: 999px;
+        margin-top: 6px;
+        width: fit-content;
+        max-width: 100%;
+
+        &--alert {
+          background: var(--adm-warning-bg);
+          color: var(--adm-warning);
+
+          .stat-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0;
+          }
+        }
+
+        &--clear {
+          background: var(--adm-success-bg);
+          color: var(--adm-success);
+
+          .stat-badge-check {
+            font-size: 10px;
+            line-height: 1;
+          }
+        }
       }
     }
   }
@@ -602,10 +709,9 @@ $sidebar-width: 260px;
     gap: 20px;
 
     .stat-cards-row {
-      display: flex;
-      flex-direction: row;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
       gap: 12px;
-      flex-wrap: wrap;
     }
 
     .dashboard-tables-row {
@@ -1576,12 +1682,6 @@ $sidebar-width: 260px;
     font-size: 12px;
     color: $text-3;
     margin-top: 2px;
-  }
-
-  // ─── StatCard ────────────────────────────────────────────────────────────────
-
-  .stat-icon-box-invisible {
-    opacity: 0;
   }
 
   // ─── AdminDashboard ───────────────────────────────────────────────────────────
