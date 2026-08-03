@@ -468,7 +468,9 @@ const CommunityModerator = () => {
                   <Stack
                     sx={{
                       background:
-                        boardTab === tab.value ? "#EEF2FF" : "#F3F4F6",
+                        boardTab === tab.value
+                          ? "var(--adm-accent-tint-1)"
+                          : "var(--adm-surface-2)",
                       borderRadius: "999px",
                       px: 0.9,
                       py: 0.1,
@@ -478,7 +480,10 @@ const CommunityModerator = () => {
                       sx={{
                         fontSize: "10px",
                         fontWeight: 700,
-                        color: boardTab === tab.value ? "#6366F1" : "#9CA3AF",
+                        color:
+                          boardTab === tab.value
+                            ? "var(--adm-accent)"
+                            : "var(--adm-text-3)",
                       }}
                     >
                       {countFor(tab.value)}
@@ -807,7 +812,7 @@ const CommunityModerator = () => {
                   placeholder={t("admin.community.phTitle")}
                   size="small"
                   fullWidth
-                  inputProps={{ style: { color: "#111827", fontWeight: 600 } }}
+                  inputProps={{ style: { fontWeight: 600 } }}
                   className="admin-cm-title-input"
                 />
               </Stack>
@@ -822,7 +827,6 @@ const CommunityModerator = () => {
                   multiline
                   rows={7}
                   fullWidth
-                  inputProps={{ style: { color: "#111827" } }}
                   InputProps={{
                     style: {
                       height: "auto",
@@ -1229,12 +1233,16 @@ const CommunityModerator = () => {
         disablePortal
       >
         <DialogTitle
-          sx={{ fontWeight: 700, fontSize: "16px", color: "#111827" }}
+          sx={{
+            fontWeight: 700,
+            fontSize: "16px",
+            color: "var(--adm-text-1)",
+          }}
         >
           Delete Post?
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ fontSize: "14px", color: "#6B7280" }}>
+          <Typography sx={{ fontSize: "14px", color: "var(--adm-text-2)" }}>
             This post will be permanently removed and cannot be restored.
           </Typography>
         </DialogContent>
@@ -1243,8 +1251,8 @@ const CommunityModerator = () => {
             onClick={() => setDeleteTarget(null)}
             sx={{
               textTransform: "none",
-              color: "#6B7280",
-              border: "1px solid #E8ECF0",
+              color: "var(--adm-text-2)",
+              border: "1px solid var(--adm-border)",
               borderRadius: "8px",
             }}
           >
@@ -1256,11 +1264,14 @@ const CommunityModerator = () => {
             sx={{
               textTransform: "none",
               fontWeight: 700,
-              color: "#ffffff",
-              backgroundColor: "#EF4444",
+              color: "#fff",
+              backgroundColor: "var(--adm-danger)",
               boxShadow: "none",
               borderRadius: "8px",
-              "&:hover": { backgroundColor: "#DC2626", boxShadow: "none" },
+              "&:hover": {
+                backgroundColor: "var(--adm-danger-strong)",
+                boxShadow: "none",
+              },
             }}
           >
             {t("admin.act.delete")}

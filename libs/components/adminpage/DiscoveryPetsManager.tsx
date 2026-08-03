@@ -798,7 +798,7 @@ const DiscoveryPetsManager = () => {
                     <CloudUploadIcon
                       sx={{
                         fontSize: 22,
-                        color: isDragging ? "#fff" : "#9CA3AF",
+                        color: isDragging ? "#fff" : "var(--adm-text-3)",
                       }}
                     />
                   </Stack>

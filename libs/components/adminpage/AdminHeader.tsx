@@ -4,6 +4,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useRouter } from "next/router";
 import { useReactiveVar } from "@apollo/client";
 import { userVar } from "@/apollo/store";
+import AdminThemeToggle from "./AdminThemeToggle";
 
 const pageNameKeys: Record<string, string> = {
   "/admin": "admin.nav.dashboard",
@@ -34,6 +35,7 @@ const AdminHeader = () => {
       </Stack>
 
       <Stack className="admin-header-right" direction="row" alignItems="center">
+        <AdminThemeToggle />
         <Stack className="admin-header-avatar">
           {adminName.charAt(0).toUpperCase()}
         </Stack>

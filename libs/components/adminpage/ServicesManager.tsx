@@ -147,7 +147,7 @@ const SortCell = ({
             fontSize: 14,
             // opacity and color are dynamic based on active
             opacity: active ? 1 : 0.3,
-            color: active ? "#6366F1" : "#9CA3AF",
+            color: active ? "var(--adm-accent)" : "var(--adm-text-3)",
             transition: "opacity 0.15s",
           }}
         />

@@ -5,6 +5,7 @@ import { BasketItem } from "../libs/types/basket/basket";
 import { ColorScheme } from "../libs/theme";
 
 export const themeVar = makeVar<ColorScheme>("light");
+export const adminThemeVar = makeVar<ColorScheme>("light");
 
 export const basketVar = makeVar<BasketItem[]>([]);
 

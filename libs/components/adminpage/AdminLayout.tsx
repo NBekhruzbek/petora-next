@@ -7,6 +7,7 @@ import { useReactiveVar } from "@apollo/client";
 import { userVar } from "@/apollo/store";
 import { getJwtToken } from "@/libs/auth";
 import { MemberType } from "@/libs/enums/member.enum";
+import { hydrateAdminColorScheme } from "@/libs/adminTheme";
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
 
@@ -28,6 +29,8 @@ const withAdminLayout = (Component: any) => {
       if (isDeciding || isAdmin) return;
       router.replace("/");
     }, [isDeciding, isAdmin, router]);
+
+    useEffect(() => hydrateAdminColorScheme(), []);
 
     if (!isAdmin) return null;
 

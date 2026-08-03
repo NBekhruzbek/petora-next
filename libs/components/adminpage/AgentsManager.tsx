@@ -801,7 +801,6 @@ const AgentsManager = () => {
                     onChange={(e) =>
                       setForm((p) => ({ ...p, [field]: e.target.value }))
                     }
-                    inputProps={{ style: { color: "#111827" } }}
                     className="admin-agt-input"
                   />
                 </Stack>
@@ -820,7 +819,6 @@ const AgentsManager = () => {
                   onChange={(e) =>
                     setForm((p) => ({ ...p, memberDesc: e.target.value }))
                   }
-                  inputProps={{ style: { color: "#111827" } }}
                   InputProps={{
                     style: {
                       height: "auto",

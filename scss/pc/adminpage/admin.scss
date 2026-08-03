@@ -1,28 +1,112 @@
 @use "../../variables.scss" as *;
 
+// ─── Admin Design Tokens ────────────────────────────────────────────────────
+// Own namespace (--adm-*), fully independent of the public site's --pt-*
+// system. Light values live here at :root (unscoped — that's deliberate: it
+// also lets .MuiMenu-root below, which MUI portals to document.body outside
+// #admin-wrap, see the token values). Dark overrides are appended at the
+// very end of this file. See libs/adminTheme.ts / AdminThemeToggle.tsx for
+// the toggle that sets the html[data-admin-theme] attribute.
+
+:root {
+  // Surfaces
+  --adm-page-bg: #f4f5fa;
+  --adm-card-bg: #ffffff;
+  --adm-surface-1: #f9fafb;
+  --adm-surface-2: #f3f4f6;
+  --adm-surface-3: #f0f1f5;
+
+  // Borders
+  --adm-border: #e8ecf0;
+  --adm-border-2: #e5e7eb;
+  --adm-border-3: #d1d5db;
+
+  // Text
+  --adm-text-1: #111827;
+  --adm-text-1b: #374151;
+  --adm-text-2: #6b7280;
+  --adm-text-3: #9ca3af;
+
+  // Accent (indigo)
+  --adm-accent: #6366f1;
+  --adm-accent-hover: #5254cc;
+  --adm-accent-rgb: 99, 102, 241;
+  --adm-accent-tint-1: #eef2ff;
+  --adm-accent-tint-2: #e0e7ff;
+  --adm-accent-tint-3: #f0f0ff;
+  --adm-accent-tint-4: #d0d5ff;
+  --adm-accent-border: #c7d2fe;
+  --adm-accent-tint-violet: #f5f3ff;
+
+  // Status — danger (red)
+  --adm-danger: #ef4444;
+  --adm-danger-strong: #dc2626;
+  --adm-danger-bg: #fef2f2;
+  --adm-danger-bg-2: #fee2e2;
+  --adm-danger-rgb: 239, 68, 68;
+  --adm-danger-strong-rgb: 220, 38, 38;
+
+  // Status — success (green)
+  --adm-success: #059669;
+  --adm-success-bg: #ecfdf5;
+  --adm-success-bg-2: #d1fae5;
+
+  // Status — warning (amber)
+  --adm-warning: #d97706;
+  --adm-warning-bg: #fffbeb;
+  --adm-warning-bg-2: #fef3c7;
+
+  // Status — info (blue)
+  --adm-info: #3b82f6;
+  --adm-info-bg: #eff6ff;
+
+  // Sidebar (stays dark in both modes — subtle shift only)
+  --adm-sidebar-bg: #0f0e17;
+  --adm-sidebar-text: rgba(255, 255, 255, 0.5);
+}
+
 // ─── Global: MUI Select dropdown menu items ─────────────────────────────────
-// MUI Menu renders in a Portal outside #admin-wrap, so must be global.
+// MUI Menu renders in a Portal outside #admin-wrap, so must be global. The
+// Paper background needs it too — MUI's theme has no dark palette
+// (scss/MaterialTheme/index.ts's background.paper is a fixed "#fff"), so
+// without this every plain <Select> (no MenuProps/PaperProps) renders its
+// open list as dark-mode text on a permanently white surface.
 .MuiMenu-root {
+  .MuiPaper-root {
+    background-color: var(--adm-card-bg) !important;
+  }
+
   .MuiMenuItem-root {
-    color: #111827;
+    color: var(--adm-text-1);
     font-family: $font;
     font-size: 13px;
   }
 }
 
+// ─── Global: admin confirm/delete dialogs ───────────────────────────────────
+// Every <Dialog> in the admin manager components uses disablePortal, so its
+// Paper stays a descendant of #admin-wrap — one scoped rule reaches all of
+// them without touching each component's className individually. Same "MUI
+// theme has no dark background.paper" gap as the Menu fix above: each
+// dialog's title/body text was already tokenized to var(--adm-text-*), but
+// nothing set the Paper's own background, so it stayed solid white.
+#admin-wrap .MuiDialog-paper {
+  background-color: var(--adm-card-bg) !important;
+}
+
 // ─── Design Tokens ──────────────────────────────────────────────────────────
 
-$sidebar-bg: #0f0e17;
-$sidebar-text: rgba(255, 255, 255, 0.5);
-$accent: #6366f1;
-$accent-hover: #5254cc;
-$accent-bg: rgba(99, 102, 241, 0.1);
-$page-bg: #f4f5fa;
-$card-bg: #ffffff;
-$card-border: #e8ecf0;
-$text-1: #111827;
-$text-2: #6b7280;
-$text-3: #9ca3af;
+$sidebar-bg: var(--adm-sidebar-bg);
+$sidebar-text: var(--adm-sidebar-text);
+$accent: var(--adm-accent);
+$accent-hover: var(--adm-accent-hover);
+$accent-bg: var(--adm-accent-tint-1);
+$page-bg: var(--adm-page-bg);
+$card-bg: var(--adm-card-bg);
+$card-border: var(--adm-border);
+$text-1: var(--adm-text-1);
+$text-2: var(--adm-text-2);
+$text-3: var(--adm-text-3);
 $radius-card: 16px;
 $radius-btn: 10px;
 $sidebar-width: 260px;
@@ -44,7 +128,7 @@ $sidebar-width: 260px;
     left: 0;
     width: $sidebar-width;
     height: 100vh;
-    background: #ffffff;
+    background: var(--adm-card-bg);
     border-right: 1px solid $card-border;
     display: flex;
     flex-direction: column;
@@ -149,7 +233,7 @@ $sidebar-width: 260px;
         }
 
         &:hover {
-          background: #f9fafb;
+          background: var(--adm-surface-1);
           color: $text-1;
           svg {
             color: $accent;
@@ -157,7 +241,7 @@ $sidebar-width: 260px;
         }
 
         &.active {
-          background: #eef2ff;
+          background: var(--adm-accent-tint-1);
           color: $accent;
           border-left-color: $accent;
           font-weight: 700;
@@ -196,10 +280,10 @@ $sidebar-width: 260px;
         }
 
         &:hover {
-          background: #fef2f2;
-          color: #ef4444;
+          background: var(--adm-danger-bg);
+          color: var(--adm-danger);
           svg {
-            color: #ef4444;
+            color: var(--adm-danger);
           }
         }
       }
@@ -260,6 +344,29 @@ $sidebar-width: 260px;
         align-items: center;
         gap: 12px;
 
+        .admin-header-theme-toggle {
+          width: 34px;
+          height: 34px;
+          border-radius: 9px;
+          color: $text-2;
+          transition:
+            color 0.15s,
+            background 0.15s;
+
+          @media (prefers-reduced-motion: reduce) {
+            transition: none;
+          }
+
+          svg {
+            font-size: 18px;
+          }
+
+          &:hover {
+            background: var(--adm-surface-1);
+            color: $accent;
+          }
+        }
+
         .admin-header-avatar {
           width: 34px;
           height: 34px;
@@ -302,8 +409,8 @@ $sidebar-width: 260px;
             background 0.15s;
 
           &:hover {
-            border-color: #cbd5e1;
-            background: #f9fafb;
+            border-color: var(--adm-border-3);
+            background: var(--adm-surface-1);
           }
 
           svg {
@@ -357,8 +464,8 @@ $sidebar-width: 260px;
       border-color 0.18s;
 
     &:hover {
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.09);
-      border-color: #d0d5ff;
+      box-shadow: 0 4px 20px rgba(var(--adm-accent-rgb), 0.09);
+      border-color: var(--adm-accent-tint-4);
     }
 
     .stat-icon-box {
@@ -403,7 +510,7 @@ $sidebar-width: 260px;
         font-family: $font;
         font-size: 11px;
         font-weight: 600;
-        color: #059669;
+        color: var(--adm-success);
         margin-top: 5px;
       }
 
@@ -486,7 +593,7 @@ $sidebar-width: 260px;
     padding: 12px 16px;
     border-bottom: 1px solid $card-border;
     flex-wrap: wrap;
-    background: #fafbfc;
+    background: var(--adm-surface-1);
 
     .admin-toolbar-search {
       .MuiOutlinedInput-root {
@@ -546,7 +653,7 @@ $sidebar-width: 260px;
     width: 100%;
 
     thead tr th {
-      background: #fafbfc;
+      background: var(--adm-surface-1);
       font-family: $font;
       font-size: 10.5px;
       font-weight: 700;
@@ -562,7 +669,7 @@ $sidebar-width: 260px;
       transition: background 0.12s;
 
       &:hover {
-        background: #f8f9fe;
+        background: var(--adm-surface-1);
       }
 
       td {
@@ -594,7 +701,7 @@ $sidebar-width: 260px;
       border-radius: 8px;
       object-fit: cover;
       border: 1px solid $card-border;
-      background: #f3f4f6;
+      background: var(--adm-surface-2);
     }
 
     .admin-name-cell {
@@ -633,92 +740,92 @@ $sidebar-width: 260px;
 
     // User/Agent statuses
     &.status-active {
-      background: #ecfdf5;
-      color: #059669;
+      background: var(--adm-success-bg);
+      color: var(--adm-success);
     }
     &.status-paused {
-      background: #fffbeb;
-      color: #d97706;
+      background: var(--adm-warning-bg);
+      color: var(--adm-warning);
     }
     &.status-blocked {
-      background: #fef2f2;
-      color: #dc2626;
+      background: var(--adm-danger-bg);
+      color: var(--adm-danger-strong);
     }
     &.status-deleted {
-      background: #f3f4f6;
-      color: #6b7280;
+      background: var(--adm-surface-2);
+      color: var(--adm-text-2);
     }
 
     // Order statuses — warm while the order still needs work, cooling to blue
     // once it is moving, green on arrival. Mirrors the tracker's progression.
     &.status-processed {
-      background: #fffbeb;
-      color: #d97706;
+      background: var(--adm-warning-bg);
+      color: var(--adm-warning);
     }
     &.status-shipped {
-      background: #eff6ff;
-      color: #3b82f6;
+      background: var(--adm-info-bg);
+      color: var(--adm-info);
     }
     &.status-en-route {
-      background: #eef2ff;
-      color: #6366f1;
+      background: var(--adm-accent-tint-1);
+      color: var(--adm-accent);
     }
     &.status-arrived {
-      background: #ecfdf5;
-      color: #059669;
+      background: var(--adm-success-bg);
+      color: var(--adm-success);
     }
     &.status-cancelled {
-      background: #fef2f2;
-      color: #dc2626;
+      background: var(--adm-danger-bg);
+      color: var(--adm-danger-strong);
     }
 
     // Booking statuses. PENDING and CANCELLED reuse the sets above; these are
     // the three a booking adds.
     &.status-confirmed {
-      background: #eef2ff;
-      color: #6366f1;
+      background: var(--adm-accent-tint-1);
+      color: var(--adm-accent);
     }
     &.status-completed {
-      background: #ecfdf5;
-      color: #059669;
+      background: var(--adm-success-bg);
+      color: var(--adm-success);
     }
     &.status-rejected {
-      background: #fef2f2;
-      color: #dc2626;
+      background: var(--adm-danger-bg);
+      color: var(--adm-danger-strong);
     }
 
     // Booking payment
     &.status-paid {
-      background: #ecfdf5;
-      color: #059669;
+      background: var(--adm-success-bg);
+      color: var(--adm-success);
     }
     &.status-unpaid {
-      background: #f3f4f6;
-      color: #6b7280;
+      background: var(--adm-surface-2);
+      color: var(--adm-text-2);
     }
     &.status-refunded {
-      background: #fffbeb;
-      color: #d97706;
+      background: var(--adm-warning-bg);
+      color: var(--adm-warning);
     }
 
     // Post statuses
     &.status-visible {
-      background: #ecfdf5;
-      color: #059669;
+      background: var(--adm-success-bg);
+      color: var(--adm-success);
     }
     &.status-hidden {
-      background: #fffbeb;
-      color: #d97706;
+      background: var(--adm-warning-bg);
+      color: var(--adm-warning);
     }
 
     // Report statuses
     &.status-resolved {
-      background: #ecfdf5;
-      color: #059669;
+      background: var(--adm-success-bg);
+      color: var(--adm-success);
     }
     &.status-dismissed {
-      background: #f3f4f6;
-      color: #6b7280;
+      background: var(--adm-surface-2);
+      color: var(--adm-text-2);
     }
   }
 
@@ -734,16 +841,16 @@ $sidebar-width: 260px;
     font-weight: 700;
 
     &.board-FREE {
-      background: #f0f0ff;
-      color: #6366f1;
+      background: var(--adm-accent-tint-3);
+      color: var(--adm-accent);
     }
     &.board-NEWS {
-      background: #eff6ff;
-      color: #3b82f6;
+      background: var(--adm-info-bg);
+      color: var(--adm-info);
     }
     &.board-QNA {
-      background: #ecfdf5;
-      color: #059669;
+      background: var(--adm-success-bg);
+      color: var(--adm-success);
     }
   }
 
@@ -760,16 +867,16 @@ $sidebar-width: 260px;
     letter-spacing: 0.04em;
 
     &.type-post {
-      background: #f0f0ff;
-      color: #6366f1;
+      background: var(--adm-accent-tint-3);
+      color: var(--adm-accent);
     }
     &.type-comment {
-      background: #fffbeb;
-      color: #d97706;
+      background: var(--adm-warning-bg);
+      color: var(--adm-warning);
     }
     &.type-user {
-      background: #fef2f2;
-      color: #dc2626;
+      background: var(--adm-danger-bg);
+      color: var(--adm-danger-strong);
     }
   }
 
@@ -895,7 +1002,7 @@ $sidebar-width: 260px;
     padding: 22px 16px;
     text-align: center;
     cursor: pointer;
-    background: #fafbfc;
+    background: var(--adm-surface-1);
     transition:
       border-color 0.18s,
       background 0.18s;
@@ -903,7 +1010,7 @@ $sidebar-width: 260px;
     &:hover,
     &.drag-over {
       border-color: $accent;
-      background: #f0f0ff;
+      background: var(--adm-accent-tint-3);
     }
 
     .upload-zone-icon {
@@ -1082,45 +1189,45 @@ $sidebar-width: 260px;
 
     &.admin-btn-sm-indigo {
       color: $accent !important;
-      border-color: #e0e7ff !important;
+      border-color: var(--adm-accent-tint-2) !important;
       &:hover {
-        background: #eef2ff !important;
+        background: var(--adm-accent-tint-1) !important;
       }
     }
     &.admin-btn-sm-indigo-bold {
       color: $accent !important;
-      border-color: #e0e7ff !important;
+      border-color: var(--adm-accent-tint-2) !important;
       font-weight: 700 !important;
       &:hover {
-        background: #eef2ff !important;
+        background: var(--adm-accent-tint-1) !important;
       }
     }
     &.admin-btn-sm-red {
-      color: #ef4444 !important;
-      border-color: #fee2e2 !important;
+      color: var(--adm-danger) !important;
+      border-color: var(--adm-danger-bg-2) !important;
       &:hover {
-        background: #fef2f2 !important;
+        background: var(--adm-danger-bg) !important;
       }
     }
     &.admin-btn-sm-green {
-      color: #059669 !important;
-      border-color: #d1fae5 !important;
+      color: var(--adm-success) !important;
+      border-color: var(--adm-success-bg-2) !important;
       &:hover {
-        background: #ecfdf5 !important;
+        background: var(--adm-success-bg) !important;
       }
     }
     &.admin-btn-sm-orange {
-      color: #d97706 !important;
-      border-color: #fef3c7 !important;
+      color: var(--adm-warning) !important;
+      border-color: var(--adm-warning-bg-2) !important;
       &:hover {
-        background: #fffbeb !important;
+        background: var(--adm-warning-bg) !important;
       }
     }
     &.admin-btn-sm-gray {
       color: $text-2 !important;
       border-color: $card-border !important;
       &:hover {
-        background: #f9fafb !important;
+        background: var(--adm-surface-1) !important;
       }
     }
   }
@@ -1138,9 +1245,9 @@ $sidebar-width: 260px;
     min-width: unset !important;
     border: 1px solid !important;
     color: $accent !important;
-    border-color: #e0e7ff !important;
+    border-color: var(--adm-accent-tint-2) !important;
     &:hover {
-      background: #eef2ff !important;
+      background: var(--adm-accent-tint-1) !important;
     }
   }
 
@@ -1155,10 +1262,10 @@ $sidebar-width: 260px;
     box-shadow: none !important;
     min-width: unset !important;
     border: 1px solid !important;
-    color: #ef4444 !important;
-    border-color: #fee2e2 !important;
+    color: var(--adm-danger) !important;
+    border-color: var(--adm-danger-bg-2) !important;
     &:hover {
-      background: #fef2f2 !important;
+      background: var(--adm-danger-bg) !important;
     }
   }
 
@@ -1189,13 +1296,13 @@ $sidebar-width: 260px;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 24px !important;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(var(--adm-accent-rgb), 0.3) !important;
     font-family: $font !important;
     &:hover {
       background-color: $accent-hover !important;
     }
     &.Mui-disabled {
-      background-color: #e5e7eb !important;
+      background-color: var(--adm-border-2) !important;
       color: $text-3 !important;
       box-shadow: none !important;
     }
@@ -1215,7 +1322,7 @@ $sidebar-width: 260px;
     background: transparent !important;
     box-shadow: none !important;
     &:hover {
-      background: #f9fafb !important;
+      background: var(--adm-surface-1) !important;
     }
   }
 
@@ -1254,7 +1361,7 @@ $sidebar-width: 260px;
   .admin-detail-card {
     background: $card-bg;
     border-radius: 14px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -1291,12 +1398,17 @@ $sidebar-width: 260px;
     min-width: 130px;
     height: 32px !important;
     border-radius: 8px !important;
+    // MuiOutlinedInput's sitewide theme default (scss/MaterialTheme/index.ts)
+    // hardcodes a white background with no dark variant — every other input
+    // class in this file overrides it, this one never did.
+    background: var(--adm-surface-1) !important;
+    color: var(--adm-text-1) !important;
 
     .MuiOutlinedInput-notchedOutline {
       border-color: $card-border !important;
     }
     &:hover .MuiOutlinedInput-notchedOutline {
-      border-color: #c7d2fe !important;
+      border-color: var(--adm-accent-border) !important;
     }
     .MuiSelect-icon {
       color: $text-3;
@@ -1311,7 +1423,7 @@ $sidebar-width: 260px;
   .admin-icon-btn-close {
     color: $text-2 !important;
     &:hover {
-      background: #f3f4f6 !important;
+      background: var(--adm-surface-2) !important;
       color: $text-1 !important;
     }
   }
@@ -1339,7 +1451,7 @@ $sidebar-width: 260px;
     object-fit: cover;
     flex-shrink: 0;
     border: 1.5px solid $card-border;
-    background: #eef2ff;
+    background: var(--adm-accent-tint-1);
   }
 
   // ─── Table cell text helpers ─────────────────────────────────────────
@@ -1407,7 +1519,7 @@ $sidebar-width: 260px;
   .admin-db-view-all-btn {
     font-size: 12px !important;
     text-transform: none !important;
-    color: #6366f1 !important;
+    color: var(--adm-accent) !important;
     font-weight: 700 !important;
     padding: 0 !important;
     min-width: auto !important;
@@ -1415,7 +1527,7 @@ $sidebar-width: 260px;
 
   .admin-db-order-no-cell {
     font-weight: 600;
-    color: #6366f1;
+    color: var(--adm-accent);
     font-size: 12px;
   }
 
@@ -1426,30 +1538,30 @@ $sidebar-width: 260px;
   .admin-db-user-name {
     font-size: 13px;
     font-weight: 600;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-db-user-handle {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-db-user-joined {
-    color: #9ca3af;
+    color: var(--adm-text-3);
     font-size: 12px;
   }
 
   .admin-db-quick-actions {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #e8ecf0;
+    border: 1px solid var(--adm-border);
     padding: 16px 20px;
   }
 
   .admin-db-qa-label {
     font-size: 12px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.07em;
     white-space: nowrap;
@@ -1463,10 +1575,10 @@ $sidebar-width: 260px;
     border-radius: 9px !important;
     height: 36px !important;
     box-shadow: none !important;
-    background-color: #6366f1 !important;
+    background-color: var(--adm-accent) !important;
     color: #fff !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
       box-shadow: none !important;
     }
   }
@@ -1478,13 +1590,13 @@ $sidebar-width: 260px;
     border-radius: 9px !important;
     height: 36px !important;
     box-shadow: none !important;
-    background-color: #f4f5fa !important;
-    color: #374151 !important;
-    border: 1px solid #e8ecf0 !important;
+    background-color: var(--adm-page-bg) !important;
+    color: var(--adm-text-1b) !important;
+    border: 1px solid var(--adm-border) !important;
     &:hover {
-      background-color: #f0f0ff !important;
-      border-color: #c7d2fe !important;
-      color: #6366f1 !important;
+      background-color: var(--adm-accent-tint-3) !important;
+      border-color: var(--adm-accent-border) !important;
+      color: var(--adm-accent) !important;
       box-shadow: none !important;
     }
   }
@@ -1516,7 +1628,7 @@ $sidebar-width: 260px;
 
   .admin-agt-pending-count {
     font-size: 13px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-agt-avatar-wrap {
@@ -1524,7 +1636,7 @@ $sidebar-width: 260px;
     height: 36px;
     border-radius: 50%;
     overflow: hidden;
-    border: 1.5px solid #e8ecf0;
+    border: 1.5px solid var(--adm-border);
     flex-shrink: 0;
 
     img {
@@ -1537,12 +1649,12 @@ $sidebar-width: 260px;
   .admin-agt-name {
     font-size: 13px;
     font-weight: 600;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-agt-handle {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-agt-service-cell {
@@ -1555,7 +1667,7 @@ $sidebar-width: 260px;
 
   .admin-agt-rating-value {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-agt-bookings-cell {
@@ -1563,7 +1675,7 @@ $sidebar-width: 260px;
   }
 
   .admin-agt-joined-cell {
-    color: #9ca3af;
+    color: var(--adm-text-3);
     font-size: 12px;
   }
 
@@ -1571,14 +1683,14 @@ $sidebar-width: 260px;
   .admin-agt-detail-paper {
     width: 500px;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
-    background: #f4f5fa;
+    background: var(--adm-page-bg);
     overflow-y: auto;
   }
 
   .admin-agt-detail-header {
     padding: 16px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-bottom: 1px solid var(--adm-border);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -1587,13 +1699,13 @@ $sidebar-width: 260px;
   .admin-agt-detail-header-title {
     font-size: 16px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-agt-detail-close-btn {
-    color: #6b7280 !important;
+    color: var(--adm-text-2) !important;
     &:hover {
-      background: #f3f4f6 !important;
+      background: var(--adm-surface-2) !important;
     }
   }
 
@@ -1604,15 +1716,19 @@ $sidebar-width: 260px;
   }
 
   .admin-agt-profile-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 16px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
     overflow: hidden;
   }
 
   .admin-agt-cover-strip {
     height: 72px;
-    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    background: linear-gradient(
+      135deg,
+      var(--adm-accent-tint-1),
+      var(--adm-accent-tint-2)
+    );
   }
 
   .admin-agt-profile-body {
@@ -1629,7 +1745,7 @@ $sidebar-width: 260px;
     height: 72px;
     border-radius: 50%;
     overflow: hidden;
-    border: 3px solid #fff;
+    border: 3px solid var(--adm-card-bg);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 
     img {
@@ -1643,30 +1759,30 @@ $sidebar-width: 260px;
   .admin-agt-fullname {
     font-size: 18px;
     font-weight: 800;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-agt-role {
     font-size: 12.5px;
-    color: #6b7280;
+    color: var(--adm-text-2);
     margin-top: 2.4px;
   }
 
   .admin-agt-stats-row {
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid var(--adm-surface-2);
   }
 
   .admin-agt-stat-value {
     font-size: 20px;
     font-weight: 800;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-agt-stat-label {
     font-size: 10px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -1680,20 +1796,20 @@ $sidebar-width: 260px;
   .admin-agt-divider-v {
     width: 1px;
     align-self: stretch;
-    background: #e5e7eb;
+    background: var(--adm-border-2);
   }
 
   .admin-agt-section-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
     padding: 20px;
   }
 
   .admin-agt-section-heading {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 9.6px;
@@ -1702,7 +1818,7 @@ $sidebar-width: 260px;
   .admin-agt-section-heading-lg {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 12px;
@@ -1710,25 +1826,25 @@ $sidebar-width: 260px;
 
   .admin-agt-bio-text {
     font-size: 13px;
-    color: #374151;
+    color: var(--adm-text-1b);
     line-height: 1.75;
   }
 
   .admin-agt-info-label {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     font-weight: 600;
   }
 
   .admin-agt-info-value {
     font-size: 12.5px;
-    color: #374151;
+    color: var(--adm-text-1b);
     font-weight: 600;
   }
 
   .admin-agt-info-row {
     padding: 6.4px 0;
-    border-bottom: 1px solid #f9fafb;
+    border-bottom: 1px solid var(--adm-surface-1);
   }
 
   .admin-agt-info-row-last {
@@ -1744,8 +1860,8 @@ $sidebar-width: 260px;
     height: 90px;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid #e8ecf0;
-    background: #f9fafb;
+    border: 1px solid var(--adm-border);
+    background: var(--adm-surface-1);
 
     img {
       width: 100%;
@@ -1759,15 +1875,15 @@ $sidebar-width: 260px;
   .admin-agt-cert-title {
     font-size: 11px;
     font-weight: 600;
-    color: #374151;
+    color: var(--adm-text-1b);
     line-height: 1.4;
     text-align: center;
   }
 
   .admin-agt-detail-footer {
     padding: 16px 24px;
-    background: #fff;
-    border-top: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-top: 1px solid var(--adm-border);
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -1777,13 +1893,13 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6366f1 !important;
-    border: 1px solid #e0e7ff !important;
+    color: var(--adm-accent) !important;
+    border: 1px solid var(--adm-accent-tint-2) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 20px !important;
     &:hover {
-      background: #eef2ff !important;
+      background: var(--adm-accent-tint-1) !important;
     }
   }
 
@@ -1791,13 +1907,13 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 24px !important;
     &:hover {
-      background: #f9fafb !important;
+      background: var(--adm-surface-1) !important;
     }
   }
 
@@ -1805,14 +1921,14 @@ $sidebar-width: 260px;
   .admin-agt-edit-paper {
     width: 500px;
     box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08);
-    background: #f4f5fa;
+    background: var(--adm-page-bg);
     overflow-y: auto;
   }
 
   .admin-agt-edit-header {
     padding: 20px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-bottom: 1px solid var(--adm-border);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -1821,12 +1937,12 @@ $sidebar-width: 260px;
   .admin-agt-edit-title {
     font-size: 16px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-agt-edit-subtitle {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 1.6px;
   }
 
@@ -1839,7 +1955,7 @@ $sidebar-width: 260px;
   .admin-agt-field-label {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
@@ -1849,16 +1965,16 @@ $sidebar-width: 260px;
       height: 42px;
       border-radius: 10px;
       font-size: 14px;
-      color: #111827;
-      background: #fff;
+      color: var(--adm-text-1);
+      background: var(--adm-card-bg);
       & fieldset {
-        border-color: #e5e7eb;
+        border-color: var(--adm-border-2);
       }
       &:hover fieldset {
-        border-color: #c7d2fe;
+        border-color: var(--adm-accent-border);
       }
       &.Mui-focused fieldset {
-        border-color: #6366f1;
+        border-color: var(--adm-accent);
         border-width: 1.5px;
       }
     }
@@ -1868,32 +1984,32 @@ $sidebar-width: 260px;
     height: 42px !important;
     border-radius: 10px !important;
     font-size: 14px !important;
-    color: #111827 !important;
-    background: #fff !important;
+    color: var(--adm-text-1) !important;
+    background: var(--adm-card-bg) !important;
     & fieldset {
-      border-color: #e5e7eb;
+      border-color: var(--adm-border-2);
     }
     &:hover fieldset {
-      border-color: #c7d2fe;
+      border-color: var(--adm-accent-border);
     }
     &.Mui-focused fieldset {
-      border-color: #6366f1;
+      border-color: var(--adm-accent);
     }
     .MuiSelect-icon {
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
   }
 
   .admin-agt-verified-label {
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var(--adm-text-1b);
   }
 
   .admin-agt-edit-footer {
     padding: 16px 24px;
-    background: #fff;
-    border-top: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-top: 1px solid var(--adm-border);
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -1903,8 +2019,8 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 9px !important;
     height: 38px !important;
     padding: 0 16px !important;
@@ -1914,14 +2030,14 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 700 !important;
-    color: #ffffff !important;
-    background-color: #6366f1 !important;
+    color: #fff !important;
+    background-color: var(--adm-accent) !important;
     box-shadow: none !important;
     border-radius: 9px !important;
     height: 38px !important;
     padding: 0 24px !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
       box-shadow: none !important;
     }
   }
@@ -1930,7 +2046,7 @@ $sidebar-width: 260px;
 
   .admin-ord-pending-count {
     font-size: 13px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-ord-search {
@@ -1984,7 +2100,7 @@ $sidebar-width: 260px;
       // The appointment came and went unanswered — the one failure this table
       // exists to surface.
       &.unanswered {
-        color: #dc2626;
+        color: var(--adm-danger-strong);
       }
     }
 
@@ -1999,7 +2115,7 @@ $sidebar-width: 260px;
       font-family: $font;
       font-size: 10px;
       font-weight: 700;
-      color: #dc2626;
+      color: var(--adm-danger-strong);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-top: 2px;
@@ -2010,8 +2126,12 @@ $sidebar-width: 260px;
   .admin-bkg-when-card {
     padding: 18px 20px;
     border-radius: 12px;
-    border: 1px solid #c7d2fe;
-    background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+    border: 1px solid var(--adm-accent-border);
+    background: linear-gradient(
+      135deg,
+      var(--adm-accent-tint-1),
+      var(--adm-accent-tint-violet)
+    );
 
     .admin-bkg-when-card-label {
       font-family: $font;
@@ -2043,7 +2163,7 @@ $sidebar-width: 260px;
       font-family: $font;
       font-size: 12px;
       font-weight: 600;
-      color: #dc2626;
+      color: var(--adm-danger-strong);
       margin-top: 10px;
     }
   }
@@ -2056,7 +2176,7 @@ $sidebar-width: 260px;
 
   .admin-ord-no-cell {
     font-weight: 700;
-    color: #6366f1;
+    color: var(--adm-accent);
     font-size: 12px;
   }
 
@@ -2067,12 +2187,12 @@ $sidebar-width: 260px;
 
   .admin-ord-customer-email {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-ord-items-cell {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--adm-text-2);
   }
 
   .admin-ord-total-cell {
@@ -2082,21 +2202,21 @@ $sidebar-width: 260px;
 
   .admin-ord-date-cell {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   // Drawer
   .admin-ord-drawer-paper {
     width: 480px;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
-    background: #f4f5fa;
+    background: var(--adm-page-bg);
     overflow-y: auto;
   }
 
   .admin-ord-drawer-header {
     padding: 20px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-bottom: 1px solid var(--adm-border);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -2106,7 +2226,7 @@ $sidebar-width: 260px;
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: #eef2ff;
+    background: var(--adm-accent-tint-1);
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -2115,20 +2235,20 @@ $sidebar-width: 260px;
   .admin-ord-header-title {
     font-size: 16px;
     font-weight: 800;
-    color: #111827;
+    color: var(--adm-text-1);
     letter-spacing: -0.01em;
   }
 
   .admin-ord-header-date {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 1.6px;
   }
 
   .admin-ord-close-btn {
-    color: #6b7280 !important;
+    color: var(--adm-text-2) !important;
     &:hover {
-      background: #f3f4f6 !important;
+      background: var(--adm-surface-2) !important;
     }
   }
 
@@ -2139,16 +2259,16 @@ $sidebar-width: 260px;
   }
 
   .admin-ord-section-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #f3f4f6;
+    border: 1px solid var(--adm-surface-2);
     padding: 20px;
   }
 
   .admin-ord-section-heading {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -2157,20 +2277,20 @@ $sidebar-width: 260px;
     height: 38px !important;
     border-radius: 9px !important;
     font-size: 13px !important;
-    background: #f9fafb !important;
-    color: #111827 !important;
+    background: var(--adm-surface-1) !important;
+    color: var(--adm-text-1) !important;
     .MuiOutlinedInput-notchedOutline {
-      border-color: #e8ecf0;
+      border-color: var(--adm-border);
     }
     &:hover .MuiOutlinedInput-notchedOutline {
-      border-color: #c7d2fe;
+      border-color: var(--adm-accent-border);
     }
     .MuiSelect-icon {
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
     &.Mui-focused .MuiOutlinedInput-notchedOutline {
       border-width: 1.4px;
-      border-color: #6366f1;
+      border-color: var(--adm-accent);
     }
   }
 
@@ -2178,7 +2298,7 @@ $sidebar-width: 260px;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #eef2ff;
+    background: var(--adm-accent-tint-1);
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -2187,36 +2307,36 @@ $sidebar-width: 260px;
   .admin-ord-customer-avatar-letter {
     font-size: 14px;
     font-weight: 700;
-    color: #6366f1;
+    color: var(--adm-accent);
   }
 
   .admin-ord-customer-name-text {
     font-size: 14px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-ord-customer-email-text {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-ord-items-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #f3f4f6;
+    border: 1px solid var(--adm-surface-2);
     overflow: hidden;
   }
 
   .admin-ord-items-header {
     padding: 12px 20px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--adm-surface-2);
   }
 
   .admin-ord-items-heading {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -2229,10 +2349,10 @@ $sidebar-width: 260px;
     width: 44px;
     height: 44px;
     border-radius: 10px;
-    background: #f3f4f6;
+    background: var(--adm-surface-2);
     flex-shrink: 0;
     overflow: hidden;
-    border: 1px solid #e8ecf0;
+    border: 1px solid var(--adm-border);
 
     img {
       width: 100%;
@@ -2245,7 +2365,7 @@ $sidebar-width: 260px;
   .admin-ord-item-name {
     font-size: 13px;
     font-weight: 600;
-    color: #111827;
+    color: var(--adm-text-1);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -2253,62 +2373,66 @@ $sidebar-width: 260px;
 
   .admin-ord-item-qty {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-ord-item-dot {
     font-size: 11px;
-    color: #d1d5db;
+    color: var(--adm-border-3);
   }
 
   .admin-ord-item-unit-price {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-ord-item-total {
     font-size: 14px;
     font-weight: 700;
-    color: #374151;
+    color: var(--adm-text-1b);
     flex-shrink: 0;
   }
 
   .admin-ord-items-divider {
     margin: 0 20px !important;
-    border-color: #f3f4f6 !important;
+    border-color: var(--adm-surface-2) !important;
   }
 
   .admin-ord-total-row {
     padding: 16px 20px;
-    border-top: 1px solid #f3f4f6;
-    background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+    border-top: 1px solid var(--adm-surface-2);
+    background: linear-gradient(
+      135deg,
+      var(--adm-accent-tint-1),
+      var(--adm-accent-tint-violet)
+    );
   }
 
   .admin-ord-total-label {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
 
   .admin-ord-total-sub {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 2.4px;
   }
 
   .admin-ord-total-amount {
     font-size: 24px;
     font-weight: 800;
-    color: #6366f1;
+    color: var(--adm-accent);
     letter-spacing: -0.02em;
   }
 
   .admin-ord-drawer-footer {
     padding: 16px 24px;
-    background: #fff;
-    border-top: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-top: 1px solid var(--adm-border);
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -2318,21 +2442,21 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 24px !important;
     &:hover {
-      background: #f9fafb !important;
+      background: var(--adm-surface-1) !important;
     }
   }
 
   // ─── ProductsManager ──────────────────────────────────────────────────────────
 
   .admin-prd-add-btn {
-    color: #ffffff !important;
-    background-color: #6366f1 !important;
+    color: #fff !important;
+    background-color: var(--adm-accent) !important;
     text-transform: none !important;
     font-weight: 700 !important;
     font-size: 13px !important;
@@ -2340,7 +2464,7 @@ $sidebar-width: 260px;
     height: 36px !important;
     box-shadow: none !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
       box-shadow: none !important;
     }
   }
@@ -2361,10 +2485,10 @@ $sidebar-width: 260px;
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: #f3f4f6;
+    background: var(--adm-surface-2);
     flex-shrink: 0;
     overflow: hidden;
-    border: 1px solid #e8ecf0;
+    border: 1px solid var(--adm-border);
 
     img {
       width: 100%;
@@ -2393,7 +2517,7 @@ $sidebar-width: 260px;
 
   .admin-prd-old-price {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-decoration: line-through;
     line-height: 1.2;
   }
@@ -2401,15 +2525,15 @@ $sidebar-width: 260px;
   .admin-prd-new-price {
     font-size: 13px;
     font-weight: 700;
-    color: #6366f1;
+    color: var(--adm-accent);
     line-height: 1.2;
   }
 
   .admin-prd-discount-badge {
     font-size: 10px;
     font-weight: 700;
-    color: #ef4444;
-    background: #fef2f2;
+    color: var(--adm-danger);
+    background: var(--adm-danger-bg);
     border-radius: 4px;
     padding: 1px 5px;
   }
@@ -2417,26 +2541,26 @@ $sidebar-width: 260px;
   .admin-prd-price-text {
     font-size: 13px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-prd-sold-cell {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--adm-text-2);
   }
 
   // Drawer
   .admin-prd-drawer-paper {
     width: 560px;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
-    background: #f4f5fa;
+    background: var(--adm-page-bg);
     overflow-y: auto;
   }
 
   .admin-prd-drawer-header {
     padding: 20px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-bottom: 1px solid var(--adm-border);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -2446,7 +2570,7 @@ $sidebar-width: 260px;
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: #eef2ff;
+    background: var(--adm-accent-tint-1);
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -2455,21 +2579,21 @@ $sidebar-width: 260px;
   .admin-prd-drawer-title {
     font-size: 16px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
     line-height: 1.2;
   }
 
   .admin-prd-drawer-subtitle {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 2.4px;
   }
 
   .admin-prd-close-btn {
-    color: #6b7280 !important;
+    color: var(--adm-text-2) !important;
     &:hover {
-      background: #f3f4f6 !important;
-      color: #111827 !important;
+      background: var(--adm-surface-2) !important;
+      color: var(--adm-text-1) !important;
     }
   }
 
@@ -2481,21 +2605,21 @@ $sidebar-width: 260px;
 
   // Section component
   .admin-prd-section {
-    background: #fff;
-    border: 1px solid #f3f4f6;
+    background: var(--adm-card-bg);
+    border: 1px solid var(--adm-surface-2);
     border-radius: 14px;
     overflow: hidden;
   }
 
   .admin-prd-section-header {
     padding: 12px 20px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--adm-surface-2);
   }
 
   .admin-prd-section-title {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -2508,7 +2632,7 @@ $sidebar-width: 260px;
   .admin-prd-field-label {
     font-size: 11px;
     font-weight: 600;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-bottom: 6.4px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -2519,29 +2643,29 @@ $sidebar-width: 260px;
     & .MuiOutlinedInput-root {
       border-radius: 10px;
       font-size: 14px;
-      color: #111827;
-      background: #fff;
+      color: var(--adm-text-1);
+      background: var(--adm-card-bg);
       & fieldset {
-        border-color: #e5e7eb;
+        border-color: var(--adm-border-2);
       }
       &:hover fieldset {
-        border-color: #c7d2fe;
+        border-color: var(--adm-accent-border);
       }
       &.Mui-focused fieldset {
-        border-color: #6366f1;
+        border-color: var(--adm-accent);
         border-width: 1.5px;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+        box-shadow: 0 0 0 3px rgba(var(--adm-accent-rgb), 0.08);
       }
     }
     & .MuiInputLabel-root {
       font-size: 13px;
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
     & .MuiInputLabel-root.Mui-focused {
-      color: #6366f1;
+      color: var(--adm-accent);
     }
     & .MuiInputBase-input {
-      color: #111827;
+      color: var(--adm-text-1);
     }
   }
 
@@ -2562,47 +2686,51 @@ $sidebar-width: 260px;
   .admin-prd-select {
     border-radius: 10px !important;
     font-size: 14px !important;
-    color: #111827 !important;
-    background: #fff !important;
+    color: var(--adm-text-1) !important;
+    background: var(--adm-card-bg) !important;
     height: 42px !important;
     & fieldset {
-      border-color: #e5e7eb;
+      border-color: var(--adm-border-2);
     }
     &:hover fieldset {
-      border-color: #c7d2fe;
+      border-color: var(--adm-accent-border);
     }
     &.Mui-focused fieldset {
-      border-color: #6366f1;
+      border-color: var(--adm-accent);
       border-width: 1.5px;
     }
     .MuiSelect-icon {
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
   }
 
   .admin-prd-adornment-text {
     font-size: 13px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   // Price breakdown
   .admin-prd-price-breakdown-disc {
     border-radius: 12px;
-    border: 1px solid #c7d2fe;
-    background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+    border: 1px solid var(--adm-accent-border);
+    background: linear-gradient(
+      135deg,
+      var(--adm-accent-tint-1),
+      var(--adm-accent-tint-violet)
+    );
     padding: 16px;
   }
 
   .admin-prd-price-breakdown-plain {
     border-radius: 12px;
-    border: 1px solid #e8ecf0;
-    background: #f9fafb;
+    border: 1px solid var(--adm-border);
+    background: var(--adm-surface-1);
     padding: 16px;
   }
 
   .admin-prd-pb-orig-label {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     font-weight: 600;
     margin-bottom: 4px;
   }
@@ -2610,7 +2738,7 @@ $sidebar-width: 260px;
   .admin-prd-pb-orig-value {
     font-size: 15px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-decoration: line-through;
   }
 
@@ -2619,7 +2747,7 @@ $sidebar-width: 260px;
   }
 
   .admin-prd-pb-disc-badge {
-    background: #ef4444;
+    background: var(--adm-danger);
     border-radius: 20px;
     padding: 4px 12px;
   }
@@ -2632,13 +2760,13 @@ $sidebar-width: 260px;
 
   .admin-prd-pb-arrow {
     font-size: 16px;
-    color: #c7d2fe;
+    color: var(--adm-accent-border);
     margin-top: 2.4px;
   }
 
   .admin-prd-pb-final-label {
     font-size: 11px;
-    color: #6366f1;
+    color: var(--adm-accent);
     font-weight: 600;
     margin-bottom: 4px;
   }
@@ -2646,19 +2774,19 @@ $sidebar-width: 260px;
   .admin-prd-pb-final-value {
     font-size: 20px;
     font-weight: 800;
-    color: #6366f1;
+    color: var(--adm-accent);
   }
 
   .admin-prd-pb-divider-v {
     width: 1px;
     height: 40px;
-    background: #c7d2fe;
+    background: var(--adm-accent-border);
     margin: 0 8px;
   }
 
   .admin-prd-pb-saves-label {
     font-size: 11px;
-    color: #059669;
+    color: var(--adm-success);
     font-weight: 600;
     margin-bottom: 4px;
   }
@@ -2666,18 +2794,18 @@ $sidebar-width: 260px;
   .admin-prd-pb-saves-value {
     font-size: 15px;
     font-weight: 700;
-    color: #059669;
+    color: var(--adm-success);
   }
 
   .admin-prd-pb-no-disc-label {
     font-size: 13px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-prd-pb-no-disc-value {
     font-size: 16px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   // Image section
@@ -2687,7 +2815,7 @@ $sidebar-width: 260px;
     height: 88px;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid #e8ecf0;
+    border: 1px solid var(--adm-border);
     flex-shrink: 0;
 
     &:hover .rm {
@@ -2708,7 +2836,7 @@ $sidebar-width: 260px;
     height: 88px;
     border-radius: 10px;
     overflow: hidden;
-    border: 2px solid #6366f1;
+    border: 2px solid var(--adm-accent);
     flex-shrink: 0;
 
     &:hover .rm {
@@ -2739,21 +2867,21 @@ $sidebar-width: 260px;
   }
 
   .admin-prd-upload-zone {
-    border: 2px dashed #e5e7eb;
+    border: 2px dashed var(--adm-border-2);
     border-radius: 12px;
     padding: 32px 0;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background: #fafafa;
+    background: var(--adm-surface-1);
     transition: all 0.2s;
     &:hover {
-      border-color: #6366f1;
-      background: #eef2ff;
+      border-color: var(--adm-accent);
+      background: var(--adm-accent-tint-1);
     }
     &.dragging {
-      border-color: #6366f1;
-      background: #eef2ff;
+      border-color: var(--adm-accent);
+      background: var(--adm-accent-tint-1);
     }
   }
 
@@ -2761,39 +2889,39 @@ $sidebar-width: 260px;
     width: 44px;
     height: 44px;
     border-radius: 12px;
-    background: #e5e7eb;
+    background: var(--adm-border-2);
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
     transition: background 0.2s;
     &.dragging {
-      background: #6366f1;
+      background: var(--adm-accent);
     }
   }
 
   .admin-prd-upload-label {
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var(--adm-text-1b);
   }
 
   .admin-prd-upload-hint {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 4px;
   }
 
   .admin-prd-img-required-msg {
     font-size: 11.5px;
-    color: #ef4444;
+    color: var(--adm-danger);
     font-weight: 600;
   }
 
   // Drawer footer
   .admin-prd-drawer-footer {
     padding: 16px 24px;
-    background: #fff;
-    border-top: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-top: 1px solid var(--adm-border);
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -2803,32 +2931,32 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 20px !important;
     &:hover {
-      background: #f9fafb !important;
+      background: var(--adm-surface-1) !important;
     }
   }
 
   .admin-prd-save-btn {
-    color: #ffffff !important;
+    color: #fff !important;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 700 !important;
-    background-color: #6366f1 !important;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+    background-color: var(--adm-accent) !important;
+    box-shadow: 0 2px 8px rgba(var(--adm-accent-rgb), 0.35) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 24px !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
     }
     &.Mui-disabled {
-      background-color: #e5e7eb !important;
-      color: #9ca3af !important;
+      background-color: var(--adm-border-2) !important;
+      color: var(--adm-text-3) !important;
       box-shadow: none !important;
     }
   }
@@ -2837,12 +2965,12 @@ $sidebar-width: 260px;
   .admin-prd-dialog-title {
     font-weight: 700 !important;
     font-size: 16px !important;
-    color: #111827 !important;
+    color: var(--adm-text-1) !important;
   }
 
   .admin-prd-dialog-body {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--adm-text-2);
   }
 
   .admin-prd-dialog-actions {
@@ -2852,20 +2980,20 @@ $sidebar-width: 260px;
 
   .admin-prd-dialog-cancel-btn {
     text-transform: none !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 8px !important;
   }
 
   .admin-prd-dialog-delete-btn {
-    color: #ffffff !important;
+    color: #fff !important;
     text-transform: none !important;
     font-weight: 700 !important;
-    background-color: #ef4444 !important;
+    background-color: var(--adm-danger) !important;
     box-shadow: none !important;
     border-radius: 8px !important;
     &:hover {
-      background-color: #dc2626 !important;
+      background-color: var(--adm-danger-strong) !important;
       box-shadow: none !important;
     }
   }
@@ -2873,8 +3001,8 @@ $sidebar-width: 260px;
   // ─── DiscoveryPetsManager ─────────────────────────────────────────────────────
 
   .admin-dsc-add-btn {
-    color: #ffffff !important;
-    background-color: #6366f1 !important;
+    color: #fff !important;
+    background-color: var(--adm-accent) !important;
     text-transform: none !important;
     font-weight: 700 !important;
     font-size: 13px !important;
@@ -2882,7 +3010,7 @@ $sidebar-width: 260px;
     height: 36px !important;
     box-shadow: none !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
       box-shadow: none !important;
     }
   }
@@ -2903,10 +3031,10 @@ $sidebar-width: 260px;
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: #f3f4f6;
+    background: var(--adm-surface-2);
     flex-shrink: 0;
     overflow: hidden;
-    border: 1px solid #e8ecf0;
+    border: 1px solid var(--adm-border);
 
     img {
       width: 100%;
@@ -2925,7 +3053,6 @@ $sidebar-width: 260px;
     white-space: nowrap;
   }
 
-
   .admin-dsc-cat-cell,
   .admin-dsc-country-cell {
     font-size: 12px;
@@ -2934,7 +3061,7 @@ $sidebar-width: 260px;
   .admin-dsc-stat-num {
     font-size: 12.5px;
     font-weight: 600;
-    color: #6b7280;
+    color: var(--adm-text-2);
   }
 
   .admin-dsc-mini-stats {
@@ -2947,7 +3074,7 @@ $sidebar-width: 260px;
   .admin-dsc-mini-stat-letter {
     font-size: 9px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     width: 10px;
     flex-shrink: 0;
   }
@@ -2957,7 +3084,7 @@ $sidebar-width: 260px;
     flex: 1;
     height: 4px;
     border-radius: 100px;
-    background: #e5e7eb;
+    background: var(--adm-border-2);
     overflow: hidden;
   }
 
@@ -2965,7 +3092,7 @@ $sidebar-width: 260px;
     display: block;
     height: 100%;
     border-radius: 100px;
-    background: #6366f1;
+    background: var(--adm-accent);
   }
 
   .admin-dsc-btn-restore {
@@ -2979,10 +3106,10 @@ $sidebar-width: 260px;
     box-shadow: none !important;
     min-width: unset !important;
     border: 1px solid !important;
-    color: #059669 !important;
-    border-color: #d1fae5 !important;
+    color: var(--adm-success) !important;
+    border-color: var(--adm-success-bg-2) !important;
     &:hover {
-      background: #ecfdf5 !important;
+      background: var(--adm-success-bg) !important;
     }
   }
 
@@ -2990,7 +3117,7 @@ $sidebar-width: 260px;
     width: 960px;
     max-width: 96vw;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
-    background: #f4f5fa;
+    background: var(--adm-page-bg);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -2998,8 +3125,8 @@ $sidebar-width: 260px;
 
   .admin-dsc-drawer-header {
     padding: 20px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-bottom: 1px solid var(--adm-border);
     flex-shrink: 0;
   }
 
@@ -3007,7 +3134,7 @@ $sidebar-width: 260px;
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: #eef2ff;
+    background: var(--adm-accent-tint-1);
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -3016,21 +3143,21 @@ $sidebar-width: 260px;
   .admin-dsc-drawer-title {
     font-size: 16px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
     line-height: 1.2;
   }
 
   .admin-dsc-drawer-subtitle {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 2.4px;
   }
 
   .admin-dsc-close-btn {
-    color: #6b7280 !important;
+    color: var(--adm-text-2) !important;
     &:hover {
-      background: #f3f4f6 !important;
-      color: #111827 !important;
+      background: var(--adm-surface-2) !important;
+      color: var(--adm-text-1) !important;
     }
   }
 
@@ -3046,7 +3173,7 @@ $sidebar-width: 260px;
       width: 4px;
     }
     &::-webkit-scrollbar-thumb {
-      background: #e8ecf0;
+      background: var(--adm-border);
       border-radius: 2px;
     }
   }
@@ -3069,7 +3196,7 @@ $sidebar-width: 260px;
   .admin-dsc-preview-label {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     align-self: flex-start;
@@ -3077,28 +3204,28 @@ $sidebar-width: 260px;
 
   .admin-dsc-preview-hint {
     font-size: 11.5px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-align: center;
     line-height: 1.4;
   }
 
   // Section component
   .admin-dsc-section {
-    background: #fff;
-    border: 1px solid #f3f4f6;
+    background: var(--adm-card-bg);
+    border: 1px solid var(--adm-surface-2);
     border-radius: 14px;
     overflow: hidden;
   }
 
   .admin-dsc-section-header {
     padding: 12px 20px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--adm-surface-2);
   }
 
   .admin-dsc-section-title {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -3111,7 +3238,7 @@ $sidebar-width: 260px;
   .admin-dsc-field-label {
     font-size: 11px;
     font-weight: 600;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-bottom: 6.4px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -3121,29 +3248,29 @@ $sidebar-width: 260px;
     & .MuiOutlinedInput-root {
       border-radius: 10px;
       font-size: 14px;
-      color: #111827;
-      background: #fff;
+      color: var(--adm-text-1);
+      background: var(--adm-card-bg);
       & fieldset {
-        border-color: #e5e7eb;
+        border-color: var(--adm-border-2);
       }
       &:hover fieldset {
-        border-color: #c7d2fe;
+        border-color: var(--adm-accent-border);
       }
       &.Mui-focused fieldset {
-        border-color: #6366f1;
+        border-color: var(--adm-accent);
         border-width: 1.5px;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+        box-shadow: 0 0 0 3px rgba(var(--adm-accent-rgb), 0.08);
       }
     }
     & .MuiInputLabel-root {
       font-size: 13px;
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
     & .MuiInputLabel-root.Mui-focused {
-      color: #6366f1;
+      color: var(--adm-accent);
     }
     & .MuiInputBase-input {
-      color: #111827;
+      color: var(--adm-text-1);
     }
     & .MuiFormHelperText-root {
       font-size: 11px;
@@ -3168,28 +3295,28 @@ $sidebar-width: 260px;
   .admin-dsc-select {
     border-radius: 10px !important;
     font-size: 14px !important;
-    color: #111827 !important;
-    background: #fff !important;
+    color: var(--adm-text-1) !important;
+    background: var(--adm-card-bg) !important;
     height: 42px !important;
     & fieldset {
-      border-color: #e5e7eb;
+      border-color: var(--adm-border-2);
     }
     &:hover fieldset {
-      border-color: #c7d2fe;
+      border-color: var(--adm-accent-border);
     }
     &.Mui-focused fieldset {
-      border-color: #6366f1;
+      border-color: var(--adm-accent);
       border-width: 1.5px;
     }
     .MuiSelect-icon {
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
   }
 
   .admin-dsc-slider-label {
     font-size: 11px;
     font-weight: 600;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -3197,19 +3324,19 @@ $sidebar-width: 260px;
   .admin-dsc-slider-value {
     font-size: 12px;
     font-weight: 700;
-    color: #6366f1;
-    background: #eef2ff;
+    color: var(--adm-accent);
+    background: var(--adm-accent-tint-1);
     border-radius: 6px;
     padding: 1px 8px;
   }
 
   .admin-dsc-slider {
-    color: #6366f1 !important;
+    color: var(--adm-accent) !important;
     padding: 10px 0 !important;
 
     .MuiSlider-rail {
       opacity: 1;
-      background: #e5e7eb;
+      background: var(--adm-border-2);
     }
     .MuiSlider-track {
       border: none;
@@ -3217,13 +3344,13 @@ $sidebar-width: 260px;
     .MuiSlider-thumb {
       width: 16px;
       height: 16px;
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important;
+      box-shadow: 0 0 0 4px rgba(var(--adm-accent-rgb), 0.15) !important;
       &:hover,
       &.Mui-focusVisible {
-        box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.18) !important;
+        box-shadow: 0 0 0 6px rgba(var(--adm-accent-rgb), 0.18) !important;
       }
       &.Mui-active {
-        box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.2) !important;
+        box-shadow: 0 0 0 8px rgba(var(--adm-accent-rgb), 0.2) !important;
       }
     }
   }
@@ -3235,7 +3362,7 @@ $sidebar-width: 260px;
     height: 96px;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid #e8ecf0;
+    border: 1px solid var(--adm-border);
     flex-shrink: 0;
 
     &:hover .rm {
@@ -3266,21 +3393,21 @@ $sidebar-width: 260px;
   }
 
   .admin-dsc-upload-zone {
-    border: 2px dashed #e5e7eb;
+    border: 2px dashed var(--adm-border-2);
     border-radius: 12px;
     padding: 32px 0;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background: #fafafa;
+    background: var(--adm-surface-1);
     transition: all 0.2s;
     &:hover {
-      border-color: #6366f1;
-      background: #eef2ff;
+      border-color: var(--adm-accent);
+      background: var(--adm-accent-tint-1);
     }
     &.dragging {
-      border-color: #6366f1;
-      background: #eef2ff;
+      border-color: var(--adm-accent);
+      background: var(--adm-accent-tint-1);
     }
   }
 
@@ -3288,38 +3415,38 @@ $sidebar-width: 260px;
     width: 44px;
     height: 44px;
     border-radius: 12px;
-    background: #e5e7eb;
+    background: var(--adm-border-2);
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
     transition: background 0.2s;
     &.dragging {
-      background: #6366f1;
+      background: var(--adm-accent);
     }
   }
 
   .admin-dsc-upload-label {
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var(--adm-text-1b);
   }
 
   .admin-dsc-upload-hint {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 4px;
   }
 
   .admin-dsc-img-required-msg {
     font-size: 11.5px;
-    color: #ef4444;
+    color: var(--adm-danger);
     font-weight: 600;
   }
 
   .admin-dsc-drawer-footer {
     padding: 16px 24px;
-    background: #fff;
-    border-top: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-top: 1px solid var(--adm-border);
     flex-shrink: 0;
   }
 
@@ -3327,32 +3454,32 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 20px !important;
     &:hover {
-      background: #f9fafb !important;
+      background: var(--adm-surface-1) !important;
     }
   }
 
   .admin-dsc-save-btn {
-    color: #ffffff !important;
+    color: #fff !important;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 700 !important;
-    background-color: #6366f1 !important;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+    background-color: var(--adm-accent) !important;
+    box-shadow: 0 2px 8px rgba(var(--adm-accent-rgb), 0.35) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 24px !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
     }
     &.Mui-disabled {
-      background-color: #e5e7eb !important;
-      color: #9ca3af !important;
+      background-color: var(--adm-border-2) !important;
+      color: var(--adm-text-3) !important;
       box-shadow: none !important;
     }
   }
@@ -3360,12 +3487,12 @@ $sidebar-width: 260px;
   .admin-dsc-dialog-title {
     font-weight: 700 !important;
     font-size: 16px !important;
-    color: #111827 !important;
+    color: var(--adm-text-1) !important;
   }
 
   .admin-dsc-dialog-body {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--adm-text-2);
   }
 
   .admin-dsc-dialog-actions {
@@ -3375,20 +3502,20 @@ $sidebar-width: 260px;
 
   .admin-dsc-dialog-cancel-btn {
     text-transform: none !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 8px !important;
   }
 
   .admin-dsc-dialog-delete-btn {
-    color: #ffffff !important;
+    color: #fff !important;
     text-transform: none !important;
     font-weight: 700 !important;
-    background-color: #ef4444 !important;
+    background-color: var(--adm-danger) !important;
     box-shadow: none !important;
     border-radius: 8px !important;
     &:hover {
-      background-color: #dc2626 !important;
+      background-color: var(--adm-danger-strong) !important;
       box-shadow: none !important;
     }
   }
@@ -3414,19 +3541,19 @@ $sidebar-width: 260px;
 
   .admin-svc-location-cell {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--adm-text-2);
   }
 
   .admin-svc-price-text {
     font-size: 13px;
     font-weight: 700;
-    color: #6366f1;
+    color: var(--adm-accent);
   }
 
   .admin-svc-empty-cell {
     padding-top: 32px !important;
     padding-bottom: 32px !important;
-    color: #9ca3af !important;
+    color: var(--adm-text-3) !important;
   }
 
   // SortCell — only the static parts
@@ -3443,12 +3570,12 @@ $sidebar-width: 260px;
   .admin-svc-dialog-title {
     font-weight: 700 !important;
     font-size: 16px !important;
-    color: #111827 !important;
+    color: var(--adm-text-1) !important;
   }
 
   .admin-svc-dialog-body {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--adm-text-2);
   }
 
   .admin-svc-dialog-actions {
@@ -3458,20 +3585,20 @@ $sidebar-width: 260px;
 
   .admin-svc-dialog-cancel-btn {
     text-transform: none !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 8px !important;
   }
 
   .admin-svc-dialog-delete-btn {
     text-transform: none !important;
     font-weight: 700 !important;
-    color: #ffffff !important;
-    background-color: #ef4444 !important;
+    color: #fff !important;
+    background-color: var(--adm-danger) !important;
     box-shadow: none !important;
     border-radius: 8px !important;
     &:hover {
-      background-color: #dc2626 !important;
+      background-color: var(--adm-danger-strong) !important;
       box-shadow: none !important;
     }
   }
@@ -3480,14 +3607,14 @@ $sidebar-width: 260px;
   .admin-svc-drawer-paper {
     width: 520px;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
-    background: #f4f5fa;
+    background: var(--adm-page-bg);
     overflow-y: auto;
   }
 
   .admin-svc-drawer-header {
     padding: 20px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-bottom: 1px solid var(--adm-border);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -3497,7 +3624,7 @@ $sidebar-width: 260px;
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: #eef2ff;
+    background: var(--adm-accent-tint-1);
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -3506,21 +3633,21 @@ $sidebar-width: 260px;
   .admin-svc-drawer-title {
     font-size: 16px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
     line-height: 1.2;
   }
 
   .admin-svc-drawer-subtitle {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 2.4px;
   }
 
   .admin-svc-close-btn {
-    color: #6b7280 !important;
+    color: var(--adm-text-2) !important;
     &:hover {
-      background: #f3f4f6 !important;
-      color: #111827 !important;
+      background: var(--adm-surface-2) !important;
+      color: var(--adm-text-1) !important;
     }
   }
 
@@ -3532,21 +3659,21 @@ $sidebar-width: 260px;
 
   // Section component (shared style with prd)
   .admin-svc-section {
-    background: #fff;
-    border: 1px solid #f3f4f6;
+    background: var(--adm-card-bg);
+    border: 1px solid var(--adm-surface-2);
     border-radius: 14px;
     overflow: hidden;
   }
 
   .admin-svc-section-header {
     padding: 12px 20px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--adm-surface-2);
   }
 
   .admin-svc-section-title {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -3560,7 +3687,7 @@ $sidebar-width: 260px;
   .admin-svc-field-label {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-bottom: 6.4px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -3571,64 +3698,64 @@ $sidebar-width: 260px;
     & .MuiOutlinedInput-root {
       border-radius: 10px;
       font-size: 14px;
-      color: #111827;
-      background: #fff;
+      color: var(--adm-text-1);
+      background: var(--adm-card-bg);
       height: 42px;
       & fieldset {
-        border-color: #e5e7eb;
+        border-color: var(--adm-border-2);
       }
       &:hover fieldset {
-        border-color: #c7d2fe;
+        border-color: var(--adm-accent-border);
       }
       &.Mui-focused fieldset {
-        border-color: #6366f1;
+        border-color: var(--adm-accent);
         border-width: 1.5px;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+        box-shadow: 0 0 0 3px rgba(var(--adm-accent-rgb), 0.08);
       }
     }
     & .MuiInputLabel-root {
       font-size: 13px;
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
     & .MuiInputLabel-root.Mui-focused {
-      color: #6366f1;
+      color: var(--adm-accent);
     }
     & .MuiInputBase-input {
-      color: #111827;
+      color: var(--adm-text-1);
     }
   }
 
   .admin-svc-select {
     border-radius: 10px !important;
     font-size: 14px !important;
-    color: #111827 !important;
-    background: #fff !important;
+    color: var(--adm-text-1) !important;
+    background: var(--adm-card-bg) !important;
     height: 42px !important;
     & fieldset {
-      border-color: #e5e7eb;
+      border-color: var(--adm-border-2);
     }
     &:hover fieldset {
-      border-color: #c7d2fe;
+      border-color: var(--adm-accent-border);
     }
     &.Mui-focused fieldset {
-      border-color: #6366f1;
+      border-color: var(--adm-accent);
       border-width: 1.5px;
     }
     .MuiSelect-icon {
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
   }
 
   .admin-svc-adornment-text {
     font-size: 14px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   // Drawer footer
   .admin-svc-drawer-footer {
     padding: 16px 24px;
-    background: #fff;
-    border-top: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-top: 1px solid var(--adm-border);
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -3638,32 +3765,32 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 20px !important;
     &:hover {
-      background: #f9fafb !important;
+      background: var(--adm-surface-1) !important;
     }
   }
 
   .admin-svc-save-btn {
-    color: #ffffff !important;
+    color: #fff !important;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 700 !important;
-    background-color: #6366f1 !important;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+    background-color: var(--adm-accent) !important;
+    box-shadow: 0 2px 8px rgba(var(--adm-accent-rgb), 0.35) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 24px !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
     }
     &.Mui-disabled {
-      background-color: #e5e7eb !important;
-      color: #9ca3af !important;
+      background-color: var(--adm-border-2) !important;
+      color: var(--adm-text-3) !important;
       box-shadow: none !important;
     }
   }
@@ -3671,8 +3798,8 @@ $sidebar-width: 260px;
   // ─── CommunityModerator ───────────────────────────────────────────────────────
 
   .admin-cm-write-btn {
-    background-color: #6366f1 !important;
-    color: #ffffff !important;
+    background-color: var(--adm-accent) !important;
+    color: #fff !important;
     text-transform: none !important;
     font-weight: 700 !important;
     font-size: 13px !important;
@@ -3680,7 +3807,7 @@ $sidebar-width: 260px;
     height: 36px !important;
     box-shadow: none !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
       box-shadow: none !important;
     }
   }
@@ -3688,21 +3815,21 @@ $sidebar-width: 260px;
   // Tabs
   .admin-cm-tabs {
     padding: 0 16px;
-    border-bottom: 1px solid #e8ecf0;
+    border-bottom: 1px solid var(--adm-border);
     min-height: 46px;
     .MuiTab-root {
       font-size: 13px;
       font-weight: 600;
-      color: #6b7280;
+      color: var(--adm-text-2);
       text-transform: none;
       min-height: 46px;
       padding: 0 16px;
     }
     .Mui-selected {
-      color: #6366f1;
+      color: var(--adm-accent);
     }
     .MuiTabs-indicator {
-      background: #6366f1;
+      background: var(--adm-accent);
       height: 2.5px;
       border-radius: 3px 3px 0 0;
     }
@@ -3724,19 +3851,19 @@ $sidebar-width: 260px;
 
   // Post card
   .admin-cm-post-card {
-    background: #fff;
-    border: 1px solid #f0f1f5;
+    background: var(--adm-card-bg);
+    border: 1px solid var(--adm-surface-3);
     border-radius: 12px;
     overflow: hidden;
     transition:
       border-color 0.15s,
       box-shadow 0.15s;
     &:hover {
-      border-color: #c7d2fe;
-      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.06);
+      border-color: var(--adm-accent-border);
+      box-shadow: 0 2px 8px rgba(var(--adm-accent-rgb), 0.06);
     }
     &.hidden-post {
-      border-color: #fef3c7;
+      border-color: var(--adm-warning-bg-2);
     }
   }
 
@@ -3754,7 +3881,7 @@ $sidebar-width: 260px;
     margin: 12px;
     margin-right: 0;
     border-radius: 8px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
 
     img {
       width: 100%;
@@ -3777,7 +3904,7 @@ $sidebar-width: 260px;
   .admin-cm-post-title {
     font-size: 13px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -3786,7 +3913,7 @@ $sidebar-width: 260px;
 
   .admin-cm-post-desc {
     font-size: 11.5px;
-    color: #6b7280;
+    color: var(--adm-text-2);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -3799,17 +3926,17 @@ $sidebar-width: 260px;
 
   .admin-cm-author-handle {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-cm-dot {
     font-size: 10.5px;
-    color: #d1d5db;
+    color: var(--adm-border-3);
   }
 
   .admin-cm-date {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     white-space: nowrap;
   }
 
@@ -3830,12 +3957,12 @@ $sidebar-width: 260px;
   .admin-cm-empty-title {
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var(--adm-text-1b);
   }
 
   .admin-cm-empty-sub {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 4px;
   }
 
@@ -3843,14 +3970,14 @@ $sidebar-width: 260px;
   .admin-cm-write-paper {
     width: 520px;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
-    background: #f4f5fa;
+    background: var(--adm-page-bg);
     overflow-y: auto;
   }
 
   .admin-cm-write-header {
     padding: 20px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-bottom: 1px solid var(--adm-border);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -3868,20 +3995,20 @@ $sidebar-width: 260px;
   .admin-cm-write-title {
     font-size: 16px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
     line-height: 1.2;
   }
 
   .admin-cm-write-subtitle {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 1.6px;
   }
 
   .admin-cm-write-close-btn {
-    color: #6b7280 !important;
+    color: var(--adm-text-2) !important;
     &:hover {
-      background: #f3f4f6 !important;
+      background: var(--adm-surface-2) !important;
     }
   }
 
@@ -3893,21 +4020,21 @@ $sidebar-width: 260px;
 
   // Content section card
   .admin-cm-write-section {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
     overflow: hidden;
   }
 
   .admin-cm-write-section-header {
     padding: 12px 20px;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--adm-surface-2);
   }
 
   .admin-cm-write-section-title {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -3920,7 +4047,7 @@ $sidebar-width: 260px;
   .admin-cm-write-field-label {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
@@ -3929,15 +4056,16 @@ $sidebar-width: 260px;
     & .MuiOutlinedInput-root {
       border-radius: 10px;
       font-size: 15px;
-      background: #fafafa;
+      color: var(--adm-text-1);
+      background: var(--adm-surface-1);
       & fieldset {
-        border-color: #e5e7eb;
+        border-color: var(--adm-border-2);
       }
       &:hover fieldset {
-        border-color: #c7d2fe;
+        border-color: var(--adm-accent-border);
       }
       &.Mui-focused fieldset {
-        border-color: #6366f1;
+        border-color: var(--adm-accent);
         border-width: 1.5px;
       }
     }
@@ -3947,16 +4075,17 @@ $sidebar-width: 260px;
     & .MuiOutlinedInput-root {
       border-radius: 10px;
       font-size: 14px;
-      background: #fafafa;
+      color: var(--adm-text-1);
+      background: var(--adm-surface-1);
       height: auto !important;
       & fieldset {
-        border-color: #e5e7eb;
+        border-color: var(--adm-border-2);
       }
       &:hover fieldset {
-        border-color: #c7d2fe;
+        border-color: var(--adm-accent-border);
       }
       &.Mui-focused fieldset {
-        border-color: #6366f1;
+        border-color: var(--adm-accent);
         border-width: 1.5px;
       }
     }
@@ -3967,7 +4096,7 @@ $sidebar-width: 260px;
     position: relative;
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--adm-border-2);
   }
 
   .admin-cm-img-overlay-btns {
@@ -3995,29 +4124,29 @@ $sidebar-width: 260px;
     font-size: 11px !important;
     text-transform: none !important;
     color: #fff !important;
-    background: rgba(239, 68, 68, 0.75) !important;
+    background: rgba(var(--adm-danger-rgb), 0.75) !important;
     border-radius: 8px !important;
     height: 30px !important;
     padding: 0 12px !important;
     font-weight: 600 !important;
     backdrop-filter: blur(4px);
     &:hover {
-      background: rgba(220, 38, 38, 0.9) !important;
+      background: rgba(var(--adm-danger-strong-rgb), 0.9) !important;
     }
   }
 
   .admin-cm-img-upload-zone {
-    border: 2px dashed #e5e7eb;
+    border: 2px dashed var(--adm-border-2);
     border-radius: 12px;
     padding: 32px 0;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background: #fafafa;
+    background: var(--adm-surface-1);
     transition: all 0.2s;
     &:hover {
-      border-color: #6366f1;
-      background: #eef2ff;
+      border-color: var(--adm-accent);
+      background: var(--adm-accent-tint-1);
     }
   }
 
@@ -4025,7 +4154,7 @@ $sidebar-width: 260px;
     width: 44px;
     height: 44px;
     border-radius: 12px;
-    background: #e5e7eb;
+    background: var(--adm-border-2);
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
@@ -4034,20 +4163,20 @@ $sidebar-width: 260px;
   .admin-cm-img-upload-label {
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: var(--adm-text-1b);
   }
 
   .admin-cm-img-upload-hint {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 4px;
   }
 
   // Write drawer footer
   .admin-cm-write-footer {
     padding: 16px 24px;
-    background: #fff;
-    border-top: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-top: 1px solid var(--adm-border);
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -4057,13 +4186,13 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 20px !important;
     &:hover {
-      background: #f9fafb !important;
+      background: var(--adm-surface-1) !important;
     }
   }
 
@@ -4071,18 +4200,18 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 700 !important;
-    color: #ffffff !important;
-    background-color: #6366f1 !important;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
+    color: #fff !important;
+    background-color: var(--adm-accent) !important;
+    box-shadow: 0 2px 8px rgba(var(--adm-accent-rgb), 0.3) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 24px !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
     }
     &.Mui-disabled {
-      background-color: #e5e7eb !important;
-      color: #9ca3af !important;
+      background-color: var(--adm-border-2) !important;
+      color: var(--adm-text-3) !important;
       box-shadow: none !important;
     }
   }
@@ -4091,23 +4220,23 @@ $sidebar-width: 260px;
   .admin-cm-detail-paper {
     width: 500px;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
-    background: #f4f5fa;
+    background: var(--adm-page-bg);
     overflow-y: auto;
   }
 
   .admin-cm-detail-header {
     padding: 16px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-bottom: 1px solid var(--adm-border);
     position: sticky;
     top: 0;
     z-index: 10;
   }
 
   .admin-cm-detail-close-btn {
-    color: #6b7280 !important;
+    color: var(--adm-text-2) !important;
     &:hover {
-      background: #f3f4f6 !important;
+      background: var(--adm-surface-2) !important;
     }
   }
 
@@ -4121,14 +4250,14 @@ $sidebar-width: 260px;
     border-radius: 14px;
     overflow: hidden;
     height: 200px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
     flex-shrink: 0;
   }
 
   .admin-cm-post-content-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
     overflow: hidden;
   }
 
@@ -4144,7 +4273,7 @@ $sidebar-width: 260px;
   .admin-cm-post-full-title {
     font-size: 19px;
     font-weight: 800;
-    color: #111827;
+    color: var(--adm-text-1);
     line-height: 1.4;
   }
 
@@ -4164,39 +4293,39 @@ $sidebar-width: 260px;
   .admin-cm-author-name {
     font-size: 13px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-cm-author-date {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   .admin-cm-desc-box {
-    background: #fafafa;
+    background: var(--adm-surface-1);
     border-radius: 10px;
     padding: 16px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
   }
 
   .admin-cm-desc-text {
     font-size: 13.5px;
-    color: #374151;
+    color: var(--adm-text-1b);
     line-height: 1.8;
     white-space: pre-wrap;
   }
 
   .admin-cm-info-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
     padding: 16px;
   }
 
   .admin-cm-info-heading {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 12px;
@@ -4204,25 +4333,25 @@ $sidebar-width: 260px;
 
   .admin-cm-info-row {
     padding: 4px 0;
-    border-bottom: 1px solid #f9fafb;
+    border-bottom: 1px solid var(--adm-surface-1);
   }
 
   .admin-cm-info-label {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     font-weight: 600;
   }
 
   .admin-cm-info-value {
     font-size: 12px;
-    color: #374151;
+    color: var(--adm-text-1b);
     font-weight: 700;
   }
 
   .admin-cm-stats-row {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
   }
 
   .admin-cm-stat-cell {
@@ -4231,30 +4360,30 @@ $sidebar-width: 260px;
     gap: 3.2px;
     padding: 16px 0;
     &.bordered {
-      border-right: 1px solid #f0f1f5;
+      border-right: 1px solid var(--adm-surface-3);
     }
   }
 
   .admin-cm-stat-value {
     font-size: 22px;
     font-weight: 800;
-    color: #111827;
+    color: var(--adm-text-1);
     letter-spacing: -0.02em;
   }
 
   .admin-cm-stat-label {
     font-size: 10px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
 
   // Moderation card
   .admin-cm-mod-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
     padding: 16px;
     gap: 12px;
   }
@@ -4262,7 +4391,7 @@ $sidebar-width: 260px;
   .admin-cm-mod-heading {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -4271,12 +4400,12 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-weight: 700 !important;
     font-size: 13px !important;
-    border-color: #fef3c7 !important;
-    color: #d97706 !important;
+    border-color: var(--adm-warning-bg-2) !important;
+    color: var(--adm-warning) !important;
     border-radius: 10px !important;
     height: 42px !important;
     &:hover {
-      background: #fffbeb !important;
+      background: var(--adm-warning-bg) !important;
     }
   }
 
@@ -4284,12 +4413,12 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-weight: 700 !important;
     font-size: 13px !important;
-    border-color: #d1fae5 !important;
-    color: #059669 !important;
+    border-color: var(--adm-success-bg-2) !important;
+    color: var(--adm-success) !important;
     border-radius: 10px !important;
     height: 42px !important;
     &:hover {
-      background: #ecfdf5 !important;
+      background: var(--adm-success-bg) !important;
     }
   }
 
@@ -4297,20 +4426,20 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-weight: 700 !important;
     font-size: 13px !important;
-    border-color: #fee2e2 !important;
-    color: #ef4444 !important;
+    border-color: var(--adm-danger-bg-2) !important;
+    color: var(--adm-danger) !important;
     border-radius: 10px !important;
     height: 42px !important;
     &:hover {
-      background: #fef2f2 !important;
+      background: var(--adm-danger-bg) !important;
     }
   }
 
   // Detail footer
   .admin-cm-detail-footer {
     padding: 16px 24px;
-    background: #fff;
-    border-top: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-top: 1px solid var(--adm-border);
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -4320,13 +4449,13 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 24px !important;
     &:hover {
-      background: #f9fafb !important;
+      background: var(--adm-surface-1) !important;
     }
   }
 
@@ -4335,21 +4464,21 @@ $sidebar-width: 260px;
   // Shared tabs style (same as admin-cm-tabs)
   .admin-cs-tabs {
     padding: 0 16px;
-    border-bottom: 1px solid #e8ecf0;
+    border-bottom: 1px solid var(--adm-border);
     min-height: 46px;
     .MuiTab-root {
       font-size: 13px;
       font-weight: 600;
-      color: #6b7280;
+      color: var(--adm-text-2);
       text-transform: none;
       min-height: 46px;
       padding: 0 16px;
     }
     .Mui-selected {
-      color: #6366f1;
+      color: var(--adm-accent);
     }
     .MuiTabs-indicator {
-      background: #6366f1;
+      background: var(--adm-accent);
       height: 2.5px;
       border-radius: 3px 3px 0 0;
     }
@@ -4357,8 +4486,8 @@ $sidebar-width: 260px;
 
   // FAQ tab
   .admin-cs-add-faq-btn {
-    background-color: #6366f1 !important;
-    color: #ffffff !important;
+    background-color: var(--adm-accent) !important;
+    color: #fff !important;
     text-transform: none !important;
     font-weight: 700 !important;
     font-size: 12px !important;
@@ -4366,41 +4495,41 @@ $sidebar-width: 260px;
     height: 34px !important;
     box-shadow: none !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
       box-shadow: none !important;
     }
   }
 
   .admin-cs-category-header {
     padding: 9.6px 24px;
-    background: #fafbfc;
-    border-bottom: 1px solid #f0f1f5;
+    background: var(--adm-surface-1);
+    border-bottom: 1px solid var(--adm-surface-3);
   }
 
   .admin-cs-category-label {
     font-size: 11px;
     font-weight: 700;
-    color: #6366f1;
+    color: var(--adm-accent);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
 
   .admin-cs-faq-item {
-    border-bottom: 1px solid #f0f1f5;
+    border-bottom: 1px solid var(--adm-surface-3);
   }
 
   .admin-cs-faq-row {
     padding: 14.4px 24px;
     cursor: pointer;
     &:hover {
-      background: #fafbff;
+      background: var(--adm-surface-1);
     }
   }
 
   .admin-cs-faq-title {
     font-size: 13px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -4408,7 +4537,7 @@ $sidebar-width: 260px;
 
   .admin-cs-faq-desc {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 1.6px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -4416,25 +4545,25 @@ $sidebar-width: 260px;
   }
 
   .admin-cs-expand-btn {
-    color: #9ca3af !important;
+    color: var(--adm-text-3) !important;
   }
 
   .admin-cs-faq-expanded {
     padding: 4px 24px 16px;
-    background: #fafbff;
+    background: var(--adm-surface-1);
   }
 
   .admin-cs-faq-answer-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 10px;
-    border: 1px solid #e8ecf0;
+    border: 1px solid var(--adm-border);
     padding: 16px;
     gap: 12px;
   }
 
   .admin-cs-faq-answer-text {
     font-size: 13px;
-    color: #374151;
+    color: var(--adm-text-1b);
     line-height: 1.7;
   }
 
@@ -4442,14 +4571,14 @@ $sidebar-width: 260px;
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #6366f1;
+    background: var(--adm-accent);
     margin-top: 7px;
     flex-shrink: 0;
   }
 
   .admin-cs-bullet-text {
     font-size: 12.5px;
-    color: #6b7280;
+    color: var(--adm-text-2);
     line-height: 1.6;
   }
 
@@ -4460,19 +4589,19 @@ $sidebar-width: 260px;
 
   .admin-cs-empty-text {
     font-size: 14px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
   }
 
   // FAQ delete dialog
   .admin-cs-dialog-title {
     font-weight: 700 !important;
     font-size: 16px !important;
-    color: #111827 !important;
+    color: var(--adm-text-1) !important;
   }
 
   .admin-cs-dialog-body {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--adm-text-2);
   }
 
   .admin-cs-dialog-actions {
@@ -4482,20 +4611,20 @@ $sidebar-width: 260px;
 
   .admin-cs-dialog-cancel-btn {
     text-transform: none !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 8px !important;
   }
 
   .admin-cs-dialog-delete-btn {
     text-transform: none !important;
     font-weight: 700 !important;
-    color: #ffffff !important;
-    background-color: #ef4444 !important;
+    color: #fff !important;
+    background-color: var(--adm-danger) !important;
     box-shadow: none !important;
     border-radius: 8px !important;
     &:hover {
-      background-color: #dc2626 !important;
+      background-color: var(--adm-danger-strong) !important;
       box-shadow: none !important;
     }
   }
@@ -4504,14 +4633,14 @@ $sidebar-width: 260px;
   .admin-cs-drawer-paper {
     width: 520px;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
-    background: #f4f5fa;
+    background: var(--adm-page-bg);
     overflow-y: auto;
   }
 
   .admin-cs-drawer-header {
     padding: 20px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-bottom: 1px solid var(--adm-border);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -4520,19 +4649,19 @@ $sidebar-width: 260px;
   .admin-cs-drawer-title {
     font-size: 16px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
   }
 
   .admin-cs-drawer-subtitle {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 1.6px;
   }
 
   .admin-cs-drawer-close-btn {
-    color: #6b7280 !important;
+    color: var(--adm-text-2) !important;
     &:hover {
-      background: #f3f4f6 !important;
+      background: var(--adm-surface-2) !important;
     }
   }
 
@@ -4544,8 +4673,8 @@ $sidebar-width: 260px;
 
   .admin-cs-drawer-footer {
     padding: 16px 24px;
-    background: #fff;
-    border-top: 1px solid #e8ecf0;
+    background: var(--adm-card-bg);
+    border-top: 1px solid var(--adm-border);
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -4555,13 +4684,13 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    color: #6b7280 !important;
-    border: 1px solid #e8ecf0 !important;
+    color: var(--adm-text-2) !important;
+    border: 1px solid var(--adm-border) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 20px !important;
     &:hover {
-      background: #f9fafb !important;
+      background: var(--adm-surface-1) !important;
     }
   }
 
@@ -4569,27 +4698,27 @@ $sidebar-width: 260px;
     text-transform: none !important;
     font-size: 13px !important;
     font-weight: 700 !important;
-    color: #ffffff !important;
-    background-color: #6366f1 !important;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3) !important;
+    color: #fff !important;
+    background-color: var(--adm-accent) !important;
+    box-shadow: 0 2px 8px rgba(var(--adm-accent-rgb), 0.3) !important;
     border-radius: 10px !important;
     height: 40px !important;
     padding: 0 24px !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
     }
     &.Mui-disabled {
-      background-color: #e5e7eb !important;
-      color: #9ca3af !important;
+      background-color: var(--adm-border-2) !important;
+      color: var(--adm-text-3) !important;
       box-shadow: none !important;
     }
   }
 
   // FAQ form
   .admin-cs-form-section-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 14px;
-    border: 1px solid #f0f1f5;
+    border: 1px solid var(--adm-surface-3);
     padding: 20px;
     gap: 16px;
   }
@@ -4597,7 +4726,7 @@ $sidebar-width: 260px;
   .admin-cs-form-section-title {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -4605,7 +4734,7 @@ $sidebar-width: 260px;
   .admin-cs-form-field-label {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
@@ -4613,7 +4742,7 @@ $sidebar-width: 260px;
   .admin-cs-form-field-label-dark {
     font-size: 11px;
     font-weight: 700;
-    color: #6b7280;
+    color: var(--adm-text-2);
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
@@ -4622,20 +4751,20 @@ $sidebar-width: 260px;
     height: 42px !important;
     border-radius: 10px !important;
     font-size: 14px !important;
-    color: #111827 !important;
-    background: #fafafa !important;
+    color: var(--adm-text-1) !important;
+    background: var(--adm-surface-1) !important;
     & fieldset {
-      border-color: #e5e7eb;
+      border-color: var(--adm-border-2);
     }
     &:hover fieldset {
-      border-color: #c7d2fe;
+      border-color: var(--adm-accent-border);
     }
     &.Mui-focused fieldset {
-      border-color: #6366f1;
+      border-color: var(--adm-accent);
       border-width: 1.5px;
     }
     .MuiSelect-icon {
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
   }
 
@@ -4643,28 +4772,28 @@ $sidebar-width: 260px;
     & .MuiOutlinedInput-root {
       border-radius: 10px;
       font-size: 14px;
-      color: #111827;
-      background: #fafafa;
+      color: var(--adm-text-1);
+      background: var(--adm-surface-1);
       & fieldset {
-        border-color: #e5e7eb;
+        border-color: var(--adm-border-2);
       }
       &:hover fieldset {
-        border-color: #c7d2fe;
+        border-color: var(--adm-accent-border);
       }
       &.Mui-focused fieldset {
-        border-color: #6366f1;
+        border-color: var(--adm-accent);
         border-width: 1.5px;
       }
     }
     & .MuiInputLabel-root {
       font-size: 13px;
-      color: #9ca3af;
+      color: var(--adm-text-3);
     }
     & .MuiInputLabel-root.Mui-focused {
-      color: #6366f1;
+      color: var(--adm-accent);
     }
     & .MuiInputBase-input {
-      color: #111827;
+      color: var(--adm-text-1);
     }
   }
 
@@ -4693,7 +4822,7 @@ $sidebar-width: 260px;
     width: 20px;
     height: 20px;
     border-radius: 6px;
-    background: #eef2ff;
+    background: var(--adm-accent-tint-1);
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
@@ -4702,39 +4831,39 @@ $sidebar-width: 260px;
   .admin-cs-step-num-text {
     font-size: 9px;
     font-weight: 800;
-    color: #6366f1;
+    color: var(--adm-accent);
   }
 
   .admin-cs-add-step-btn {
     font-size: 11px !important;
     text-transform: none !important;
-    color: #6366f1 !important;
+    color: var(--adm-accent) !important;
     font-weight: 600 !important;
   }
 
   .admin-cs-step-instructions-text {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
 
   .admin-cs-step-instructions-sub {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     margin-top: 2.4px;
   }
 
   .admin-cs-remove-bullet-btn {
-    color: #ef4444 !important;
+    color: var(--adm-danger) !important;
     flex-shrink: 0;
   }
 
   // Notices tab
   .admin-cs-add-notice-btn {
-    color: #ffffff !important;
-    background-color: #6366f1 !important;
+    color: #fff !important;
+    background-color: var(--adm-accent) !important;
     text-transform: none !important;
     font-weight: 700 !important;
     font-size: 12px !important;
@@ -4742,27 +4871,27 @@ $sidebar-width: 260px;
     height: 34px !important;
     box-shadow: none !important;
     &:hover {
-      background-color: #5254cc !important;
+      background-color: var(--adm-accent-hover) !important;
       box-shadow: none !important;
     }
   }
 
   .admin-cs-notice-item {
-    border-bottom: 1px solid #f0f1f5;
+    border-bottom: 1px solid var(--adm-surface-3);
   }
 
   .admin-cs-notice-row {
     padding: 14.4px 24px;
     cursor: pointer;
     &:hover {
-      background: #fafbff;
+      background: var(--adm-surface-1);
     }
   }
 
   .admin-cs-notice-title {
     font-size: 13px;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text-1);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -4770,7 +4899,7 @@ $sidebar-width: 260px;
 
   .admin-cs-notice-summary {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -4778,19 +4907,19 @@ $sidebar-width: 260px;
 
   .admin-cs-notice-date {
     font-size: 11px;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     flex-shrink: 0;
   }
 
   .admin-cs-notice-expanded {
     padding: 4px 24px 16px;
-    background: #fafbff;
+    background: var(--adm-surface-1);
   }
 
   .admin-cs-notice-expanded-card {
-    background: #fff;
+    background: var(--adm-card-bg);
     border-radius: 10px;
-    border: 1px solid #e8ecf0;
+    border: 1px solid var(--adm-border);
     padding: 16px;
     gap: 12px;
   }
@@ -4798,17 +4927,17 @@ $sidebar-width: 260px;
   .admin-cs-notice-summary-text {
     font-size: 12px;
     font-weight: 600;
-    color: #6b7280;
+    color: var(--adm-text-2);
     font-style: italic;
   }
 
   .admin-cs-notice-divider {
-    border-color: #f0f1f5 !important;
+    border-color: var(--adm-surface-3) !important;
   }
 
   .admin-cs-notice-para {
     font-size: 13px;
-    color: #374151;
+    color: var(--adm-text-1b);
     line-height: 1.75;
   }
 
@@ -4838,7 +4967,7 @@ $sidebar-width: 260px;
     width: 22px;
     height: 22px;
     border-radius: 6px;
-    background: #eef2ff;
+    background: var(--adm-accent-tint-1);
     align-items: center;
     justify-content: center;
     margin-top: 10px;
@@ -4848,18 +4977,18 @@ $sidebar-width: 260px;
   .admin-cs-para-num-text {
     font-size: 10px;
     font-weight: 700;
-    color: #6366f1;
+    color: var(--adm-accent);
   }
 
   .admin-cs-add-para-btn {
     font-size: 11px !important;
     text-transform: none !important;
-    color: #6366f1 !important;
+    color: var(--adm-accent) !important;
     font-weight: 600 !important;
   }
 
   .admin-cs-remove-para-btn {
-    color: #ef4444 !important;
+    color: var(--adm-danger) !important;
     margin-top: 6px !important;
     flex-shrink: 0;
   }
@@ -4867,7 +4996,7 @@ $sidebar-width: 260px;
   .admin-cs-notice-badge-type-heading {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -4875,7 +5004,7 @@ $sidebar-width: 260px;
   .admin-cs-notice-full-content-heading {
     font-size: 11px;
     font-weight: 700;
-    color: #9ca3af;
+    color: var(--adm-text-3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -4892,51 +5021,51 @@ $sidebar-width: 260px;
 
   .admin-icon-13-blue {
     font-size: 13px !important;
-    color: #3b82f6 !important;
+    color: var(--adm-info) !important;
   }
   .admin-icon-16-blue {
     font-size: 16px !important;
-    color: #3b82f6 !important;
+    color: var(--adm-info) !important;
   }
   .admin-icon-13-gray {
     font-size: 13px !important;
-    color: #9ca3af !important;
+    color: var(--adm-text-3) !important;
   }
   .admin-icon-16-indigo {
     font-size: 16px !important;
-    color: #6366f1 !important;
+    color: var(--adm-accent) !important;
   }
   .admin-icon-20-indigo {
     font-size: 20px !important;
-    color: #6366f1 !important;
+    color: var(--adm-accent) !important;
   }
   .admin-icon-18-indigo {
     font-size: 18px !important;
-    color: #6366f1 !important;
+    color: var(--adm-accent) !important;
   }
   .admin-icon-11-gray {
     font-size: 11px !important;
-    color: #9ca3af !important;
+    color: var(--adm-text-3) !important;
   }
   .admin-icon-10-gray {
     font-size: 10px !important;
-    color: #9ca3af !important;
+    color: var(--adm-text-3) !important;
   }
   .admin-icon-22-gray {
     font-size: 22px !important;
-    color: #9ca3af !important;
+    color: var(--adm-text-3) !important;
   }
   .admin-icon-17-red {
     font-size: 17px !important;
-    color: #ef4444 !important;
+    color: var(--adm-danger) !important;
   }
   .admin-icon-18-green {
     font-size: 18px !important;
-    color: #059669 !important;
+    color: var(--adm-success) !important;
   }
   .admin-icon-17-amber {
     font-size: 17px !important;
-    color: #f59e0b !important;
+    color: var(--adm-warning) !important;
   }
   .admin-icon-15 {
     font-size: 15px !important;
@@ -4955,7 +5084,7 @@ $sidebar-width: 260px;
     justify-content: center;
     padding: 14px 16px;
     border-top: 1px solid $card-border;
-    background: #fafbfc;
+    background: var(--adm-surface-1);
 
     .MuiPaginationItem-root {
       font-family: $font;
@@ -4965,7 +5094,7 @@ $sidebar-width: 260px;
 
       &.Mui-selected {
         background: $accent;
-        color: #ffffff;
+        color: #fff;
         font-weight: 700;
 
         &:hover {
@@ -5001,7 +5130,66 @@ $sidebar-width: 260px;
     color: $text-1;
     padding: 10px 12px;
     border-radius: 8px;
-    background: #f9fafb;
+    background: var(--adm-surface-1);
     border: 1px solid $card-border;
   }
+}
+
+// ─── Admin Dark Mode ─────────────────────────────────────────────────────────
+
+html[data-admin-theme="dark"] {
+  // Surfaces
+  --adm-page-bg: #0d0c14;
+  --adm-card-bg: #161320;
+  --adm-surface-1: #1c1829;
+  --adm-surface-2: #211c30;
+  --adm-surface-3: #1f1a2c;
+
+  // Borders
+  --adm-border: rgba(255, 255, 255, 0.08);
+  --adm-border-2: rgba(255, 255, 255, 0.1);
+  --adm-border-3: rgba(255, 255, 255, 0.16);
+
+  // Text
+  --adm-text-1: #f1eefb;
+  --adm-text-1b: #d3c9e6;
+  --adm-text-2: #a79fc0;
+  --adm-text-3: #8981a0;
+
+  // Accent (indigo)
+  --adm-accent: #8688f5;
+  --adm-accent-hover: #a1a3f8;
+  --adm-accent-rgb: 134, 136, 245;
+  --adm-accent-tint-1: rgba(134, 136, 245, 0.14);
+  --adm-accent-tint-2: rgba(134, 136, 245, 0.2);
+  --adm-accent-tint-3: rgba(134, 136, 245, 0.1);
+  --adm-accent-tint-4: rgba(134, 136, 245, 0.3);
+  --adm-accent-border: rgba(134, 136, 245, 0.34);
+  --adm-accent-tint-violet: rgba(168, 145, 245, 0.12);
+
+  // Status — danger (red)
+  --adm-danger: #f87171;
+  --adm-danger-strong: #ef4444;
+  --adm-danger-bg: rgba(248, 113, 113, 0.12);
+  --adm-danger-bg-2: rgba(248, 113, 113, 0.2);
+  --adm-danger-rgb: 248, 113, 113;
+  --adm-danger-strong-rgb: 239, 68, 68;
+
+  // Status — success (green)
+  --adm-success: #34d399;
+  --adm-success-bg: rgba(52, 211, 153, 0.12);
+  --adm-success-bg-2: rgba(52, 211, 153, 0.2);
+
+  // Status — warning (amber)
+  --adm-warning: #fbbf24;
+  --adm-warning-bg: rgba(251, 191, 36, 0.12);
+  --adm-warning-bg-2: rgba(251, 191, 36, 0.2);
+
+  // Status — info (blue)
+  --adm-info: #60a5fa;
+  --adm-info-bg: rgba(96, 165, 250, 0.14);
+
+  // Sidebar (stays dark in both modes — subtle shift only)
+  --adm-sidebar-bg: #0a0912;
+  --adm-sidebar-text: rgba(255, 255, 255, 0.55);
 }

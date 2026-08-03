@@ -519,8 +519,8 @@ const ProductsManager = () => {
                           fontWeight: 600,
                           color:
                             product.productQuantity === 0
-                              ? "#EF4444"
-                              : "#374151",
+                              ? "var(--adm-danger)"
+                              : "var(--adm-text-1b)",
                         }}
                       >
                         {product.productQuantity === 0
@@ -808,11 +808,14 @@ const ProductsManager = () => {
               sx={{
                 borderRadius: "12px",
                 border: "1px solid",
-                borderColor: form.productDiscount > 0 ? "#C7D2FE" : "#E8ECF0",
+                borderColor:
+                  form.productDiscount > 0
+                    ? "var(--adm-accent-border)"
+                    : "var(--adm-border)",
                 background:
                   form.productDiscount > 0
-                    ? "linear-gradient(135deg,#EEF2FF,#F5F3FF)"
-                    : "#F9FAFB",
+                    ? "linear-gradient(135deg,var(--adm-accent-tint-1),var(--adm-accent-tint-violet))"
+                    : "var(--adm-surface-1)",
                 p: 2,
               }}
             >
@@ -920,7 +923,7 @@ const ProductsManager = () => {
               onChange={(e) => handleChange("productShortDesc", e.target.value)}
               size="small"
               fullWidth
-              inputProps={{ maxLength: 250, style: { color: "#111827" } }}
+              inputProps={{ maxLength: 250 }}
               helperText="Shown on the shop card · 3–250 characters"
               className="admin-prd-input"
             />
@@ -932,7 +935,6 @@ const ProductsManager = () => {
               multiline
               rows={3}
               fullWidth
-              inputProps={{ style: { color: "#111827" } }}
               InputProps={{
                 style: {
                   height: "auto",
@@ -1014,7 +1016,7 @@ const ProductsManager = () => {
                   <CloudUploadIcon
                     sx={{
                       fontSize: 22,
-                      color: isDragging ? "#fff" : "#9CA3AF",
+                      color: isDragging ? "#fff" : "var(--adm-text-3)",
                     }}
                   />
                 </Stack>

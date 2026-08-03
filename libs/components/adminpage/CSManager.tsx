@@ -678,7 +678,6 @@ const FaqTab = () => {
             multiline
             rows={4}
             fullWidth
-            inputProps={{ style: { color: "#111827" } }}
             InputProps={{
               style: {
                 height: "auto",
@@ -724,7 +723,6 @@ const FaqTab = () => {
                   size="small"
                   fullWidth
                   placeholder={`Bullet point ${i + 1}`}
-                  inputProps={{ style: { color: "#111827" } }}
                   className="admin-cs-bullet-input-h38"
                 />
                 {form.bullets.length > 1 && (
@@ -1133,20 +1131,22 @@ const NoticesTab = () => {
                     className="admin-cs-badge-option"
                     sx={{
                       border: "1.5px solid",
-                      borderColor: active ? bs.color : "#E5E7EB",
-                      background: active ? bs.bg : "#FAFAFA",
+                      borderColor: active ? bs.color : "var(--adm-border-2)",
+                      background: active ? bs.bg : "var(--adm-surface-1)",
                       "&:hover": { borderColor: bs.color, background: bs.bg },
                     }}
                   >
                     <Stack
                       className="admin-cs-badge-dot"
-                      sx={{ background: active ? bs.color : "#D1D5DB" }}
+                      sx={{
+                        background: active ? bs.color : "var(--adm-border-3)",
+                      }}
                     />
                     <Typography
                       sx={{
                         fontSize: "13px",
                         fontWeight: 700,
-                        color: active ? bs.color : "#9CA3AF",
+                        color: active ? bs.color : "var(--adm-text-3)",
                       }}
                     >
                       {t(`cs.noticeType.${type}`)}
@@ -1195,7 +1195,6 @@ const NoticesTab = () => {
               size="small"
               fullWidth
               placeholder={t("admin.cs.phNoticeTitle")}
-              inputProps={{ style: { color: "#111827" } }}
               className="admin-cs-input-h42"
             />
           </Stack>
@@ -1210,7 +1209,7 @@ const NoticesTab = () => {
                   textTransform: "none",
                   letterSpacing: 0,
                   fontSize: "10px",
-                  color: "#9CA3AF",
+                  color: "var(--adm-text-3)",
                 }}
               >
                 · one-line preview shown in list
@@ -1224,7 +1223,6 @@ const NoticesTab = () => {
               size="small"
               fullWidth
               placeholder={t("admin.cs.phShortDesc")}
-              inputProps={{ style: { color: "#111827" } }}
               className="admin-cs-input-h42"
             />
           </Stack>
@@ -1263,7 +1261,6 @@ const NoticesTab = () => {
                 rows={2}
                 fullWidth
                 placeholder={`Paragraph ${i + 1}`}
-                inputProps={{ style: { color: "#111827" } }}
                 InputProps={{
                   style: {
                     height: "auto",
