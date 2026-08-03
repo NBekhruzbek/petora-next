@@ -2,7 +2,6 @@ import { Direction } from "@/libs/enums/common.enum";
 import { PetCategory, PetStatus } from "@/libs/enums/discoveryPet.enum";
 
 export interface DiscoveryPetInput {
-  petSlug: string;
   petCategory: PetCategory;
   petStatus?: PetStatus;
   petName: string;

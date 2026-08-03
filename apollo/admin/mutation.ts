@@ -120,6 +120,72 @@ export const REMOVE_PRODUCT_BY_ADMIN = gql`
 `;
 
 /***********************************
+ *          DISCOVERY PET          *
+ ***********************************/
+
+export const CREATE_DISCOVERY_PET = gql`
+  mutation CreateDiscoveryPet($input: DiscoveryPetInput!) {
+    createDiscoveryPet(input: $input) {
+      _id
+      petCategory
+      petStatus
+      petName
+      petCountry
+      petImage
+      petDifficulty
+      petFerocious
+      petSpace
+      petGroups
+      petDescription
+      petLink
+      petLikes
+      petViews
+      petRank
+      memberId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const UPDATE_DISCOVERY_PET_BY_ADMIN = gql`
+  mutation UpdateDiscoveryPetByAdmin($input: DiscoveryPetUpdate!) {
+    updateDiscoveryPetByAdmin(input: $input) {
+      _id
+      petCategory
+      petStatus
+      petName
+      petCountry
+      petImage
+      petDifficulty
+      petFerocious
+      petSpace
+      petGroups
+      petDescription
+      petLink
+      petLikes
+      petViews
+      petRank
+      memberId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+// Hard delete. Only matches pets already in DELETE status, matching every
+// other removeXByAdmin resolver's two-step pattern.
+export const REMOVE_DISCOVERY_PET_BY_ADMIN = gql`
+  mutation RemoveDiscoveryPetByAdmin($input: String!) {
+    removeDiscoveryPetByAdmin(petId: $input) {
+      _id
+      petName
+      petStatus
+    }
+  }
+`;
+
+/***********************************
  *              ORDER              *
  ***********************************/
 

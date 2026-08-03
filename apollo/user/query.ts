@@ -1085,7 +1085,6 @@ export const GET_DISCOVERY_PET = gql`
   query GetDiscoveryPet($input: String!) {
     getDiscoveryPet(petId: $input) {
       _id
-      petSlug
       petCategory
       petStatus
       petName
@@ -1117,7 +1116,6 @@ export const GET_ALL_DISCOVERY_PETS = gql`
     getAllDiscoveryPets(input: $input) {
       list {
         _id
-        petSlug
         petCategory
         petStatus
         petName

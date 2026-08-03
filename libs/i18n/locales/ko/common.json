@@ -83,6 +83,13 @@
       "ACCESSORIES": "액세서리",
       "OTHER": "기타"
     },
+    "petCategory": {
+      "DOG": "강아지",
+      "CAT": "고양이",
+      "RABBIT": "토끼",
+      "BIRD": "새",
+      "HAMSTER": "햄스터"
+    },
     "productPetType": {
       "DOG": "강아지",
       "CAT": "고양이",

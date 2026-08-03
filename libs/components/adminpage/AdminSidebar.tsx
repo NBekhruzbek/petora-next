@@ -9,6 +9,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import ForumIcon from "@mui/icons-material/Forum";
 import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
+import ExploreIcon from "@mui/icons-material/Explore";
 
 import LogoutIcon from "@mui/icons-material/Logout";
 import PetsIcon from "@mui/icons-material/Pets";
@@ -37,6 +38,11 @@ const navItems: NavItem[] = [
     labelKey: "admin.nav.products",
     icon: <InventoryIcon />,
     href: "/admin/products",
+  },
+  {
+    labelKey: "admin.nav.discovery",
+    icon: <ExploreIcon />,
+    href: "/admin/discovery",
   },
   {
     labelKey: "admin.nav.services",

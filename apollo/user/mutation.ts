@@ -826,7 +826,6 @@ export const LIKE_TARGET_DISCOVERY_PET = gql`
   mutation LikeTargetDiscoveryPet($input: String!) {
     likeTargetDiscoveryPet(petId: $input) {
       _id
-      petSlug
       petLikes
       meLiked {
         memberId

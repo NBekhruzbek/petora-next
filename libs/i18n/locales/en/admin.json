@@ -11,6 +11,7 @@
       "agents": "Agents",
       "services": "Services",
       "products": "Products",
+      "discovery": "Discovery",
       "orders": "Orders",
       "bookings": "Bookings",
       "community": "Community",
@@ -56,7 +57,10 @@
       "published": "Published",
       "description": "Description",
       "serviceTitle": "Service Title",
-      "serviceArea": "Service Area"
+      "serviceArea": "Service Area",
+      "country": "Country",
+      "stats": "Stats",
+      "link": "Link"
     },
     "filter": {
       "allStatuses": "All Statuses",
@@ -165,6 +169,36 @@
       "phTitle": "e.g. Premium Dog Grooming",
       "phZero": "0"
     },
+    "discoveryPets": {
+      "title": "Discovery Pets",
+      "search": "Search pet name…",
+      "added": "Pet added!",
+      "saved": "Pet saved!",
+      "removed": "Pet removed!",
+      "deleted": "Pet deleted for good!",
+      "restored": "Pet restored!",
+      "editTitle": "Edit Discovery Pet",
+      "addTitle": "Add New Discovery Pet",
+      "uploadFailed": "Image upload failed, please retry.",
+      "basicInfo": "Basic Info",
+      "statsSection": "Discovery Stats",
+      "detailsSection": "Description & Link",
+      "imageSection": "Photo",
+      "imageRequired": "A photo is required",
+      "previewLabel": "Live Preview",
+      "previewHint": "This is exactly how the pet will appear in the homepage Discovery section.",
+      "linkHelper": "Destination for the card's Read More button. Leave blank to keep it disabled for visitors.",
+      "phCountry": "e.g. Germany",
+      "phName": "e.g. Chihuahua",
+      "phLink": "https://…",
+      "previewNamePh": "Pet name",
+      "previewCountryPh": "Country",
+      "previewDescPh": "Description will appear here…",
+      "deleteTitle": "Retire this pet?",
+      "deleteBody": "This pet will be taken off the homepage Discovery section and out of the customer-facing list. Restore it any time, or remove it for good once retired.",
+      "removeTitle": "Remove permanently?",
+      "removeBody": "will be erased from the database. This cannot be undone — restore it instead if you only want it off the homepage."
+    },
     "cs": {
       "title": "Customer Support",
       "editFaq": "Edit FAQ",
@@ -223,6 +257,7 @@
       "bookings": "No bookings found",
       "posts": "No posts found",
       "faqs": "No FAQs found",
+      "discoveryPets": "No discovery pets found",
       "tryOtherFilter": "Try changing the board tab or search filter"
     },
     "blockedOnPage": "{{count}} blocked on this page",
@@ -247,7 +282,10 @@
       "delete": "Delete",
       "hide": "Hide",
       "unhide": "Unhide",
-      "addNotice": "Add Notice"
+      "addNotice": "Add Notice",
+      "cancel": "Cancel",
+      "restore": "Restore",
+      "remove": "Remove"
     },
     "count": {
       "item_one": "{{count}} item",

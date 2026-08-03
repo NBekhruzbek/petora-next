@@ -11,6 +11,7 @@
       "agents": "에이전트",
       "services": "서비스",
       "products": "상품",
+      "discovery": "디스커버리",
       "orders": "주문",
       "bookings": "예약",
       "community": "커뮤니티",
@@ -56,7 +57,10 @@
       "published": "게시일",
       "description": "설명",
       "serviceTitle": "서비스명",
-      "serviceArea": "서비스 지역"
+      "serviceArea": "서비스 지역",
+      "country": "국가",
+      "stats": "특성",
+      "link": "링크"
     },
     "filter": {
       "allStatuses": "전체 상태",
@@ -165,6 +169,36 @@
       "phTitle": "예: 프리미엄 강아지 미용",
       "phZero": "0"
     },
+    "discoveryPets": {
+      "title": "디스커버리 반려동물",
+      "search": "동물 이름 검색…",
+      "added": "동물이 등록되었습니다!",
+      "saved": "동물 정보가 저장되었습니다!",
+      "removed": "동물이 삭제되었습니다!",
+      "deleted": "동물이 완전히 삭제되었습니다!",
+      "restored": "동물이 복원되었습니다!",
+      "editTitle": "디스커버리 동물 수정",
+      "addTitle": "새 디스커버리 동물 등록",
+      "uploadFailed": "이미지 업로드에 실패했습니다. 다시 시도해 주세요.",
+      "basicInfo": "기본 정보",
+      "statsSection": "디스커버리 특성",
+      "detailsSection": "설명 · 링크",
+      "imageSection": "사진",
+      "imageRequired": "사진을 등록해 주세요",
+      "previewLabel": "실시간 미리보기",
+      "previewHint": "홈페이지 디스커버리 섹션에 실제로 표시되는 모습입니다.",
+      "linkHelper": "카드의 '더 보기' 버튼이 연결될 주소입니다. 비워두면 방문자에게는 비활성 상태로 보입니다.",
+      "phCountry": "예: 독일",
+      "phName": "예: 치와와",
+      "phLink": "https://…",
+      "previewNamePh": "동물 이름",
+      "previewCountryPh": "국가",
+      "previewDescPh": "설명이 여기에 표시됩니다…",
+      "deleteTitle": "이 동물을 비공개할까요?",
+      "deleteBody": "홈페이지 디스커버리 섹션과 고객 목록에서 제외됩니다. 언제든 복원할 수 있고, 비공개 후에는 완전히 삭제할 수도 있습니다.",
+      "removeTitle": "완전히 삭제할까요?",
+      "removeBody": "항목이 데이터베이스에서 완전히 삭제됩니다. 되돌릴 수 없으니, 홈페이지에서만 제외하려면 복원을 이용해 주세요."
+    },
     "cs": {
       "title": "고객지원",
       "editFaq": "FAQ 수정",
@@ -223,6 +257,7 @@
       "bookings": "예약을 찾을 수 없습니다",
       "posts": "게시글을 찾을 수 없습니다",
       "faqs": "FAQ를 찾을 수 없습니다",
+      "discoveryPets": "디스커버리 동물을 찾을 수 없습니다",
       "tryOtherFilter": "게시판 탭이나 검색 조건을 바꿔보세요"
     },
     "blockedOnPage": "이 페이지에 차단 {{count}}건",
@@ -247,7 +282,10 @@
       "delete": "삭제",
       "hide": "숨기기",
       "unhide": "숨김 해제",
-      "addNotice": "공지 등록"
+      "addNotice": "공지 등록",
+      "cancel": "취소",
+      "restore": "복원",
+      "remove": "삭제"
     },
     "count": {
       "item_other": "{{count}}개",

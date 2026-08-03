@@ -83,6 +83,13 @@
       "ACCESSORIES": "Accessories",
       "OTHER": "Other"
     },
+    "petCategory": {
+      "DOG": "Dogs",
+      "CAT": "Cats",
+      "RABBIT": "Rabbits",
+      "BIRD": "Birds",
+      "HAMSTER": "Hamsters"
+    },
     "productPetType": {
       "DOG": "Dogs",
       "CAT": "Cats",

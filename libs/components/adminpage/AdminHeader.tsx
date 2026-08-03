@@ -10,6 +10,7 @@ const pageNameKeys: Record<string, string> = {
   "/admin/users": "admin.nav.users",
   "/admin/agents": "admin.nav.agents",
   "/admin/products": "admin.nav.products",
+  "/admin/discovery": "admin.nav.discovery",
   "/admin/services": "admin.nav.services",
   "/admin/orders": "admin.nav.orders",
   "/admin/bookings": "admin.nav.bookings",

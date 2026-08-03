@@ -3,7 +3,6 @@ import { MeLiked } from "../like/like";
 
 export interface DiscoveryPet {
   _id: string;
-  petSlug: string;
   petCategory: PetCategory;
   petStatus: PetStatus;
   petName: string;

@@ -14,7 +14,7 @@ import { userVar } from "@/apollo/store";
 import { LIKE_TARGET_DISCOVERY_PET } from "@/apollo/user/mutation";
 import { DiscoveryPet } from "@/libs/types/discovery-pet/discovery-pet";
 import { T } from "@/libs/types/common";
-import { Messages } from "@/libs/config";
+import { Messages, REACT_APP_API_URL } from "@/libs/config";
 import {
   sweetBottomSmallSuccessAlert,
   sweetMixinErrorAlert,
@@ -26,6 +26,11 @@ type DiscoveryCardProps = {
     variables?: Partial<OperationVariables>,
   ) => Promise<ApolloQueryResult<T>>;
 };
+
+const petImageSrc = (path: string) =>
+  path.startsWith("/") || path.startsWith("http")
+    ? path
+    : `${REACT_APP_API_URL}/${path}`;
 
 const DiscoveryCard = ({
   pet,
@@ -46,12 +51,6 @@ const DiscoveryCard = ({
     { key: "groups", value: pet.petGroups },
   ];
 
-  const name = t(`discovery.pets.${pet.petSlug}.name`, {
-    defaultValue: pet.petName,
-  });
-  const description = t(`discovery.pets.${pet.petSlug}.desc`, {
-    defaultValue: pet.petDescription,
-  });
   const country = t(`discovery.country.${pet.petCountry}`, {
     defaultValue: pet.petCountry,
   });
@@ -99,10 +98,14 @@ const DiscoveryCard = ({
       </Box>
 
       <Box className="pet-image-box">
-        <img className="pet-image" src={pet.petImage} alt={name} />
+        <img
+          className="pet-image"
+          src={petImageSrc(pet.petImage)}
+          alt={pet.petName}
+        />
       </Box>
 
-      <Box className="pet-title">{name}</Box>
+      <Box className="pet-title">{pet.petName}</Box>
 
       <Stack className="country-row">
         <PublicRoundedIcon className="country-icon" />
@@ -123,7 +126,7 @@ const DiscoveryCard = ({
       </Stack>
 
       <Box className="description-title">{t("discovery.description")}</Box>
-      <Box className="description-text">{description}</Box>
+      <Box className="description-text">{pet.petDescription}</Box>
 
       {pet.petLink ? (
         <Box
