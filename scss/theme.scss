@@ -626,6 +626,131 @@ html[data-theme="dark"] {
     }
   }
 
+  /** Notifications dropdown (desktop popover + mobile) **/
+  .notif-menu-paper {
+    background: var(--pt-menu-surface) !important;
+    border-color: var(--pt-hairline) !important;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55) !important;
+
+    &::before {
+      background: var(--pt-menu-surface);
+      border-top-color: var(--pt-hairline);
+      border-left-color: var(--pt-hairline);
+    }
+
+    .notif-menu-frame {
+      background: var(--pt-menu-surface);
+    }
+
+    .notif-menu-header {
+      border-bottom-color: var(--pt-hairline);
+
+      .notif-menu-title {
+        color: var(--pt-ink-strong);
+      }
+
+      .notif-menu-count {
+        color: var(--pt-accent);
+      }
+
+      .notif-menu-markall {
+        color: var(--pt-accent);
+        background: var(--pt-selected);
+
+        &:hover {
+          background: var(--pt-hover);
+        }
+      }
+    }
+
+    .notif-menu-list::-webkit-scrollbar-thumb {
+      background: var(--pt-hairline);
+    }
+
+    .notif-menu-item {
+      background: var(--pt-menu-surface);
+      border-bottom-color: var(--pt-hairline);
+
+      &.unread::before {
+        background: var(--pt-accent);
+      }
+
+      &.read {
+        .notif-menu-item-icon {
+          background: var(--pt-hover);
+
+          .notif-icon {
+            color: var(--pt-ink-faint);
+          }
+        }
+
+        .notif-menu-item-title {
+          color: var(--pt-ink-muted);
+        }
+
+        .notif-menu-item-text {
+          color: var(--pt-ink-faint);
+        }
+
+        .notif-menu-item-time {
+          color: var(--pt-ink-faint);
+        }
+      }
+
+      &:hover {
+        background: var(--pt-hover);
+      }
+
+      &:focus-visible {
+        outline-color: var(--pt-accent);
+      }
+
+      .notif-menu-item-icon {
+        background: var(--pt-selected);
+
+        .notif-icon {
+          color: var(--pt-accent);
+        }
+      }
+
+      .notif-menu-item-title {
+        color: var(--pt-ink-strong);
+      }
+
+      .notif-menu-item-time {
+        color: var(--pt-ink-faint);
+      }
+
+      .notif-menu-item-text {
+        color: var(--pt-ink-muted);
+      }
+    }
+
+    .notif-menu-footer {
+      background: var(--pt-surface-sunken);
+      border-top-color: var(--pt-hairline);
+
+      // Same cut-scrim trick as the light mode, re-tinted to the dark sunken
+      // surface behind it instead of white.
+      &::before {
+        background: linear-gradient(
+          to bottom,
+          rgba(27, 20, 40, 0),
+          rgba(27, 20, 40, 0.92)
+        );
+      }
+
+      .notif-menu-seeall {
+        color: var(--pt-ink);
+
+        &:hover {
+          background: var(--pt-hover);
+          color: var(--pt-accent);
+        }
+      }
+    }
+  }
+
   .lang-menu-paper {
     background: var(--pt-menu-surface) !important;
     border-color: var(--pt-hairline) !important;
