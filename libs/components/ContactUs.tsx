@@ -1,6 +1,7 @@
 import { Box, Button, Stack } from "@mui/material";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { T } from "../types/common";
 
 const growMessageField = (el: HTMLTextAreaElement) => {
   el.style.height = "auto";
@@ -53,9 +54,28 @@ const ContactUs = () => {
     setFormState((prev) => ({ ...prev, message: event.target.value }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-  };
+  async function handleSubmit(e: T) {
+    e.preventDefault();
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        access_key: process.env.NEXT_PUBLIC_WEB3FORMS_CONTACT_US_ACCESS_KEY,
+        name: e.target.fullName.value,
+        phoneNumber: e.target.phoneNumber.value,
+        email: e.target.email.value,
+        message: e.target.message.value,
+      }),
+    });
+    const result = await response.json();
+    if (result.success) {
+      handleReset();
+      console.log(result);
+    }
+  }
 
   const handleReset = () => {
     setFormState(initialFormState);
@@ -82,8 +102,8 @@ const ContactUs = () => {
           >
             <ContactField id="contact-fullName" label={t("contact.fullName")}>
               <input
-                id="contact-fullName"
                 type="text"
+                name="fullName"
                 value={formState.fullName}
                 onChange={handleInputChange("fullName")}
               />
@@ -96,6 +116,7 @@ const ContactUs = () => {
               <input
                 id="contact-phoneNumber"
                 type="tel"
+                name="phoneNumber"
                 value={formState.phoneNumber}
                 onChange={handleInputChange("phoneNumber")}
               />
@@ -105,6 +126,7 @@ const ContactUs = () => {
               <input
                 id="contact-email"
                 type="email"
+                name="email"
                 value={formState.email}
                 onChange={handleInputChange("email")}
               />
@@ -114,6 +136,7 @@ const ContactUs = () => {
               <textarea
                 id="contact-message"
                 className="message"
+                name="message"
                 ref={messageRef}
                 value={formState.message}
                 onChange={handleMessageChange}
