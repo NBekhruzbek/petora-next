@@ -274,20 +274,17 @@ html[data-theme="dark"] {
         color: var(--pt-ink);
       }
 
-      .title-paw .paw-pad {
-        background: rgba(201, 166, 255, 0.22);
+      .field-wrapper .field-label {
+        color: var(--pt-ink-faint);
       }
 
-      .field-wrapper {
+      .field-control {
         border-color: var(--pt-hairline);
         background: var(--pt-field-surface);
 
-        input {
+        input,
+        textarea {
           color: var(--pt-ink-body);
-
-          &::placeholder {
-            color: var(--pt-ink-muted);
-          }
         }
       }
 
@@ -376,7 +373,11 @@ html[data-theme="dark"] {
         color: var(--pt-ink);
       }
 
-      .field-wrapper {
+      .field-wrapper .field-label {
+        color: var(--pt-ink-faint);
+      }
+
+      .field-control {
         border-color: var(--pt-hairline);
         background: var(--pt-field-surface);
 
@@ -384,12 +385,9 @@ html[data-theme="dark"] {
           border-color: var(--pt-ink);
         }
 
-        input {
+        input,
+        textarea {
           color: var(--pt-ink-body);
-
-          &::placeholder {
-            color: var(--pt-ink-muted);
-          }
         }
       }
 

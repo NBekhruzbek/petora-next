@@ -129,13 +129,13 @@
     "enjoy": "Enjoy Our Services!"
   },
   "contact": {
-    "title": "CONTACT WITH US",
+    "title": "CONTACT US",
     "fullName": "Full Name",
     "phoneNumber": "Phone Number",
     "email": "Email",
     "message": "Message",
-    "submit": "Submit",
-    "refresh": "Refresh"
+    "submit": "Send Message",
+    "refresh": "Clear"
   },
   "basket": {
     "title": "Your Basket",

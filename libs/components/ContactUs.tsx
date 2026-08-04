@@ -1,6 +1,26 @@
 import { Box, Button, Stack } from "@mui/material";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+
+const growMessageField = (el: HTMLTextAreaElement) => {
+  el.style.height = "auto";
+  el.style.height = `${el.scrollHeight}px`;
+};
+
+interface ContactFieldProps {
+  id: string;
+  label: string;
+  children: React.ReactNode;
+}
+
+const ContactField = ({ id, label, children }: ContactFieldProps) => (
+  <Box className="field-wrapper">
+    <label className="field-label" htmlFor={id}>
+      {label}
+    </label>
+    <Box className="field-control">{children}</Box>
+  </Box>
+);
 
 interface ContactFormState {
   fullName: string;
@@ -20,6 +40,7 @@ const ContactUs = () => {
   const { t } = useTranslation();
   const [formState, setFormState] =
     useState<ContactFormState>(initialFormState);
+  const messageRef = useRef<HTMLTextAreaElement>(null);
 
   const handleInputChange =
     (field: keyof ContactFormState) =>
@@ -27,12 +48,20 @@ const ContactUs = () => {
       setFormState((prev) => ({ ...prev, [field]: event.target.value }));
     };
 
+  const handleMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    growMessageField(event.target);
+    setFormState((prev) => ({ ...prev, message: event.target.value }));
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
 
   const handleReset = () => {
     setFormState(initialFormState);
+    if (messageRef.current) {
+      messageRef.current.style.height = "";
+    }
   };
 
   return (
@@ -51,46 +80,46 @@ const ContactUs = () => {
             className="contact-form"
             onSubmit={handleSubmit}
           >
-            <Box className="field-wrapper has-label">
+            <ContactField id="contact-fullName" label={t("contact.fullName")}>
               <input
+                id="contact-fullName"
                 type="text"
-                placeholder={t("contact.fullName")}
                 value={formState.fullName}
                 onChange={handleInputChange("fullName")}
-                aria-label={t("contact.fullName")}
               />
-            </Box>
+            </ContactField>
 
-            <Box className="field-wrapper">
+            <ContactField
+              id="contact-phoneNumber"
+              label={t("contact.phoneNumber")}
+            >
               <input
+                id="contact-phoneNumber"
                 type="tel"
-                placeholder={t("contact.phoneNumber")}
                 value={formState.phoneNumber}
                 onChange={handleInputChange("phoneNumber")}
-                aria-label={t("contact.phoneNumber")}
               />
-            </Box>
+            </ContactField>
 
-            <Box className="field-wrapper">
+            <ContactField id="contact-email" label={t("contact.email")}>
               <input
+                id="contact-email"
                 type="email"
-                placeholder={t("contact.email")}
                 value={formState.email}
                 onChange={handleInputChange("email")}
-                aria-label={t("contact.email")}
               />
-            </Box>
+            </ContactField>
 
-            <Box className="field-wrapper">
-              <input
+            <ContactField id="contact-message" label={t("contact.message")}>
+              <textarea
+                id="contact-message"
                 className="message"
-                type="text"
-                placeholder={t("contact.message")}
+                ref={messageRef}
                 value={formState.message}
-                onChange={handleInputChange("message")}
-                aria-label={t("contact.message")}
+                onChange={handleMessageChange}
+                rows={1}
               />
-            </Box>
+            </ContactField>
 
             <Stack className="action-row" direction="row">
               <Button className="submit-btn" type="submit" variant="contained">

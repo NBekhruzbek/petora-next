@@ -638,101 +638,65 @@
         text-transform: uppercase;
       }
 
-      .title-paw {
-        position: relative;
-        width: 54px;
-        height: 54px;
-        display: inline-block;
-
-        .paw-pad {
-          position: absolute;
-          display: inline-block;
-          background: #ead6ff;
-          border-radius: 999px;
-        }
-
-        .main {
-          width: 28px;
-          height: 34px;
-          left: 12px;
-          top: 17px;
-        }
-
-        .toe {
-          width: 13px;
-          height: 17px;
-        }
-
-        .toe-1 {
-          left: 6px;
-          top: 2px;
-          transform: rotate(-24deg);
-        }
-
-        .toe-2 {
-          left: 20px;
-          top: -2px;
-          transform: rotate(2deg);
-        }
-
-        .toe-3 {
-          left: 34px;
-          top: 3px;
-          transform: rotate(24deg);
-        }
-
-        .toe-4 {
-          left: 38px;
-          top: 21px;
-          transform: rotate(42deg);
-        }
-      }
-
       .contact-form {
-        margin-top: 38px;
-        gap: 20px;
+        margin-top: 34px;
+        gap: 18px;
       }
 
       .field-wrapper {
-        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
         width: 90%;
-        height: 44px;
-        border-radius: 13px;
-        border: 1.5px solid #c9c9c9;
-        background: #fff;
 
-        input {
-          width: 100%;
-          height: 100%;
-          border: 0;
-          outline: 0;
-          background: transparent;
-          padding: 0 26px;
-          color: #333;
+        .field-label {
+          color: #8a8a8a;
           font-family: $font;
-          font-size: 16px;
+          font-size: 12.5px;
           font-style: normal;
-          font-weight: 400;
-          line-height: 1.2;
-
-          &::placeholder {
-            color: #9e9e9e;
-          }
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          line-height: 1;
+          text-transform: uppercase;
         }
 
-        &.has-label {
-          .field-label {
-            position: absolute;
-            top: -10px;
-            left: 18px;
-            padding: 0 6px;
-            color: #a0a0a0;
-            background: #fff;
+        .field-control {
+          border-radius: 13px;
+          border: 1.5px solid #c9c9c9;
+          background: #fff;
+          transition: border-color 0.15s ease;
+
+          &:focus-within {
+            border-color: #410075;
+          }
+
+          input,
+          textarea {
+            display: block;
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            padding: 0 20px;
+            color: #333;
             font-family: $font;
-            font-size: 18px;
+            font-size: 16px;
             font-style: normal;
             font-weight: 400;
-            line-height: 1;
+            line-height: 1.2;
+          }
+
+          input {
+            height: 44px;
+          }
+
+          textarea {
+            min-height: 92px;
+            max-height: 220px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            resize: none;
+            overflow-y: auto;
           }
         }
       }
@@ -743,10 +707,13 @@
 
         .submit-btn,
         .refresh-btn {
-          width: 150px;
+          width: auto;
+          min-width: 150px;
           height: 44px;
+          padding: 0 28px;
           border-radius: 7px;
           text-transform: none;
+          white-space: nowrap;
           font-family: $font;
           font-size: 18px;
           font-style: normal;
@@ -846,11 +813,11 @@
 
       .pets-image {
         position: absolute;
-        width: 630px;
-        max-width: none;
-        left: 47%;
+        width: 700px;
+        left: 50%;
+        bottom: 50px;
         transform: translateX(-50%);
-        object-fit: contain;
+        filter: drop-shadow(10px 22px 16px rgba(43, 0, 79, 0.28));
       }
     }
   }
