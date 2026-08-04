@@ -878,4 +878,182 @@ html[data-theme="dark"] {
       }
     }
   }
+
+  /** LoginRegister - Dark mode**/
+
+  .auth-dialog {
+    .auth-dialog-paper {
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55) !important;
+    }
+
+    .auth-close-button {
+      color: var(--pt-ink) !important;
+      background: var(--pt-surface) !important;
+      border-color: var(--pt-hairline) !important;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+
+      &:hover {
+        background: var(--pt-hover) !important;
+      }
+    }
+
+    .auth-form-panel {
+      background: var(--pt-surface);
+
+      .auth-heading {
+        .auth-kicker {
+          color: var(--pt-accent);
+        }
+
+        h2 {
+          color: var(--pt-ink);
+        }
+
+        span {
+          color: var(--pt-ink-muted);
+        }
+      }
+
+      .auth-form {
+        .auth-field {
+          .auth-success {
+            color: #4ade80;
+          }
+
+          .auth-error {
+            color: #f87171;
+          }
+        }
+
+        .auth-input-wrap {
+          border-color: var(--pt-hairline);
+          background: var(--pt-surface-sunken);
+
+          &:focus-within {
+            border-color: var(--pt-accent);
+            background: var(--pt-surface);
+            box-shadow: 0 0 0 4px rgba(201, 166, 255, 0.16);
+          }
+
+          svg {
+            color: var(--pt-ink-faint);
+          }
+
+          input {
+            color: var(--pt-ink-body);
+
+            &:focus::placeholder {
+              color: var(--pt-ink-faint);
+            }
+          }
+
+          span {
+            color: var(--pt-ink-faint);
+
+            &.floating {
+              color: var(--pt-accent);
+              background: var(--pt-surface);
+            }
+          }
+
+          button {
+            color: var(--pt-ink-muted);
+          }
+
+          &.auth-input-with-action button {
+            color: var(--pt-on-ink);
+            background: var(--pt-ink);
+          }
+        }
+
+        .auth-check {
+          color: var(--pt-ink-muted);
+
+          input {
+            accent-color: var(--pt-accent);
+          }
+        }
+
+        .auth-link-button,
+        .auth-switch-copy button,
+        .auth-otp-meta button {
+          color: var(--pt-accent);
+        }
+
+        .auth-switch-copy {
+          color: var(--pt-ink-muted);
+        }
+
+        .auth-divider {
+          color: var(--pt-ink-faint);
+
+          span {
+            background: var(--pt-hairline);
+          }
+        }
+
+        .auth-socials .auth-social-button {
+          border-color: var(--pt-hairline);
+          color: var(--pt-ink-body);
+          background: var(--pt-surface-sunken);
+
+          &:hover {
+            border-color: var(--pt-ink);
+            background: var(--pt-surface);
+          }
+        }
+
+        .auth-role-group button {
+          border-color: var(--pt-hairline);
+          color: var(--pt-ink-muted);
+          background: var(--pt-surface-sunken);
+
+          svg {
+            color: var(--pt-accent);
+          }
+
+          &.active {
+            border-color: var(--pt-accent);
+            color: var(--pt-ink);
+            background: var(--pt-surface);
+            box-shadow: 0 0 0 4px rgba(201, 166, 255, 0.16);
+          }
+        }
+
+        .auth-form-error {
+          border-color: rgba(248, 113, 113, 0.28);
+          color: #f87171;
+          background: rgba(248, 113, 113, 0.12);
+        }
+
+        .auth-otp-grid input {
+          border-color: var(--pt-hairline);
+          color: var(--pt-ink);
+          background: var(--pt-surface-sunken);
+
+          &:focus {
+            border-color: var(--pt-accent);
+            box-shadow: 0 0 0 4px rgba(201, 166, 255, 0.16);
+          }
+        }
+
+        .auth-otp-meta {
+          color: var(--pt-ink-muted);
+
+          strong {
+            color: var(--pt-accent);
+          }
+        }
+
+        .auth-step-dots span {
+          border-color: var(--pt-hairline);
+
+          &.active {
+            border-color: var(--pt-accent);
+            background: var(--pt-accent);
+          }
+        }
+      }
+    }
+  }
 }
