@@ -501,7 +501,7 @@ const Top = () => {
                     >
                       <Stack direction="row" alignItems="center" gap="12px">
                         <Avatar
-                          src="/img/profile/defaultUser.png"
+                          src={memberAvatar}
                           sx={{ width: 52, height: 52 }}
                         />
                         <Stack gap="4px">
