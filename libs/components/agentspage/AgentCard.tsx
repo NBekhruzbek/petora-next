@@ -48,7 +48,9 @@ const AgentCard = ({ agent, getAgentsRefetch }: AgentCardProps) => {
 
   const agentName = agent.memberFullName || agent.memberUserName;
   const agentImage = agent.memberImage
-    ? `${REACT_APP_API_URL}/${agent.memberImage}`
+    ? /^https?:\/\//.test(agent.memberImage)
+      ? agent.memberImage
+      : `${REACT_APP_API_URL}/${agent.memberImage}`
     : "/img/profile/defaultUser.png";
   const serviceTypes = agent.memberServiceTypes ?? [];
   const serviceArea = (agent.memberServiceArea ?? []).map(enumLabel).join(", ");
@@ -154,7 +156,8 @@ const AgentCard = ({ agent, getAgentsRefetch }: AgentCardProps) => {
           >
             <WorkHistoryOutlinedIcon className="agent-meta-icon" />
             <Typography className="agent-meta-text">
-              {experienceYears} year{experienceYears === 1 ? "" : "s"} experience
+              {experienceYears} year{experienceYears === 1 ? "" : "s"}{" "}
+              experience
             </Typography>
           </Stack>
         )}

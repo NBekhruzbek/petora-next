@@ -115,7 +115,7 @@ const toForm = (member?: Member): ProfileForm => ({
 });
 
 const imageSrc = (path?: string) =>
-  path ? `${REACT_APP_API_URL}/${path}` : "";
+  path ? (/^https?:\/\//.test(path) ? path : `${REACT_APP_API_URL}/${path}`) : "";
 
 const PersonalInfo = ({
   isEditable,

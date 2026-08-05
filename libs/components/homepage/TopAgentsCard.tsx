@@ -33,7 +33,11 @@ const TopAgentsCard = ({ agent }: TopServiceAgentsProps) => {
       <Box className="agent-image-wrap">
         <img
           className="agent-image"
-          src={`${REACT_APP_API_URL}/${agent?.memberImage}`}
+          src={
+            agent?.memberImage && /^https?:\/\//.test(agent.memberImage)
+              ? agent.memberImage
+              : `${REACT_APP_API_URL}/${agent?.memberImage}`
+          }
           alt={agent.memberUserName}
         />
       </Box>
