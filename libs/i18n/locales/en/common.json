@@ -135,7 +135,9 @@
     "email": "Email",
     "message": "Message",
     "submit": "Send Message",
-    "refresh": "Clear"
+    "refresh": "Clear",
+    "success": "Your message has been sent! We'll get back to you soon.",
+    "error": "Couldn't send your message. Please try again."
   },
   "basket": {
     "title": "Your Basket",

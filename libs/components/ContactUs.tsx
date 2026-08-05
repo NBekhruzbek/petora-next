@@ -2,6 +2,11 @@ import { Box, Button, Stack } from "@mui/material";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { T } from "../types/common";
+import { Messages } from "@/libs/config";
+import {
+  sweetBottomSmallSuccessAlert,
+  sweetMixinErrorAlert,
+} from "@/libs/sweetAlert";
 
 const growMessageField = (el: HTMLTextAreaElement) => {
   el.style.height = "auto";
@@ -56,24 +61,40 @@ const ContactUs = () => {
 
   async function handleSubmit(e: T) {
     e.preventDefault();
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        access_key: process.env.NEXT_PUBLIC_WEB3FORMS_CONTACT_US_ACCESS_KEY,
-        name: e.target.fullName.value,
-        phoneNumber: e.target.phoneNumber.value,
-        email: e.target.email.value,
-        message: e.target.message.value,
-      }),
-    });
-    const result = await response.json();
-    if (result.success) {
+    try {
+      const { fullName, phoneNumber, email, message } = formState;
+      if (
+        !fullName.trim() ||
+        !phoneNumber.trim() ||
+        !email.trim() ||
+        !message.trim()
+      ) {
+        throw new Error(Messages.error3);
+      }
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_CONTACT_US_ACCESS_KEY,
+          name: e.target.fullName.value,
+          phoneNumber: e.target.phoneNumber.value,
+          email: e.target.email.value,
+          message: e.target.message.value,
+        }),
+      });
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.message || Messages.error1);
+      }
       handleReset();
-      console.log(result);
+      await sweetBottomSmallSuccessAlert(t("contact.success"), 5500);
+    } catch (err: any) {
+      console.log("ERROR, contact handleSubmit:", err.message);
+      await sweetMixinErrorAlert(err.message || t("contact.error"));
     }
   }
 
