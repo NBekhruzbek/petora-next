@@ -3,6 +3,8 @@ import {
   Box,
   Button,
   CircularProgress,
+  Dialog,
+  IconButton,
   MenuItem,
   Pagination,
   Rating,
@@ -19,6 +21,9 @@ import WorkOutlinedIcon from "@mui/icons-material/WorkOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import SentimentSatisfiedAltOutlinedIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import moment from "moment";
@@ -110,6 +115,10 @@ const AgentDetail: NextPage = () => {
   const [expandedReviews, setExpandedReviews] = useState<
     Record<string, boolean>
   >({});
+  // Index into `certificates` for the fullscreen viewer; null = closed.
+  const [certGalleryIndex, setCertGalleryIndex] = useState<number | null>(
+    null,
+  );
 
   const activeReviewSort =
     REVIEW_SORT_OPTIONS.find((option) => option.value === reviewSort) ??
@@ -307,6 +316,25 @@ const AgentDetail: NextPage = () => {
     .join(", ");
   const certificates = (agent.memberCertificates ?? []).filter(Boolean);
 
+  const handleOpenCertificate = (index: number) => setCertGalleryIndex(index);
+  const handleCloseCertificate = () => setCertGalleryIndex(null);
+  const handlePreviousCertificate = () =>
+    setCertGalleryIndex((prev) =>
+      prev === null
+        ? prev
+        : prev === 0
+          ? certificates.length - 1
+          : prev - 1,
+    );
+  const handleNextCertificate = () =>
+    setCertGalleryIndex((prev) =>
+      prev === null
+        ? prev
+        : prev === certificates.length - 1
+          ? 0
+          : prev + 1,
+    );
+
   const infoRows: { icon: ReactNode; text: string }[] = [
     {
       icon: <WorkOutlinedIcon className="agent-detail-info-icon" />,
@@ -422,7 +450,19 @@ const AgentDetail: NextPage = () => {
                 </Stack>
                 <Stack className="agent-detail-certs-grid">
                   {certificates.map((certificate, i) => (
-                    <Box key={certificate} className="agent-detail-cert-card">
+                    <Box
+                      key={certificate}
+                      className="agent-detail-cert-card"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => handleOpenCertificate(i)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleOpenCertificate(i);
+                        }
+                      }}
+                    >
                       <img
                         src={imageUrl(certificate)}
                         alt={`Certificate ${i + 1}`}
@@ -724,6 +764,60 @@ const AgentDetail: NextPage = () => {
           </Stack>
         </Stack>
       </Stack>
+
+      <Dialog
+        className="agent-cert-dialog"
+        open={certGalleryIndex !== null}
+        onClose={handleCloseCertificate}
+        maxWidth="lg"
+        transitionDuration={{ enter: 280, exit: 200 }}
+        PaperProps={{ className: "agent-cert-dialog-paper" }}
+      >
+        {certGalleryIndex !== null ? (
+          <Stack className="agent-cert-dialog-body">
+            <IconButton
+              onClick={handleCloseCertificate}
+              className="agent-cert-dialog-close"
+            >
+              <CloseRoundedIcon />
+            </IconButton>
+
+            {certificates.length > 1 ? (
+              <IconButton
+                onClick={handlePreviousCertificate}
+                className="agent-cert-dialog-nav prev"
+              >
+                <ArrowBackIosNewRoundedIcon />
+              </IconButton>
+            ) : null}
+
+            <Stack className="agent-cert-stage">
+              <img
+                key={certificates[certGalleryIndex]}
+                className="agent-cert-stage-image"
+                src={imageUrl(certificates[certGalleryIndex])}
+                alt={`Certificate ${certGalleryIndex + 1}`}
+                draggable={false}
+              />
+            </Stack>
+
+            {certificates.length > 1 ? (
+              <IconButton
+                onClick={handleNextCertificate}
+                className="agent-cert-dialog-nav next"
+              >
+                <ArrowForwardIosRoundedIcon />
+              </IconButton>
+            ) : null}
+
+            {certificates.length > 1 ? (
+              <Typography className="agent-cert-dialog-counter">
+                {certGalleryIndex + 1} / {certificates.length}
+              </Typography>
+            ) : null}
+          </Stack>
+        ) : null}
+      </Dialog>
     </Stack>
   );
 };

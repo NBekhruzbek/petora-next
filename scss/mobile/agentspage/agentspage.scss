@@ -348,6 +348,13 @@
             border-radius: $m-radius-sm;
             overflow: hidden;
             background: var(--pt-tint-soft);
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.15s ease;
+
+            &:active {
+              transform: scale(0.97);
+            }
 
             .agent-detail-cert-img {
               width: 100%;
@@ -627,6 +634,57 @@
             background-color: var(--pt-ink) !important;
             color: var(--pt-on-ink);
           }
+        }
+      }
+    }
+  }
+}
+
+// ── Certificate viewer ──
+// MUI's Dialog portals to <body>, escaping #mobile-wrap, so it must be
+// targeted with the app's breakpoint instead of the id scope.
+@media (max-width: #{$breakpoint-mobile}) {
+  .agent-cert-dialog-paper {
+    max-width: 94vw !important;
+    margin-top: 72px !important;
+
+    .agent-cert-dialog-body {
+      gap: $space-3;
+      padding: $space-3 $space-3 $space-4;
+
+      .agent-cert-stage {
+        width: 100%;
+        height: auto;
+        max-height: 64vh;
+
+        .agent-cert-stage-image {
+          width: 100%;
+          height: auto;
+          max-height: 64vh;
+        }
+      }
+
+      .agent-cert-dialog-close {
+        top: $space-2;
+        right: $space-2;
+        width: 36px;
+        height: 36px;
+      }
+
+      .agent-cert-dialog-nav {
+        width: 40px;
+        height: 40px;
+
+        &.prev {
+          left: $space-2;
+        }
+
+        &.next {
+          right: $space-2;
+        }
+
+        svg {
+          font-size: 18px;
         }
       }
     }

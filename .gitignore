@@ -49,9 +49,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files — real values stay local, the template is committed
+# env files
 .env*
-!.env.example
 
 # vercel
 .vercel
