@@ -15,6 +15,7 @@ import {
   FormControl,
   OutlinedInput,
   Checkbox,
+  Dialog,
 } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import PersonIcon from "@mui/icons-material/Person";
@@ -31,6 +32,10 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { userVar } from "@/apollo/store";
 import { GET_MEMBER } from "@/apollo/user/query";
@@ -115,7 +120,11 @@ const toForm = (member?: Member): ProfileForm => ({
 });
 
 const imageSrc = (path?: string) =>
-  path ? (/^https?:\/\//.test(path) ? path : `${REACT_APP_API_URL}/${path}`) : "";
+  path
+    ? /^https?:\/\//.test(path)
+      ? path
+      : `${REACT_APP_API_URL}/${path}`
+    : "";
 
 const PersonalInfo = ({
   isEditable,
@@ -130,6 +139,8 @@ const PersonalInfo = ({
   const [avatar, setAvatar] = useState<{ file: File; preview: string } | null>(
     null,
   );
+  const [certGalleryIndex, setCertGalleryIndex] = useState<number | null>(null);
+
   // Guards against the save effect firing on mount, when saveTrigger is 0.
   const lastSaveTrigger = useRef(saveTrigger ?? 0);
 
@@ -249,6 +260,33 @@ const PersonalInfo = ({
   const addCertification = () => {
     setCertificates((prev) => [...prev, { preview: "" }]);
   };
+
+  const viewableCertificates = certificates.filter((cert) => cert.preview);
+
+  const handleOpenCertificate = (cert: CertificateSlot) => {
+    const index = viewableCertificates.indexOf(cert);
+    if (index >= 0) setCertGalleryIndex(index);
+  };
+
+  const handleCloseCertificateGallery = () => setCertGalleryIndex(null);
+
+  const handlePreviousCertificate = () =>
+    setCertGalleryIndex((prev) =>
+      prev === null
+        ? prev
+        : prev === 0
+          ? viewableCertificates.length - 1
+          : prev - 1,
+    );
+
+  const handleNextCertificate = () =>
+    setCertGalleryIndex((prev) =>
+      prev === null
+        ? prev
+        : prev === viewableCertificates.length - 1
+          ? 0
+          : prev + 1,
+    );
 
   const handleSave = async () => {
     try {
@@ -816,18 +854,42 @@ const PersonalInfo = ({
                       </label>
                     ) : cert.preview ? (
                       <Box
-                        component="img"
-                        src={cert.preview}
-                        alt="certificate"
-                        className="cert-image"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = "none";
+                        className="cert-view-trigger"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleOpenCertificate(cert)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleOpenCertificate(cert);
+                          }
                         }}
-                      />
+                      >
+                        <Box
+                          component="img"
+                          src={cert.preview}
+                          alt="certificate"
+                          className="cert-image"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display =
+                              "none";
+                          }}
+                        />
+                      </Box>
                     ) : (
                       <Box className="cert-placeholder">
                         <WorkspacePremiumIcon />
                       </Box>
+                    )}
+
+                    {isEditable && cert.preview && (
+                      <IconButton
+                        size="small"
+                        onClick={() => handleOpenCertificate(cert)}
+                        className="cert-view-btn"
+                      >
+                        <ZoomInIcon />
+                      </IconButton>
                     )}
                     {isEditable && (
                       <IconButton
@@ -845,6 +907,60 @@ const PersonalInfo = ({
           </Stack>
         </>
       )}
+
+      <Dialog
+        className="cert-view-dialog"
+        open={certGalleryIndex !== null}
+        onClose={handleCloseCertificateGallery}
+        maxWidth="lg"
+        transitionDuration={{ enter: 280, exit: 200 }}
+        PaperProps={{ className: "cert-view-dialog-paper" }}
+      >
+        {certGalleryIndex !== null ? (
+          <Stack className="cert-view-dialog-body">
+            <IconButton
+              onClick={handleCloseCertificateGallery}
+              className="cert-view-dialog-close"
+            >
+              <CloseRoundedIcon />
+            </IconButton>
+
+            {viewableCertificates.length > 1 ? (
+              <IconButton
+                onClick={handlePreviousCertificate}
+                className="cert-view-dialog-nav prev"
+              >
+                <ArrowBackIosNewRoundedIcon />
+              </IconButton>
+            ) : null}
+
+            <Stack className="cert-view-stage">
+              <img
+                key={viewableCertificates[certGalleryIndex]?.preview}
+                className="cert-view-stage-image"
+                src={viewableCertificates[certGalleryIndex]?.preview}
+                alt={`Certificate ${certGalleryIndex + 1}`}
+                draggable={false}
+              />
+            </Stack>
+
+            {viewableCertificates.length > 1 ? (
+              <IconButton
+                onClick={handleNextCertificate}
+                className="cert-view-dialog-nav next"
+              >
+                <ArrowForwardIosRoundedIcon />
+              </IconButton>
+            ) : null}
+
+            {viewableCertificates.length > 1 ? (
+              <Typography className="cert-view-dialog-counter">
+                {certGalleryIndex + 1} / {viewableCertificates.length}
+              </Typography>
+            ) : null}
+          </Stack>
+        ) : null}
+      </Dialog>
     </Stack>
   );
 };

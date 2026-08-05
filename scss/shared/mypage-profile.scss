@@ -407,6 +407,24 @@
       position: relative;
     }
 
+    // Read-only mode: the whole card opens the fullscreen viewer.
+    .cert-view-trigger {
+      cursor: pointer;
+      display: block;
+      outline: none;
+
+      .cert-image {
+        transition:
+          filter 0.15s ease,
+          transform 0.15s ease;
+      }
+
+      &:hover .cert-image,
+      &:focus-visible .cert-image {
+        filter: brightness(0.9);
+      }
+    }
+
     .cert-image {
       width: 100%;
       height: 200px;
@@ -450,6 +468,23 @@
         font-size: 12px;
         color: #fff;
         font-weight: 600;
+      }
+    }
+
+    .cert-view-btn {
+      position: absolute !important;
+      top: 6px !important;
+      left: 6px !important;
+      z-index: 2;
+      background-color: var(--pt-scrim) !important;
+
+      &:hover {
+        background-color: var(--pt-surface) !important;
+      }
+
+      .MuiSvgIcon-root {
+        font-size: 16px;
+        color: var(--pt-ink-cool);
       }
     }
 
@@ -627,3 +662,156 @@
   }
 }
 
+.cert-view-dialog {
+  z-index: 2000 !important;
+
+  .MuiBackdrop-root {
+    background: var(--pt-scrim);
+  }
+}
+
+.cert-view-dialog-paper {
+  max-width: min(92vw, 900px) !important;
+  border-radius: 28px !important;
+  background: transparent;
+  overflow: visible;
+  margin-top: 100px !important;
+  box-shadow: none;
+
+  .cert-view-dialog-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 22px 22px 20px;
+    border-radius: 28px;
+    background: var(--pt-panel);
+    box-shadow: 0 24px 60px rgba(70, 77, 92, 0.14);
+
+    .cert-view-dialog-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 3;
+      width: 42px;
+      height: 42px;
+      background: var(--pt-scrim);
+      color: var(--pt-ink-cool);
+      border: 1px solid var(--pt-hairline);
+
+      &:hover {
+        background: var(--pt-surface);
+      }
+    }
+
+    .cert-view-stage {
+      position: relative;
+      width: min(760px, 82vw);
+      height: min(560px, 68vh);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 22px;
+      background: var(--pt-surface-sunken);
+      border: 1px solid var(--pt-hairline);
+      overflow: hidden;
+
+      .cert-view-stage-image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: contain;
+        background: var(--pt-surface-sunken);
+      }
+    }
+
+    .cert-view-dialog-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 52px;
+      height: 52px;
+      background: var(--pt-scrim);
+      color: var(--pt-ink-cool);
+      border: 1px solid var(--pt-hairline);
+      box-shadow: 0 10px 22px rgba(89, 98, 112, 0.14);
+
+      &.prev {
+        left: 36px;
+      }
+
+      &.next {
+        right: 36px;
+      }
+
+      &:hover {
+        background: var(--pt-surface);
+      }
+
+      svg {
+        font-size: 22px;
+      }
+    }
+
+    .cert-view-dialog-counter {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: var(--pt-scrim);
+      border: 1px solid var(--pt-hairline);
+      font-family: $font;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--pt-ink-cool);
+    }
+  }
+}
+
+@media (max-width: #{$breakpoint-mobile}) {
+  .cert-view-dialog-paper {
+    max-width: 94vw !important;
+    margin-top: 72px !important;
+
+    .cert-view-dialog-body {
+      gap: 12px;
+      padding: 16px 16px 20px;
+
+      .cert-view-stage {
+        width: 100%;
+        height: auto;
+        max-height: 64vh;
+
+        .cert-view-stage-image {
+          width: 100%;
+          height: auto;
+          max-height: 64vh;
+        }
+      }
+
+      .cert-view-dialog-close {
+        top: 8px;
+        right: 8px;
+        width: 36px;
+        height: 36px;
+      }
+
+      .cert-view-dialog-nav {
+        width: 40px;
+        height: 40px;
+
+        &.prev {
+          left: 8px;
+        }
+
+        &.next {
+          right: 8px;
+        }
+
+        svg {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
