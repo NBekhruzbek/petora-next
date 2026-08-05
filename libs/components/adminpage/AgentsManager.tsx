@@ -15,6 +15,7 @@ import {
   TableRow,
   Button,
   Drawer,
+  Dialog,
   IconButton,
   Rating,
   Pagination,
@@ -24,6 +25,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import PlaceIcon from "@mui/icons-material/Place";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_ALL_AGENTS_BY_ADMIN } from "@/apollo/admin/query";
 import { UPDATE_MEMBER_BY_ADMIN } from "@/apollo/admin/mutation";
@@ -138,6 +142,8 @@ const AgentsManager = () => {
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailAgent, setDetailAgent] = useState<Member | null>(null);
 
+  const [certGalleryIndex, setCertGalleryIndex] = useState<number | null>(null);
+
   /** APOLLO REQUESTS **/
 
   const searchFilter: MembersInquiry = {
@@ -177,6 +183,7 @@ const AgentsManager = () => {
   const blockedCount = agents.filter(
     (a) => a.memberStatus === MemberStatus.BLOCK,
   ).length;
+  const certificates = (detailAgent?.memberCertificates ?? []).filter(Boolean);
 
   /** HANDLERS **/
 
@@ -264,7 +271,19 @@ const AgentsManager = () => {
   const openDetail = (agent: Member) => {
     setDetailAgent(agent);
     setDetailOpen(true);
+    setCertGalleryIndex(null);
   };
+
+  const handleOpenCertificate = (index: number) => setCertGalleryIndex(index);
+  const handleCloseCertificateGallery = () => setCertGalleryIndex(null);
+  const handlePreviousCertificate = () =>
+    setCertGalleryIndex((prev) =>
+      prev === null ? prev : prev === 0 ? certificates.length - 1 : prev - 1,
+    );
+  const handleNextCertificate = () =>
+    setCertGalleryIndex((prev) =>
+      prev === null ? prev : prev === certificates.length - 1 ? 0 : prev + 1,
+    );
 
   const resetToFirstPage = () => setPage(1);
 
@@ -464,9 +483,6 @@ const AgentsManager = () => {
             const ss =
               STATUS_STYLE[detailAgent.memberStatus] ??
               STATUS_STYLE[MemberStatus.ACTIVE];
-            const certificates = (detailAgent.memberCertificates ?? []).filter(
-              Boolean,
-            );
             return (
               <>
                 {/* Sticky Header */}
@@ -714,7 +730,18 @@ const AgentsManager = () => {
                       <Stack direction="row" flexWrap="wrap" gap={1.5}>
                         {certificates.map((cert, i) => (
                           <Stack key={i} className="admin-agt-cert-wrap">
-                            <Stack className="admin-agt-cert-img-box">
+                            <Stack
+                              className="admin-agt-cert-img-box"
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => handleOpenCertificate(i)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  handleOpenCertificate(i);
+                                }
+                              }}
+                            >
                               <img
                                 src={imageUrl(cert)}
                                 alt={`Certificate ${i + 1}`}
@@ -758,6 +785,61 @@ const AgentsManager = () => {
             );
           })()}
       </Drawer>
+
+      {/* ── Certificate Viewer ── */}
+      <Dialog
+        className="admin-cert-view-dialog"
+        open={certGalleryIndex !== null}
+        onClose={handleCloseCertificateGallery}
+        maxWidth="lg"
+        transitionDuration={{ enter: 280, exit: 200 }}
+        PaperProps={{ className: "admin-cert-view-dialog-paper" }}
+      >
+        {certGalleryIndex !== null ? (
+          <Stack className="admin-cert-view-dialog-body">
+            <IconButton
+              onClick={handleCloseCertificateGallery}
+              className="admin-cert-view-dialog-close"
+            >
+              <CloseRoundedIcon />
+            </IconButton>
+
+            {certificates.length > 1 ? (
+              <IconButton
+                onClick={handlePreviousCertificate}
+                className="admin-cert-view-dialog-nav prev"
+              >
+                <ArrowBackIosNewRoundedIcon />
+              </IconButton>
+            ) : null}
+
+            <Stack className="admin-cert-view-stage">
+              <img
+                key={certificates[certGalleryIndex]}
+                className="admin-cert-view-stage-image"
+                src={imageUrl(certificates[certGalleryIndex])}
+                alt={`Certificate ${certGalleryIndex + 1}`}
+                draggable={false}
+              />
+            </Stack>
+
+            {certificates.length > 1 ? (
+              <IconButton
+                onClick={handleNextCertificate}
+                className="admin-cert-view-dialog-nav next"
+              >
+                <ArrowForwardIosRoundedIcon />
+              </IconButton>
+            ) : null}
+
+            {certificates.length > 1 ? (
+              <Typography className="admin-cert-view-dialog-counter">
+                {certGalleryIndex + 1} / {certificates.length}
+              </Typography>
+            ) : null}
+          </Stack>
+        ) : null}
+      </Dialog>
 
       {/* ── Edit Drawer ───────────────────────────────────── */}
       <Drawer

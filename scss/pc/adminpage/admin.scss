@@ -131,6 +131,113 @@
   background-color: var(--adm-card-bg) !important;
 }
 
+/** ─── Global: certificate fullscreen viewer ──── **/
+.admin-cert-view-dialog {
+  z-index: 2000 !important;
+
+  .MuiBackdrop-root {
+    background: rgba(17, 24, 39, 0.6);
+  }
+}
+
+.admin-cert-view-dialog-paper {
+  max-width: min(92vw, 900px) !important;
+  border-radius: 20px !important;
+  background: transparent;
+  overflow: visible;
+  margin-top: 100px !important;
+  box-shadow: none;
+
+  .admin-cert-view-dialog-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 22px 22px 20px;
+    border-radius: 20px;
+    background: var(--adm-card-bg);
+    box-shadow: 0 24px 60px rgba(17, 24, 39, 0.18);
+
+    .admin-cert-view-dialog-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 3;
+      width: 42px;
+      height: 42px;
+      background: var(--adm-surface-1);
+      color: var(--adm-text-1);
+      border: 1px solid var(--adm-border);
+
+      &:hover {
+        background: var(--adm-surface-2);
+      }
+    }
+
+    .admin-cert-view-stage {
+      position: relative;
+      width: min(760px, 82vw);
+      height: min(560px, 68vh);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: var(--adm-surface-1);
+      border: 1px solid var(--adm-border);
+      overflow: hidden;
+
+      .admin-cert-view-stage-image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: contain;
+        background: var(--adm-surface-1);
+      }
+    }
+
+    .admin-cert-view-dialog-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 52px;
+      height: 52px;
+      background: var(--adm-surface-1);
+      color: var(--adm-text-1);
+      border: 1px solid var(--adm-border);
+      box-shadow: 0 10px 22px rgba(17, 24, 39, 0.12);
+
+      &.prev {
+        left: 36px;
+      }
+
+      &.next {
+        right: 36px;
+      }
+
+      &:hover {
+        background: var(--adm-surface-2);
+      }
+
+      svg {
+        font-size: 22px;
+      }
+    }
+
+    .admin-cert-view-dialog-counter {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: var(--adm-surface-1);
+      border: 1px solid var(--adm-border);
+      font-family: $font;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--adm-text-1);
+    }
+  }
+}
+
 // ─── Design Tokens ──────────────────────────────────────────────────────────
 
 $sidebar-bg: var(--adm-sidebar-bg);
@@ -2032,6 +2139,17 @@ $sidebar-width: 260px;
     overflow: hidden;
     border: 1px solid var(--adm-border);
     background: var(--adm-surface-1);
+    cursor: pointer;
+    outline: none;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--adm-accent-border);
+      box-shadow: 0 4px 12px rgba(var(--adm-accent-rgb), 0.18);
+    }
 
     img {
       width: 100%;
