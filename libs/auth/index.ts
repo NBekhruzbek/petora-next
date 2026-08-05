@@ -3,7 +3,7 @@ import { initializeApollo } from "../../apollo/client";
 import { userVar } from "../../apollo/store";
 import { CustomJwtPayload } from "../types/customJwtPayload";
 import { sweetMixinErrorAlert } from "../sweetAlert";
-import { LOGIN, SIGN_UP } from "../../apollo/user/mutation";
+import { LOGIN, LOGIN_WITH_GOOGLE, SIGN_UP } from "../../apollo/user/mutation";
 import { REACT_APP_API_URL } from "../config";
 
 export function getJwtToken(): any {
@@ -65,6 +65,44 @@ const requestJwtToken = async ({
         await sweetMixinErrorAlert("User has been blocked!");
         break;
     }
+    throw new Error("token error");
+  }
+};
+
+export const loginWithGoogle = async (idToken: string): Promise<void> => {
+  try {
+    const { jwtToken } = await requestGoogleJwtToken({ idToken });
+
+    if (jwtToken) {
+      updateStorage({ jwtToken });
+      updateUserInfo(jwtToken);
+    }
+  } catch (err) {
+    console.warn("google login err", err);
+    clearAuthState();
+  }
+};
+
+const requestGoogleJwtToken = async ({
+  idToken,
+}: {
+  idToken: string;
+}): Promise<{ jwtToken: string }> => {
+  const apolloClient = await initializeApollo();
+
+  try {
+    const result = await apolloClient.mutate({
+      mutation: LOGIN_WITH_GOOGLE,
+      variables: { idToken },
+      fetchPolicy: "network-only",
+    });
+
+    console.log("---------- google login ----------");
+    const { accessToken } = result?.data?.loginAndSignupWithGoogle;
+
+    return { jwtToken: accessToken };
+  } catch (err: any) {
+    console.log("request google token err", err.graphQLErrors);
     throw new Error("token error");
   }
 };
@@ -162,7 +200,9 @@ export const updateUserInfo = (jwtToken: any) => {
     memberUserName: claims.memberUserName ?? "",
     memberFullName: claims.memberFullName ?? "",
     memberImage: claims.memberImage
-      ? `${REACT_APP_API_URL}/${claims.memberImage}`
+      ? /^https?:\/\//.test(claims.memberImage)
+        ? claims.memberImage
+        : `${REACT_APP_API_URL}/${claims.memberImage}`
       : "/img/profile/defaultUser.png",
     memberExperience: claims.memberExperience ?? "",
     memberApproach: claims.memberApproach ?? "",

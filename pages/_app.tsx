@@ -11,6 +11,7 @@ import { I18nextProvider } from "react-i18next";
 import { getI18n } from "@/libs/i18n";
 import { hydrateColorScheme } from "@/libs/theme";
 import Head from "next/head";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import "../scss/app.scss";
 import "../scss/pc/main.scss";
 import "../scss/mobile/main.scss";
@@ -32,19 +33,21 @@ export default function App({ Component, pageProps }: AppProps) {
 
   // Socket.io, Redux, MUI ...
   return (
-    <ApolloProvider client={client}>
-      <I18nextProvider i18n={i18n}>
-        <ThemeProvider theme={theme}>
-          <Head>
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1"
-            />
-          </Head>
-          <CssBaseline />
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </I18nextProvider>
-    </ApolloProvider>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+      <ApolloProvider client={client}>
+        <I18nextProvider i18n={i18n}>
+          <ThemeProvider theme={theme}>
+            <Head>
+              <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1"
+              />
+            </Head>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </I18nextProvider>
+      </ApolloProvider>
+    </GoogleOAuthProvider>
   );
 }

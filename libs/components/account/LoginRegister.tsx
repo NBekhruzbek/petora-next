@@ -20,7 +20,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { getJwtToken, logIn, signUp } from "@/libs/auth";
+import { getJwtToken, logIn, loginWithGoogle, signUp } from "@/libs/auth";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 
 interface LoginRegisterProps {
   open: boolean;
@@ -83,6 +84,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
+  const [googleError, setGoogleError] = useState("");
   const [loginForm, setLoginForm] = useState({ name: "", password: "" });
   const [registerForm, setRegisterForm] = useState({
     name: "",
@@ -100,6 +102,10 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(180);
   const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const [googleBtnWrap, setGoogleBtnWrap] = useState<HTMLDivElement | null>(
+    null,
+  );
+  const [googleBtnWidth, setGoogleBtnWidth] = useState(300);
 
   const isRegister = mode !== "login";
   const isResetFlow = mode === "forgot" || mode === "reset";
@@ -140,6 +146,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
       setShowConfirmPassword(false);
       setLoginError("");
       setRegisterError("");
+      setGoogleError("");
     }
   }, [open]);
 
@@ -152,6 +159,18 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     }
     return () => clearInterval(timer);
   }, [mode, timeLeft]);
+
+  useEffect(() => {
+    if (!googleBtnWrap) return;
+
+    const updateWidth = () =>
+      setGoogleBtnWidth(Math.min(googleBtnWrap.offsetWidth, 400));
+
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(googleBtnWrap);
+    return () => observer.disconnect();
+  }, [googleBtnWrap]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -288,6 +307,19 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     }
   };
 
+  const handleGoogleSuccess = async (
+    credentialResponse: CredentialResponse,
+  ) => {
+    const { credential } = credentialResponse;
+    if (!credential) return;
+
+    setGoogleError("");
+    await loginWithGoogle(credential);
+
+    if (getJwtToken()) onClose();
+    else setGoogleError(t("auth2.errLogin"));
+  };
+
   const renderDivider = () => (
     <div className="auth-divider">
       <span />
@@ -298,10 +330,19 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
 
   const renderSocialButtons = () => (
     <div className="auth-socials">
-      <button type="button" className="auth-social-button">
-        <img className="google" src="/img/icons/google.png" alt="google logo" />
-        {t("auth2.gmail")}
-      </button>
+      <div className="auth-google-btn" ref={setGoogleBtnWrap}>
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() => setGoogleError(t("auth2.errLogin"))}
+          theme="outline"
+          size="large"
+          shape="rectangular"
+          text="continue_with"
+          logo_alignment="left"
+          width={googleBtnWidth}
+        />
+      </div>
+      {googleError && <p className="auth-form-error">{googleError}</p>}
     </div>
   );
 

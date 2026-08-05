@@ -1399,30 +1399,21 @@
         .auth-socials {
           display: flex;
           flex-direction: column;
+          align-items: center;
           gap: 10px;
 
-          .auth-social-button {
-            height: 40px;
-            display: inline-flex;
-            align-items: center;
+          // Google's widget renders in a cross-origin iframe we can't
+          // restyle; the wrapper only positions it, sized to match the
+          // width of the primary button and inputs above it.
+          .auth-google-btn {
+            display: flex;
             justify-content: center;
-            gap: 12px;
-            border: 1px solid #d2c9d8;
-            border-radius: 8px;
-            color: #5c5660;
-            background: rgba(255, 255, 255, 0.28);
-            font-family: $font;
-            font-size: 14px;
-            font-weight: 900;
-            cursor: pointer;
+            width: 100%;
 
-            .google {
-              width: 28px;
-            }
-
-            &:hover {
-              border-color: #9b7eb4;
-              background: #ffffff;
+            > div {
+              width: 100%;
+              display: flex;
+              justify-content: center;
             }
           }
         }
@@ -1635,11 +1626,6 @@
 
           .auth-socials {
             gap: 7px;
-
-            .auth-social-button {
-              height: 36px;
-              font-size: 13px;
-            }
           }
         }
       }
