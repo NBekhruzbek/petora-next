@@ -93,7 +93,7 @@ function createIsomorphicLink() {
 
     /* WEBSOCKET SUBSCRIPTION LINK */
     const wsLink = new WebSocketLink({
-      uri: process.env.NEXT_PUBLIC_API_WS ?? "ws://127.0.0.1:3007",
+      uri: process.env.NEXT_PUBLIC_API_WS ?? "ws://127.0.0.1:4000",
       options: {
         reconnect: false,
         timeout: 30000,
