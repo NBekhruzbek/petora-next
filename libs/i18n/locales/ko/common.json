@@ -123,6 +123,18 @@
     }
   },
   "backToTop": "맨 위로",
+  "chat": {
+    "launcherLabel": "라이브 채팅 열기",
+    "closeLabel": "라이브 채팅 닫기",
+    "title": "라이브 채팅",
+    "online_other": "{{count}}명 접속 중",
+    "onlyYou": "지금은 나 혼자 있어요",
+    "welcome": "멤버 라운지에 오신 것을 환영해요! 지금 접속 중인 모두가 메시지를 볼 수 있어요.",
+    "joined": "{{name}}님이 들어왔어요",
+    "left": "{{name}}님이 나갔어요",
+    "placeholder": "모두에게 메시지 보내기…",
+    "send": "보내기"
+  },
   "footer": {
     "about": "Cuddle & Care Pets에 오신 것을 환영합니다! 반려동물 용품과 미용, 케어 상담을 제공합니다.",
     "navbar": "바로가기",

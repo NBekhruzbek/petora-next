@@ -11,6 +11,7 @@ import Top from "../Top";
 import Footer from "../Footer";
 import ContactUs from "../ContactUs";
 import BackToTop from "../common/BackToTop";
+import Chat from "../Chat";
 import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 
 const withLayoutBasic = (Component: any) => {
@@ -84,6 +85,7 @@ const withLayoutBasic = (Component: any) => {
           </Stack>
 
           <BackToTop />
+          <Chat />
         </Stack>
       </>
     );

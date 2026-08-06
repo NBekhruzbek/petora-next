@@ -123,6 +123,19 @@
     }
   },
   "backToTop": "Back to top",
+  "chat": {
+    "launcherLabel": "Open live chat",
+    "closeLabel": "Close live chat",
+    "title": "Live chat",
+    "online_one": "{{count}} member online",
+    "online_other": "{{count}} members online",
+    "onlyYou": "You're the only one here right now",
+    "welcome": "Welcome to the member lounge! Everyone online right now can see your message.",
+    "joined": "{{name}} joined",
+    "left": "{{name}} left",
+    "placeholder": "Message everyone…",
+    "send": "Send"
+  },
   "footer": {
     "about": "Welcome to Cuddle & Care Pets! We provide quality pet products, grooming, and care advice for your furry friends.",
     "navbar": "Navbar",

@@ -1193,6 +1193,11 @@ react-is@^19.0.0:
   resolved "https://registry.npmjs.org/react-is/-/react-is-19.2.4.tgz"
   integrity sha512-W+EWGn2v0ApPKgKKCy/7s7WHXkboGcsrXE+2joLyVxkbyVQfO3MUEaUQDHoSmb8TFFrSKYa9mw64WZHNHSDzYA==
 
+react-scrollable-feed@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-scrollable-feed/-/react-scrollable-feed-2.0.4.tgz#eec146b752a0f5656fe5a0c170a7bb92cc054bd1"
+  integrity sha512-ax8QAwKZS7YOlf5qMdgc2zIzGd9ZAAlfAaI3OtFi8Bl6DuB27m8KIzLN5DudbP6kh7O1FwdDM2sgODLWin/deQ==
+
 react-transition-group@^4.4.5:
   version "4.4.5"
   resolved "https://registry.npmjs.org/react-transition-group/-/react-transition-group-4.4.5.tgz"
