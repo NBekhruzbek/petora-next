@@ -5,20 +5,9 @@ import { useTranslation } from "react-i18next";
 import ScrollableFeed from "react-scrollable-feed";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import { userVar } from "@/apollo/store";
+import { socketVar, userVar } from "@/apollo/store";
 import { REACT_APP_API_URL } from "@/libs/config";
-
-type ChatEntry =
-  | {
-      kind: "msg";
-      id: string;
-      text: string;
-      mine: boolean;
-      name: string;
-      image?: string;
-      time: string;
-    }
-  | { kind: "sys"; id: string; text: string };
+import { Member } from "../types/member/member";
 
 const resolveAvatar = (path?: string) =>
   path
@@ -70,19 +59,57 @@ const PawBubble = ({ className }: { className: string }) => (
   </svg>
 );
 
+interface MessagePayload {
+  event: string;
+  text: string;
+  memberData: Member;
+}
+
+interface InfoPayload {
+  event: string;
+  totalClients: number;
+  memberData: Member;
+  action: string;
+}
+
 const Chat = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const user = useReactiveVar(userVar);
+  const socket = useReactiveVar(socketVar);
 
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [entries, setEntries] = useState<ChatEntry[]>([]);
-  const [onlineCount, setOnlineCount] = useState(1);
+  const [messageInput, setMessageInput] = useState("");
+  const [onlineUsers, setOnlineUsers] = useState(0);
   const [unseen, setUnseen] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [messagesList, setMessagesList] = useState<MessagePayload[]>([]);
 
   /** LIFECYCLES **/
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.onmessage = (msg) => {
+      const data = JSON.parse(msg.data);
+
+      switch (data.event) {
+        case "info":
+          const newInfo: InfoPayload = data;
+          setOnlineUsers(newInfo.totalClients);
+          break;
+        case "getMessages":
+          const list: MessagePayload[] = data.list;
+          setMessagesList(list);
+          break;
+        case "message":
+          const newMessage: MessagePayload = data;
+          setMessagesList((prev) => [...prev, newMessage]);
+          if (!open) setUnseen((prev) => prev + 1);
+          break;
+      }
+    };
+  }, [socket, open]);
 
   useEffect(() => {
     setOpen(false);
@@ -105,37 +132,27 @@ const Chat = () => {
       setOpen(false);
       return;
     }
-    if (event.key === "Enter") handleSend();
+    if (event.key === "Enter") {
+      // Ignore Enter while an IME (Korean/Japanese/Chinese) is still composing:
+      // it fires an extra keydown that would re-send the last character.
+      // keyCode 229 covers Safari, where isComposing is unreliable.
+      if (event.nativeEvent.isComposing || event.keyCode === 229) return;
+      handleSend();
+    }
   };
 
   const handleSend = () => {
-    const text = message.trim();
-    if (!text) return;
+    const text = messageInput.trim();
+    if (!text || !socket) return;
 
-    setEntries((prev) => [
-      ...prev,
-      {
-        kind: "msg",
-        id: `${Date.now()}`,
-        text,
-        mine: true,
-        name: user.memberFullName || user.memberUserName,
-        image: user.memberImage,
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      },
-    ]);
-    setMessage("");
+    socket.send(JSON.stringify({ event: "message", data: text }));
+    setMessageInput("");
     inputRef.current?.focus();
   };
 
-  if (!user?._id) return null;
-
-  const othersOnline = onlineCount > 1;
+  const othersOnline = onlineUsers > 0;
   const presenceLine = othersOnline
-    ? t("chat.online", { count: onlineCount })
+    ? t("chat.online", { count: onlineUsers })
     : t("chat.onlyYou");
 
   return (
@@ -174,41 +191,40 @@ const Chat = () => {
                   <div className="chat-msg-bubble">{t("chat.welcome")}</div>
                 </div>
               </div>
+              {messagesList.map((chat, index) => {
+                const mine = chat.memberData?._id === user?._id;
+                const name =
+                  chat.memberData?.memberFullName ||
+                  chat.memberData?.memberUserName ||
+                  "Guest";
 
-              {entries.map((entry) =>
-                entry.kind === "sys" ? (
-                  <div className="chat-sys-row" key={entry.id}>
-                    {entry.text}
-                  </div>
-                ) : entry.mine ? (
-                  <div className="chat-msg-row out" key={entry.id}>
+                return mine ? (
+                  <div className="chat-msg-row out" key={index}>
                     <div className="chat-msg-group">
-                      <div className="chat-msg-bubble">{entry.text}</div>
-                      <span className="chat-msg-time">{entry.time}</span>
+                      <div className="chat-msg-bubble">{chat.text}</div>
                     </div>
                     <img
                       className="chat-msg-avatar"
-                      src={resolveAvatar(entry.image)}
+                      src={resolveAvatar(chat.memberData?.memberImage)}
                       alt=""
                       aria-hidden="true"
                     />
                   </div>
                 ) : (
-                  <div className="chat-msg-row in" key={entry.id}>
+                  <div className="chat-msg-row in" key={index}>
                     <img
                       className="chat-msg-avatar"
-                      src={resolveAvatar(entry.image)}
+                      src={resolveAvatar(chat.memberData?.memberImage)}
                       alt=""
                       aria-hidden="true"
                     />
                     <div className="chat-msg-group">
-                      <span className="chat-msg-name">{entry.name}</span>
-                      <div className="chat-msg-bubble">{entry.text}</div>
-                      <span className="chat-msg-time">{entry.time}</span>
+                      <span className="chat-msg-name">{name}</span>
+                      <div className="chat-msg-bubble">{chat.text}</div>
                     </div>
                   </div>
-                ),
-              )}
+                );
+              })}
             </ScrollableFeed>
           </div>
 
@@ -219,8 +235,8 @@ const Chat = () => {
               className="chat-panel-input"
               placeholder={t("chat.placeholder")}
               maxLength={500}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={messageInput}
+              onChange={(e) => setMessageInput(e.target.value)}
               onKeyDown={handleKeyDown}
               aria-label={t("chat.placeholder")}
             />
@@ -228,7 +244,7 @@ const Chat = () => {
               type="button"
               className="chat-panel-send"
               onClick={handleSend}
-              disabled={!message.trim()}
+              disabled={!messageInput.trim()}
               aria-label={t("chat.send")}
             >
               <SendRoundedIcon />
