@@ -823,6 +823,7 @@
       width: 100%;
       height: 600px;
       background: var(--pt-band);
+      overflow-x: clip;
       .species-main {
         margin-top: 32px;
         flex-direction: row;

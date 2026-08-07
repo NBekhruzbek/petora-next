@@ -283,6 +283,7 @@
   #main-top {
     background-color: var(--pt-header-surface);
     position: relative;
+    overflow-x: clip;
 
     &::after {
       content: "";
