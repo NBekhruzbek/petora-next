@@ -258,6 +258,8 @@ const Detail = () => {
 
       await likeTargetProduct({ variables: { input: product._id } });
       await getProductRefetch({ input: productId });
+
+      await sweetBottomSmallSuccessAlert("Success!", 700);
     } catch (err: any) {
       console.log("ERROR, likeProductHandler:", err.message);
       await sweetMixinErrorAlert(err.message);
@@ -270,6 +272,12 @@ const Detail = () => {
     if (!flyToBasket(mainImageRef.current)) {
       await sweetBottomSmallSuccessAlert("Added to basket!", 700);
     }
+  };
+
+  const payNowHandler = () => {
+    if (!product) return;
+    addToBasket(product, quantity);
+    void router.push("/checkout");
   };
 
   const increase = () => setQuantity((prev) => prev + 1);
@@ -462,7 +470,11 @@ const Detail = () => {
                 >
                   Add to cart
                 </Button>
-                <Button className="pay-btn" variant="contained">
+                <Button
+                  className="pay-btn"
+                  variant="contained"
+                  onClick={payNowHandler}
+                >
                   Pay
                 </Button>
               </Stack>
