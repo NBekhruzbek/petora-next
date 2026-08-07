@@ -49,10 +49,12 @@ const playCatch = (button: HTMLElement) => {
     { duration: CATCH_MS, easing: "cubic-bezier(0.3, 1.2, 0.4, 1)" },
   );
 
-  button.querySelector<HTMLElement>(".MuiBadge-badge")?.animate(
-    [{ scale: "1" }, { scale: "1.5", offset: 0.35 }, { scale: "1" }],
-    { duration: BADGE_POP_MS, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" },
-  );
+  button
+    .querySelector<HTMLElement>(".MuiBadge-badge")
+    ?.animate(
+      [{ scale: "1" }, { scale: "1.5", offset: 0.35 }, { scale: "1" }],
+      { duration: BADGE_POP_MS, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" },
+    );
 };
 
 /**
@@ -95,7 +97,10 @@ const runFlight = (
   if (!from.width || !to.width) return;
 
   // Shrink the ghost around the source's centre so dx/dy stay centre-to-centre.
-  const shrink = Math.min(1, MAX_GHOST_EDGE / Math.max(from.width, from.height));
+  const shrink = Math.min(
+    1,
+    MAX_GHOST_EDGE / Math.max(from.width, from.height),
+  );
   const width = from.width * shrink;
   const height = from.height * shrink;
   const dx = to.left + to.width / 2 - (from.left + from.width / 2);
@@ -149,7 +154,13 @@ const runFlight = (
   // off the clock and swallow the crouch. Character goes on the keyframes.
   body.animate(
     [
-      { scale: "1 1", rotate: "0deg", opacity: 1, offset: 0, easing: "ease-in" },
+      {
+        scale: "1 1",
+        rotate: "0deg",
+        opacity: 1,
+        offset: 0,
+        easing: "ease-in",
+      },
       // Coil.
       {
         scale: "1.14 0.82",
