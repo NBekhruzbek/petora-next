@@ -31,6 +31,7 @@ import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import moment, { Moment } from "moment";
@@ -1594,8 +1595,44 @@ const Booking = () => {
               </Stack>
             </Stack>
 
-            <Stack className="booking-confirm-policy">
-              <Typography>
+            <Stack className="booking-pay-note">
+              <Stack
+                direction="row"
+                alignItems="center"
+                gap="7px"
+                className="pay-note-eyebrow"
+              >
+                <PaymentsOutlinedIcon fontSize="small" />
+                <Typography>How payment works</Typography>
+              </Stack>
+
+              <Stack direction="row" className="pay-rail">
+                <Stack className="pay-beat">
+                  <Box className="beat-dot" />
+                  <Typography className="beat-when">Now</Typography>
+                  <Typography className="beat-what">Request sent</Typography>
+                </Stack>
+                <Stack className="pay-beat">
+                  <Box className="beat-dot" />
+                  <Typography className="beat-when">
+                    {moment(date).format("MMM D")}
+                  </Typography>
+                  <Typography className="beat-what">Session</Typography>
+                </Stack>
+                <Stack className="pay-beat pay-beat-due">
+                  <Box className="beat-dot" />
+                  <Typography className="beat-when">After</Typography>
+                  <Typography className="beat-what">
+                    Pay {formatPrice(service.servicePrice)}
+                  </Typography>
+                </Stack>
+              </Stack>
+
+              <Typography className="pay-note-body">
+                Nothing is charged now. You pay {agentName || "your agent"}{" "}
+                directly once the session is complete.
+              </Typography>
+              <Typography className="pay-note-foot">
                 Free cancellation up to 24 hours before the session.
               </Typography>
             </Stack>
@@ -1638,6 +1675,18 @@ const Booking = () => {
               will review and accept your booking shortly. You'll be notified
               once it's confirmed.
             </Typography>
+            <Stack
+              direction="row"
+              alignItems="center"
+              gap="9px"
+              className="booking-success-pay"
+            >
+              <PaymentsOutlinedIcon fontSize="small" />
+              <Typography>
+                Nothing has been charged. Pay {agentName || "your agent"}{" "}
+                {formatPrice(service.servicePrice)} directly after the session.
+              </Typography>
+            </Stack>
             <Button
               className="btn-booking-done"
               onClick={closeBookingDialog}
