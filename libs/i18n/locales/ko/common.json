@@ -119,6 +119,10 @@
     },
     "payment": {
       "CARD": "카드",
+      "EASY_PAY": "간편결제",
+      "TRANSFER": "계좌이체",
+      "VIRTUAL_ACCOUNT": "가상계좌",
+      "MOBILE": "휴대폰 결제",
       "CASH_TO_DELIVERY": "착불 현금"
     }
   },

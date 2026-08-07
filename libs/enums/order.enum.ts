@@ -12,7 +12,15 @@ export enum OrderStatus {
   CANCELLED = "CANCELLED",
 }
 
+/**
+ * How an order was paid for. Everything except CASH_TO_DELIVERY is derived
+ * server-side from the verified PortOne payment, never chosen by the browser.
+ */
 export enum PaymentMethod {
   CARD = "CARD",
+  EASY_PAY = "EASY_PAY",
+  TRANSFER = "TRANSFER",
+  VIRTUAL_ACCOUNT = "VIRTUAL_ACCOUNT",
+  MOBILE = "MOBILE",
   CASH_TO_DELIVERY = "CASH_TO_DELIVERY",
 }

@@ -119,6 +119,10 @@
     },
     "payment": {
       "CARD": "Card",
+      "EASY_PAY": "Easy pay",
+      "TRANSFER": "Bank transfer",
+      "VIRTUAL_ACCOUNT": "Virtual account",
+      "MOBILE": "Mobile",
       "CASH_TO_DELIVERY": "Cash on delivery"
     }
   },

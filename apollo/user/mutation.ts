@@ -266,14 +266,15 @@ export const LIKE_TARGET_PRODUCT = gql`
  ***********************************/
 
 export const CREATE_ORDER = gql`
-  mutation CreateOrder($input: [OrderItemInput!]!) {
-    createOrder(input: $input) {
+  mutation CreateOrder($input: [OrderItemInput!]!, $paymentId: String!) {
+    createOrder(input: $input, paymentId: $paymentId) {
       _id
       orderNumber
       orderTotal
       orderDelivery
       orderStatus
       paymentMethod
+      paymentId
       deliveryAddress
       receiverName
       receiverPhone

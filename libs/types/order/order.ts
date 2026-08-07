@@ -20,6 +20,7 @@ export interface Order {
   orderDelivery: number;
   orderStatus: OrderStatus;
   paymentMethod: PaymentMethod;
+  paymentId?: string;
   deliveryAddress: string;
   receiverName: string;
   receiverPhone: string;

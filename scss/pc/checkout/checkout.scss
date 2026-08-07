@@ -42,6 +42,55 @@
     }
   }
 
+  // ── Nothing to pay for ──
+  .checkout-empty {
+    align-items: center;
+    gap: 8px;
+    padding: 72px 20px 80px;
+    border-radius: 12px;
+    border: 1px solid rgba(143, 143, 143, 0.5);
+    background: #ffffff;
+
+    .checkout-empty-icon {
+      font-size: 46px;
+      color: #d1d5db;
+    }
+
+    .checkout-empty-title {
+      font-family: $font;
+      font-size: 18px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .checkout-empty-sub {
+      font-family: $font;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .btn-empty-shop {
+      font-family: $font;
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: none;
+      border-radius: 8px;
+      padding: 9px 26px;
+      background: #410075;
+      transition:
+        background 0.2s,
+        box-shadow 0.2s;
+
+      &:hover {
+        background: #5b0099;
+        box-shadow: 0 4px 12px rgba(65, 0, 117, 0.25);
+      }
+    }
+  }
+
   // ── Two-column layout ──
   .checkout-body {
     display: grid;
@@ -207,10 +256,30 @@
     gap: 14px;
   }
 
-  .field-row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 14px;
+  .field-note {
+    font-family: $font;
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+  }
+
+  // Shown when the profile is missing the address the server ships to.
+  .checkout-warning {
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+
+    svg {
+      color: #ea580c;
+    }
+
+    .MuiTypography-root {
+      font-family: $font;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #9a3412;
+    }
   }
 
   .btn-section-cancel {
@@ -249,118 +318,62 @@
     }
   }
 
-  // ── Credit card preview — exact MyProfile style ──
-  .credit-card-preview {
-    border-radius: 10px !important;
-    background: linear-gradient(135deg, #22272e 0%, #15191e 100%) !important;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
-    overflow: hidden;
-    position: relative;
-    color: #ffffff;
-    min-height: 220px;
+  // ── Payment method — one card per channel wired up in the PortOne console ──
+  .pay-method {
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: #f9fafb;
     transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
+      border-color 0.2s,
+      box-shadow 0.2s;
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15) !important;
+    &.selected {
+      border-color: #410075;
+      background: #faf5ff;
+      box-shadow: 0 4px 14px rgba(65, 0, 117, 0.06);
     }
 
-    &::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.03) 50%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      transform: skewX(-20deg);
-      transition: 0.5s;
-    }
+    .pay-method-logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
 
-    &:hover::after {
-      left: 150%;
-      transition: 1s ease-in-out;
-    }
+      // KakaoPay's own yellow — the mark customers look for.
+      &.kakaopay {
+        background: #ffe812;
 
-    .chip {
-      width: 38px;
-      height: 28px;
-      background: linear-gradient(135deg, #e0c371 0%, #b8933b 100%);
-      border-radius: 4px;
-      position: relative;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
-
-      &::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 22px;
-        height: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 2px;
+        span {
+          font-family: $font;
+          font-size: 15px;
+          font-weight: 800;
+          color: #3c1e1e;
+          letter-spacing: -0.02em;
+        }
       }
     }
 
-    .type {
-      font-size: 20px;
+    .pay-method-name {
+      font-family: $font;
+      font-size: 15px;
       font-weight: 800;
-      font-style: italic;
-      opacity: 0.9;
-      letter-spacing: 1px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      color: #111827;
     }
 
-    .card-number {
-      font-family: "Courier New", Courier, monospace;
+    .pay-method-desc {
+      font-family: $font;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: #6b7280;
+    }
+
+    .pay-method-check {
       font-size: 22px;
-      letter-spacing: 2px;
-      margin-top: 54px;
-      margin-bottom: 14px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-      font-weight: 600;
-      color: #f3f4f6;
-    }
-
-    .label {
-      font-size: 10px;
-      text-transform: uppercase;
-      opacity: 0.6;
-      letter-spacing: 1px;
-      margin-bottom: 2px;
-    }
-
-    .value {
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #f9fafb;
-    }
-
-    .logos {
-      position: relative;
-      width: 40px;
-      height: 24px;
-
-      .logo1,
-      .logo2 {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        position: absolute;
-        opacity: 0.8;
-      }
-      .logo1 { background: #eb001b; left: 0; }
-      .logo2 { background: #f79e1b; left: 14px; }
+      color: #410075;
     }
   }
 
@@ -533,6 +546,20 @@
       &:hover {
         transform: translateY(-1px);
         box-shadow: 0 10px 28px rgba(65, 0, 117, 0.28);
+      }
+
+      // Nothing to click while the PG window is up, or before there is an
+      // address to ship to — the flowing border would read as "ready".
+      &.Mui-disabled {
+        background: #d1d5db;
+        animation: none;
+        color: #ffffff;
+        opacity: 0.85;
+
+        &:hover {
+          transform: none;
+          box-shadow: none;
+        }
       }
     }
   }
