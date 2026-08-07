@@ -239,12 +239,12 @@
 
     .MuiOutlinedInput-root {
       border-radius: 8px !important;
-      background-color: #ffffff !important;
+      background-color: var(--pt-field-surface) !important;
 
       input {
-        color: #000000 !important;
+        color: var(--pt-ink-strong) !important;
         font-weight: 500 !important;
-        -webkit-text-fill-color: #000000 !important;
+        -webkit-text-fill-color: var(--pt-ink-strong) !important;
         font-family: $font;
       }
     }
@@ -531,7 +531,9 @@
             #5f18b7 100%
           )
           border-box;
-      background-size: 100% 100%, 250% 250%;
+      background-size:
+        100% 100%,
+        250% 250%;
       animation: ctaBorderFlow 3.6s linear infinite;
       color: #fff;
       font-family: $font;
@@ -645,7 +647,11 @@
           background: #f3f4f6;
           flex-shrink: 0;
 
-          img { width: 100%; height: 100%; object-fit: cover; }
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
         }
 
         .success-item-name {
@@ -690,7 +696,9 @@
         background: transparent;
         transition: background 0.2s;
 
-        &:hover { background: #f9fafb; }
+        &:hover {
+          background: #f9fafb;
+        }
       }
 
       .btn-success-orders {
@@ -705,11 +713,23 @@
         border: 2px solid transparent;
         background:
           linear-gradient(#c390ed, #410075) padding-box,
-          linear-gradient(120deg, #e83333 0%, #d3b7ff 35%, #fff 55%, #b56cff 75%, #5f18b7 100%) border-box;
-        background-size: 100% 100%, 250% 250%;
+          linear-gradient(
+              120deg,
+              #e83333 0%,
+              #d3b7ff 35%,
+              #fff 55%,
+              #b56cff 75%,
+              #5f18b7 100%
+            )
+            border-box;
+        background-size:
+          100% 100%,
+          250% 250%;
         animation: ctaBorderFlow 3.6s linear infinite;
         box-shadow: none;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
 
         &:hover {
           transform: translateY(-1px);
@@ -721,6 +741,331 @@
 }
 
 @keyframes ctaBorderFlow {
-  0%   { background-position: 0 0, 0% 50%;   }
-  100% { background-position: 0 0, 250% 50%; }
+  0% {
+    background-position:
+      0 0,
+      0% 50%;
+  }
+  100% {
+    background-position:
+      0 0,
+      250% 50%;
+  }
+}
+
+/**     Dark Mode    **/
+html[data-theme="dark"] {
+  .checkout-page {
+    background: var(--pt-page-bg);
+
+    .checkout-heading {
+      .btn-back-to-shop {
+        color: var(--pt-ink);
+      }
+
+      .checkout-title {
+        color: var(--pt-ink-strong);
+      }
+    }
+
+    .checkout-empty {
+      border-color: var(--pt-hairline);
+      background: var(--pt-surface);
+
+      .checkout-empty-icon {
+        color: var(--pt-track);
+      }
+
+      .checkout-empty-title {
+        color: var(--pt-ink-strong);
+      }
+
+      .checkout-empty-sub {
+        color: var(--pt-ink-soft);
+      }
+
+      .btn-empty-shop {
+        background: var(--pt-ink);
+        color: var(--pt-on-ink);
+
+        &:hover {
+          background: #d8bcff;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+        }
+      }
+    }
+
+    .checkout-section {
+      border-color: var(--pt-hairline);
+      background: var(--pt-surface);
+
+      &.editable {
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      .checkout-section-header {
+        .section-icon-wrap {
+          background: var(--pt-surface-sunken);
+
+          svg {
+            color: var(--pt-ink-muted);
+          }
+        }
+
+        .checkout-section-title {
+          color: var(--pt-ink-strong);
+        }
+
+        .btn-section-edit {
+          color: var(--pt-ink);
+          border-color: var(--pt-hairline);
+
+          &:hover {
+            background: var(--pt-hover);
+          }
+        }
+      }
+    }
+
+    .review-display {
+      background: var(--pt-surface-sunken);
+      border-color: var(--pt-hairline);
+
+      .review-label,
+      .review-label-plain {
+        color: var(--pt-ink-faint);
+
+        svg {
+          color: var(--pt-ink-faint);
+        }
+      }
+
+      .review-value {
+        color: var(--pt-ink-strong);
+      }
+
+      .review-subvalue {
+        color: var(--pt-ink-soft);
+      }
+    }
+
+    // The field surface, text and outline are already tokenised (see the base
+    // .checkout-fields rules and `fieldSx` in pages/checkout/index.tsx), so only
+    // the floating label — which neither of those covers — is left.
+    .checkout-fields {
+      .MuiInputLabel-root {
+        color: var(--pt-ink-muted);
+
+        &.Mui-focused {
+          color: var(--pt-ink);
+        }
+      }
+    }
+
+    .field-note {
+      color: var(--pt-ink-faint);
+    }
+
+    .checkout-warning {
+      background: rgba(234, 88, 12, 0.12);
+      border-color: rgba(234, 88, 12, 0.35);
+
+      svg {
+        color: #fb923c;
+      }
+
+      .MuiTypography-root {
+        color: #fdba74;
+      }
+    }
+
+    .btn-section-cancel {
+      color: var(--pt-ink-soft);
+      border-color: var(--pt-hairline);
+
+      &:hover {
+        background: var(--pt-hover);
+      }
+    }
+
+    .btn-section-save {
+      background: var(--pt-ink);
+      color: var(--pt-on-ink);
+
+      &:hover {
+        background: #d8bcff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+      }
+    }
+
+    .pay-method {
+      background: var(--pt-surface-sunken);
+      border-color: var(--pt-hairline);
+
+      &.selected {
+        border-color: var(--pt-ink);
+        background: var(--pt-selected);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      }
+
+      // .pay-method-logo.kakaopay keeps KakaoPay's own yellow in both themes —
+      // it is the mark customers look for, not a themeable surface.
+
+      .pay-method-name {
+        color: var(--pt-ink-strong);
+      }
+
+      .pay-method-desc {
+        color: var(--pt-ink-soft);
+      }
+
+      .pay-method-check {
+        color: var(--pt-ink);
+      }
+    }
+
+    .secure-note {
+      svg {
+        color: #4ade80;
+      }
+
+      .MuiTypography-root {
+        color: var(--pt-ink-faint);
+      }
+    }
+
+    .checkout-summary-card {
+      border-color: var(--pt-hairline);
+      background: var(--pt-surface);
+
+      .summary-card-title {
+        color: var(--pt-ink-strong);
+      }
+
+      .summary-item {
+        background: var(--pt-surface-sunken);
+        border-color: var(--pt-hairline);
+
+        .summary-item-img-wrap {
+          background: var(--pt-tint-soft);
+        }
+
+        .summary-item-name {
+          color: var(--pt-ink-strong);
+        }
+
+        .summary-item-qty {
+          color: var(--pt-ink-faint);
+        }
+
+        .summary-item-price {
+          color: var(--pt-price);
+        }
+      }
+
+      .summary-totals {
+        background: var(--pt-surface-sunken);
+        border-color: var(--pt-hairline);
+
+        .summary-totals-row {
+          .totals-label {
+            color: var(--pt-ink-soft);
+          }
+
+          .totals-value {
+            color: var(--pt-ink-strong);
+          }
+        }
+
+        .free-delivery {
+          color: #4ade80 !important;
+        }
+
+        .totals-divider {
+          background: var(--pt-hairline);
+        }
+
+        .totals-total-label {
+          color: var(--pt-ink-mid);
+        }
+
+        .totals-total-value {
+          color: var(--pt-ink-strong);
+        }
+      }
+
+      // .btn-place-order keeps its purple gradient and flowing border in both
+      // themes — only the disabled grey needs to stop being a light-grey blob.
+      .btn-place-order.Mui-disabled {
+        background: var(--pt-track);
+        color: var(--pt-ink-faint);
+      }
+    }
+  }
+
+  .checkout-success {
+    background: var(--pt-page-bg);
+
+    .checkout-success-card {
+      border-color: var(--pt-hairline);
+      background: var(--pt-surface);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+
+      .success-icon {
+        color: #4ade80;
+      }
+
+      .success-title {
+        color: var(--pt-ink-strong);
+      }
+
+      .success-order-num {
+        color: var(--pt-ink);
+        background: var(--pt-selected);
+        border-color: var(--pt-hairline);
+      }
+
+      .success-message {
+        color: var(--pt-ink-soft);
+      }
+
+      .success-divider {
+        border-color: var(--pt-hairline);
+      }
+
+      .success-items {
+        .success-item {
+          background: var(--pt-surface-sunken);
+          border-color: var(--pt-hairline);
+
+          .success-item-img-wrap {
+            background: var(--pt-tint-soft);
+          }
+
+          .success-item-name {
+            color: var(--pt-ink-strong);
+          }
+
+          .success-item-qty {
+            color: var(--pt-ink-faint);
+          }
+
+          .success-item-price {
+            color: var(--pt-price);
+          }
+        }
+      }
+
+      .success-actions {
+        .btn-success-shop {
+          color: var(--pt-ink-mid);
+          border-color: var(--pt-hairline);
+
+          &:hover {
+            background: var(--pt-hover);
+          }
+        }
+      }
+    }
+  }
 }

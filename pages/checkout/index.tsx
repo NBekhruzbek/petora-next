@@ -51,8 +51,8 @@ import {
   toOrderItems,
 } from "@/libs/payment/portone";
 import {
+  sweetBottomSmallSuccessAlert,
   sweetMixinErrorAlert,
-  sweetTopSmallSuccessAlert,
 } from "@/libs/sweetAlert";
 
 interface DeliveryForm {
@@ -61,20 +61,22 @@ interface DeliveryForm {
   address: string;
 }
 
+// Themed through the --pt-* tokens rather than literals so the fields follow
+// dark mode; the outline colours only live here, not in checkout.scss.
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "10px",
-    background: "#fff",
-    "& fieldset": { borderColor: "#410075" },
-    "&:hover fieldset": { borderColor: "#6d28d9" },
-    "&.Mui-focused fieldset": { borderColor: "#410075" },
-    "&.Mui-disabled fieldset": { borderColor: "rgba(0,0,0,0.05)" },
+    background: "var(--pt-field-surface)",
+    "& fieldset": { borderColor: "var(--pt-ink)" },
+    "&:hover fieldset": { borderColor: "var(--pt-accent)" },
+    "&.Mui-focused fieldset": { borderColor: "var(--pt-ink)" },
+    "&.Mui-disabled fieldset": { borderColor: "var(--pt-hairline)" },
   },
   "& .MuiInputBase-input": {
     fontFamily: "Assistant",
     fontSize: "14px",
     fontWeight: 600,
-    color: "#111827",
+    color: "var(--pt-ink-strong)",
   },
 };
 
@@ -163,7 +165,7 @@ const CheckoutPage: NextPage = () => {
 
       setDelivery(deliveryDraft);
       setEditDelivery(false);
-      await sweetTopSmallSuccessAlert(t("checkout.addressSaved"), 900);
+      await sweetBottomSmallSuccessAlert(t("checkout.addressSaved"), 900);
     } catch (err: any) {
       await sweetMixinErrorAlert(err.message);
     } finally {
