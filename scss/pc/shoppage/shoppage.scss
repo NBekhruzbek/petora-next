@@ -1365,6 +1365,7 @@
 
                 .button {
                   border-radius: 50%;
+                  color: var(--pt-ink-body);
 
                   &:hover {
                     background-color: var(--pt-hover);
@@ -1373,6 +1374,10 @@
 
                 .dec-inc-icon {
                   font-size: 20px;
+                }
+
+                html[data-theme="dark"] & {
+                  border-color: var(--pt-hairline);
                 }
               }
               .add-btn {
