@@ -89,8 +89,12 @@ const prettifyEnum = (value?: string) =>
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-const imageUrl = (path?: string, fallback = "") =>
-  path ? `${REACT_APP_API_URL}/${path}` : fallback;
+const imageUrl = (path?: string, fallback = "") => {
+  if (!path) return fallback;
+  return /^https?:\/\//.test(path) ? path : `${REACT_APP_API_URL}/${path}`;
+};
+
+const DEFAULT_AVATAR = "/img/profile/defaultUser.png";
 
 const AgentDetail: NextPage = () => {
   const router = useRouter();
@@ -115,10 +119,12 @@ const AgentDetail: NextPage = () => {
   const [expandedReviews, setExpandedReviews] = useState<
     Record<string, boolean>
   >({});
-  // Index into `certificates` for the fullscreen viewer; null = closed.
-  const [certGalleryIndex, setCertGalleryIndex] = useState<number | null>(
-    null,
+  // Remote avatars (OAuth photo URLs) can expire — fall back to the initial.
+  const [brokenAvatars, setBrokenAvatars] = useState<Record<string, boolean>>(
+    {},
   );
+  // Index into `certificates` for the fullscreen viewer; null = closed.
+  const [certGalleryIndex, setCertGalleryIndex] = useState<number | null>(null);
 
   const activeReviewSort =
     REVIEW_SORT_OPTIONS.find((option) => option.value === reviewSort) ??
@@ -320,19 +326,11 @@ const AgentDetail: NextPage = () => {
   const handleCloseCertificate = () => setCertGalleryIndex(null);
   const handlePreviousCertificate = () =>
     setCertGalleryIndex((prev) =>
-      prev === null
-        ? prev
-        : prev === 0
-          ? certificates.length - 1
-          : prev - 1,
+      prev === null ? prev : prev === 0 ? certificates.length - 1 : prev - 1,
     );
   const handleNextCertificate = () =>
     setCertGalleryIndex((prev) =>
-      prev === null
-        ? prev
-        : prev === certificates.length - 1
-          ? 0
-          : prev + 1,
+      prev === null ? prev : prev === certificates.length - 1 ? 0 : prev + 1,
     );
 
   const infoRows: { icon: ReactNode; text: string }[] = [
@@ -378,12 +376,15 @@ const AgentDetail: NextPage = () => {
           <Stack className="agent-detail-profile">
             <Box className="agent-detail-avatar-wrap">
               <img
-                src={imageUrl(
-                  agent.memberImage,
-                  "/img/profile/defaultUser.png",
-                )}
+                src={imageUrl(agent.memberImage, DEFAULT_AVATAR)}
                 alt={agentName}
                 className="agent-detail-avatar"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  if (img.getAttribute("src") !== DEFAULT_AVATAR)
+                    img.src = DEFAULT_AVATAR;
+                }}
               />
             </Box>
 
@@ -674,10 +675,18 @@ const AgentDetail: NextPage = () => {
                         alignItems="center"
                       >
                         <Box className="review-card-avatar">
-                          {reviewer?.memberImage ? (
+                          {reviewer?.memberImage &&
+                          !brokenAvatars[review._id] ? (
                             <img
                               src={imageUrl(reviewer.memberImage)}
                               alt={`${reviewerName} avatar`}
+                              referrerPolicy="no-referrer"
+                              onError={() =>
+                                setBrokenAvatars((prev) => ({
+                                  ...prev,
+                                  [review._id]: true,
+                                }))
+                              }
                             />
                           ) : (
                             reviewerName.charAt(0).toUpperCase()

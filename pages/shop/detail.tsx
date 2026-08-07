@@ -63,8 +63,18 @@ const DISTRIBUTION_ROWS = [
 const formatPrice = (value: number) =>
   `₩${Math.round(value).toLocaleString("ko-KR")}`;
 
-const imageUrl = (path?: string, fallback = "") =>
-  path ? `${REACT_APP_API_URL}/${path}` : fallback;
+const imageUrl = (path?: string, fallback = "") => {
+  if (!path) return fallback;
+  return /^https?:\/\//.test(path) ? path : `${REACT_APP_API_URL}/${path}`;
+};
+
+const DEFAULT_AVATAR = "/img/profile/defaultUser.png";
+
+const onAvatarError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const img = e.currentTarget;
+  if (img.getAttribute("src") === DEFAULT_AVATAR) return;
+  img.src = DEFAULT_AVATAR;
+};
 
 const Detail = () => {
   const router = useRouter();
@@ -715,9 +725,11 @@ const Detail = () => {
                             <img
                               src={imageUrl(
                                 reviewer?.memberImage,
-                                "/img/profile/defaultUser.png",
+                                DEFAULT_AVATAR,
                               )}
                               alt={`${reviewerName} avatar`}
+                              referrerPolicy="no-referrer"
+                              onError={onAvatarError}
                             />
                           </Box>
                           <Stack className="review-user-meta">

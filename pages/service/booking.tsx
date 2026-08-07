@@ -156,8 +156,18 @@ const toClock = (minutes: number) => {
   return `${h}:${m}`;
 };
 
-const imageUrl = (path?: string, fallback = "") =>
-  path ? `${REACT_APP_API_URL}/${path}` : fallback;
+const imageUrl = (path?: string, fallback = "") => {
+  if (!path) return fallback;
+  return /^https?:\/\//.test(path) ? path : `${REACT_APP_API_URL}/${path}`;
+};
+
+const DEFAULT_AVATAR = "/img/profile/defaultUser.png";
+
+const onAvatarError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const img = e.currentTarget;
+  if (img.getAttribute("src") === DEFAULT_AVATAR) return;
+  img.src = DEFAULT_AVATAR;
+};
 
 const Booking = () => {
   const device = useDeviceDetect();
@@ -921,11 +931,10 @@ const Booking = () => {
               <Stack className="agent-overview-card">
                 <Box className="agent-overview-image">
                   <img
-                    src={imageUrl(
-                      agent?.memberImage,
-                      "/img/profile/defaultUser.png",
-                    )}
+                    src={imageUrl(agent?.memberImage, DEFAULT_AVATAR)}
                     alt={agentName ? `${agentName} profile` : "Agent profile"}
+                    referrerPolicy="no-referrer"
+                    onError={onAvatarError}
                   />
                 </Box>
 
@@ -1277,9 +1286,11 @@ const Booking = () => {
                           <img
                             src={imageUrl(
                               reviewer?.memberImage,
-                              "/img/profile/defaultUser.png",
+                              DEFAULT_AVATAR,
                             )}
                             alt={`${reviewerName} avatar`}
+                            referrerPolicy="no-referrer"
+                            onError={onAvatarError}
                           />
                         </Box>
                         <Stack className="review-user-meta">
