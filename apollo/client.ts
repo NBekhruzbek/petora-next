@@ -52,7 +52,7 @@ class LoggingWebSocket {
     };
 
     this.socket.onmessage = (msg) => {
-      console.log("WebSocket message: ", msg.data);
+      // console.log("WebSocket message: ", msg.data);
     };
 
     this.socket.onerror = (error) => {
@@ -81,7 +81,7 @@ function createIsomorphicLink() {
           ...getHeaders(),
         },
       }));
-      console.warn("requesting.. ", operation);
+      console.log("requesting.. ", operation);
       return forward(operation);
     });
 
