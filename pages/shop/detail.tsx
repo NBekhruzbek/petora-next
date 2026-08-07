@@ -43,6 +43,9 @@ import {
   sweetMixinErrorAlert,
   sweetBottomSmallSuccessAlert,
 } from "@/libs/sweetAlert";
+import ImageViewerDialog, {
+  ImageViewerState,
+} from "@/libs/components/common/ImageViewerDialog";
 import { addToBasket } from "@/libs/basket";
 import { flyToBasket } from "@/libs/flyToBasket";
 import moment from "moment";
@@ -101,6 +104,7 @@ const Detail = () => {
   const [expandedReviews, setExpandedReviews] = useState<
     Record<string, boolean>
   >({});
+  const [photoViewer, setPhotoViewer] = useState<ImageViewerState>(null);
 
   /** APOLLO REQUESTS **/
 
@@ -771,6 +775,23 @@ const Detail = () => {
                                 <Box
                                   key={`${review._id}-photo-${index}`}
                                   className="review-photo-item"
+                                  role="button"
+                                  tabIndex={0}
+                                  onClick={() =>
+                                    setPhotoViewer({
+                                      images: photos.map((p) => imageUrl(p)),
+                                      index,
+                                    })
+                                  }
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                      e.preventDefault();
+                                      setPhotoViewer({
+                                        images: photos.map((p) => imageUrl(p)),
+                                        index,
+                                      });
+                                    }
+                                  }}
                                 >
                                   <img
                                     src={imageUrl(photo)}
@@ -822,6 +843,12 @@ const Detail = () => {
       </Stack>
       {/* Other Products may You Like component develop*/}
       <RelatedProducts />
+
+      <ImageViewerDialog
+        viewer={photoViewer}
+        onChange={setPhotoViewer}
+        altPrefix="Review photo"
+      />
     </Stack>
   );
 };

@@ -38,6 +38,9 @@ import moment, { Moment } from "moment";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import RelatedServices from "@/libs/components/servicepage/RelatedServices";
+import ImageViewerDialog, {
+  ImageViewerState,
+} from "@/libs/components/common/ImageViewerDialog";
 import useDeviceDetect from "@/libs/hooks/useDeviceDetect";
 import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
@@ -211,6 +214,7 @@ const Booking = () => {
   const [reviewImages, setReviewImages] = useState<
     { file: File; preview: string }[]
   >([]);
+  const [photoViewer, setPhotoViewer] = useState<ImageViewerState>(null);
 
   const activeReviewSort =
     REVIEW_SORT_OPTIONS.find((option) => option.value === reviewSort) ??
@@ -1327,6 +1331,23 @@ const Booking = () => {
                               <Box
                                 key={`${review._id}-photo-${index}`}
                                 className="review-photo-item"
+                                role="button"
+                                tabIndex={0}
+                                onClick={() =>
+                                  setPhotoViewer({
+                                    images: photos.map((p) => imageUrl(p)),
+                                    index,
+                                  })
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    setPhotoViewer({
+                                      images: photos.map((p) => imageUrl(p)),
+                                      index,
+                                    });
+                                  }
+                                }}
                               >
                                 <img
                                   src={imageUrl(photo)}
@@ -1708,6 +1729,12 @@ const Booking = () => {
           </Stack>
         )}
       </Dialog>
+
+      <ImageViewerDialog
+        viewer={photoViewer}
+        onChange={setPhotoViewer}
+        altPrefix="Review photo"
+      />
     </Stack>
   );
 };
