@@ -90,7 +90,7 @@ const Chat = () => {
   useEffect(() => {
     if (!socket) return;
 
-    socket.onmessage = (msg) => {
+    const handler = (msg: MessageEvent) => {
       const data = JSON.parse(msg.data);
 
       switch (data.event) {
@@ -109,6 +109,9 @@ const Chat = () => {
           break;
       }
     };
+
+    socket.addEventListener("message", handler);
+    return () => socket.removeEventListener("message", handler);
   }, [socket, open]);
 
   useEffect(() => {

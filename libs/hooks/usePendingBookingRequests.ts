@@ -1,9 +1,10 @@
+import { useEffect } from "react";
 import { useQuery, useReactiveVar } from "@apollo/client";
-import { userVar } from "@/apollo/store";
+import { socketVar, userVar } from "@/apollo/store";
 import { GET_AGENT_BOOKINGS } from "@/apollo/user/query";
-import { BADGE_POLL_MS } from "@/libs/config";
 import { BookingStatus } from "@/libs/enums/booking.enum";
 import { MemberType } from "@/libs/enums/member.enum";
+import { NotificationGroup } from "@/libs/enums/notification.enum";
 import { useRefetchOnFocus } from "./useRefetchOnFocus";
 
 interface UsePendingBookingRequestsOptions {
@@ -15,6 +16,7 @@ export const usePendingBookingRequests = (
 ) => {
   const { live = false } = options;
   const user = useReactiveVar(userVar);
+  const socket = useReactiveVar(socketVar);
   const isAgent = user?.memberType === MemberType.AGENT;
 
   const { data, refetch } = useQuery(GET_AGENT_BOOKINGS, {
@@ -24,8 +26,24 @@ export const usePendingBookingRequests = (
     },
     skip: !isAgent,
     notifyOnNetworkStatusChange: true,
-    ...(live ? { pollInterval: BADGE_POLL_MS } : {}),
   });
+
+  useEffect(() => {
+    if (!live || !isAgent || !socket) return;
+
+    const handler = (msg: MessageEvent) => {
+      const data = JSON.parse(msg.data);
+      if (
+        data.event === "notification" &&
+        data.notification?.notificationGroup === NotificationGroup.BOOKINGS
+      ) {
+        refetch();
+      }
+    };
+
+    socket.addEventListener("message", handler);
+    return () => socket.removeEventListener("message", handler);
+  }, [socket, live, isAgent, refetch]);
 
   useRefetchOnFocus(refetch, live && isAgent);
 
