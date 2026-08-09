@@ -196,6 +196,32 @@
     }
   }
 
+  &__admin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2;
+    width: 100%;
+    min-height: $touch-target-min;
+    margin-top: $space-2;
+    border: none;
+    border-radius: 12px;
+    background: var(--pt-selected);
+    color: var(--pt-ink);
+    font-family: $font;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+
+    svg {
+      font-size: 19px;
+    }
+
+    &:active {
+      background: var(--pt-hover);
+    }
+  }
+
   &__login {
     display: flex;
     align-items: center;

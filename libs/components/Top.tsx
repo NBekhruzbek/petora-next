@@ -15,6 +15,7 @@ import { userVar } from "@/apollo/store";
 import { logOut } from "@/libs/auth";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -50,6 +51,8 @@ const Top = () => {
         ? t("member.typeAdmin")
         : t("member.typeUser");
   const memberAvatar = user.memberImage || "/img/profile/defaultUser.png";
+
+  const isAdmin = user.memberType === "ADMIN";
 
   const [colorChange, setColorChange] = useState<boolean>(false);
   const [bgColor, setBgColor] = useState<boolean>(false);
@@ -262,26 +265,42 @@ const Top = () => {
 
             <Box className="mobile-nav-drawer__footer">
               {authMember ? (
-                <Stack className="mobile-nav-drawer__member" direction="row">
-                  <Avatar
-                    src={memberAvatar}
-                    className="mobile-nav-drawer__avatar"
-                  />
-                  <Typography className="mobile-nav-drawer__member-name">
-                    {memberDisplayName}
-                  </Typography>
-                  <button
-                    type="button"
-                    className="mobile-nav-drawer__logout"
-                    onClick={() => {
-                      closeMobileNav();
-                      logOut();
-                    }}
-                  >
-                    <Logout />
-                    {t("auth.logout")}
-                  </button>
-                </Stack>
+                <>
+                  <Stack className="mobile-nav-drawer__member" direction="row">
+                    <Avatar
+                      src={memberAvatar}
+                      className="mobile-nav-drawer__avatar"
+                    />
+                    <Typography className="mobile-nav-drawer__member-name">
+                      {memberDisplayName}
+                    </Typography>
+                    <button
+                      type="button"
+                      className="mobile-nav-drawer__logout"
+                      onClick={() => {
+                        closeMobileNav();
+                        logOut();
+                      }}
+                    >
+                      <Logout />
+                      {t("auth.logout")}
+                    </button>
+                  </Stack>
+
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      className="mobile-nav-drawer__admin"
+                      onClick={() => {
+                        closeMobileNav();
+                        void router.push("/admin");
+                      }}
+                    >
+                      <AdminPanelSettingsIcon />
+                      {t("mypage.adminPanel")}
+                    </button>
+                  )}
+                </>
               ) : (
                 <button
                   type="button"
