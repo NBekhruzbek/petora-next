@@ -10,6 +10,8 @@ import { MemberType } from "@/libs/enums/member.enum";
 import { hydrateAdminColorScheme } from "@/libs/adminTheme";
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
+import AdminMobileNav from "./AdminMobileNav";
+import { useAdminTableLabels } from "./adminHelpers";
 
 /**
  * Every query behind this layout is `@Roles(ADMIN)`-guarded, so letting a
@@ -32,6 +34,8 @@ const withAdminLayout = (Component: any) => {
 
     useEffect(() => hydrateAdminColorScheme(), []);
 
+    useAdminTableLabels(isAdmin);
+
     if (!isAdmin) return null;
 
     return (
@@ -47,6 +51,7 @@ const withAdminLayout = (Component: any) => {
               <Component {...props} />
             </Stack>
           </Stack>
+          <AdminMobileNav />
         </Stack>
       </>
     );

@@ -5,6 +5,10 @@
     "sectionMain": "기본",
     "sectionManagement": "관리",
     "brandAdmin": "Petora 관리자",
+    "mobile": {
+      "changeSection": "섹션 변경",
+      "waiting": "대기 {{count}}건"
+    },
     "nav": {
       "dashboard": "대시보드",
       "users": "회원",

@@ -5,6 +5,10 @@
     "sectionMain": "Main",
     "sectionManagement": "Management",
     "brandAdmin": "Petora Admin",
+    "mobile": {
+      "changeSection": "Change section",
+      "waiting": "{{count}} waiting"
+    },
     "nav": {
       "dashboard": "Dashboard",
       "users": "Users",

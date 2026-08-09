@@ -111,3 +111,46 @@ export const useDebouncedValue = <T>(value: T, delay = 400): T => {
 /** Total rows behind a paged query, from the `$facet` counter every list returns. */
 export const metaTotal = (metaCounter?: { total: number }[]) =>
   metaCounter?.[0]?.total ?? 0;
+
+export const useAdminTableLabels = (enabled: boolean) => {
+  useEffect(() => {
+    if (!enabled) return;
+    const root = document.getElementById("admin-content");
+    if (!root) return;
+
+    const stamp = () => {
+      root.querySelectorAll("table.admin-table").forEach((table) => {
+        const labels = Array.from(table.querySelectorAll("thead th")).map(
+          (th) => th.textContent?.trim() ?? "",
+        );
+        if (!labels.length) return;
+
+        table.querySelectorAll("tbody tr").forEach((row) => {
+          const cells = (row as HTMLTableRowElement).cells;
+          // A short row is the colSpan'd empty state, not a record — it gets no
+          // labels, and the stylesheet renders it as a plain centred message.
+          if (cells.length !== labels.length) return;
+          Array.from(cells).forEach((cell, i) => {
+            if (labels[i] && cell.dataset.label !== labels[i]) {
+              cell.dataset.label = labels[i];
+            }
+          });
+        });
+      });
+    };
+
+    stamp();
+
+    let frame = 0;
+    const observer = new MutationObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(stamp);
+    });
+    observer.observe(root, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [enabled]);
+};
