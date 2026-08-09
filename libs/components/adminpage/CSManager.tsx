@@ -472,6 +472,7 @@ const FaqTab = () => {
                         direction="row"
                         alignItems="center"
                         gap={0.8}
+                        className="admin-cs-faq-actions"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Button
@@ -990,6 +991,7 @@ const NoticesTab = () => {
                   direction="row"
                   alignItems="center"
                   gap={0.8}
+                  className="admin-cs-notice-actions"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Button
@@ -1313,6 +1315,8 @@ const CSManager = () => {
           value={tab}
           onChange={(_, v) => setTab(v)}
           className="admin-cs-tabs"
+          variant="scrollable"
+          scrollButtons={false}
         >
           <Tab
             label={

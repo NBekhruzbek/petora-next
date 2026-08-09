@@ -452,10 +452,15 @@ const CommunityModerator = () => {
 
       <Stack className="admin-card">
         {/* Board Tabs */}
+        {/* Scrollable so four labelled tabs with counts can be swiped on a
+            phone; with room to spare it renders identically to the fixed
+            variant, and the arrows stay off at every width. */}
         <Tabs
           value={boardTab}
           onChange={(_, v) => changeTab(v)}
           className="admin-cm-tabs"
+          variant="scrollable"
+          scrollButtons={false}
         >
           {TABS.map((tab) => (
             <Tab
