@@ -14,6 +14,7 @@ import {
 import { Dialog, IconButton } from "@mui/material";
 import {
   ChangeEvent,
+  ClipboardEvent,
   FormEvent,
   useEffect,
   useMemo,
@@ -22,6 +23,12 @@ import {
 } from "react";
 import { getJwtToken, logIn, loginWithGoogle, signUp } from "@/libs/auth";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { useMutation } from "@apollo/client";
+import {
+  REQUEST_PASSWORD_RESET,
+  RESET_PASSWORD,
+  VERIFY_PASSWORD_RESET_CODE,
+} from "@/apollo/user/mutation";
 
 interface LoginRegisterProps {
   open: boolean;
@@ -98,6 +105,11 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     password: "",
     confirmPassword: "",
   });
+  const [resetError, setResetError] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  // Handed out by the server once the code verifies; the reset step spends it.
+  const [resetToken, setResetToken] = useState("");
+  const [loginNotice, setLoginNotice] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(180);
@@ -106,6 +118,10 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     null,
   );
   const [googleBtnWidth, setGoogleBtnWidth] = useState(300);
+
+  const [requestPasswordReset] = useMutation(REQUEST_PASSWORD_RESET);
+  const [verifyPasswordResetCode] = useMutation(VERIFY_PASSWORD_RESET_CODE);
+  const [resetPassword] = useMutation(RESET_PASSWORD);
 
   const isRegister = mode !== "login";
   const isResetFlow = mode === "forgot" || mode === "reset";
@@ -147,6 +163,12 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
       setLoginError("");
       setRegisterError("");
       setGoogleError("");
+      setResetError("");
+      setLoginNotice("");
+      setResetToken("");
+      setOtp(Array(6).fill(""));
+      setForgotForm({ name: "", email: "" });
+      setResetForm({ password: "", confirmPassword: "" });
     }
   }, [open]);
 
@@ -195,13 +217,29 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     (field: keyof typeof forgotForm) =>
     (event: ChangeEvent<HTMLInputElement>) => {
       setForgotForm((prev) => ({ ...prev, [field]: event.target.value }));
+      setResetError("");
     };
 
   const handleResetChange =
     (field: keyof typeof resetForm) =>
     (event: ChangeEvent<HTMLInputElement>) => {
       setResetForm((prev) => ({ ...prev, [field]: event.target.value }));
+      setResetError("");
     };
+
+  const sendResetCode = async () => {
+    await requestPasswordReset({
+      variables: {
+        input: {
+          memberUserName: forgotForm.name.trim(),
+          memberEmail: forgotForm.email.trim(),
+        },
+      },
+    });
+    setOtp(Array(6).fill(""));
+    setTimeLeft(180);
+    window.setTimeout(() => otpRefs.current[0]?.focus(), 80);
+  };
 
   // Removed handleCheckId
 
@@ -251,45 +289,94 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     else setRegisterError(t("auth2.errRegister"));
   };
 
-  const handleForgotSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleForgotSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setMode("verify");
-    setTimeLeft(180);
-    window.setTimeout(() => otpRefs.current[0]?.focus(), 80);
+
+    setResetError("");
+    setResetLoading(true);
+    try {
+      await sendResetCode();
+      setMode("verify");
+    } catch {
+      setResetError(t("auth2.errResetRequest"));
+    } finally {
+      setResetLoading(false);
+    }
   };
 
-  const handleResetSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleVerifySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (resetForm.password !== resetForm.confirmPassword) {
-      setRegisterError(t("auth2.errMismatch"));
+
+    const code = otp.join("");
+    if (code.length !== otp.length) {
+      setResetError(t("auth2.errCodeIncomplete"));
       return;
     }
-    setMode("login");
-  };
 
-  const handleVerifySubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (mode === "verify") {
-      // In a real app, check if we came from 'forgot'
-      // For this demo, let's assume if name in forgotForm is filled, we go to reset
-      if (forgotForm.name) {
-        setMode("reset");
-      } else {
-        // Successful registration logic
-        setMode("login");
-      }
+    setResetError("");
+    setResetLoading(true);
+    try {
+      const { data } = await verifyPasswordResetCode({
+        variables: {
+          input: { memberUserName: forgotForm.name.trim(), code },
+        },
+      });
+      setResetToken(data?.verifyPasswordResetCode ?? "");
+      setResetForm({ password: "", confirmPassword: "" });
+      setMode("reset");
+    } catch {
+      setResetError(t("auth2.errCode"));
+    } finally {
+      setResetLoading(false);
     }
   };
 
-  const handleResendOtp = () => {
-    setTimeLeft(180);
-    setOtp(Array(6).fill(""));
-    otpRefs.current[0]?.focus();
-    // Add API call for resending OTP here
+  const handleResetSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (resetForm.password !== resetForm.confirmPassword) {
+      setResetError(t("auth2.errMismatch"));
+      return;
+    }
+
+    setResetError("");
+    setResetLoading(true);
+    try {
+      await resetPassword({
+        variables: {
+          input: { resetToken, memberPassword: resetForm.password },
+        },
+      });
+
+      // Land back on login with the username already filled, so the new password
+      // can be used straight away.
+      setLoginForm({ name: forgotForm.name.trim(), password: "" });
+      setLoginNotice(t("auth2.resetDone"));
+      setResetToken("");
+      setResetForm({ password: "", confirmPassword: "" });
+      setMode("login");
+    } catch {
+      setResetError(t("auth2.errResetExpired"));
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setResetError("");
+    setResetLoading(true);
+    try {
+      await sendResetCode();
+    } catch {
+      setResetError(t("auth2.errResetRequest"));
+    } finally {
+      setResetLoading(false);
+    }
   };
 
   const handleOtpChange = (index: number, value: string) => {
     const nextValue = value.replace(/\D/g, "").slice(-1);
+    setResetError("");
     setOtp((prev) => {
       const next = [...prev];
       next[index] = nextValue;
@@ -299,6 +386,28 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
     if (nextValue && index < otp.length - 1) {
       otpRefs.current[index + 1]?.focus();
     }
+  };
+
+  // maxLength caps a paste at one character per box, so the whole code has to be
+  // spread across the boxes by hand.
+  const handleOtpPaste = (
+    index: number,
+    event: ClipboardEvent<HTMLInputElement>,
+  ) => {
+    const digits = event.clipboardData.getData("text").replace(/\D/g, "");
+    if (!digits) return;
+
+    event.preventDefault();
+    setResetError("");
+    setOtp((prev) => {
+      const next = [...prev];
+      digits.split("").forEach((digit, offset) => {
+        if (index + offset < next.length) next[index + offset] = digit;
+      });
+      return next;
+    });
+
+    otpRefs.current[Math.min(index + digits.length, otp.length - 1)]?.focus();
   };
 
   const handleOtpKeyDown = (index: number, key: string) => {
@@ -449,12 +558,18 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                 <button
                   type="button"
                   className="auth-link-button"
-                  onClick={() => setMode("forgot")}
+                  onClick={() => {
+                    setLoginNotice("");
+                    setResetError("");
+                    setForgotForm({ name: loginForm.name, email: "" });
+                    setMode("forgot");
+                  }}
                 >
                   {t("auth2.forgotPassword")}
                 </button>
               </div>
 
+              {loginNotice && <p className="auth-form-notice">{loginNotice}</p>}
               {loginError && <p className="auth-form-error">{loginError}</p>}
 
               <button
@@ -723,13 +838,25 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                 </div>
               </label>
 
-              <button className="auth-primary-button" type="submit">
-                {t("auth2.sendResetCode")}
+              {resetError && <p className="auth-form-error">{resetError}</p>}
+
+              <button
+                className="auth-primary-button"
+                type="submit"
+                disabled={resetLoading}
+              >
+                {resetLoading ? t("auth2.sending") : t("auth2.sendResetCode")}
               </button>
 
               <p className="auth-switch-copy">
                 {t("auth2.rememberPassword")}
-                <button type="button" onClick={() => setMode("login")}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetError("");
+                    setMode("login");
+                  }}
+                >
                   {t("auth2.backToLogin")}
                 </button>
               </p>
@@ -807,8 +934,14 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                 </div>
               </label>
 
-              <button className="auth-primary-button" type="submit">
-                {t("auth2.resetPassword")}
+              {resetError && <p className="auth-form-error">{resetError}</p>}
+
+              <button
+                className="auth-primary-button"
+                type="submit"
+                disabled={resetLoading}
+              >
+                {resetLoading ? t("auth2.resetting") : t("auth2.resetPassword")}
               </button>
             </form>
           )}
@@ -830,6 +963,7 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
                       handleOtpChange(index, event.target.value)
                     }
                     onKeyDown={(event) => handleOtpKeyDown(index, event.key)}
+                    onPaste={(event) => handleOtpPaste(index, event)}
                     inputMode="numeric"
                     maxLength={1}
                     aria-label={`Verification digit ${index + 1}`}
@@ -839,34 +973,53 @@ const LoginRegister = ({ open, onClose }: LoginRegisterProps) => {
 
               <div className="auth-otp-meta">
                 <p>
-                  OTP will expire in <strong>{formatTime(timeLeft)}</strong>
+                  {timeLeft > 0 ? (
+                    <>
+                      OTP will expire in <strong>{formatTime(timeLeft)}</strong>
+                    </>
+                  ) : (
+                    <strong>{t("auth2.codeExpired")}</strong>
+                  )}
                 </p>
                 <p>
                   {t("auth2.noCode")}
-                  <button type="button" onClick={handleResendOtp}>
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={resetLoading}
+                  >
                     {t("auth2.resend")}
                   </button>
                 </p>
               </div>
+
+              {resetError && <p className="auth-form-error">{resetError}</p>}
 
               <div className="auth-step-dots">
                 <span />
                 <span className="active" />
               </div>
 
-              <button className="auth-primary-button" type="submit">
-                {t("auth2.submit")}
+              <button
+                className="auth-primary-button"
+                type="submit"
+                disabled={resetLoading || timeLeft === 0}
+              >
+                {resetLoading ? t("auth2.verifying") : t("auth2.submit")}
               </button>
 
               <p className="auth-switch-copy">
-                {t("auth2.haveAccount")}
-                <button type="button" onClick={handleSwitchToLogin}>
-                  {t("auth2.loginHere")}
+                {t("auth2.rememberPassword")}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetError("");
+                    setMode("login");
+                  }}
+                >
+                  {t("auth2.backToLogin")}
                 </button>
               </p>
-
-              {renderDivider()}
-              {renderSocialButtons()}
             </form>
           )}
         </div>

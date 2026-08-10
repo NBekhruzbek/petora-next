@@ -1473,7 +1473,8 @@
           }
         }
 
-        .auth-form-error {
+        .auth-form-error,
+        .auth-form-notice {
           margin: -2px 0 0;
           padding: 10px 14px;
           border: 1px solid rgba(192, 56, 56, 0.24);
@@ -1483,6 +1484,12 @@
           font-family: $font;
           font-size: 13px;
           font-weight: 800;
+        }
+
+        .auth-form-notice {
+          border-color: rgba(22, 128, 78, 0.24);
+          color: #15703f;
+          background: rgba(232, 250, 239, 0.78);
         }
 
         .auth-otp-grid {

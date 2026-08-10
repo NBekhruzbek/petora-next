@@ -127,6 +127,24 @@ export const SIGN_UP = gql`
   }
 `;
 
+export const REQUEST_PASSWORD_RESET = gql`
+  mutation RequestPasswordReset($input: PasswordResetRequestInput!) {
+    requestPasswordReset(input: $input)
+  }
+`;
+
+export const VERIFY_PASSWORD_RESET_CODE = gql`
+  mutation VerifyPasswordResetCode($input: PasswordResetVerifyInput!) {
+    verifyPasswordResetCode(input: $input)
+  }
+`;
+
+export const RESET_PASSWORD = gql`
+  mutation ResetPassword($input: PasswordResetInput!) {
+    resetPassword(input: $input)
+  }
+`;
+
 export const UPDATE_MEMBER = gql`
   mutation UpdateMember($input: MemberUpdate!) {
     updateMember(input: $input) {
