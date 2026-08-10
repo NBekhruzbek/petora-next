@@ -84,7 +84,7 @@ const OurCompany = () => {
           <Stack className="oc-card">
             <img
               className="oc-dog-img"
-              src="/img/pets/petlogin.png"
+              src="/img/pets/PetLogin.png"
               alt="Our company dog"
             />
             {/* Gradient footer inside card */}
