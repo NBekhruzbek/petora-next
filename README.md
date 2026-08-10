@@ -257,8 +257,9 @@ petora-next/
 │       ├── homepage/ servicepage/ agentspage/ shoppage/
 │       ├── community/ discoverypage/ cspage/ mypage/
 │       ├── notifications/          # Bell, presentation, destination routing
-│       ├── adminpage/              # Layout, sidebar, 10 managers, theme toggle
-│       ├── account/LoginRegister.tsx
+│       ├── adminpage/              # Layout, sidebar + mobile nav, 10 managers,
+│       │                           #   shared nav model, theme toggle
+│       ├── account/LoginRegister.tsx  # Login, signup and the 3-step reset flow
 │       ├── Top.tsx Footer.tsx Basket.tsx Chat.tsx ContactUs.tsx
 │       └── ...
 │
@@ -351,6 +352,25 @@ errorLink  →  tokenRefreshLink  →  split
 - Member images are normalised at this boundary: an absolute URL (Google's avatar) is used as-is, a relative path from our API is prefixed with `NEXT_PUBLIC_API_URL`, and a missing one falls back to `/img/profile/defaultUser.png`.
 - `logOut()` clears the token and reloads the page, so every cached query refetches as a guest. A _failed_ login uses `clearAuthState()` instead — same cleanup, no reload, so the login dialog survives to show its error.
 - **Role gating** is enforced per surface: `AdminLayout` redirects any member whose `memberType` isn't `ADMIN`, and My Page swaps its entire navigation set depending on whether the member is an `AGENT`.
+
+**Password reset** is a three-step flow inside the same `LoginRegister` dialog — `forgot` → `verify` → `reset` — backed by three mutations in `apollo/user/mutation.ts`:
+
+| Step     | Mutation                                            | Returns                      |
+| -------- | --------------------------------------------------- | ---------------------------- |
+| `forgot` | `requestPasswordReset(memberUserName, memberEmail)` | `Boolean` — always `true`    |
+| `verify` | `verifyPasswordResetCode(memberUserName, code)`     | A single-use **reset token** |
+| `reset`  | `resetPassword(resetToken, memberPassword)`         | `Boolean`                    |
+
+Four details are worth knowing before touching this:
+
+- **Step 1 always succeeds.** The API returns `true` whether or not the username/email pair matches a member, so the dialog advances to the code step regardless — that's deliberate (it keeps the form from confirming which accounts exist), and it means "no email arrived" and "wrong details" look identical in the UI. Google-auth members are in the same bucket: they have no password, so no code is ever sent.
+- **The reset token is the authorisation for step 3**, not the code. It lives only in component state (`resetToken`), so closing the dialog mid-flow abandons the reset — the `open` effect clears the OTP boxes, both forms and the token together.
+- **The 3-minute countdown is paired with the backend's `RESET_CODE_TTL_MINUTES`**, the same way the delivery-fee constants are. At zero, Submit disables and only Resend stays live; resending issues a fresh code and restarts the timer. The backend also burns the request after five wrong codes, which surfaces as the same "wrong or expired" error.
+- **The OTP boxes need their own paste handler.** Each input is `maxLength={1}`, so pasting a six-digit code would otherwise drop one digit into one box; `handleOtpPaste` spreads the digits across the remaining boxes and moves focus to the end.
+
+On success the dialog returns to `login` with the username pre-filled and a success notice (`.auth-form-notice` — the green counterpart to `.auth-form-error`), so the new password can be used immediately. Reset-flow errors use their own `resetError` state rather than the login/register error slots, since all three steps share one dialog.
+
+Styling for the whole dialog lives under `.auth-dialog` at the **top level of `scss/pc/main.scss`**, not inside the `#pc-wrap` block — MUI portals it out of the wrapper, the same situation as the language menu in [8.4](#84-styling-and-dark-mode). One consequence: that single stylesheet serves both the desktop and mobile trees, so there is nothing to add under `scss/mobile/` when this dialog changes.
 
 ### 8.3 Layouts & the device split
 
@@ -497,10 +517,11 @@ Older query-string forms (`?articleCategory=`, `?category=ORDERS`) are still nor
 | **CS**        | FAQ management grouped by category; notices with type badges            |
 | **Discovery** | Discovery pet CRUD with a live preview of the resulting card            |
 
-Two implementation notes:
+Three implementation notes:
 
 - **Destructive actions are two-step** and mostly **soft deletes** — records are marked, not dropped.
 - Every MUI `Drawer` and `Dialog` in the admin panel uses **`disablePortal`**, so that SCSS scoped under `#admin-wrap` actually reaches the rendered content. Without it, portalled content escapes the scope and renders unstyled.
+- **The mobile layer is a set of media queries, not a second tree.** Unlike the public site, the admin panel doesn't split into `#pc-wrap` / `#mobile-wrap` — `scss/mobile/adminpage/admin.scss` narrows the same `#admin-wrap` markup: the sidebar becomes a bottom section bar, and `useAdminTableLabels` stamps every `<td>` with a `data-label` read from its `<thead>` so the wide tables restack into labelled cards. The rail and the mobile bar read from one shared nav model in `adminNav.tsx`, so a section is added in one place.
 
 ---
 
@@ -537,7 +558,7 @@ Stated plainly, because they're the honest state of the project:
 
 - **Only the basket checkout is wired to PortOne.** Buy-now and booking prepayment are not; bookings settle with the agent after the session.
 - **The token-refresh link is a stub.** `apollo-link-token-refresh` is installed and in the chain, but `isTokenValidOrUndefined` always returns `true` and `fetchAccessToken` returns `null` — an expired token surfaces as a 401 rather than being silently refreshed. Wiring a real refresh mutation is the next auth task.
-- **The admin panel is desktop-only.** It has its own dark mode, but no mobile layer.
+- **Password reset can't tell a user their details were wrong.** Step 1 deliberately returns success for an unknown username/email pair, so a member who mistypes their email waits for a code that will never arrive. A "we've sent a code _if_ this account exists" wording is the honest fix; the current copy implies delivery.
 - **`pages/api/hello.ts`** is the Create-Next-App leftover; the app has no real Next.js API routes, since everything goes through the GraphQL backend.
 - **No automated test suite yet.** Verification is currently a clean `yarn build` plus manual browser checks on both the desktop and mobile trees.
 - Google sign-ups still carry a `google-<sub>` phone placeholder, which the payment layer works around client-side. The proper fix belongs in the backend.
@@ -789,8 +810,9 @@ petora-next/
 │       ├── homepage/ servicepage/ agentspage/ shoppage/
 │       ├── community/ discoverypage/ cspage/ mypage/
 │       ├── notifications/          # 알림 벨, 표시 로직, 이동 경로 결정
-│       ├── adminpage/              # 레이아웃, 사이드바, 매니저 10개, 테마 토글
-│       ├── account/LoginRegister.tsx
+│       ├── adminpage/              # 레이아웃, 사이드바 + 모바일 내비, 매니저 10개,
+│       │                           #   공용 내비 모델, 테마 토글
+│       ├── account/LoginRegister.tsx  # 로그인, 회원가입, 3단계 재설정 흐름
 │       ├── Top.tsx Footer.tsx Basket.tsx Chat.tsx ContactUs.tsx
 │       └── ...
 │
@@ -883,6 +905,25 @@ errorLink  →  tokenRefreshLink  →  split
 - 회원 이미지는 이 지점에서 정규화됩니다. 절대 URL(구글 아바타)은 그대로 쓰고, 우리 API의 상대 경로에는 `NEXT_PUBLIC_API_URL`을 붙이며, 값이 없으면 `/img/profile/defaultUser.png`로 대체합니다.
 - `logOut()`은 토큰을 지우고 페이지를 새로고침하여 캐시된 모든 쿼리를 비로그인 상태로 다시 가져옵니다. 반면 로그인에 *실패*한 경우에는 `clearAuthState()`를 사용합니다 — 정리는 동일하지만 새로고침은 하지 않으므로, 로그인 다이얼로그가 살아남아 에러를 보여줄 수 있습니다.
 - **권한 제어**는 화면 단위로 적용됩니다. `AdminLayout`은 `memberType`이 `ADMIN`이 아닌 회원을 리다이렉트하고, 마이페이지는 회원이 `AGENT`인지에 따라 내비게이션 구성을 통째로 바꿉니다.
+
+**비밀번호 재설정**은 같은 `LoginRegister` 다이얼로그 안에서 `forgot` → `verify` → `reset` 세 단계로 진행되며, `apollo/user/mutation.ts`의 뮤테이션 세 개가 이를 받칩니다.
+
+| 단계     | 뮤테이션                                            | 반환값                  |
+| -------- | --------------------------------------------------- | ----------------------- |
+| `forgot` | `requestPasswordReset(memberUserName, memberEmail)` | `Boolean` — 항상 `true` |
+| `verify` | `verifyPasswordResetCode(memberUserName, code)`     | 1회용 **리셋 토큰**     |
+| `reset`  | `resetPassword(resetToken, memberPassword)`         | `Boolean`               |
+
+이 흐름을 수정하기 전에 알아둘 네 가지:
+
+- **1단계는 언제나 성공합니다.** 아이디·이메일 조합이 실제 회원과 일치하든 아니든 API는 `true`를 반환하고, 다이얼로그는 그대로 코드 입력 단계로 넘어갑니다. 어떤 계정이 존재하는지 알려주지 않기 위한 의도된 동작이며, 그 결과 "메일이 오지 않음"과 "정보가 틀림"이 UI에서 구분되지 않습니다. 구글 로그인 회원도 마찬가지입니다 — 비밀번호 자체가 없으므로 코드가 발송되지 않습니다.
+- **3단계를 인가하는 것은 코드가 아니라 리셋 토큰입니다.** 토큰은 컴포넌트 상태(`resetToken`)에만 존재하므로, 도중에 다이얼로그를 닫으면 재설정이 폐기됩니다. `open` 이펙트가 OTP 입력칸과 두 폼, 토큰을 함께 초기화합니다.
+- **3분 카운트다운은 백엔드의 `RESET_CODE_TTL_MINUTES`와 짝을 이룹니다.** 배송비 상수와 같은 방식입니다. 0이 되면 제출 버튼이 비활성화되고 재전송만 남으며, 재전송하면 새 코드가 발급되고 타이머가 다시 시작됩니다. 백엔드는 코드를 5회 틀리면 해당 요청을 폐기하는데, 이는 동일한 "잘못되었거나 만료됨" 에러로 표시됩니다.
+- **OTP 입력칸에는 별도의 붙여넣기 처리가 필요합니다.** 각 입력이 `maxLength={1}`이라 여섯 자리 코드를 붙여넣으면 한 칸에 한 글자만 들어가므로, `handleOtpPaste`가 각 자리를 남은 칸에 나눠 넣고 포커스를 마지막 칸으로 옮깁니다.
+
+완료되면 다이얼로그는 아이디가 채워진 `login` 화면으로 돌아가며 성공 안내(`.auth-form-notice` — `.auth-form-error`의 초록색 짝)를 띄우므로, 새 비밀번호를 바로 사용할 수 있습니다. 세 단계가 하나의 다이얼로그를 공유하기 때문에, 재설정 흐름의 에러는 로그인·회원가입 에러 슬롯이 아니라 별도의 `resetError` 상태를 사용합니다.
+
+이 다이얼로그의 스타일은 `#pc-wrap` 블록 안이 아니라 **`scss/pc/main.scss`의 최상위**에 `.auth-dialog`로 정의되어 있습니다. MUI가 래퍼 밖으로 포털시키기 때문이며, [8.4](#84-스타일링과-다크-모드)의 언어 메뉴와 같은 상황입니다. 그 결과 이 스타일시트 하나가 데스크톱과 모바일 트리를 모두 담당하므로, 이 다이얼로그를 수정할 때 `scss/mobile/` 쪽에 따로 추가할 것은 없습니다.
 
 ### 8.3 레이아웃과 디바이스 분기
 
@@ -1029,10 +1070,11 @@ MUI 관련해 알아둘 함정이 하나 있습니다. `Menu`/`Select`는 표면
 | **고객센터**   | 카테고리별 FAQ 관리, 유형 배지가 있는 공지 관리                  |
 | **디스커버리** | 결과 카드를 실시간으로 미리 보며 진행하는 디스커버리 펫 CRUD     |
 
-구현상 두 가지 참고 사항:
+구현상 세 가지 참고 사항:
 
 - **삭제성 작업은 2단계 확인**을 거치며, 대부분 **소프트 삭제**입니다. 레코드는 표시될 뿐 실제로 제거되지 않습니다.
 - 관리자 패널의 모든 MUI `Drawer`와 `Dialog`는 **`disablePortal`** 을 사용합니다. 그래야 `#admin-wrap` 하위로 스코프된 SCSS가 실제 렌더링된 내용에 닿습니다. 이 옵션이 없으면 포털로 빠져나간 콘텐츠가 스코프 밖에서 스타일 없이 렌더링됩니다.
+- **모바일 대응은 두 번째 트리가 아니라 미디어 쿼리 레이어입니다.** 공개 사이트와 달리 관리자 패널은 `#pc-wrap` / `#mobile-wrap`으로 갈라지지 않습니다. `scss/mobile/adminpage/admin.scss`가 동일한 `#admin-wrap` 마크업을 좁은 화면에 맞게 조정합니다. 사이드바는 하단 섹션 바로 바뀌고, `useAdminTableLabels`가 각 `<td>`에 `<thead>`에서 읽은 `data-label`을 찍어 넓은 테이블을 라벨이 붙은 카드로 재배치합니다. 사이드 레일과 모바일 바는 `adminNav.tsx`의 공용 내비게이션 모델 하나를 함께 사용하므로, 섹션 추가는 한 곳만 고치면 됩니다.
 
 ---
 
@@ -1069,7 +1111,7 @@ MUI 관련해 알아둘 함정이 하나 있습니다. `Menu`/`Select`는 표면
 
 - **PortOne 결제는 장바구니 결제에만 연결되어 있습니다.** 바로 구매와 예약 선결제는 아직 연결되지 않았으며, 예약은 서비스 종료 후 에이전트와 정산합니다.
 - **토큰 갱신 링크는 아직 스텁입니다.** `apollo-link-token-refresh`가 설치되어 체인에 들어가 있지만 `isTokenValidOrUndefined`가 항상 `true`를 반환하고 `fetchAccessToken`이 `null`을 반환합니다. 즉 만료된 토큰은 조용히 갱신되지 않고 401로 드러납니다. 실제 갱신 뮤테이션을 연결하는 것이 인증 쪽 다음 과제입니다.
-- **관리자 패널은 데스크톱 전용입니다.** 자체 다크 모드는 있지만 모바일 레이어는 없습니다.
+- **비밀번호 재설정은 입력이 틀렸다는 사실을 알려줄 수 없습니다.** 1단계가 존재하지 않는 아이디·이메일 조합에도 의도적으로 성공을 반환하므로, 이메일을 잘못 입력한 회원은 오지 않을 코드를 계속 기다리게 됩니다. "해당 계정이 존재한다면 코드를 보냈습니다" 식의 문구가 정직한 해법이며, 현재 문구는 발송을 단정하고 있습니다.
 - **`pages/api/hello.ts`** 는 Create Next App의 잔재입니다. 모든 통신이 GraphQL 백엔드를 거치므로 실제로 사용하는 Next.js API 라우트는 없습니다.
 - **아직 자동화된 테스트 스위트가 없습니다.** 현재 검증은 `yarn build` 통과와 데스크톱·모바일 두 트리에 대한 수동 브라우저 확인으로 이루어집니다.
 - 구글 가입 회원에게는 여전히 `google-<sub>` 형태의 전화번호 자리표시자가 남아 있으며, 결제 계층이 클라이언트에서 이를 우회하고 있습니다. 근본적인 수정은 백엔드에서 이루어져야 합니다.
