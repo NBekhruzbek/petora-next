@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Stack, Typography, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -20,12 +21,19 @@ const pageNameKeys: Record<string, string> = {
   "/admin/cs": "admin.nav.cs",
 };
 
+const DEFAULT_AVATAR = "/img/profile/defaultUser.png";
+
 const AdminHeader = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const user = useReactiveVar(userVar);
   const pageNameKey = pageNameKeys[router.pathname] ?? "admin.panel";
   const adminName = user?.memberFullName || user?.memberUserName || "Admin";
+  const adminPhoto =
+    user?.memberImage && user.memberImage !== DEFAULT_AVATAR
+      ? user.memberImage
+      : "";
+  const [failedPhoto, setFailedPhoto] = useState("");
 
   return (
     <Stack className="admin-header" direction="row" alignItems="center">
@@ -39,7 +47,15 @@ const AdminHeader = () => {
         <AdminLangSwitcher />
         <AdminThemeToggle />
         <Stack className="admin-header-avatar">
-          {adminName.charAt(0).toUpperCase()}
+          {adminPhoto && adminPhoto !== failedPhoto ? (
+            <img
+              src={adminPhoto}
+              alt=""
+              onError={() => setFailedPhoto(adminPhoto)}
+            />
+          ) : (
+            adminName.charAt(0).toUpperCase()
+          )}
         </Stack>
         <Typography className="admin-header-name">{adminName}</Typography>
         <Button
