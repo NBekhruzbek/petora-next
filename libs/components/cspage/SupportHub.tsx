@@ -489,41 +489,43 @@ const SupportHub = () => {
                             ) : null}
 
                             <Box className="faq-expanded-content">
-                              {content.paragraphs.map((paragraph, index) => (
-                                <Box
-                                  className="faq-answer"
-                                  key={`${faq._id}-p-${index}`}
-                                >
-                                  {paragraph}
-                                </Box>
-                              ))}
+                              <Box className="faq-expanded-inner">
+                                {content.paragraphs.map((paragraph, index) => (
+                                  <Box
+                                    className="faq-answer"
+                                    key={`${faq._id}-p-${index}`}
+                                  >
+                                    {paragraph}
+                                  </Box>
+                                ))}
 
-                              {content.bullets.length ? (
-                                <ul className="faq-bullets">
-                                  {content.bullets.map((bullet, index) => (
-                                    <li key={`${faq._id}-b-${index}`}>
-                                      {bullet}
-                                    </li>
-                                  ))}
-                                </ul>
-                              ) : null}
+                                {content.bullets.length ? (
+                                  <ul className="faq-bullets">
+                                    {content.bullets.map((bullet, index) => (
+                                      <li key={`${faq._id}-b-${index}`}>
+                                        {bullet}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                ) : null}
 
-                              <Stack
-                                className="faq-feedback-row"
-                                direction="row"
-                                onClick={(event) => event.stopPropagation()}
-                              >
-                                <Box className="feedback-label">
-                                  {t("cs.helpful")}
-                                </Box>
-                                <button
-                                  type="button"
-                                  className="close-expanded"
-                                  onClick={() => setExpandedFaqId(null)}
+                                <Stack
+                                  className="faq-feedback-row"
+                                  direction="row"
+                                  onClick={(event) => event.stopPropagation()}
                                 >
-                                  <CloseRoundedIcon />
-                                </button>
-                              </Stack>
+                                  <Box className="feedback-label">
+                                    {t("cs.helpful")}
+                                  </Box>
+                                  <button
+                                    type="button"
+                                    className="close-expanded"
+                                    onClick={() => setExpandedFaqId(null)}
+                                  >
+                                    <CloseRoundedIcon />
+                                  </button>
+                                </Stack>
+                              </Box>
                             </Box>
                           </Stack>
                         </Box>

@@ -14,7 +14,9 @@
   .support-hub-section {
     padding: $space-5 0 $space-6;
     margin-top: 0;
-    background: var(--pt-page-bg); // pc sets the same; restate so the header's lilac can't bleed
+    background: var(
+      --pt-page-bg
+    ); // pc sets the same; restate so the header's lilac can't bleed
 
     .container {
       padding: 0 $space-4;
@@ -208,7 +210,9 @@
       }
 
       .panel-title {
-        color: var(--pt-ink-strong); // pc-scoped, else inherits the section purple
+        color: var(
+          --pt-ink-strong
+        ); // pc-scoped, else inherits the section purple
         font-family: $font;
         font-size: 20px;
         font-weight: 700;
@@ -224,7 +228,7 @@
     }
 
     // Grid layout is #pc-wrap-only; restate it 1-col so stacked cards get
-    // consistent gaps, and neutralize the shared span-2 expanded rule.
+    // consistent gaps.
     .faq-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -232,10 +236,6 @@
     }
 
     .faq-card {
-      &.expanded {
-        grid-column: auto;
-      }
-
       .faq-card-inner {
         padding: $space-4; // shared is desktop-scale 24px
       }

@@ -23,7 +23,6 @@
   }
 
   &.expanded {
-    grid-column: span 2;
     box-shadow: 0 20px 44px rgba(92, 76, 187, 0.12);
 
     .faq-arrow {
@@ -31,7 +30,7 @@
     }
 
     .faq-expanded-content {
-      max-height: 500px;
+      grid-template-rows: 1fr;
       opacity: 1;
       margin-top: 18px;
     }
@@ -70,13 +69,18 @@
   }
 
   .faq-expanded-content {
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     opacity: 0;
-    overflow: hidden;
     transition:
-      max-height 0.3s ease,
+      grid-template-rows 0.3s ease,
       opacity 0.24s ease,
       margin-top 0.3s ease;
+
+    .faq-expanded-inner {
+      min-height: 0; // else the row floors at the content height and never collapses
+      overflow: hidden;
+    }
   }
 
   .faq-answer {
@@ -276,4 +280,3 @@
     font-size: 24px;
   }
 }
-
