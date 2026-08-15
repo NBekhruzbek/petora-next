@@ -2239,12 +2239,13 @@
           margin-left: 10px;
         }
       }
+
       .product-cards {
-        display: flex;
-        flex-direction: row;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
         gap: 34px;
         .product-card {
-          width: 400px;
+          max-width: none;
           min-height: 300px;
           border-radius: 12px;
           border: 1px solid var(--pt-border-lilac);
