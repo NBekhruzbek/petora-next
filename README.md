@@ -38,7 +38,8 @@ Book grooming, walking, training and veterinary services from verified agents �
 10. [Admin panel](#10-admin-panel)
 11. [Code conventions](#11-code-conventions)
 12. [Scripts](#12-scripts)
-13. [Known limitations & roadmap](#13-known-limitations--roadmap)
+13. [Deployment](#13-deployment)
+14. [Known limitations & roadmap](#14-known-limitations--roadmap)
 
 ---
 
@@ -133,7 +134,7 @@ This repository is the **frontend only**. It talks to a separate NestJS + GraphQ
 
 ### Prerequisites
 
-- **Node.js 18.18+** (Next.js 16 requirement)
+- **Node.js 20.9+** — Next.js 16 declares `engines: { node: ">=20.9.0" }`
 - **Yarn 1.22+**
 - The **`petora-nest` backend** running on `http://localhost:4000`, with MongoDB available. Without it the UI renders but every list is empty.
 
@@ -552,7 +553,126 @@ Three implementation notes:
 
 ---
 
-## 13. Known limitations & roadmap
+## 13. Deployment
+
+The repository ships its own deployment setup — two files at the project root:
+
+| File | Role |
+|---|---|
+| `docker-compose.yml` | Defines the single `petora-next` service |
+| `deploy.sh` | Redeploy script, run on the server |
+
+### How the container works
+
+There is **no Dockerfile**. The compose file runs the stock `node:20.10.0` image, bind-mounts the project directory into it, and does the install and build *inside* the container on every start:
+
+```yaml
+services:
+  petora-next:
+    container_name: petora-next
+    restart: always
+    image: node:20.10.0
+    ports:
+      - 4000:3000
+    environment:
+      - PORT=3000
+
+    volumes:
+      - ./:/usr/src/petora-next
+    working_dir: /usr/src/petora-next
+
+    networks:
+      - client-network
+
+    # FOR PRODUCTION
+    command: bash -c "yarn && yarn run build && yarn run start"
+
+networks:
+  client-network:
+    driver: bridge
+```
+
+So a deploy is: pull the new code, and the container reinstalls, rebuilds and restarts on top of it. Nothing is baked into an image.
+
+### Port map
+
+Petora runs as three services on one host. The frontend is **host port 4000**, which is *not* the same 4000 the API uses in local development:
+
+| Service | Host port | Container port |
+|---|---|---|
+| **petora-next** (this app) | 4000 | 3000 |
+| petora-api | 4010 | 4000 |
+| petora-batch | 4011 | 4001 |
+
+### First deploy on a fresh server
+
+```bash
+# 1. Docker Engine + the compose plugin must be installed
+
+# 2. Clone and switch to the deployment branch
+git clone https://github.com/NBekhruzbek/petora-next.git
+cd petora-next
+git checkout main
+
+# 3. Create the env file BY HAND — see the note below
+vi .env.local
+
+# 4. Bring it up
+docker compose up -d
+```
+
+### Redeploying
+
+```bash
+./deploy.sh
+```
+
+Which is:
+
+```bash
+git reset --hard
+git checkout main
+git pull origin main
+docker compose up -d
+```
+
+Useful commands while it runs:
+
+```bash
+docker compose logs -f petora-next     # follow the build + server output
+docker compose up -d --force-recreate  # rebuild after an env change
+docker compose down                    # stop
+```
+
+### Deployment notes
+
+These are the things that actually bite:
+
+- **The env file never arrives through git.** `.env*` is gitignored, so `git pull` will never deliver it and `git reset --hard` will never remove it — it only touches tracked files. You place it on the server once by hand, and it survives every subsequent redeploy. That is what makes this setup work.
+
+- **Use `.env.local`, not `.env.development`.** `yarn start` runs Next.js with `NODE_ENV=production`, which loads `.env.production*`, `.env.local` and `.env` — **never** `.env.development`. `.env.local` is read in both modes, which is why this project keeps its live values there.
+
+- **`NEXT_PUBLIC_*` values are inlined at build time, not read at runtime.** The container's `command` runs `yarn build`, so the env file must already exist before you bring the stack up. Changing a value needs a rebuild (`docker compose up -d --force-recreate`), not just a restart.
+
+- **Point the API variables at a public origin.** `localhost` in `NEXT_PUBLIC_API_URL` / `_GRAPHQL_URL` / `_WS` resolves to the *visitor's own machine*, because these values run in their browser. On the server they must be the API's real address — and per the port map above, that is port **4010**, not 4000.
+
+- **Serving over HTTPS requires `wss://`.** If you terminate TLS in front of the app, `NEXT_PUBLIC_API_WS` must be `wss://…` or the browser blocks it as mixed content, and notifications and chat stop working with no visible error.
+
+- **`deploy.sh` deploys `main`.** Day-to-day work happens on `develop`, so merge to `main` before running it. Note also that `git reset --hard` discards any uncommitted change made directly on the server.
+
+- **Don't run `yarn install` on the host.** The bind mount means the host directory *is* the container's `node_modules`. Next.js ships platform-specific SWC binaries, so a macOS install mounted into a Linux container can leave the wrong ones in place. Let the container's `yarn` own that directory.
+
+### Gaps in the current setup
+
+Stated plainly, since this is a working deployment rather than a hardened one:
+
+- **No image is built or published.** Every deploy re-runs `yarn install` and `yarn build` inside a stock Node container, which makes deploys slow and not reproducible — the result depends on whatever the registry resolves to that day. A multi-stage `Dockerfile` producing a lockfile-pinned image (ideally Next.js `output: "standalone"`) is the natural next step.
+- **No reverse proxy, TLS, or healthcheck** in the compose file. The app is served as plain HTTP on port 4000.
+- **No CI/CD.** `deploy.sh` is run by hand on the server.
+
+---
+
+## 14. Known limitations & roadmap
 
 Stated plainly, because they're the honest state of the project:
 
@@ -591,7 +711,8 @@ Stated plainly, because they're the honest state of the project:
 10. [관리자 패널](#10-관리자-패널)
 11. [코드 컨벤션](#11-코드-컨벤션)
 12. [스크립트](#12-스크립트)
-13. [현재 한계와 로드맵](#13-현재-한계와-로드맵)
+13. [배포](#13-배포)
+14. [현재 한계와 로드맵](#14-현재-한계와-로드맵)
 
 ---
 
@@ -686,7 +807,7 @@ Petora는 반려동물 케어 양면 플랫폼입니다. 회원 유형이 세 �
 
 ### 사전 요구 사항
 
-- **Node.js 18.18 이상** (Next.js 16 요구 사항)
+- **Node.js 20.9 이상** — Next.js 16이 `engines: { node: ">=20.9.0" }`을 요구합니다
 - **Yarn 1.22 이상**
 - `http://localhost:4000`에서 실행 중인 **`petora-nest` 백엔드**와 MongoDB. 백엔드가 없으면 UI는 렌더링되지만 모든 목록이 비어 있습니다.
 
@@ -1105,7 +1226,126 @@ MUI 관련해 알아둘 함정이 하나 있습니다. `Menu`/`Select`는 표면
 
 ---
 
-## 13. 현재 한계와 로드맵
+## 13. 배포
+
+이 저장소에는 배포 설정이 함께 들어 있습니다. 프로젝트 루트의 두 파일입니다.
+
+| 파일 | 역할 |
+|---|---|
+| `docker-compose.yml` | 단일 `petora-next` 서비스 정의 |
+| `deploy.sh` | 서버에서 실행하는 재배포 스크립트 |
+
+### 컨테이너 동작 방식
+
+**Dockerfile은 없습니다.** compose 파일이 순정 `node:20.10.0` 이미지를 띄우고, 프로젝트 디렉터리를 바인드 마운트한 뒤, 설치와 빌드를 매번 컨테이너 *안에서* 수행합니다.
+
+```yaml
+services:
+  petora-next:
+    container_name: petora-next
+    restart: always
+    image: node:20.10.0
+    ports:
+      - 4000:3000
+    environment:
+      - PORT=3000
+
+    volumes:
+      - ./:/usr/src/petora-next
+    working_dir: /usr/src/petora-next
+
+    networks:
+      - client-network
+
+    # FOR PRODUCTION
+    command: bash -c "yarn && yarn run build && yarn run start"
+
+networks:
+  client-network:
+    driver: bridge
+```
+
+즉 배포란 새 코드를 받아오면 컨테이너가 그 위에서 다시 설치하고, 다시 빌드하고, 재시작하는 것입니다. 이미지에 미리 구워 넣는 것은 없습니다.
+
+### 포트 매핑
+
+Petora는 한 호스트에서 세 개의 서비스로 동작합니다. 프론트엔드는 **호스트 4000번 포트**를 쓰는데, 이는 로컬 개발에서 API가 쓰는 4000번과 *다른* 것입니다.
+
+| 서비스 | 호스트 포트 | 컨테이너 포트 |
+|---|---|---|
+| **petora-next** (이 앱) | 4000 | 3000 |
+| petora-api | 4010 | 4000 |
+| petora-batch | 4011 | 4001 |
+
+### 새 서버에서 최초 배포
+
+```bash
+# 1. Docker Engine과 compose 플러그인이 설치되어 있어야 합니다
+
+# 2. 클론 후 배포 브랜치로 전환
+git clone https://github.com/NBekhruzbek/petora-next.git
+cd petora-next
+git checkout main
+
+# 3. 환경 파일을 직접 생성 — 아래 주의사항 참고
+vi .env.local
+
+# 4. 컨테이너 실행
+docker compose up -d
+```
+
+### 재배포
+
+```bash
+./deploy.sh
+```
+
+내용은 다음과 같습니다.
+
+```bash
+git reset --hard
+git checkout main
+git pull origin main
+docker compose up -d
+```
+
+실행 중 유용한 명령:
+
+```bash
+docker compose logs -f petora-next     # 빌드 및 서버 로그 확인
+docker compose up -d --force-recreate  # 환경 변수 변경 후 재빌드
+docker compose down                    # 중지
+```
+
+### 배포 시 주의사항
+
+실제로 문제가 되는 지점들입니다.
+
+- **환경 파일은 git으로 전달되지 않습니다.** `.env*`는 gitignore 대상이라 `git pull`로 내려오지 않으며, `git reset --hard`로 지워지지도 않습니다(추적 중인 파일만 대상으로 하기 때문입니다). 서버에 한 번 직접 만들어 두면 이후 모든 재배포에서 그대로 유지됩니다. 이 구조가 성립하는 이유가 바로 이것입니다.
+
+- **`.env.development`가 아니라 `.env.local`을 사용하세요.** `yarn start`는 Next.js를 `NODE_ENV=production`으로 실행하며, 이때 로드되는 파일은 `.env.production*`, `.env.local`, `.env`입니다. **`.env.development`는 절대 읽지 않습니다.** `.env.local`은 개발/프로덕션 양쪽에서 읽히므로, 이 프로젝트가 실제 값을 여기에 두는 이유입니다.
+
+- **`NEXT_PUBLIC_*` 값은 런타임이 아니라 빌드 시점에 번들에 새겨집니다.** 컨테이너의 `command`가 `yarn build`를 실행하므로, 스택을 올리기 *전에* 환경 파일이 이미 존재해야 합니다. 값을 바꾸려면 단순 재시작이 아니라 재빌드(`docker compose up -d --force-recreate`)가 필요합니다.
+
+- **API 관련 변수는 공개 주소를 가리켜야 합니다.** 이 값들은 방문자의 브라우저에서 실행되므로, `NEXT_PUBLIC_API_URL` / `_GRAPHQL_URL` / `_WS`에 들어간 `localhost`는 *방문자 본인의 PC*를 가리키게 됩니다. 서버에서는 API의 실제 주소여야 하며, 위 포트 매핑에 따르면 4000번이 아니라 **4010번**입니다.
+
+- **HTTPS로 서비스하려면 `wss://`가 필요합니다.** 앞단에서 TLS를 종료하는 경우 `NEXT_PUBLIC_API_WS`는 반드시 `wss://…`여야 합니다. 그렇지 않으면 브라우저가 혼합 콘텐츠로 차단하며, 눈에 보이는 오류 없이 알림과 채팅이 동작을 멈춥니다.
+
+- **`deploy.sh`는 `main` 브랜치를 배포합니다.** 평소 작업은 `develop`에서 이루어지므로, 실행 전에 `main`으로 머지해야 합니다. 또한 `git reset --hard`는 서버에서 직접 수정한 커밋되지 않은 변경을 모두 폐기한다는 점에 유의하세요.
+
+- **호스트에서 `yarn install`을 실행하지 마세요.** 바인드 마운트 때문에 호스트 디렉터리가 곧 컨테이너의 `node_modules`입니다. Next.js는 플랫폼별 SWC 바이너리를 포함하므로, macOS에서 설치한 결과를 리눅스 컨테이너에 마운트하면 잘못된 바이너리가 남을 수 있습니다. 이 디렉터리는 컨테이너의 `yarn`이 관리하도록 두세요.
+
+### 현재 배포 구성의 한계
+
+동작하는 배포일 뿐 견고하게 다듬은 배포는 아니므로, 있는 그대로 적습니다.
+
+- **빌드하거나 배포하는 이미지가 없습니다.** 매 배포마다 순정 Node 컨테이너 안에서 `yarn install`과 `yarn build`를 다시 실행하므로 배포가 느리고 재현 가능하지도 않습니다 — 결과가 그날 레지스트리가 해석한 버전에 좌우됩니다. 락파일로 고정한 이미지를 만드는 멀티스테이지 `Dockerfile`(가능하면 Next.js `output: "standalone"` 사용)이 다음 단계로 자연스럽습니다.
+- compose 파일에 **리버스 프록시, TLS, 헬스체크가 없습니다.** 앱은 4000번 포트에서 평문 HTTP로 서비스됩니다.
+- **CI/CD가 없습니다.** `deploy.sh`를 서버에서 손으로 실행합니다.
+
+---
+
+## 14. 현재 한계와 로드맵
 
 프로젝트의 실제 상태를 있는 그대로 적습니다.
 
